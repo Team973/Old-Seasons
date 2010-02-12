@@ -1,5 +1,10 @@
-// ControlBoard.cpp
-// Created on 2/11/10.
+//
+//	ControlBoard.cpp
+//	Team 973
+//	2010 "The Boss"
+//
+//	Created on 2/11/10.
+//
 
 #include "ControlBoard.hpp"
 

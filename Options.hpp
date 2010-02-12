@@ -1,5 +1,10 @@
-// Options.hpp
-// Created on 2/11/10.
+//
+//	Options.hpp
+//	Team 973
+//	2010 "The Boss"
+//
+//	Created on 2/12/10.
+//
 
 // This file is used to collect all of the compile-time options for the robot.
 // If you think that you need to have something that should be changed at compile

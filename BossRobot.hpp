@@ -1,5 +1,10 @@
-// BossRobot.hpp
-// Created on 2/12/10.
+//
+//	BossRobot.hpp
+//	Team 973
+//	2010 "The Boss"
+//
+//	Created on 2/11/10.
+//
 
 #include "Options.hpp"
 #include "WPILib.h"

@@ -1,5 +1,10 @@
-// BossRobot.cpp
-// Created on 2/11/10.
+//
+//	BossRobot.cpp
+//	Team 973
+//	2010 "The Boss"
+//
+//	Created on 2/11/10.
+//
 
 #include "BossRobot.hpp"
 

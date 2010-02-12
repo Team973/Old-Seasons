@@ -1,5 +1,10 @@
-// DriveSystem.cpp
-// Created on 2/11/10.
+//
+//	DriveSystem.cpp
+//	Team 973
+//	2010 "The Boss"
+//
+//	Created on 2/11/10.
+//
 
 #include "DriveSystem.hpp"
 #include "ControlBoard.hpp"

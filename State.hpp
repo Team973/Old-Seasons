@@ -1,5 +1,10 @@
-// State.hpp
-// Created on 2/11/10.
+//
+//	State.hpp
+//	Team 973
+//	2010 "The Boss"
+//
+//	Created on 2/11/10.
+//
 
 #include "WPILib.h"
 #include "BossRobot.hpp"
