@@ -14,8 +14,9 @@ DriveSystem::DriveSystem()
 	m_drive = NULL;
 }
 
-DriveSystem::DriveSystem(RobotDrive *d)
+DriveSystem::DriveSystem(BossRobot *r, RobotDrive *d)
 {
+    m_robot = r;
 	m_drive = d;
 }
 
@@ -29,7 +30,8 @@ void DriveSystem::Compensate()
 	// TODO
 }
 
-AutonomousDriveSystem::AutonomousDriveSystem(RobotDrive *d) : DriveSystem(d)
+AutonomousDriveSystem::AutonomousDriveSystem(BossRobot *r, RobotDrive *d)
+    : DriveSystem(r, d)
 {
 }
 	
@@ -41,15 +43,16 @@ void AutonomousDriveSystem::Drive()
 {
 }
 
-ArcadeDriveSystem::ArcadeDriveSystem(RobotDrive *d) : DriveSystem(d)
+ArcadeDriveSystem::ArcadeDriveSystem(BossRobot *r, RobotDrive *d)
+    : DriveSystem(r, d)
 {
 	m_x = m_y = 0.0;
 }
 
 void ArcadeDriveSystem::ReadControls()
 {
-	m_y = -(m_robot->GetControlBoard()->GetJoystick(1).GetY());
-	m_x = -(m_robot->GetControlBoard()->GetJoystick(2).GetX());
+	m_y = -(ControlBoard::GetInstance().GetJoystick(1).GetY());
+	m_x = -(ControlBoard::GetInstance().GetJoystick(2).GetX());
 }
 
 void ArcadeDriveSystem::Drive()
@@ -66,12 +69,13 @@ void ArcadeDriveSystem::Drive()
  * 		4 - Right X
  * 		5 - Right Y
  */
-XboxDriveSystem::XboxDriveSystem(RobotDrive *d) : ArcadeDriveSystem(d)
+XboxDriveSystem::XboxDriveSystem(BossRobot *r, RobotDrive *d)
+    : ArcadeDriveSystem(r, d)
 {
 }
 
 void XboxDriveSystem::ReadControls(void)
 {
-	m_y = -(m_robot->GetControlBoard()->GetJoystick(1).GetY());
-	m_x = -(m_robot->GetControlBoard()->GetJoystick(1).GetRawAxis(4));
+	m_y = -(ControlBoard::GetInstance().GetJoystick(1).GetY());
+	m_x = -(ControlBoard::GetInstance().GetJoystick(1).GetRawAxis(4));
 }

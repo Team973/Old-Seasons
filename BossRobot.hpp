@@ -17,7 +17,6 @@
 #define _BOSS_973_BOSSROBOT_H_
 
 class State;
-class ControlBoard;
 class DriveSystem;
 
 class BossRobot : public SimpleRobot
@@ -25,7 +24,6 @@ class BossRobot : public SimpleRobot
 protected:
 	// New variables
 	State *m_state, *m_prevState;
-	ControlBoard *m_controlBoard;
 	DriveSystem *m_driveSystem;
 	
 	// Old variables
@@ -51,8 +49,8 @@ public:
 	virtual void OperatorControl();
 	
 	inline State *GetState() 				{ return m_state; }
-	inline ControlBoard *GetControlBoard() 	{ return m_controlBoard; }
 	inline DriveSystem *GetDriveSystem() 	{ return m_driveSystem; }
+	inline void SetDriveSystem(DriveSystem *d) { m_driveSystem = d; }
 	RobotDrive *GetDrive();
 
 protected:

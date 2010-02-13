@@ -9,7 +9,6 @@
 #include "BossRobot.hpp"
 
 #include "State.hpp"
-#include "ControlBoard.hpp"
 #include "DriveSystem.hpp"
 
 const float TELEOP_LOOP_LAG = 0.005;

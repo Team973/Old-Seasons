@@ -8,9 +8,20 @@
 
 #include "ControlBoard.hpp"
 
+static ControlBoard *gControlBoardInstance = NULL;
+
 ControlBoard::ControlBoard()
 	: m_stick1(1), m_stick2(2), m_stick3(3)
 {
+}
+
+ControlBoard &ControlBoard::GetInstance()
+{
+    if (gControlBoardInstance == NULL)
+    {
+        gControlBoardInstance = new ControlBoard();
+    }
+    return *gControlBoardInstance;
 }
 
 Joystick &ControlBoard::GetJoystick(int index)

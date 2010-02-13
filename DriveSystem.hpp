@@ -19,7 +19,7 @@ protected:
 	RobotDrive *m_drive;
 	
 	DriveSystem();
-	DriveSystem(RobotDrive *);
+	DriveSystem(BossRobot *, RobotDrive *);
 public:
 	virtual ~DriveSystem() {}
 	
@@ -42,7 +42,7 @@ public:
 class AutonomousDriveSystem : public DriveSystem
 {
 public:
-	AutonomousDriveSystem(RobotDrive *);
+	AutonomousDriveSystem(BossRobot *, RobotDrive *);
 	virtual void ReadControls();
 	virtual void Drive();
 };
@@ -52,7 +52,7 @@ class ArcadeDriveSystem : public DriveSystem
 protected:
 	float m_x, m_y;
 public:
-	ArcadeDriveSystem(RobotDrive *);
+	ArcadeDriveSystem(BossRobot *, RobotDrive *);
 	virtual void ReadControls();
 	virtual void Drive();
 };
@@ -60,7 +60,7 @@ public:
 class XboxDriveSystem : public ArcadeDriveSystem
 {
 public:
-	XboxDriveSystem(RobotDrive *);
+	XboxDriveSystem(BossRobot *, RobotDrive *);
 	virtual void ReadControls();
 };
 
