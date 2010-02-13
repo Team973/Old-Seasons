@@ -17,7 +17,7 @@ NormalState::NormalState(BossRobot *r)
 
 void NormalState::Enter()
 {
-	m_robot->SetDriveSystem(new ArcadeDriveSystem());
+	m_robot->SetDriveSystem(new ArcadeDriveSystem(m_robot, m_robot->GetDrive()));
 }
 
 void NormalState::Exit()

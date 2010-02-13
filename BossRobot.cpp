@@ -9,6 +9,7 @@
 #include "BossRobot.hpp"
 
 #include "State.hpp"
+#include "NormalState.hpp"
 #include "DriveSystem.hpp"
 
 const float TELEOP_LOOP_LAG = 0.005;
@@ -35,7 +36,7 @@ BossRobot::BossRobot(void)
 	m_rightMotor1 = new Jaguar(4);
 	m_rightMotor2 = new Jaguar(2);
 	
-	m_driveSystem = new AutonomousDriveSystem(new RobotDrive(
+	m_driveSystem = new AutonomousDriveSystem(this, new RobotDrive(
 			m_leftMotor1, m_leftMotor2, m_rightMotor1, m_rightMotor2));
 	
 	/* Pneumatics */
@@ -102,7 +103,7 @@ void BossRobot::OperatorControl(void)
 	GetWatchdog().SetEnabled(true);
 	GetWatchdog().Feed();
 	
-	ChangeState(new NormalState());
+	ChangeState(new NormalState(this));
 	
 	while (IsOperatorControl())
 	{
