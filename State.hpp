@@ -16,14 +16,14 @@ class State
 {
 protected:
 	BossRobot *m_robot;
+	
+	State()                { m_robot = NULL; }
+	State(BossRobot *r)    { m_robot = r; }
 public:
+	virtual ~State() {};
 	virtual void Enter() = 0;
 	virtual void Exit() = 0;
 	virtual void Step() = 0;
-};
-
-class NormalState : public State
-{
 };
 
 // TODO: Expand acronym without offending people

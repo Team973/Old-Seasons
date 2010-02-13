@@ -26,6 +26,9 @@ BossRobot::BossRobot(void)
 	lcd->UpdateLCD();
 #endif
 	
+	/* Program setup */
+	m_state = m_prevState = NULL;
+	
 	/* Drive system */
 	m_leftMotor1 = new Jaguar(1);
 	m_leftMotor2 = new Jaguar(3);
@@ -48,27 +51,29 @@ BossRobot::BossRobot(void)
 	
 	/* Camera */
 #ifdef FEATURE_CAMERA
-	// Camera setup
-	GetWatchdog().SetEnabled(false);
-	Wait(5.0);
-#ifdef FEATURE_LCD
-	lcd->Printf(DriverStationLCD::kUser_Line1, 1, "Done waiting for cam  ");
-	lcd->UpdateLCD();
-#endif
-
-	m_camera = &(AxisCamera::GetInstance());
-	m_camera->WriteResolution(AxisCameraParams::kResolution_320x240);
-	m_camera->WriteBrightness(0);
-	m_camera->WriteCompression(75);
-	m_camera->WriteMaxFPS(15);
+	{
+		// Camera setup
+		GetWatchdog().SetEnabled(false);
+		Wait(5.0);
+	#ifdef FEATURE_LCD
+		lcd->Printf(DriverStationLCD::kUser_Line1, 1, "Done waiting for cam  ");
+		lcd->UpdateLCD();
+	#endif
 	
-	// Tell the operator we're just idling
-#ifdef FEATURE_LCD
-	lcd->Printf(DriverStationLCD::kUser_Line1, 1, "Camera initialized    ");
-	lcd->UpdateLCD();
-	Wait(1.0);
-#endif
-	GetWatchdog().SetEnabled(true);
+		m_camera = &(AxisCamera::GetInstance());
+		m_camera->WriteResolution(AxisCameraParams::kResolution_320x240);
+		m_camera->WriteBrightness(0);
+		m_camera->WriteCompression(75);
+		m_camera->WriteMaxFPS(15);
+		
+		// Tell the operator we're just idling
+	#ifdef FEATURE_LCD
+		lcd->Printf(DriverStationLCD::kUser_Line1, 1, "Camera initialized    ");
+		lcd->UpdateLCD();
+		Wait(1.0);
+	#endif
+		GetWatchdog().SetEnabled(true);
+	}
 #endif
 
 #ifdef FEATURE_LCD
@@ -97,17 +102,51 @@ void BossRobot::OperatorControl(void)
 	GetWatchdog().SetEnabled(true);
 	GetWatchdog().Feed();
 	
+	ChangeState(new NormalState());
+	
 	while (IsOperatorControl())
 	{
 		GetWatchdog().SetEnabled(true);
 		GetWatchdog().Feed();
 		
+		if (m_state != m_prevState)
+		{
+			// We must have changed states since the last iteration
+			// 1. Exit out of "old" state
+			if (m_prevState != NULL)
+				m_prevState->Exit();
+			GetWatchdog().Feed();
+			// 2. Enter "new" state
+			m_state->Enter();
+			GetWatchdog().Feed();
+			// 3. Record the state change as successful
+			m_prevState = m_state;
+		}
+		
+		// Do what the state wants
 		m_state->Step();
+		GetWatchdog().Feed();
 		
 		// Post-iteration clean up
 		GetWatchdog().Feed();
 		Wait(TELEOP_LOOP_LAG);				// wait for a motor update time
 		GetWatchdog().Feed();
+	}
+}
+
+void BossRobot::ChangeState(State *st)
+{
+	// FIXME: This will leak memory
+	m_state = st;
+}
+
+void BossRobot::SetDriveSystem(DriveSystem *d)
+{
+	if (m_driveSystem != d)
+	{
+		if (m_driveSystem != NULL)
+			delete m_driveSystem;
+		m_driveSystem = d;
 	}
 }
 

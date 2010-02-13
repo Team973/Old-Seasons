@@ -49,8 +49,10 @@ public:
 	virtual void OperatorControl();
 	
 	inline State *GetState() 				{ return m_state; }
+	void ChangeState(State *);
+	
 	inline DriveSystem *GetDriveSystem() 	{ return m_driveSystem; }
-	inline void SetDriveSystem(DriveSystem *d) { m_driveSystem = d; }
+	void SetDriveSystem(DriveSystem *d);
 	RobotDrive *GetDrive();
 
 protected:
