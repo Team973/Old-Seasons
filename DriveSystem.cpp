@@ -44,7 +44,7 @@ void AutonomousDriveSystem::Drive()
 }
 
 ArcadeDriveSystem::ArcadeDriveSystem(BossRobot *r, RobotDrive *d)
-    : DriveSystem(r, d)
+    : TeleoperatedDriveSystem(r, d)
 {
 	m_x = m_y = 0.0;
 }
@@ -58,6 +58,12 @@ void ArcadeDriveSystem::ReadControls()
 void ArcadeDriveSystem::Drive()
 {
 	m_drive->ArcadeDrive(m_y, m_x);
+}
+
+bool ArcadeDriveSystem::IsMoving()
+{
+	return (m_y > 0.25 || m_y < -0.25 ||
+			m_x > 0.25 || m_x < -0.25);
 }
 
 /* 	Xbox controller info

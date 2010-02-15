@@ -39,10 +39,22 @@ BossRobot::BossRobot(void)
 	m_driveSystem = new AutonomousDriveSystem(this, new RobotDrive(
 			m_leftMotor1, m_leftMotor2, m_rightMotor1, m_rightMotor2));
 	
+	m_leftDriveEncoder = new Encoder(2, 3, true);
+	m_rightDriveEncoder = new Encoder(4, 5);
+	
 	/* Pneumatics */
 	m_compressor = new Relay(1, Relay::kForwardOnly);
 	m_pressureSwitch = new DigitalInput(1);
 	m_gearSwitch = new Solenoid(1);
+	
+	/* Upper board */
+#ifdef FEATURE_UPPER_BOARD
+	m_armMotor1 = new Victor(6, 1);
+	m_armMotor2 = new Victor(6, 2);
+	m_intakeMotor1 = new Victor(6, 3);
+	m_intakeMotor2 = new Victor(6, 4);
+	m_kickerMotor = new Victor(6, 5);
+#endif
 	
 	/* Misc */
 	m_ioTimer = new Timer();
@@ -128,6 +140,10 @@ void BossRobot::OperatorControl(void)
 		m_state->Step();
 		GetWatchdog().Feed();
 		
+		// Send I/O data
+		SendVisionData();
+		SendIOPortData();
+		
 		// Post-iteration clean up
 		GetWatchdog().Feed();
 		Wait(TELEOP_LOOP_LAG);				// wait for a motor update time
@@ -210,6 +226,18 @@ void BossRobot::SendVisionData()
 	dash.Finalize();
 }
 
+static UINT16 DIOHardware2Logical(UINT16 dio)
+{
+	UINT16 result = 0;
+	int i;
+	
+	for (i = 0; i < 16; i++)
+	{
+		result |= ((dio & (1 << i)) >> i) << (16 - i - 1);
+	}
+	return result;
+}
+
 void BossRobot::SendIOPortData()
 {
 	if (m_ioTimer->Get() < 0.1)
@@ -249,8 +277,8 @@ void BossRobot::SendIOPortData()
 					int module = 4;
 					dash.AddU8(DigitalModule::GetInstance(module)->GetRelayForward());
 					dash.AddU8(DigitalModule::GetInstance(module)->GetRelayReverse());
-					dash.AddU16((short)DigitalModule::GetInstance(module)->GetDIO());
-					dash.AddU16((short)DigitalModule::GetInstance(module)->GetDIODirection());
+					dash.AddU16(DIOHardware2Logical(DigitalModule::GetInstance(module)->GetDIO()));
+					dash.AddU16(DIOHardware2Logical(DigitalModule::GetInstance(module)->GetDIODirection()));
 					dash.AddCluster();
 					{
 						for (int i = 1; i <= 10; i++)
@@ -294,8 +322,7 @@ void BossRobot::SendIOPortData()
 		dash.FinalizeCluster();
 
 		// Solenoids (must have objects for each)
-		//dash.AddU8((unsigned char)m_gearSwitch->Get());
-		dash.AddU8(m_still ? 0x01 : 0x00);
+		dash.AddU8((unsigned char)m_gearSwitch->Get());
 	}
 	dash.FinalizeCluster();
 	dash.Finalize();

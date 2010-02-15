@@ -19,5 +19,6 @@
 
 // Running
 //#define FEATURE_COMPRESSOR
+//#define FEATURE_UPPER_BOARD
 
 #endif

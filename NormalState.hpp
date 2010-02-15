@@ -14,6 +14,8 @@
 
 class NormalState : public State
 {
+protected:
+	bool m_still, m_prevStill;
 public:
 	NormalState(BossRobot *r);
 	

@@ -47,7 +47,16 @@ public:
 	virtual void Drive();
 };
 
-class ArcadeDriveSystem : public DriveSystem
+class TeleoperatedDriveSystem : public DriveSystem
+{
+protected:
+	TeleoperatedDriveSystem() : DriveSystem() {}
+	TeleoperatedDriveSystem(BossRobot *r, RobotDrive *d) : DriveSystem(r, d) {}
+public:
+	virtual bool IsMoving() = 0;
+};
+
+class ArcadeDriveSystem : public TeleoperatedDriveSystem
 {
 protected:
 	float m_x, m_y;
@@ -55,6 +64,7 @@ public:
 	ArcadeDriveSystem(BossRobot *, RobotDrive *);
 	virtual void ReadControls();
 	virtual void Drive();
+	virtual bool IsMoving();
 };
 
 class XboxDriveSystem : public ArcadeDriveSystem

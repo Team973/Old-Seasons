@@ -22,26 +22,28 @@ class DriveSystem;
 class BossRobot : public SimpleRobot
 {
 protected:
-	// New variables
 	State *m_state, *m_prevState;
 	DriveSystem *m_driveSystem;
 	
-	// Old variables
 	SpeedController *m_leftMotor1, *m_leftMotor2;   // Front, Back
 	SpeedController *m_rightMotor1, *m_rightMotor2; // Front, Back
+	Solenoid *m_gearSwitch;
+	Encoder *m_leftDriveEncoder, *m_rightDriveEncoder;
+	
 	Relay *m_compressor;
 	DigitalInput *m_pressureSwitch;
-	Solenoid *m_gearSwitch;
-#ifdef FEATURE_PRECISION_DRIVE
-	Encoder *m_leftEncoder, *m_rightEncoder;
-#endif
+	
+	SpeedController *m_armMotor1, *m_armMotor2;
+	SpeedController *m_intakeMotor1, *m_intakeMotor2;
+	SpeedController *m_kickerMotor;
+	Relay *m_winchRelay1, *m_winchRelay2;
+	Relay *m_intakeRelay1, *m_intakeRelay2;
+	
 #ifdef FEATURE_CAMERA
 	AxisCamera *m_camera;
 #endif
 	
 	Timer *m_ioTimer, *m_visionTimer;
-	
-	bool m_hiGear, m_still, m_prevStill;
 public:
 	BossRobot();
 	
@@ -54,6 +56,10 @@ public:
 	inline DriveSystem *GetDriveSystem() 	{ return m_driveSystem; }
 	void SetDriveSystem(DriveSystem *d);
 	RobotDrive *GetDrive();
+	
+	// Accessors
+	inline Encoder *GetLeftDriveEncoder() 	{ return m_leftDriveEncoder; }
+	inline Encoder *GetRightDriveEncoder() 	{ return m_rightDriveEncoder; }
 
 protected:
 	void SendIOPortData(void);
