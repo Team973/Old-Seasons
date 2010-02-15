@@ -14,7 +14,7 @@
 #define _BOSS_973_OPTIONS_H_
 
 // Operator interface
-//#define FEATURE_CAMERA
+#define FEATURE_CAMERA
 #define FEATURE_LCD
 #define DS_LCD MyDriverStationLCD
 

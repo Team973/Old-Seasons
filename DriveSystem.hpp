@@ -7,6 +7,7 @@
 //
 
 #include "WPILib.h"
+#include "Options.hpp"
 #include "BossRobot.hpp"
 #include "SimplePID.hpp"
 
@@ -20,8 +21,9 @@ protected:
 	RobotDrive *m_drive;
 	
 	float m_leftSpeed, m_rightSpeed;
-	bool m_prevMoving;
+	bool m_prevMoving, m_firstMoveComp;
 	SimplePID m_leftPID, m_rightPID;
+	SimplePID m_deadheadPID;
 	
 	DriveSystem();
 	DriveSystem(BossRobot *, RobotDrive *);
@@ -40,6 +42,7 @@ public:
 	
 	virtual void Stop();
 	virtual bool IsMoving();
+	virtual bool IsTurning();
 protected:
 	virtual void InertCompensate();
 	virtual void MovingCompensate();
@@ -77,6 +80,7 @@ public:
 	ArcadeDriveSystem(BossRobot *, RobotDrive *);
 	virtual void ReadControls();
 	virtual bool IsMoving();
+	virtual bool IsTurning();
 };
 
 class XboxDriveSystem : public ArcadeDriveSystem
