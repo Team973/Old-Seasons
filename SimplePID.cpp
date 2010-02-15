@@ -8,7 +8,7 @@
 
 #include "SimplePID.hpp"
 
-SimplePID::SimplePID(float p, float i, float d)
+SimplePID::SimplePID(double p, double i, double d)
 {
 	m_timer = NULL;
 	SetPID(p, i, d);
@@ -17,17 +17,18 @@ SimplePID::SimplePID(float p, float i, float d)
 
 SimplePID::~SimplePID()
 {
-	delete m_timer;
+	if (m_timer != NULL)
+	{
+		m_timer->Stop();
+		delete m_timer;
+	}
 }
 
-void SimplePID::SetPID(float p, float i, float d)
+void SimplePID::SetPID(double p, double i, double d)
 {
 	m_P = p;
 	m_I = i;
 	m_D = d;
-	if (m_timer != NULL)
-		delete m_timer;
-	m_timer = new Timer();
 }
 
 void SimplePID::Start()
@@ -45,17 +46,25 @@ void SimplePID::Reset()
 {
 	m_previousError = 0.0;
 	m_integral = 0.0;
-	m_timer->Reset();
+	m_target = 0.0;
+	m_output = 0.0;
+	
+	if (m_timer != NULL)
+	{
+		m_timer->Stop();
+		delete m_timer;
+	}
+	m_timer = new Timer();
 }
 
-float SimplePID::Update(float actual)
+double SimplePID::Update(double actual)
 {
 	double time = m_timer->Get();
 	m_timer->Reset();
 	return Update(actual, time);
 }
 
-float SimplePID::Update(float actual, float time)
+double SimplePID::Update(double actual, double time)
 {
 	double error = m_target - actual;
 	double derivative;

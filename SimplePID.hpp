@@ -14,27 +14,27 @@
 class SimplePID
 {
 protected:
-	float m_P, m_I, m_D;
-	float m_integral;
+	double m_P, m_I, m_D;
 	double m_previousError;
-	float m_target, m_output;
+	double m_integral;
+	double m_target, m_output;
 	
-	float m_max, m_min;
+	double m_max, m_min;
 	bool m_hasMax, m_hasMin;
 	
 	Timer *m_timer;
 public:
-	SimplePID(float p=0.0, float i=0.0, float d=0.0);
+	SimplePID(double p=0.0, double i=0.0, double d=0.0);
 	~SimplePID();
 	void Start();
 	void Stop();
 	void Reset();
-	void SetPID(float p, float i, float d);
+	void SetPID(double p, double i, double d);
 	
-	inline float GetTarget(void)	{ return m_target; }
-	inline void SetTarget(float t)	{ m_target = t; }
+	inline double GetTarget(void)	{ return m_target; }
+	inline void SetTarget(double t)	{ m_target = t; }
 
-	inline void SetMin(float m)
+	inline void SetMin(double m)
 	{
 		m_hasMin = true;
 		m_min = m;
@@ -43,7 +43,7 @@ public:
 	{
 		m_hasMin = false;
 	}
-	inline void SetMax(float m)
+	inline void SetMax(double m)
 	{
 		m_hasMax = true;
 		m_max = m;
@@ -52,20 +52,25 @@ public:
 	{
 		m_hasMax = false;
 	}
-	inline void SetLimits(float minimum, float maximum)
+	inline void SetLimits(double minimum, double maximum)
 	{
 		SetMin(minimum);
 		SetMax(maximum);
 	}
+	inline void ClearLimits()
+	{
+		ClearMin();
+		ClearMax();
+	}
 	
-	float Update(float actual, float time);
-	float Update(float actual);
-	inline float Update(PIDSource *source)
+	double Update(double actual, double time);
+	double Update(double actual);
+	inline double Update(PIDSource *source)
 	{
 		return Update(source->PIDGet());
 	}
 	
-	inline float GetOutput(void)
+	inline double GetOutput(void)
 	{
 		return m_output;
 	}
