@@ -8,6 +8,7 @@
 
 #include "Options.hpp"
 #include "WPILib.h"
+#include "MyDriverStationLCD.h"
 
 #ifdef FEATURE_CAMERA
 #	include "Vision/AxisCamera.h"
@@ -61,6 +62,7 @@ public:
 	// Accessors
 	inline Encoder *GetLeftDriveEncoder() 	{ return m_leftDriveEncoder; }
 	inline Encoder *GetRightDriveEncoder() 	{ return m_rightDriveEncoder; }
+	inline Gyro *GetGyro() 				{ return m_gyro; }
 
 protected:
 	void SendIOPortData(void);

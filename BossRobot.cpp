@@ -17,13 +17,13 @@ const float TELEOP_LOOP_LAG = 0.005;
 BossRobot::BossRobot(void)
 {
 #ifdef FEATURE_LCD
-	DriverStationLCD *lcd = DriverStationLCD::GetInstance();
+	DS_LCD *lcd = DS_LCD::GetInstance();
 #endif
 	
 	GetWatchdog().SetExpiration(0.25);
 
 #ifdef FEATURE_LCD
-	lcd->Printf(DriverStationLCD::kUser_Line1, 1, "Robot init            ");
+	lcd->Printf(DS_LCD::kUser_Line1, 1, "Robot init            ");
 	lcd->UpdateLCD();
 #endif
 	
@@ -70,7 +70,7 @@ BossRobot::BossRobot(void)
 		GetWatchdog().SetEnabled(false);
 		Wait(5.0);
 	#ifdef FEATURE_LCD
-		lcd->Printf(DriverStationLCD::kUser_Line1, 1, "Done waiting for cam  ");
+		lcd->Printf(DS_LCD::kUser_Line1, 1, "Done waiting for cam  ");
 		lcd->UpdateLCD();
 	#endif
 	
@@ -82,7 +82,7 @@ BossRobot::BossRobot(void)
 		
 		// Tell the operator we're just idling
 	#ifdef FEATURE_LCD
-		lcd->Printf(DriverStationLCD::kUser_Line1, 1, "Camera initialized    ");
+		lcd->Printf(DS_LCD::kUser_Line1, 1, "Camera initialized    ");
 		lcd->UpdateLCD();
 		Wait(1.0);
 	#endif
@@ -91,7 +91,7 @@ BossRobot::BossRobot(void)
 #endif
 
 #ifdef FEATURE_LCD
-	lcd->Printf(DriverStationLCD::kUser_Line1, 1, "Robot ready           ");
+	lcd->Printf(DS_LCD::kUser_Line1, 1, "Robot ready           ");
 	lcd->UpdateLCD();
 #endif
 }
