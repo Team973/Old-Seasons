@@ -116,12 +116,19 @@ void BossRobot::OperatorControl(void)
 	GetWatchdog().SetEnabled(true);
 	GetWatchdog().Feed();
 	
-	ChangeState(new NormalState(this));
-	
 	while (IsOperatorControl())
 	{
 		GetWatchdog().SetEnabled(true);
 		GetWatchdog().Feed();
+		
+		if (IsDisabled())
+		{
+			ChangeState(NULL);
+		}
+		else if (m_state == NULL)
+		{
+			ChangeState(new NormalState(this));
+		}
 		
 		if (m_state != m_prevState)
 		{
@@ -131,19 +138,25 @@ void BossRobot::OperatorControl(void)
 				m_prevState->Exit();
 			GetWatchdog().Feed();
 			// 2. Enter "new" state
-			m_state->Enter();
+			if (m_state != NULL)
+				m_state->Enter();
 			GetWatchdog().Feed();
 			// 3. Record the state change as successful
 			m_prevState = m_state;
 		}
 		
 		// Do what the state wants
-		m_state->Step();
+		if (m_state != NULL)
+		{
+			m_state->Step();
+		}
 		GetWatchdog().Feed();
 		
 		// Send I/O data
 		SendVisionData();
+		GetWatchdog().Feed();
 		SendIOPortData();
+		GetWatchdog().Feed();
 		
 		// Post-iteration clean up
 		GetWatchdog().Feed();
