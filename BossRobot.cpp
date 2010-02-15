@@ -41,6 +41,7 @@ BossRobot::BossRobot(void)
 	
 	m_leftDriveEncoder = new Encoder(2, 3, true);
 	m_rightDriveEncoder = new Encoder(4, 5);
+	m_gyro = new Gyro(1);
 	
 	/* Pneumatics */
 	m_compressor = new Relay(1, Relay::kForwardOnly);
@@ -183,7 +184,7 @@ void BossRobot::SendVisionData()
 		dash.AddCluster(); // tracking data
 		{
 			dash.AddDouble(0.0); // Joystick X
-			dash.AddDouble(0.0); // angle
+			dash.AddDouble(m_gyro->GetAngle()); // angle
 			dash.AddDouble(0.0); // angular rate
 			dash.AddDouble(0.0); // other X
 		}

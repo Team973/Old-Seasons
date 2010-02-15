@@ -29,6 +29,7 @@ protected:
 	SpeedController *m_rightMotor1, *m_rightMotor2; // Front, Back
 	Solenoid *m_gearSwitch;
 	Encoder *m_leftDriveEncoder, *m_rightDriveEncoder;
+	Gyro *m_gyro;
 	
 	Relay *m_compressor;
 	DigitalInput *m_pressureSwitch;
