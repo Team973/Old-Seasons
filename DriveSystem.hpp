@@ -8,6 +8,7 @@
 
 #include "WPILib.h"
 #include "BossRobot.hpp"
+#include "SimplePID.hpp"
 
 #ifndef _BOSS_973_DRIVESYSTEM_H_
 #define _BOSS_973_DRIVESYSTEM_H_
@@ -17,6 +18,10 @@ class DriveSystem
 protected:
 	BossRobot *m_robot;
 	RobotDrive *m_drive;
+	
+	float m_leftSpeed, m_rightSpeed;
+	bool m_prevMoving;
+	SimplePID m_leftPID, m_rightPID;
 	
 	DriveSystem();
 	DriveSystem(BossRobot *, RobotDrive *);
@@ -29,9 +34,15 @@ public:
 	}
 	
 	virtual void ReadControls() = 0;
-	virtual void Drive() = 0;
-	virtual void Stop();
+	virtual void Drive();
+	// The compensation needs to be done before calling Drive.
 	virtual void Compensate();
+	
+	virtual void Stop();
+	virtual bool IsMoving();
+protected:
+	virtual void InertCompensate();
+	virtual void MovingCompensate();
 };
 
 /**
@@ -44,12 +55,12 @@ class AutonomousDriveSystem : public DriveSystem
 public:
 	AutonomousDriveSystem(BossRobot *, RobotDrive *);
 	virtual void ReadControls();
-	virtual void Drive();
 };
 
 class TeleoperatedDriveSystem : public DriveSystem
 {
 protected:
+	
 	TeleoperatedDriveSystem() : DriveSystem() {}
 	TeleoperatedDriveSystem(BossRobot *r, RobotDrive *d) : DriveSystem(r, d) {}
 public:
@@ -59,11 +70,12 @@ public:
 class ArcadeDriveSystem : public TeleoperatedDriveSystem
 {
 protected:
-	float m_x, m_y;
+	float m_move, m_rotate;
+	
+	virtual void InterpretControls();
 public:
 	ArcadeDriveSystem(BossRobot *, RobotDrive *);
 	virtual void ReadControls();
-	virtual void Drive();
 	virtual bool IsMoving();
 };
 
