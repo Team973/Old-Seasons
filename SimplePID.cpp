@@ -60,6 +60,9 @@ float SimplePID::Update(float actual, float time)
 	double error = m_target - actual;
 	double derivative;
 	
+	if (time == 0.0)
+		time = 0.001;
+	
 	m_integral += error * time;
 	derivative = (error - m_previousError) / time;
 	m_output = (m_P * error) + (m_I * m_integral) + (m_D * derivative);
