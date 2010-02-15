@@ -8,6 +8,7 @@
 
 #include "WPILib.h"
 #include "State.hpp"
+#include "SimplePID.hpp"
 
 #ifndef _BOSS_973_NORMALSTATE_H_
 #define _BOSS_973_NORMALSTATE_H_
@@ -15,6 +16,7 @@
 class NormalState : public State
 {
 protected:
+	SimplePID m_leftPID, m_rightPID;
 	bool m_still, m_prevStill;
 public:
 	NormalState(BossRobot *r);
