@@ -3,7 +3,7 @@
 //	Team 973
 //	2010 "The Boss"
 //
-//	Created on 2/15/10.
+//	Created on 2/16/10.
 //
 
 #include "ConfigParser.hpp"
@@ -23,16 +23,33 @@ ConfigParser::~ConfigParser()
 bool ConfigParser::Read(std::string filename)
 {
 	std::ifstream f;
-	std::string key, value;
+	std::string line, key, value;
+	std::string::iterator i;
 	
 	f.open(filename.c_str());
+	if (f.fail())
+		return false;
 	
 	while (f.good())
 	{
-		getline(f, key, '=');
-		getline(f, value);
-		Set(key, value);
+		// Read line
+		getline(f, line);
+		// Parse line
+		for (i = line.begin(); i != line.end(); i++)
+		{
+			if (*i == '=')
+			{
+				key = std::string(line.begin(), i);
+				value = std::string(i + 1, line.end());
+				break;
+			}
+		}
+		
+		if (i != line.end())
+			Set(key, value);
 	}
+	
+	return !f.bad();
 }
 
 bool ConfigParser::Write(std::string filename)
@@ -41,14 +58,20 @@ bool ConfigParser::Write(std::string filename)
 	std::map<std::string, std::string>::const_iterator i;
 	
 	f.open(filename.c_str());
+	if (f.fail())
+		return false;
 	
-	for (i = m_values.begin(); i != m_values.end(); i++)
+	f << "# ";
+	
+	for (i = m_values.begin(); i != m_values.end() && f.good(); i++)
 	{
 		f << (i->first);
 		f << "=";
 		f << (i->second);
 		f << "\n";
 	}
+	
+	return !f.fail();
 }
 
 bool ConfigParser::Has(std::string key) const
