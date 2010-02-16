@@ -16,12 +16,14 @@ class ConfigParser
 {
 protected:
 	std::map<std::string, std::string> m_values;
+	
+	void ParseLine(const std::string &line);
 public:
 	ConfigParser();
 	~ConfigParser();
 	
 	bool Read(std::string filename);
-	bool Write(std::string filename);
+	bool Write(std::string filename, std::string description="This is a config file.");
 	
 	bool Has(std::string key) const;
 	std::string Get(std::string key) const;

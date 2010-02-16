@@ -23,8 +23,7 @@ ConfigParser::~ConfigParser()
 bool ConfigParser::Read(std::string filename)
 {
 	std::ifstream f;
-	std::string line, key, value;
-	std::string::iterator i;
+	std::string line;
 	
 	f.open(filename.c_str());
 	if (f.fail())
@@ -32,27 +31,39 @@ bool ConfigParser::Read(std::string filename)
 	
 	while (f.good())
 	{
-		// Read line
 		getline(f, line);
-		// Parse line
-		for (i = line.begin(); i != line.end(); i++)
-		{
-			if (*i == '=')
-			{
-				key = std::string(line.begin(), i);
-				value = std::string(i + 1, line.end());
-				break;
-			}
-		}
-		
-		if (i != line.end())
-			Set(key, value);
+		ParseLine(line);
 	}
 	
 	return !f.bad();
 }
 
-bool ConfigParser::Write(std::string filename)
+void ConfigParser::ParseLine(const std::string &line)
+{
+    std::string key, value;
+	std::string::const_iterator i;
+	
+    if (line[0] == '#')
+    {
+        // This is a comment; move along.
+        return;
+    }
+    
+    for (i = line.begin(); i != line.end(); i++)
+    {
+        if (*i == '=')
+        {
+            key = std::string(line.begin(), i);
+            value = std::string(i + 1, line.end());
+            break;
+        }
+    }
+    
+    if (i != line.end())
+        Set(key, value);
+}
+
+bool ConfigParser::Write(std::string filename, std::string description)
 {
 	std::ofstream f;
 	std::map<std::string, std::string>::const_iterator i;
@@ -61,7 +72,11 @@ bool ConfigParser::Write(std::string filename)
 	if (f.fail())
 		return false;
 	
-	f << "# ";
+	f << "# " + description << "\n";
+	f << "# Each line in this file must be in the form: name=value\n";
+	f << "# There must not be any spaces around the equals sign.\n";
+	f << "# Any line that starts with # is ignored and treated as a comment.\n";
+	f << "\n";
 	
 	for (i = m_values.begin(); i != m_values.end() && f.good(); i++)
 	{
