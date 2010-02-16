@@ -60,11 +60,23 @@ void DriveSystem::Stop()
 	m_leftSpeed = m_rightSpeed = 0.0;
 }
 
+bool DriveSystem::IsMoving()
+{
+	return (m_leftSpeed > 0.25 || m_leftSpeed < -0.25 ||
+			m_rightSpeed > 0.25 || m_rightSpeed < -0.25);
+}
+
+bool DriveSystem::IsTurning()
+{
+	double delta = m_leftSpeed - m_rightSpeed;
+	return (delta > 0.15 || delta < -0.15);
+}
+
 void DriveSystem::Compensate()
 {
 	bool newMoving = IsMoving();
 	
-	if (newMoving)
+	if (!newMoving)
 	{
 		InertCompensate();
 		m_firstMoveComp = true;
@@ -75,6 +87,11 @@ void DriveSystem::Compensate()
 	}
 	
 	m_prevMoving = newMoving;
+	
+#ifdef FEATURE_LCD
+	DS_LCD *lcd = DS_LCD::GetInstance();
+	lcd->UpdateLCD();
+#endif
 }
 
 #define INERT_P 0.05
@@ -110,20 +127,34 @@ void DriveSystem::InertCompensate()
 		if (abs(m_robot->GetRightDriveEncoder()->Get()) < 15)
 			m_rightSpeed = m_rightPID.GetOutput();
 	}
+
+#ifdef FEATURE_LCD
+	DS_LCD *lcd = DS_LCD::GetInstance();
+	lcd->PrintfLine(DS_LCD::kUser_Line2, "PID Inert");
+#endif
 }
 
 #undef INERT_P
 #undef INERT_I
 #undef INERT_D
 
-#define MOVING_P 0.0005
+#define MOVING_P 5.e-3
 #define MOVING_I 0.0
 #define MOVING_D 0.0
 
 void DriveSystem::MovingCompensate()
 {
+#ifdef FEATURE_LCD
+	DS_LCD *lcd = DS_LCD::GetInstance();
+#endif
+	
 	if (IsTurning())
+	{
+#ifdef FEATURE_LCD
+		lcd->PrintfLine(DS_LCD::kUser_Line2, "PID Off");
+#endif
 		return;
+	}
 	
 	if (m_firstMoveComp)
 	{
@@ -137,8 +168,12 @@ void DriveSystem::MovingCompensate()
 	{
 		m_deadheadPID.Update(m_robot->GetGyro()->GetAngle());
 		
-		m_leftSpeed = limit(m_leftSpeed - m_deadheadPID.GetOutput());
-		m_rightSpeed = limit(m_rightSpeed + m_deadheadPID.GetOutput());
+		m_leftSpeed = limit(m_leftSpeed + m_deadheadPID.GetOutput());
+		m_rightSpeed = limit(m_rightSpeed - m_deadheadPID.GetOutput());
+		
+#ifdef FEATURE_LCD
+		lcd->PrintfLine(DS_LCD::kUser_Line2, "PID: %.4f", m_deadheadPID.GetOutput());
+#endif
 	}
 	
 	m_firstMoveComp = false;
@@ -148,17 +183,7 @@ void DriveSystem::MovingCompensate()
 #undef MOVING_I
 #undef MOVING_D
 
-bool DriveSystem::IsMoving()
-{
-	return (m_leftSpeed > 0.25 || m_leftSpeed < -0.25 ||
-			m_rightSpeed > 0.25 || m_rightSpeed < -0.25);
-}
-
-bool DriveSystem::IsTurning()
-{
-	double delta = m_leftSpeed - m_rightSpeed;
-	return (delta > 0.15 || delta < -0.15);
-}
+/**** AUTONOMOUS ****/
 
 AutonomousDriveSystem::AutonomousDriveSystem(BossRobot *r, RobotDrive *d)
     : DriveSystem(r, d)
@@ -168,6 +193,8 @@ AutonomousDriveSystem::AutonomousDriveSystem(BossRobot *r, RobotDrive *d)
 void AutonomousDriveSystem::ReadControls()
 {	
 }
+
+/**** ARCADE ****/
 
 ArcadeDriveSystem::ArcadeDriveSystem(BossRobot *r, RobotDrive *d)
     : TeleoperatedDriveSystem(r, d)
@@ -225,14 +252,15 @@ void ArcadeDriveSystem::InterpretControls()
 
 bool ArcadeDriveSystem::IsMoving()
 {
-	return (m_move > 0.25 || m_move < -0.25 ||
-			m_rotate > 0.25 || m_rotate < -0.25);
+	return (m_move > 0.25 || m_move < -0.25 || IsTurning());
 }
 
 bool ArcadeDriveSystem::IsTurning()
 {
 	return (m_rotate > 0.15 || m_rotate < -0.15);
 }
+
+/**** XBOX ****/
 
 /* 	Xbox controller info
  * 

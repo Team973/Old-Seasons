@@ -41,7 +41,10 @@ BossRobot::BossRobot(void)
 	
 	m_leftDriveEncoder = new Encoder(2, 3, true);
 	m_rightDriveEncoder = new Encoder(4, 5);
-	m_gyro = new Gyro(1);
+	m_gyroChannel = new AnalogChannel(1, 1);
+	m_gyro = new Gyro(m_gyroChannel);
+	m_gyro->SetSensitivity(0.006);
+	m_gyro->Reset();
 	
 	/* Pneumatics */
 	m_compressor = new Relay(1, Relay::kForwardOnly);
@@ -70,7 +73,7 @@ BossRobot::BossRobot(void)
 		GetWatchdog().SetEnabled(false);
 		Wait(5.0);
 	#ifdef FEATURE_LCD
-		lcd->Printf(DS_LCD::kUser_Line1, 1, "Done waiting for cam  ");
+		lcd->PrintfLine(DS_LCD::kUser_Line1, "Done waiting for cam");
 		lcd->UpdateLCD();
 	#endif
 	
@@ -82,7 +85,7 @@ BossRobot::BossRobot(void)
 		
 		// Tell the operator we're just idling
 	#ifdef FEATURE_LCD
-		lcd->Printf(DS_LCD::kUser_Line1, 1, "Camera initialized    ");
+		lcd->PrintfLine(DS_LCD::kUser_Line1, "Camera initialized");
 		lcd->UpdateLCD();
 		Wait(1.0);
 	#endif
@@ -91,7 +94,7 @@ BossRobot::BossRobot(void)
 #endif
 
 #ifdef FEATURE_LCD
-	lcd->Printf(DS_LCD::kUser_Line1, 1, "Robot ready           ");
+	lcd->PrintfLine(DS_LCD::kUser_Line1, "Robot ready");
 	lcd->UpdateLCD();
 #endif
 }
@@ -152,6 +155,12 @@ void BossRobot::OperatorControl(void)
 		}
 		GetWatchdog().Feed();
 		
+#ifdef FEATURE_LCD
+		DS_LCD *lcd = DS_LCD::GetInstance();
+		lcd->PrintfLine(DS_LCD::kUser_Line3, "Gyro: %.2fV %.2f", m_gyroChannel->GetVoltage(), m_gyro->GetAngle());
+		lcd->UpdateLCD();
+#endif
+		
 		// Send I/O data
 		SendVisionData();
 		GetWatchdog().Feed();
@@ -196,8 +205,15 @@ void BossRobot::SendVisionData()
 	{
 		dash.AddCluster(); // tracking data
 		{
+			double gyroAngle = m_gyro->GetAngle();
+			
+			while (gyroAngle > 180.0)
+				gyroAngle -= 360.0;
+			while (gyroAngle < -180.0)
+				gyroAngle += 360.0;
+			
 			dash.AddDouble(0.0); // Joystick X
-			dash.AddDouble(m_gyro->GetAngle()); // angle
+			dash.AddDouble(gyroAngle); // angle
 			dash.AddDouble(0.0); // angular rate
 			dash.AddDouble(0.0); // other X
 		}
