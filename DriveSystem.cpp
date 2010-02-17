@@ -112,10 +112,6 @@ void DriveSystem::Compensate()
 #endif
 }
 
-#define INERT_P 0.05
-#define INERT_I 0.0
-#define INERT_D 0.0
-
 void DriveSystem::InertCompensate()
 {
 	if (IsMoving() != m_prevMoving)
@@ -147,14 +143,6 @@ void DriveSystem::InertCompensate()
 	lcd->PrintfLine(DS_LCD::kUser_Line2, "PID Inert");
 #endif
 }
-
-#undef INERT_P
-#undef INERT_I
-#undef INERT_D
-
-#define MOVING_P 5.e-3
-#define MOVING_I 0.0
-#define MOVING_D 0.0
 
 void DriveSystem::MovingCompensate()
 {
@@ -190,10 +178,6 @@ void DriveSystem::MovingCompensate()
 	
 	m_firstMoveComp = false;
 }
-
-#undef MOVING_P
-#undef MOVING_I
-#undef MOVING_D
 
 /**** AUTONOMOUS ****/
 
