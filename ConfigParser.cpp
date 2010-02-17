@@ -128,28 +128,45 @@ double ConfigParser::GetDouble(std::string key) const
 	return result;
 }
 
-void ConfigParser::SetDefault(std::string key, std::string value)
+std::string ConfigParser::SetDefault(std::string key, std::string value)
 {
-	if (m_values.find(key) == m_values.end())
+	std::map<std::string, std::string>::iterator i;
+	
+	i = m_values.find(key);
+	
+	if (i == m_values.end())
 	{
 		m_values[key] = value;
+		return value;
+	}
+	else
+	{
+		return i->second;
 	}
 }
 
-void ConfigParser::SetDefault(std::string key, int value)
+int ConfigParser::SetDefault(std::string key, int value)
 {
-	std::ostringstream st;
+	std::ostringstream ost;
+	std::istringstream ist;
+	int result = 0;
 	
-	st << value;
-	SetDefault(key, st.str());
+	ost << value;
+	ist.str(SetDefault(key, ost.str()));
+	ist >> result;
+	return result;
 }
 
-void ConfigParser::SetDefault(std::string key, double value)
+double ConfigParser::SetDefault(std::string key, double value)
 {
-	std::ostringstream st;
+	std::ostringstream ost;
+	std::istringstream ist;
+	double result = 0.0;
 	
-	st << value;
-	SetDefault(key, st.str());
+	ost << value;
+	ist.str(SetDefault(key, ost.str()));
+	ist >> result;
+	return result;
 }
 
 void ConfigParser::Set(std::string key, std::string value)
