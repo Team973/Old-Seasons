@@ -13,6 +13,7 @@
 NormalState::NormalState(BossRobot *r)
 	: State(r)
 {
+	mKicker = new KickerSystem();
 }
 
 void NormalState::Enter()
@@ -34,7 +35,19 @@ void NormalState::Step()
 {
 	TeleoperatedDriveSystem *ds = dynamic_cast<TeleoperatedDriveSystem *>(m_robot->GetDriveSystem());
 	
-	ds->ReadControls();
-	ds->Compensate();
-	ds->Drive();
+	if (ds != NULL)
+	{
+		ds->ReadControls();
+		ds->Compensate();
+		m_robot->GetWatchdog().Feed();
+		ds->Drive();
+	}
+	m_robot->GetWatchdog().Feed();
+	
+#ifdef FEATURE_UPPER_BOARD
+	mKicker->ReadControls();
+	mKicker->Update();
+#endif
+	
+	m_robot->GetWatchdog().Feed();
 }

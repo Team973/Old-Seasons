@@ -40,9 +40,11 @@ protected:
 	
 	SpeedController *m_armMotor1, *m_armMotor2;
 	SpeedController *m_intakeMotor1, *m_intakeMotor2;
-	SpeedController *m_kickerMotor;
-	Relay *m_winchRelay1, *m_winchRelay2;
 	Relay *m_intakeRelay1, *m_intakeRelay2;
+	
+	SpeedController *m_kickerMotor;
+	Relay *m_kickerWinchRelay1, *m_kickerWinchRelay2;
+	AnalogChannel *m_kickerWinchSensor;
 	
 #ifdef FEATURE_CAMERA
 	AxisCamera *m_camera;
@@ -68,6 +70,9 @@ public:
 	inline Encoder *GetLeftDriveEncoder() 	{ return m_leftDriveEncoder; }
 	inline Encoder *GetRightDriveEncoder() 	{ return m_rightDriveEncoder; }
 	inline Gyro *GetGyro() 				{ return m_gyro; }
+	inline Relay *GetKickerWinch1()			{ return m_kickerWinchRelay1; }
+	inline Relay *GetKickerWinch2()			{ return m_kickerWinchRelay2; }
+	inline AnalogChannel *GetKickerWinchSensor()	{ return m_kickerWinchSensor; }
 
 protected:
 	void SendIOPortData(void);

@@ -65,8 +65,13 @@ BossRobot::BossRobot(void)
 #ifdef FEATURE_UPPER_BOARD
 	m_armMotor1 = new Victor(6, 1);
 	m_armMotor2 = new Victor(6, 2);
+	
 	m_intakeMotor1 = new Victor(6, 3);
 	m_intakeMotor2 = new Victor(6, 4);
+	
+	m_kickerWinchSensor = new AnalogChannel(6, 1);
+	m_kickerWinchRelay1 = new Relay(6, 1);
+	m_kickerWinchRelay2 = new Relay(6, 2);
 	m_kickerMotor = new Victor(6, 5);
 #endif
 	
