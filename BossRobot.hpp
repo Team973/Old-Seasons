@@ -9,6 +9,7 @@
 #include "Options.hpp"
 #include "WPILib.h"
 #include "MyDriverStationLCD.h"
+#include "ConfigParser.hpp"
 
 #ifdef FEATURE_CAMERA
 #	include "Vision/AxisCamera.h"
@@ -25,6 +26,7 @@ class BossRobot : public SimpleRobot
 protected:
 	State *m_state, *m_prevState;
 	DriveSystem *m_driveSystem;
+	ConfigParser m_config;
 	
 	SpeedController *m_leftMotor1, *m_leftMotor2;   // Front, Back
 	SpeedController *m_rightMotor1, *m_rightMotor2; // Front, Back
@@ -59,6 +61,8 @@ public:
 	inline DriveSystem *GetDriveSystem() 	{ return m_driveSystem; }
 	void SetDriveSystem(DriveSystem *d);
 	RobotDrive *GetDrive();
+	
+	inline ConfigParser &GetConfig()		{ return m_config; }
 	
 	// Accessors
 	inline Encoder *GetLeftDriveEncoder() 	{ return m_leftDriveEncoder; }

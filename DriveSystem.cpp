@@ -35,9 +35,7 @@ DriveSystem::DriveSystem()
 	m_robot = NULL;
 	m_drive = NULL;
 	m_leftSpeed = m_rightSpeed = 0.0;
-	m_prevMoving = false;
-	m_firstMoveComp = true;
-	m_deadheadPID.SetLimits(-0.25, 0.25);
+	InitPID();
 }
 
 DriveSystem::DriveSystem(BossRobot *r, RobotDrive *d)
@@ -45,8 +43,28 @@ DriveSystem::DriveSystem(BossRobot *r, RobotDrive *d)
     m_robot = r;
 	m_drive = d;
 	m_leftSpeed = m_rightSpeed = 0.0;
+	InitPID();
+}
+
+void DriveSystem::InitPID()
+{
+	double inertP = m_robot->GetConfig().SetDefault("inertP", 0.05);
+	double inertI = m_robot->GetConfig().SetDefault("inertI", 0.0);
+	double inertD = m_robot->GetConfig().SetDefault("inertD", 0.0);
+	double movingP = m_robot->GetConfig().SetDefault("movingP", 5.e-3);
+	double movingI = m_robot->GetConfig().SetDefault("movingI", 0.0);
+	double movingD = m_robot->GetConfig().SetDefault("movingD", 0.0);
+	
 	m_prevMoving = false;
 	m_firstMoveComp = true;
+	
+	m_leftPID.SetPID(inertP, inertI, inertD);
+	m_leftPID.SetLimits(-1.0, 1.0);
+	
+	m_rightPID.SetPID(inertP, inertI, inertD);
+	m_rightPID.SetLimits(-1.0, 1.0);
+	
+	m_deadheadPID.SetPID(movingP, movingI, movingD);
 	m_deadheadPID.SetLimits(-0.25, 0.25);
 }
 
@@ -105,16 +123,12 @@ void DriveSystem::InertCompensate()
 		m_robot->GetLeftDriveEncoder()->Reset();
 		m_robot->GetRightDriveEncoder()->Reset();
 		
-		m_leftPID.SetPID(INERT_P, INERT_I, INERT_D);
 		m_leftPID.Reset();
 		m_leftPID.SetTarget(0.0);
-		m_leftPID.SetLimits(-1.0, 1.0);
 		m_leftPID.Start();
-
-		m_rightPID.SetPID(INERT_P, INERT_I, INERT_D);
+		
 		m_rightPID.Reset();
 		m_rightPID.SetTarget(0.0);
-		m_rightPID.SetLimits(-1.0, 1.0);
 		m_rightPID.Start();
 	}
 	else
@@ -158,10 +172,8 @@ void DriveSystem::MovingCompensate()
 	
 	if (m_firstMoveComp)
 	{
-		m_deadheadPID.SetPID(MOVING_P, MOVING_I, MOVING_D);
 		m_deadheadPID.Reset();
 		m_deadheadPID.SetTarget(m_robot->GetGyro()->GetAngle());
-		m_deadheadPID.SetLimits(-0.25, 0.25);
 		m_deadheadPID.Start();
 	}
 	else

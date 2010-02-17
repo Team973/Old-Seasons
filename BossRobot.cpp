@@ -12,7 +12,12 @@
 #include "NormalState.hpp"
 #include "DriveSystem.hpp"
 
+#include <iostream>
+#include <fstream>
+
 const float TELEOP_LOOP_LAG = 0.005;
+
+extern "C" int Priv_SetWriteFileAllowed(UINT32 enable);
 
 BossRobot::BossRobot(void)
 {
@@ -23,12 +28,17 @@ BossRobot::BossRobot(void)
 	GetWatchdog().SetExpiration(0.25);
 
 #ifdef FEATURE_LCD
-	lcd->Printf(DS_LCD::kUser_Line1, 1, "Robot init            ");
+	lcd->PrintfLine(DS_LCD::kUser_Line1, "Robot init");
 	lcd->UpdateLCD();
 #endif
 	
 	/* Program setup */
 	m_state = m_prevState = NULL;
+	
+	/* Config file */
+	Priv_SetWriteFileAllowed(1);
+	
+	m_config.Read("boss.cfg");
 	
 	/* Drive system */
 	m_leftMotor1 = new Jaguar(1);

@@ -27,6 +27,8 @@ protected:
 	
 	DriveSystem();
 	DriveSystem(BossRobot *, RobotDrive *);
+private:
+	void InitPID();
 public:
 	virtual ~DriveSystem() {}
 	
