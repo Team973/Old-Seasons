@@ -8,12 +8,15 @@
 
 #include "WPILib.h"
 #include "State.hpp"
+#include "KickerSystem.hpp"
 
 #ifndef _BOSS_973_NORMALSTATE_H_
 #define _BOSS_973_NORMALSTATE_H_
 
 class NormalState : public State
 {
+protected:
+	KickerSystem *mKicker;
 public:
 	NormalState(BossRobot *r);
 	
