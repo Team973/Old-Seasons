@@ -20,6 +20,11 @@ ConfigParser::~ConfigParser()
 {
 }
 
+void ConfigParser::Clear()
+{
+	m_values.clear();
+}
+
 bool ConfigParser::Read(std::string filename)
 {
 	std::ifstream f;
