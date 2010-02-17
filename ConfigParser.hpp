@@ -21,6 +21,7 @@ protected:
 public:
 	ConfigParser();
 	~ConfigParser();
+	void Clear();
 	
 	bool Read(std::string filename);
 	bool Write(std::string filename, std::string description="This is a config file.");
