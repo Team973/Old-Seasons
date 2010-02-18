@@ -54,9 +54,15 @@ void KickerSystem::Update()
 	}
 	
 	actual = m_robot->GetKickerWinchSensor()->GetVoltage();
-	tolerance = m_robot->GetConfig().SetDefault("kickerPosTolerance", 0.5);
+	tolerance = m_robot->GetConfig().SetDefault("kickerPosTolerance", 0.25);
 	if (actual < (target - tolerance))
+	{
 		m_robot->GetKickerWinch1()->Set(Relay::kForward);
+		m_robot->GetKickerWinch1()->Set(Relay::kForward);
+	}
 	else if (actual > (target + tolerance))
+	{
+		m_robot->GetKickerWinch1()->Set(Relay::kReverse);
 		m_robot->GetKickerWinch2()->Set(Relay::kReverse);
+	}
 }
