@@ -21,5 +21,7 @@
 // Running
 //#define FEATURE_COMPRESSOR
 //#define FEATURE_UPPER_BOARD
+#define FEATURE_GYRO
+#define FEATURE_DRIVE_ENCODERS
 
 #endif

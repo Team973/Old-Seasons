@@ -96,12 +96,16 @@ void DriveSystem::Compensate()
 	
 	if (!newMoving)
 	{
+#ifdef FEATURE_DRIVE_ENCODERS
 		InertCompensate();
+#endif
 		m_firstMoveComp = true;
 	}
 	else
 	{
+#ifdef FEATURE_GYRO
 		MovingCompensate();
+#endif
 	}
 	
 	m_prevMoving = newMoving;

@@ -49,12 +49,22 @@ BossRobot::BossRobot(void)
 	m_driveSystem = new AutonomousDriveSystem(this, new RobotDrive(
 			m_leftMotor1, m_leftMotor2, m_rightMotor1, m_rightMotor2));
 	
+#ifdef FEATURE_DRIVE_ENCODERS
 	m_leftDriveEncoder = new Encoder(2, 3, true);
 	m_rightDriveEncoder = new Encoder(4, 5);
+#else
+	m_leftDriveEncoder = m_rightDriveEncoder = NULL;
+#endif
+	
+#ifdef FEATURE_GYRO
 	m_gyroChannel = new AnalogChannel(1, 1);
 	m_gyro = new Gyro(m_gyroChannel);
 	m_gyro->SetSensitivity(0.006);
 	m_gyro->Reset();
+#else
+	m_gyroChannel = NULL;
+	m_gyro = NULL;
+#endif
 	
 	/* Pneumatics */
 	m_compressor = new Relay(1, Relay::kForwardOnly);
@@ -170,7 +180,7 @@ void BossRobot::OperatorControl(void)
 		}
 		GetWatchdog().Feed();
 		
-#ifdef FEATURE_LCD
+#if defined(FEATURE_LCD) && defined(FEATURE_GYRO)
 		DS_LCD *lcd = DS_LCD::GetInstance();
 		lcd->PrintfLine(DS_LCD::kUser_Line3, "Gyro: %.2fV %.2f", m_gyroChannel->GetVoltage(), m_gyro->GetAngle());
 		lcd->UpdateLCD();
@@ -220,12 +230,16 @@ void BossRobot::SendVisionData()
 	{
 		dash.AddCluster(); // tracking data
 		{
-			double gyroAngle = m_gyro->GetAngle();
+			double gyroAngle = 0.0;
+			
+#ifdef FEATURE_GYRO
+			gyroAngle = m_gyro->GetAngle();
 			
 			while (gyroAngle > 180.0)
 				gyroAngle -= 360.0;
 			while (gyroAngle < -180.0)
 				gyroAngle += 360.0;
+#endif
 			
 			dash.AddDouble(0.0); // Joystick X
 			dash.AddDouble(gyroAngle); // angle
