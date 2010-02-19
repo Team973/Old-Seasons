@@ -41,10 +41,17 @@ BossRobot::BossRobot(void)
 	m_config.Read("boss.cfg");
 	
 	/* Drive system */
+#ifdef FEATURE_DRIVE_VICTORS
+	m_leftMotor1 = new Victor(1);
+	m_leftMotor2 = new Victor(3);
+	m_rightMotor1 = new Victor(4);
+	m_rightMotor2 = new Victor(2);
+#else
 	m_leftMotor1 = new Jaguar(1);
 	m_leftMotor2 = new Jaguar(3);
 	m_rightMotor1 = new Jaguar(4);
 	m_rightMotor2 = new Jaguar(2);
+#endif
 	
 	m_driveSystem = new AutonomousDriveSystem(this, new RobotDrive(
 			m_leftMotor1, m_leftMotor2, m_rightMotor1, m_rightMotor2));
