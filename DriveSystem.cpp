@@ -34,6 +34,7 @@ DriveSystem::DriveSystem()
 {
 	m_robot = NULL;
 	m_drive = NULL;
+	m_gear = kLoGear;
 	m_leftSpeed = m_rightSpeed = 0.0;
 	InitPID();
 }
@@ -42,21 +43,21 @@ DriveSystem::DriveSystem(BossRobot *r, RobotDrive *d)
 {
     m_robot = r;
 	m_drive = d;
+	m_gear = kLoGear;
 	m_leftSpeed = m_rightSpeed = 0.0;
 	InitPID();
 }
 
 void DriveSystem::InitPID()
 {
-	double inertP = m_robot->GetConfig().SetDefault("inertP", 0.05);
+	double inertP = m_robot->GetConfig().SetDefault("inertP", 0.01);
 	double inertI = m_robot->GetConfig().SetDefault("inertI", 0.0);
 	double inertD = m_robot->GetConfig().SetDefault("inertD", 0.0);
 	double movingP = m_robot->GetConfig().SetDefault("movingP", 5.e-3);
 	double movingI = m_robot->GetConfig().SetDefault("movingI", 0.0);
 	double movingD = m_robot->GetConfig().SetDefault("movingD", 0.0);
 	
-	m_prevMoving = false;
-	m_firstMoveComp = true;
+	m_firstInertComp = m_firstMovingComp = true;
 	
 	m_leftPID.SetPID(inertP, inertI, inertD);
 	m_leftPID.SetLimits(-1.0, 1.0);
@@ -71,6 +72,18 @@ void DriveSystem::InitPID()
 void DriveSystem::Drive()
 {
 	m_drive->SetLeftRightMotorSpeeds(m_leftSpeed, m_rightSpeed);
+	
+#ifdef FEATURE_GEAR_SWITCH
+	switch (m_gear)
+	{
+	case kLoGear:
+		m_robot->GetGearSwitch()->Set(0);
+		break;
+	case kHiGear:
+		m_robot->GetGearSwitch()->Set(1);
+		break;
+	}
+#endif
 }
 
 void DriveSystem::Stop()
@@ -80,8 +93,8 @@ void DriveSystem::Stop()
 
 bool DriveSystem::IsMoving()
 {
-	return (m_leftSpeed > 0.25 || m_leftSpeed < -0.25 ||
-			m_rightSpeed > 0.25 || m_rightSpeed < -0.25);
+	return (m_leftSpeed > 0.05 || m_leftSpeed < -0.05 ||
+			m_rightSpeed > 0.05 || m_rightSpeed < -0.05);
 }
 
 bool DriveSystem::IsTurning()
@@ -92,23 +105,26 @@ bool DriveSystem::IsTurning()
 
 void DriveSystem::Compensate()
 {
-	bool newMoving = IsMoving();
-	
-	if (!newMoving)
+	if (!IsMoving())
 	{
-#ifdef FEATURE_DRIVE_ENCODERS
+		if (m_firstInertComp)
+		{
+			m_firstInertComp = false;
+			InitInertCompensate();
+		}
 		InertCompensate();
-#endif
-		m_firstMoveComp = true;
+		m_firstMovingComp = true;
 	}
 	else
 	{
-#ifdef FEATURE_GYRO
+		if (m_firstMovingComp)
+		{
+			m_firstMovingComp = false;
+			InitMovingCompensate();
+		}
 		MovingCompensate();
-#endif
+		m_firstInertComp = true;
 	}
-	
-	m_prevMoving = newMoving;
 	
 #ifdef FEATURE_LCD
 	DS_LCD *lcd = DS_LCD::GetInstance();
@@ -116,40 +132,71 @@ void DriveSystem::Compensate()
 #endif
 }
 
+void DriveSystem::InitInertCompensate()
+{
+#ifdef FEATURE_DRIVE_ENCODERS
+	m_robot->GetLeftDriveEncoder()->Reset();
+	m_robot->GetRightDriveEncoder()->Reset();
+#endif
+	
+	m_leftPID.Reset();
+	m_leftPID.SetTarget(0.0);
+	m_leftPID.Start();
+	
+	m_rightPID.Reset();
+	m_rightPID.SetTarget(0.0);
+	m_rightPID.Start();
+}
+
 void DriveSystem::InertCompensate()
 {
-	if (IsMoving() != m_prevMoving)
-	{
-		m_robot->GetLeftDriveEncoder()->Reset();
-		m_robot->GetRightDriveEncoder()->Reset();
-		
-		m_leftPID.Reset();
-		m_leftPID.SetTarget(0.0);
-		m_leftPID.Start();
-		
-		m_rightPID.Reset();
-		m_rightPID.SetTarget(0.0);
-		m_rightPID.Start();
-	}
-	else
-	{
-		m_leftPID.Update(m_robot->GetLeftDriveEncoder()->Get());
-		m_rightPID.Update(m_robot->GetRightDriveEncoder()->Get());
-		
-		if (abs(m_robot->GetLeftDriveEncoder()->Get()) < 15)
-			m_leftSpeed = m_leftPID.GetOutput();
-		if (abs(m_robot->GetRightDriveEncoder()->Get()) < 15)
-			m_rightSpeed = m_rightPID.GetOutput();
-	}
+	INT32 encoderL, encoderR;
+	float encoderLAngle, encoderRAngle;
+	int ticksPerRevolution = m_robot->GetConfig().SetDefault("driveEncoderTicksPerRev", 300);
 
+#ifdef FEATURE_DRIVE_ENCODERS
+	encoderL = m_robot->GetLeftDriveEncoder()->Get();
+	encoderR = m_robot->GetRightDriveEncoder()->Get();
+#else
+	encoderL = encoderR = 0;
+#endif
+	
+	encoderLAngle = (float)encoderL * 360.0 / ticksPerRevolution;
+	encoderRAngle = (float)encoderR * 360.0 / ticksPerRevolution;
+		
+	m_leftPID.Update(encoderLAngle);
+	m_rightPID.Update(encoderRAngle);
+	
+	if ((encoderLAngle > 5 && encoderLAngle < 180) || (encoderLAngle < -5 && encoderLAngle > -180))
+		m_leftSpeed = m_leftPID.GetOutput();
+	if ((encoderRAngle > 5 && encoderRAngle < 180) || (encoderRAngle < -5 && encoderRAngle > -180))
+		m_rightSpeed = m_rightPID.GetOutput();
+		
 #ifdef FEATURE_LCD
 	DS_LCD *lcd = DS_LCD::GetInstance();
 	lcd->PrintfLine(DS_LCD::kUser_Line2, "PID Inert");
+	lcd->PrintfLine(DS_LCD::kUser_Line4, "L: %.1f R: %.1f", encoderLAngle, encoderRAngle);
 #endif
+}
+
+void DriveSystem::InitMovingCompensate()
+{
+	float angle;
+	
+#ifdef FEATURE_GYRO
+	angle = m_robot->GetGyro()->GetAngle();
+#else
+	angle = 0;
+#endif
+	
+	m_deadheadPID.Reset();
+	m_deadheadPID.SetTarget(angle);
+	m_deadheadPID.Start();
 }
 
 void DriveSystem::MovingCompensate()
 {
+	float angle;
 #ifdef FEATURE_LCD
 	DS_LCD *lcd = DS_LCD::GetInstance();
 #endif
@@ -162,25 +209,20 @@ void DriveSystem::MovingCompensate()
 		return;
 	}
 	
-	if (m_firstMoveComp)
-	{
-		m_deadheadPID.Reset();
-		m_deadheadPID.SetTarget(m_robot->GetGyro()->GetAngle());
-		m_deadheadPID.Start();
-	}
-	else
-	{
-		m_deadheadPID.Update(m_robot->GetGyro()->GetAngle());
-		
-		m_leftSpeed = limit(m_leftSpeed + m_deadheadPID.GetOutput());
-		m_rightSpeed = limit(m_rightSpeed - m_deadheadPID.GetOutput());
+#ifdef FEATURE_GYRO
+	angle = m_robot->GetGyro()->GetAngle();
+#else
+	angle = 0;
+#endif
+	
+	m_deadheadPID.Update(angle);
+	
+	m_leftSpeed = limit(m_leftSpeed + m_deadheadPID.GetOutput());
+	m_rightSpeed = limit(m_rightSpeed - m_deadheadPID.GetOutput());
 		
 #ifdef FEATURE_LCD
-		lcd->PrintfLine(DS_LCD::kUser_Line2, "PID: %.4f", m_deadheadPID.GetOutput());
+	lcd->PrintfLine(DS_LCD::kUser_Line2, "PID: %.4f", m_deadheadPID.GetOutput());
 #endif
-	}
-	
-	m_firstMoveComp = false;
 }
 
 /**** AUTONOMOUS ****/
@@ -206,6 +248,11 @@ void ArcadeDriveSystem::ReadControls()
 {
 	m_move = -(ControlBoard::GetInstance().GetJoystick(1).GetY());
 	m_rotate = -(ControlBoard::GetInstance().GetJoystick(2).GetX());
+	
+	if (ControlBoard::GetInstance().GetJoystick(1).GetRawButton(2))
+		m_gear = kLoGear;
+	else if (ControlBoard::GetInstance().GetJoystick(1).GetRawButton(3))
+		m_gear = kHiGear;
 	
 	InterpretControls();
 }
@@ -252,12 +299,12 @@ void ArcadeDriveSystem::InterpretControls()
 
 bool ArcadeDriveSystem::IsMoving()
 {
-	return (m_move > 0.25 || m_move < -0.25 || IsTurning());
+	return (m_move > 0.05 || m_move < -0.05 || IsTurning());
 }
 
 bool ArcadeDriveSystem::IsTurning()
 {
-	return (m_rotate > 0.15 || m_rotate < -0.15);
+	return (m_rotate > 0.05 || m_rotate < -0.05);
 }
 
 /**** XBOX ****/
@@ -280,6 +327,11 @@ void XboxDriveSystem::ReadControls(void)
 {
 	m_move = -(ControlBoard::GetInstance().GetJoystick(1).GetY());
 	m_rotate = -(ControlBoard::GetInstance().GetJoystick(1).GetRawAxis(4));
+	
+	if (ControlBoard::GetInstance().GetJoystick(1).GetRawButton(5))
+		m_gear = kLoGear;
+	else if (ControlBoard::GetInstance().GetJoystick(1).GetRawButton(6))
+		m_gear = kHiGear;
 	
 	InterpretControls();
 }

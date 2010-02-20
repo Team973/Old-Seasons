@@ -73,10 +73,14 @@ public:
 	inline Relay *GetKickerWinch1()			{ return m_kickerWinchRelay1; }
 	inline Relay *GetKickerWinch2()			{ return m_kickerWinchRelay2; }
 	inline AnalogChannel *GetKickerWinchSensor()	{ return m_kickerWinchSensor; }
+	inline Solenoid *GetGearSwitch()		{ return m_gearSwitch; }
 
 protected:
 	void SendIOPortData(void);
 	void SendVisionData(void);
+	
+	void PreStep(void);
+	void PostStep(void);
 };
 
 #endif

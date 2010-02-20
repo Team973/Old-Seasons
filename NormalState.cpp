@@ -19,16 +19,20 @@ NormalState::NormalState(BossRobot *r)
 void NormalState::Enter()
 {
 	m_robot->SetDriveSystem(new ArcadeDriveSystem(m_robot, m_robot->GetDrive()));
+#ifdef FEATURE_DRIVE_ENCODERS
 	m_robot->GetLeftDriveEncoder()->Start();
 	m_robot->GetRightDriveEncoder()->Start();
 	m_robot->GetLeftDriveEncoder()->Reset();
 	m_robot->GetRightDriveEncoder()->Reset();
+#endif
 }
 
 void NormalState::Exit()
 {
+#ifdef FEATURE_DRIVE_ENCODERS
 	m_robot->GetLeftDriveEncoder()->Reset();
 	m_robot->GetRightDriveEncoder()->Reset();
+#endif
 }
 
 void NormalState::Step()

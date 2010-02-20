@@ -21,9 +21,12 @@ protected:
 	RobotDrive *m_drive;
 	
 	float m_leftSpeed, m_rightSpeed;
-	bool m_prevMoving, m_firstMoveComp;
+	bool m_firstInertComp, m_firstMovingComp;
+	int m_gear;
 	SimplePID m_leftPID, m_rightPID;
 	SimplePID m_deadheadPID;
+	
+	enum { kLoGear, kHiGear };
 	
 	DriveSystem();
 	DriveSystem(BossRobot *, RobotDrive *);
@@ -46,7 +49,9 @@ public:
 	virtual bool IsMoving();
 	virtual bool IsTurning();
 protected:
+	virtual void InitInertCompensate();
 	virtual void InertCompensate();
+	virtual void InitMovingCompensate();
 	virtual void MovingCompensate();
 };
 
