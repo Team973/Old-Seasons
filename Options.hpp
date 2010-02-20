@@ -19,9 +19,10 @@
 #define DS_LCD MyDriverStationLCD
 
 // Running
-//#define FEATURE_COMPRESSOR
+#define FEATURE_COMPRESSOR
 //#define FEATURE_UPPER_BOARD
-#define FEATURE_GYRO
+#define FEATURE_GEAR_SWITCH
+//#define FEATURE_GYRO
 #define FEATURE_DRIVE_ENCODERS
 #define FEATURE_DRIVE_VICTORS
 

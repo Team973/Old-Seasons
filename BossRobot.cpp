@@ -58,7 +58,9 @@ BossRobot::BossRobot(void)
 	
 #ifdef FEATURE_DRIVE_ENCODERS
 	m_leftDriveEncoder = new Encoder(2, 3, true);
+	m_leftDriveEncoder->Start();
 	m_rightDriveEncoder = new Encoder(4, 5);
+	m_rightDriveEncoder->Start();
 #else
 	m_leftDriveEncoder = m_rightDriveEncoder = NULL;
 #endif
@@ -180,6 +182,10 @@ void BossRobot::OperatorControl(void)
 			m_prevState = m_state;
 		}
 		
+		// Do any pre-step logic
+		PreStep();
+		GetWatchdog().Feed();
+		
 		// Do what the state wants
 		if (m_state != NULL)
 		{
@@ -187,16 +193,8 @@ void BossRobot::OperatorControl(void)
 		}
 		GetWatchdog().Feed();
 		
-#if defined(FEATURE_LCD) && defined(FEATURE_GYRO)
-		DS_LCD *lcd = DS_LCD::GetInstance();
-		lcd->PrintfLine(DS_LCD::kUser_Line3, "Gyro: %.2fV %.2f", m_gyroChannel->GetVoltage(), m_gyro->GetAngle());
-		lcd->UpdateLCD();
-#endif
-		
-		// Send I/O data
-		SendVisionData();
-		GetWatchdog().Feed();
-		SendIOPortData();
+		// Do any post-step logic
+		PostStep();
 		GetWatchdog().Feed();
 		
 		// Post-iteration clean up
@@ -204,6 +202,28 @@ void BossRobot::OperatorControl(void)
 		Wait(TELEOP_LOOP_LAG);				// wait for a motor update time
 		GetWatchdog().Feed();
 	}
+}
+
+void BossRobot::PreStep(void)
+{
+#ifdef FEATURE_COMPRESSOR
+	m_compressor->Set(m_pressureSwitch->Get() ? Relay::kOff : Relay::kOn);
+#endif
+}
+
+void BossRobot::PostStep(void)
+{
+#if defined(FEATURE_LCD) && defined(FEATURE_GYRO)
+	DS_LCD *lcd = DS_LCD::GetInstance();
+	lcd->PrintfLine(DS_LCD::kUser_Line3, "Gyro: %.2fV %.2f", m_gyroChannel->GetVoltage(), m_gyro->GetAngle());
+	lcd->UpdateLCD();
+#endif
+		
+	// Send I/O data
+	SendVisionData();
+	GetWatchdog().Feed();
+	SendIOPortData();
+	GetWatchdog().Feed();
 }
 
 void BossRobot::ChangeState(State *st)
