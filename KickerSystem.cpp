@@ -32,7 +32,7 @@ void KickerSystem::ReadControls()
 		m_strength = kStrengthHi;
 	
 	m_kickTrigger.Set(board.GetJoystick(3).GetTrigger());
-	if (m_kickTrigger.TriggeredOn())
+	if (m_kickTrigger.GetTriggeredOn())
 		Kick();
 	
 #ifdef FEATURE_LCD
@@ -152,7 +152,7 @@ void KickerSystem::UpdateKicker()
 						 encoderVoltage < restVoltage);
 	}
 	// Stop the kicking if we are inside the deadband
-	if (m_inDeadband.TriggeredOn())
+	if (m_inDeadband.GetTriggeredOn())
 	{
 		m_kicking = false;
 		m_robot->GetKickerMotor()->Set(0.0);

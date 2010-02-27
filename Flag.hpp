@@ -24,9 +24,9 @@ public:
 	bool CheckTriggeredOn();
 	bool CheckTriggeredOff();
 	
-	bool Triggered();
-	bool TriggeredOn();
-	bool TriggeredOff();
+	bool GetTriggered();
+	bool GetTriggeredOn();
+	bool GetTriggeredOff();
 	void ClearTrigger();
 };
 
