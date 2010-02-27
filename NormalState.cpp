@@ -13,7 +13,6 @@
 NormalState::NormalState(BossRobot *r)
 	: State(r)
 {
-	mKicker = new KickerSystem();
 }
 
 void NormalState::Enter()
@@ -48,10 +47,11 @@ void NormalState::Step()
 	}
 	m_robot->GetWatchdog().Feed();
 	
-#ifdef FEATURE_UPPER_BOARD
-	mKicker->ReadControls();
-	mKicker->Update();
-#endif
+	if (m_robot->GetKickerSystem() != NULL)
+	{
+		m_robot->GetKickerSystem()->ReadControls();
+		m_robot->GetKickerSystem()->Update();
+	}
 	
 	m_robot->GetWatchdog().Feed();
 }

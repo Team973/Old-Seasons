@@ -11,6 +11,7 @@
 #include "State.hpp"
 #include "NormalState.hpp"
 #include "DriveSystem.hpp"
+#include "KickerSystem.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -93,6 +94,8 @@ BossRobot::BossRobot(void)
 	m_kickerWinchRelay2 = new Relay(6, 2);
 	m_kickerMotor = new Victor(6, 5);
 #endif
+	
+	m_kickerSystem = new KickerSystem(this);
 	
 	/* Misc */
 	m_ioTimer = new Timer();

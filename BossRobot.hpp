@@ -20,12 +20,14 @@
 
 class State;
 class DriveSystem;
+class KickerSystem;
 
 class BossRobot : public SimpleRobot
 {
 protected:
 	State *m_state, *m_prevState;
 	DriveSystem *m_driveSystem;
+	KickerSystem *m_kickerSystem;
 	ConfigParser m_config;
 	
 	SpeedController *m_leftMotor1, *m_leftMotor2;   // Front, Back
@@ -63,6 +65,8 @@ public:
 	inline DriveSystem *GetDriveSystem() 	{ return m_driveSystem; }
 	void SetDriveSystem(DriveSystem *d);
 	RobotDrive *GetDrive();
+	
+	inline KickerSystem *GetKickerSystem() 	{ return m_kickerSystem; }
 	
 	inline ConfigParser &GetConfig()		{ return m_config; }
 	

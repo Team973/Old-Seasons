@@ -16,6 +16,7 @@
 // Operator interface
 #define FEATURE_CAMERA
 #define FEATURE_LCD
+#define FEATURE_IO_BOARD
 #define DS_LCD MyDriverStationLCD
 
 // Running
