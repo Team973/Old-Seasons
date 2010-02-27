@@ -53,13 +53,11 @@ void ConfigState::Step()
 	}
 	
 	HandleStrengthPresetting();
-	
-	// Check for kick config
-	m_kickRest.Set(board.GetJoystick(3).GetTrigger());
-	if (m_kickRest.GetTriggeredOn())
-	{
-		m_robot->GetConfig().Set("kickerRestAngle", m_robot->GetKickerEncoder()->GetVoltage());
-	}
+	HandleKickPresetting();
+
+#ifdef FEATURE_LCD
+	DS_LCD::GetInstance()->UpdateLCD();
+#endif
 }
 
 #ifdef FEATURE_UPPER_BOARD
@@ -95,5 +93,25 @@ void ConfigState::HandleStrengthPresetting()
 		m_robot->GetKickerWinch1()->Set(Relay::kOff);
 		m_robot->GetKickerWinch2()->Set(Relay::kOff);
 	}
+#endif
+}
+
+void ConfigState::HandleKickPresetting()
+{
+	// Run kicker motor when holding trigger
+	m_robot->GetKickerMotor()->Set(board.GetJoystick(3).GetTrigger() ? 1.0 : 0.0);
+	
+	// Set point for kicker
+	m_kickRest.Set(board.GetJoystick(3).GetRawButton(2));
+	if (m_kickRest.GetTriggeredOn())
+	{
+#ifdef FEATURE_UPPER_BOARD
+		m_robot->GetConfig().Set("kickerRestAngle", m_robot->GetKickerEncoder()->GetVoltage());
+#endif
+	}
+	
+#ifdef FEATURE_LCD
+	DS_LCD::GetInstance()->PrintfLine(DS_LCD::kUser_Line2,
+		"Kicker: %.2fV", m_robot->GetKickerEncoder()->GetVoltage());
 #endif
 }
