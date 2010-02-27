@@ -43,21 +43,21 @@ bool Flag::CheckTriggeredOff()
 	return (!m_value && CheckTriggered());
 }
 
-bool Flag::Triggered()
+bool Flag::GetTriggered()
 {
 	bool retval = CheckTriggered();
 	ClearTrigger();
 	return retval;
 }
 
-bool Flag::TriggeredOn()
+bool Flag::GetTriggeredOn()
 {
 	bool retval = CheckTriggeredOn();
 	ClearTrigger();
 	return retval;
 }
 
-bool Flag::TriggeredOff()
+bool Flag::GetTriggeredOff()
 {
 	bool retval = CheckTriggeredOff();
 	ClearTrigger();

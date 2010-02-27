@@ -47,7 +47,7 @@ void ConfigState::Step()
 	
 	// Check for the re-read config file button
 	m_reread.Set(board.GetButton(5));
-	if (m_reread.TriggeredOn())
+	if (m_reread.GetTriggeredOn())
 	{
 		m_robot->GetConfig().Read("boss.cfg");
 	}
@@ -56,7 +56,7 @@ void ConfigState::Step()
 	
 	// Check for kick config
 	m_kickRest.Set(board.GetJoystick(3).GetTrigger());
-	if (m_kickRest.TriggeredOn())
+	if (m_kickRest.GetTriggeredOn())
 	{
 		m_robot->GetConfig().Set("kickerRestAngle", m_robot->GetKickerEncoder()->GetVoltage());
 	}
@@ -66,7 +66,7 @@ void ConfigState::Step()
 #define STRENGTH_PRESET(button, name) \
 	{ \
 		m_strength##name.Set(ControlBoard::GetInstance().GetButton(button)); \
-		if (m_strength##name.TriggeredOn()) \
+		if (m_strength##name.GetTriggeredOn()) \
 			m_robot->GetConfig().Set("kickerStrength" #name "_pos", m_robot->GetKickerWinchSensor()->GetVoltage()); \
 	}
 #else
