@@ -70,11 +70,10 @@ public:
 class TeleoperatedDriveSystem : public DriveSystem
 {
 protected:
-	
 	TeleoperatedDriveSystem() : DriveSystem() {}
 	TeleoperatedDriveSystem(BossRobot *r, RobotDrive *d) : DriveSystem(r, d) {}
-public:
-	virtual bool IsMoving() = 0;
+	
+	virtual void InterpretControls() = 0;
 };
 
 class ArcadeDriveSystem : public TeleoperatedDriveSystem
@@ -85,6 +84,17 @@ protected:
 	virtual void InterpretControls();
 public:
 	ArcadeDriveSystem(BossRobot *, RobotDrive *);
+	virtual void ReadControls();
+	virtual bool IsMoving();
+	virtual bool IsTurning();
+};
+
+class TankDriveSystem : public TeleoperatedDriveSystem
+{
+protected:
+	virtual void InterpretControls();
+public:
+	TankDriveSystem(BossRobot *, RobotDrive *);
 	virtual void ReadControls();
 	virtual bool IsMoving();
 	virtual bool IsTurning();

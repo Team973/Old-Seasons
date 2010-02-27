@@ -25,7 +25,26 @@ void NormalState::Enter()
 	lcd->PrintfLine(DS_LCD::kUser_Line1, "Normal operation");
 #endif
 	
-	m_robot->SetDriveSystem(new ArcadeDriveSystem(m_robot, m_robot->GetDrive()));
+	// Initialize drive system
+	std::string driveSystemName = m_robot->GetConfig().SetDefault("driveSystem", "arcade");
+	if (driveSystemName == "arcade")
+	{
+		m_robot->SetDriveSystem(new ArcadeDriveSystem(m_robot, m_robot->GetDrive()));
+	}
+	else if (driveSystemName == "tank")
+	{
+		m_robot->SetDriveSystem(new TankDriveSystem(m_robot, m_robot->GetDrive()));
+	}
+	else if (driveSystemName == "xbox")
+	{
+		m_robot->SetDriveSystem(new XboxDriveSystem(m_robot, m_robot->GetDrive()));
+	}
+	else
+	{
+		// Default to arcade system
+		m_robot->SetDriveSystem(new ArcadeDriveSystem(m_robot, m_robot->GetDrive()));
+	}
+	
 #ifdef FEATURE_DRIVE_ENCODERS
 	m_robot->GetLeftDriveEncoder()->Start();
 	m_robot->GetRightDriveEncoder()->Start();
