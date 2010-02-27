@@ -20,6 +20,7 @@ void ConfigState::Enter()
 #ifdef FEATURE_LCD
 	DS_LCD *lcd = DS_LCD::GetInstance();
 	lcd->PrintfLine(DS_LCD::kUser_Line1, "CONFIGURATION");
+	lcd->UpdateLCD();
 #endif
 	
 	m_prevReread = false;
