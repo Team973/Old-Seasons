@@ -66,25 +66,27 @@ void KickerSystem::Update()
 
 #ifdef FEATURE_UPPER_BOARD
 	actual = m_robot->GetKickerWinchSensor()->GetVoltage();
-	tolerance = m_robot->GetConfig().SetDefault("kickerPosTolerance", 0.25);
+	tolerance = m_robot->GetConfig().SetDefault("kickerPosTolerance", 0.02);
 	if (actual < (target - tolerance))
 	{
 		m_robot->GetKickerWinch1()->Set(Relay::kForward);
 		m_robot->GetKickerWinch2()->Set(Relay::kForward);
 		if (lightNum != 0)
-			ControlBoard::GetInstance().SetLight(lightNum, ControlBoard::kLightYellow);
+			ControlBoard::GetInstance().SetMultiLight(lightNum, ControlBoard::kLightYellow);
 	}
 	else if (actual > (target + tolerance))
 	{
 		m_robot->GetKickerWinch1()->Set(Relay::kReverse);
 		m_robot->GetKickerWinch2()->Set(Relay::kReverse);
 		if (lightNum != 0)
-			ControlBoard::GetInstance().SetLight(lightNum, ControlBoard::kLightYellow);
+			ControlBoard::GetInstance().SetMultiLight(lightNum, ControlBoard::kLightYellow);
 	}
 	else
 	{
+		m_robot->GetKickerWinch1()->Set(Relay::kOff);
+		m_robot->GetKickerWinch2()->Set(Relay::kOff);
 		if (lightNum != 0)
-			ControlBoard::GetInstance().SetLight(lightNum, ControlBoard::kLightGreen);
+			ControlBoard::GetInstance().SetMultiLight(lightNum, ControlBoard::kLightGreen);
 	}
 #else
 	ControlBoard::GetInstance().SetMultiLight(lightNum, ControlBoard::kLightGreen);

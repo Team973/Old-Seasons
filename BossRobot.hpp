@@ -42,7 +42,7 @@ protected:
 	
 	SpeedController *m_armMotor1, *m_armMotor2;
 	SpeedController *m_intakeMotor1, *m_intakeMotor2;
-	Relay *m_intakeRelay1, *m_intakeRelay2;
+	Relay *m_intakeMotor3, *m_intakeMotor4;
 	
 	SpeedController *m_kickerMotor;
 	Relay *m_kickerWinchRelay1, *m_kickerWinchRelay2;
