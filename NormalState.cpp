@@ -7,8 +7,11 @@
 //
 
 #include "NormalState.hpp"
+#include "ConfigState.hpp"
 
+#include "ControlBoard.hpp"
 #include "DriveSystem.hpp"
+#include "KickerSystem.hpp"
 
 NormalState::NormalState(BossRobot *r)
 	: State(r)
@@ -17,6 +20,11 @@ NormalState::NormalState(BossRobot *r)
 
 void NormalState::Enter()
 {
+#ifdef FEATURE_LCD
+	DS_LCD *lcd = DS_LCD::GetInstance();
+	lcd->PrintfLine(DS_LCD::kUser_Line1, "Normal operation");
+#endif
+	
 	m_robot->SetDriveSystem(new ArcadeDriveSystem(m_robot, m_robot->GetDrive()));
 #ifdef FEATURE_DRIVE_ENCODERS
 	m_robot->GetLeftDriveEncoder()->Start();
@@ -37,6 +45,12 @@ void NormalState::Exit()
 void NormalState::Step()
 {
 	TeleoperatedDriveSystem *ds = dynamic_cast<TeleoperatedDriveSystem *>(m_robot->GetDriveSystem());
+	
+	if (ControlBoard::GetInstance().GetButton(1))
+	{
+		m_robot->ChangeState(new ConfigState(m_robot));
+		return;
+	}
 	
 	if (ds != NULL)
 	{
