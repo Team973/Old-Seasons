@@ -13,6 +13,7 @@ KickerSystem::KickerSystem(BossRobot *r)
 {
 	m_robot = r;
 	m_strength = kStrengthLo;
+	m_kicking = false;
 }
 
 KickerSystem::~KickerSystem()
@@ -29,9 +30,31 @@ void KickerSystem::ReadControls()
 		m_strength = kStrengthMd;
 	else if (board.GetButton(7))
 		m_strength = kStrengthHi;
+	if (board.GetJoystick(3).GetTrigger() && !m_prevKickingTrigger)
+		Kick();
+	
+	m_prevKickingTrigger = board.GetJoystick(3).GetTrigger();
+	
+#ifdef FEATURE_LCD
+	DS_LCD *lcd = DS_LCD::GetInstance();
+	lcd->PrintfLine(DS_LCD::kUser_Line5, "Kicker: %.2fV", m_robot->GetKickerEncoder()->GetVoltage());
+	lcd->UpdateLCD();
+#endif
+}
+
+void KickerSystem::Kick()
+{
+	m_kicking = true;
+	m_inDeadband = true;
 }
 
 void KickerSystem::Update()
+{
+	UpdateWinch();
+	UpdateKicker();
+}
+
+void KickerSystem::UpdateWinch()
 {
 	double target = 0.0;
 	double actual, tolerance;
@@ -91,4 +114,39 @@ void KickerSystem::Update()
 #else
 	ControlBoard::GetInstance().SetMultiLight(lightNum, ControlBoard::kLightGreen);
 #endif
+}
+
+void KickerSystem::UpdateKicker()
+{
+	float encoderVoltage;
+	double restVoltage, deadbandVoltage;
+	
+	if (!m_kicking)
+	{
+		m_robot->GetKickerMotor()->Set(0.0);
+		return;
+	}
+	// Get config values
+	encoderVoltage = m_robot->GetKickerEncoder()->GetVoltage();
+	restVoltage = m_robot->GetConfig().SetDefault("kickerRestAngle", 3.825);
+	deadbandVoltage = m_robot->GetConfig().SetDefault("kickerDeadbandAngle", 4.710);
+	
+	// Stop the kicking if we are inside the deadband
+	if (encoderVoltage > deadbandVoltage && encoderVoltage < restVoltage - 0.1)
+	{
+		if (!m_inDeadband)
+		{
+			m_kicking = false;
+			m_robot->GetKickerMotor()->Set(0.0);
+			return;
+		}
+		m_inDeadband = true;
+	}
+	else
+	{
+		m_inDeadband = false;
+	}
+	
+	// We're in the process of kicking.
+	m_robot->GetKickerMotor()->Set(1.0);
 }

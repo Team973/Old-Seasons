@@ -47,6 +47,7 @@ protected:
 	SpeedController *m_kickerMotor;
 	Relay *m_kickerWinchRelay1, *m_kickerWinchRelay2;
 	AnalogChannel *m_kickerWinchSensor;
+	AnalogChannel *m_kickerEncoder;
 	
 #ifdef FEATURE_CAMERA
 	AxisCamera *m_camera;
@@ -77,6 +78,8 @@ public:
 	inline Relay *GetKickerWinch1()			{ return m_kickerWinchRelay1; }
 	inline Relay *GetKickerWinch2()			{ return m_kickerWinchRelay2; }
 	inline AnalogChannel *GetKickerWinchSensor()	{ return m_kickerWinchSensor; }
+	inline AnalogChannel *GetKickerEncoder()	{ return m_kickerEncoder; }
+	inline SpeedController *GetKickerMotor()	{ return m_kickerMotor; }
 	inline Solenoid *GetGearSwitch()		{ return m_gearSwitch; }
 
 protected:

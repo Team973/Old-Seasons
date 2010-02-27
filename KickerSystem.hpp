@@ -18,6 +18,7 @@ class KickerSystem
 protected:
 	BossRobot *m_robot;
 	short m_strength;
+	bool m_kicking, m_inDeadband, m_prevKickingTrigger;
 	
 	enum {kStrengthLo, kStrengthMd, kStrengthHi};
 public:
@@ -26,6 +27,10 @@ public:
 	
 	virtual void ReadControls();
 	virtual void Update();
+	virtual void Kick();
+protected:
+	virtual void UpdateWinch();
+	virtual void UpdateKicker();
 };
 
 #endif

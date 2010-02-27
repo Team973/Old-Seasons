@@ -17,6 +17,7 @@ class ConfigState : public State
 protected:
 	bool m_prevReread;
 	bool m_prevStrengthLo, m_prevStrengthMd, m_prevStrengthHi;
+	bool m_prevKickRest, m_prevKickDeadband;
 public:
 	ConfigState(BossRobot *r);
 	
