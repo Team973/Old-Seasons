@@ -307,6 +307,39 @@ bool ArcadeDriveSystem::IsTurning()
 	return (m_rotate > 0.05 || m_rotate < -0.05);
 }
 
+/**** TANK ****/
+
+TankDriveSystem::TankDriveSystem(BossRobot *r, RobotDrive *d)
+    : TeleoperatedDriveSystem(r, d)
+{
+}
+
+void TankDriveSystem::ReadControls()
+{
+	m_leftSpeed = -(ControlBoard::GetInstance().GetJoystick(1).GetY());
+	m_rightSpeed = -(ControlBoard::GetInstance().GetJoystick(2).GetY());
+	
+	if (ControlBoard::GetInstance().GetJoystick(1).GetRawButton(2))
+		m_gear = kLoGear;
+	else if (ControlBoard::GetInstance().GetJoystick(1).GetRawButton(3))
+		m_gear = kHiGear;
+	
+	InterpretControls();
+}
+
+void TankDriveSystem::InterpretControls()
+{
+	m_leftSpeed = limit(m_leftSpeed);
+	m_rightSpeed = limit(m_rightSpeed);
+	
+	// Copied from WPILib
+	if (1) // squaredInputs
+	{
+		m_leftSpeed = sign_square(m_leftSpeed);
+		m_rightSpeed = sign_square(m_rightSpeed);
+	}
+}
+
 /**** XBOX ****/
 
 /* 	Xbox controller info
