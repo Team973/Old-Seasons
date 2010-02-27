@@ -20,6 +20,10 @@ public:
 	bool Get();
 	void Set(bool);
 	
+	bool CheckTriggered();
+	bool CheckTriggeredOn();
+	bool CheckTriggeredOff();
+	
 	bool Triggered();
 	bool TriggeredOn();
 	bool TriggeredOff();

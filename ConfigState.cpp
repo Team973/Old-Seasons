@@ -51,7 +51,6 @@ void ConfigState::Step()
 	{
 		m_robot->GetConfig().Read("boss.cfg");
 	}
-	m_reread.ClearTrigger();
 	
 	HandleStrengthPresetting();
 	
@@ -61,7 +60,6 @@ void ConfigState::Step()
 	{
 		m_robot->GetConfig().Set("kickerRestAngle", m_robot->GetKickerEncoder()->GetVoltage());
 	}
-	m_kickRest.ClearTrigger();
 }
 
 #ifdef FEATURE_UPPER_BOARD
@@ -70,7 +68,6 @@ void ConfigState::Step()
 		m_strength##name.Set(ControlBoard::GetInstance().GetButton(button)); \
 		if (m_strength##name.TriggeredOn()) \
 			m_robot->GetConfig().Set("kickerStrength" #name "_pos", m_robot->GetKickerWinchSensor()->GetVoltage()); \
-		m_strength##name.ClearTrigger(); \
 	}
 #else
 #define STRENGTH_PRESET(button, name)
