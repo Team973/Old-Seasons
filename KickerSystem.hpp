@@ -9,6 +9,7 @@
 #include "WPILib.h"
 #include "Options.hpp"
 #include "BossRobot.hpp"
+#include "Flag.hpp"
 
 #ifndef _BOSS_973_KICKERSYSTEM_H_
 #define _BOSS_973_KICKERSYSTEM_H_
@@ -18,7 +19,9 @@ class KickerSystem
 protected:
 	BossRobot *m_robot;
 	short m_strength;
-	bool m_kicking, m_inDeadband, m_prevKickingTrigger;
+	bool m_kicking;
+	Flag m_inDeadband;
+	Flag m_kickTrigger;
 	
 	enum {kStrengthLo, kStrengthMd, kStrengthHi};
 public:
