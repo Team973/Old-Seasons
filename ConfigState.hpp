@@ -8,6 +8,7 @@
 
 #include "WPILib.h"
 #include "State.hpp"
+#include "Flag.hpp"
 
 #ifndef _BOSS_973_CONFIGSTATE_H_
 #define _BOSS_973_CONFIGSTATE_H_
@@ -15,9 +16,9 @@
 class ConfigState : public State
 {
 protected:
-	bool m_prevReread;
-	bool m_prevStrengthLo, m_prevStrengthMd, m_prevStrengthHi;
-	bool m_prevKickRest, m_prevKickDeadband;
+	Flag m_reread;
+	Flag m_strengthLo, m_strengthMd, m_strengthHi;
+	Flag m_kickRest;
 public:
 	ConfigState(BossRobot *r);
 	
