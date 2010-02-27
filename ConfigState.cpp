@@ -23,9 +23,9 @@ void ConfigState::Enter()
 	lcd->UpdateLCD();
 #endif
 	
-	m_prevReread = false;
-	m_prevStrengthLo = m_prevStrengthMd = m_prevStrengthHi = false;
-	m_prevKickRest = m_prevKickDeadband = false;
+	m_reread = Flag();
+	m_strengthLo = m_strengthMd = m_strengthHi = Flag();
+	m_kickRest = Flag();
 	m_robot->GetConfig().Read("boss.cfg");
 }
 
@@ -46,33 +46,31 @@ void ConfigState::Step()
 	}
 	
 	// Check for the re-read config file button
-	if (board.GetButton(5) && !m_prevReread)
+	m_reread.Set(board.GetButton(5));
+	if (m_reread.TriggeredOn())
 	{
 		m_robot->GetConfig().Read("boss.cfg");
 	}
-	m_prevReread = board.GetButton(5);
+	m_reread.ClearTrigger();
 	
 	HandleStrengthPresetting();
 	
 	// Check for kick config
-	if (board.GetJoystick(3).GetTrigger() && !m_prevKickRest)
+	m_kickRest.Set(board.GetJoystick(3).GetTrigger());
+	if (m_kickRest.TriggeredOn())
 	{
 		m_robot->GetConfig().Set("kickerRestAngle", m_robot->GetKickerEncoder()->GetVoltage());
 	}
-	m_prevKickRest = board.GetJoystick(3).GetTrigger();
-	if (board.GetJoystick(3).GetRawButton(2) && !m_prevKickDeadband)
-	{
-		m_robot->GetConfig().Set("kickerDeadbandAngle", m_robot->GetKickerEncoder()->GetVoltage());
-	}
-	m_prevKickDeadband = board.GetJoystick(3).GetRawButton(2);
+	m_kickRest.ClearTrigger();
 }
 
 #ifdef FEATURE_UPPER_BOARD
 #define STRENGTH_PRESET(button, name) \
 	{ \
-		if (ControlBoard::GetInstance().GetButton(button) && !m_prevStrength##name) \
+		m_strength##name.Set(ControlBoard::GetInstance().GetButton(button)); \
+		if (m_strength##name.TriggeredOn()) \
 			m_robot->GetConfig().Set("kickerStrength" #name "_pos", m_robot->GetKickerWinchSensor()->GetVoltage()); \
-		m_prevStrength##name = ControlBoard::GetInstance().GetButton(button); \
+		m_strength##name.ClearTrigger(); \
 	}
 #else
 #define STRENGTH_PRESET(button, name)
