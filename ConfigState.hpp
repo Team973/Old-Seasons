@@ -27,6 +27,7 @@ public:
 	virtual void Step();
 protected:
 	void HandleStrengthPresetting();
+	void HandleKickPresetting();
 };
 
 #endif
