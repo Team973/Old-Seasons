@@ -7,6 +7,7 @@
 //
 
 #include "WPILib.h"
+#include "Options.hpp"
 
 #ifndef _BOSS_973_CONTROLBOARD_H_
 #define _BOSS_973_CONTROLBOARD_H_
@@ -18,10 +19,20 @@ protected:
 	
 	ControlBoard();
 public:
+	enum
+	{
+		kLightOff = 0,
+		kLightRed = 1,
+		kLightGreen = 2,
+		kLightYellow = 3,
+	};
+	
     static ControlBoard &GetInstance();
     
 	Joystick &GetJoystick(int index);
 	bool GetButton(UINT16 buttonNum);
+	void SetMultiLight(UINT16 lightNum, short state);
+	void SetMultiLight(UINT16 greenLight, UINT16 redLight, short state);
 };
 
 #endif

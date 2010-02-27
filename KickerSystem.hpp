@@ -21,7 +21,7 @@ protected:
 	
 	enum {kStrengthLo, kStrengthMd, kStrengthHi};
 public:
-	KickerSystem();
+	KickerSystem(BossRobot *);
 	virtual ~KickerSystem();
 	
 	virtual void ReadControls();

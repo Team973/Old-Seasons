@@ -15,8 +15,6 @@
 
 class NormalState : public State
 {
-protected:
-	KickerSystem *mKicker;
 public:
 	NormalState(BossRobot *r);
 	
