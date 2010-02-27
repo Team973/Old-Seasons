@@ -30,10 +30,10 @@ void KickerSystem::ReadControls()
 		m_strength = kStrengthMd;
 	else if (board.GetButton(7))
 		m_strength = kStrengthHi;
-	if (board.GetJoystick(3).GetTrigger() && !m_prevKickingTrigger)
-		Kick();
 	
-	m_prevKickingTrigger = board.GetJoystick(3).GetTrigger();
+	m_kickTrigger.Set(board.GetJoystick(3).GetTrigger());
+	if (m_kickTrigger.TriggeredOn())
+		Kick();
 	
 #ifdef FEATURE_LCD
 	DS_LCD *lcd = DS_LCD::GetInstance();
@@ -45,7 +45,8 @@ void KickerSystem::ReadControls()
 void KickerSystem::Kick()
 {
 	m_kicking = true;
-	m_inDeadband = true;
+	m_inDeadband.Set(true);
+	m_inDeadband.Clear();
 }
 
 void KickerSystem::Update()
@@ -119,32 +120,43 @@ void KickerSystem::UpdateWinch()
 void KickerSystem::UpdateKicker()
 {
 	float encoderVoltage;
-	double restVoltage, deadbandVoltage;
+	double restVoltage, deadbandVoltage, encoderMaxVoltage;
 	
 	if (!m_kicking)
 	{
 		m_robot->GetKickerMotor()->Set(0.0);
 		return;
 	}
-	// Get config values
-	encoderVoltage = m_robot->GetKickerEncoder()->GetVoltage();
-	restVoltage = m_robot->GetConfig().SetDefault("kickerRestAngle", 3.825);
-	deadbandVoltage = m_robot->GetConfig().SetDefault("kickerDeadbandAngle", 4.710);
 	
-	// Stop the kicking if we are inside the deadband
-	if (encoderVoltage > deadbandVoltage && encoderVoltage < restVoltage - 0.1)
+	encoderVoltage = m_robot->GetKickerEncoder()->GetVoltage();
+	
+	// Get config values
+	encoderMaxVoltage = m_robot->GetConfig().SetDefault("kickerEncoderVoltage", 5.0);
+	restVoltage = m_robot->GetConfig().SetDefault("kickerRestAngle", 4.710);
+	deadbandVoltage = restVoltage - m_robot->GetConfig().SetDefault("kickerDeadband", 0.5);
+	if (deadbandVoltage < 0)
+		deadbandVoltage += encoderMaxVoltage;
+	
+	// Calculate whether we're in the deadband
+	if (deadbandVoltage < restVoltage)
 	{
-		if (!m_inDeadband)
-		{
-			m_kicking = false;
-			m_robot->GetKickerMotor()->Set(0.0);
-			return;
-		}
-		m_inDeadband = true;
+		// The simple case: the deadband doesn't wrap.
+		m_inDeadband.Set(encoderVoltage > deadbandVoltage &&
+						 encoderVoltage < restVoltage);
 	}
 	else
 	{
-		m_inDeadband = false;
+		// The less simple case: the deadband does wrap (i.e. the deadband start
+		// is larger than the rest position)
+		m_inDeadband.Set(encoderVoltage > deadbandVoltage ||
+						 encoderVoltage < restVoltage);
+	}
+	// Stop the kicking if we are inside the deadband
+	if (m_inDeadband.TriggeredOn())
+	{
+		m_kicking = false;
+		m_robot->GetKickerMotor()->Set(0.0);
+		return;
 	}
 	
 	// We're in the process of kicking.
