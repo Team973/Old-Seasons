@@ -96,8 +96,6 @@ protected:
 public:
 	TankDriveSystem(BossRobot *, RobotDrive *);
 	virtual void ReadControls();
-	virtual bool IsMoving();
-	virtual bool IsTurning();
 };
 
 class XboxDriveSystem : public ArcadeDriveSystem
