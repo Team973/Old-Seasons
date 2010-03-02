@@ -46,7 +46,7 @@ void KickerSystem::Kick()
 {
 	m_kicking = true;
 	m_inDeadband.Set(true);
-	m_inDeadband.Clear();
+	m_inDeadband.ClearTrigger();
 }
 
 void KickerSystem::Update()

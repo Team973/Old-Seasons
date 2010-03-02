@@ -98,6 +98,7 @@ void ConfigState::HandleStrengthPresetting()
 
 void ConfigState::HandleKickPresetting()
 {
+	ControlBoard &board = ControlBoard::GetInstance();
 	// Run kicker motor when holding trigger
 	m_robot->GetKickerMotor()->Set(board.GetJoystick(3).GetTrigger() ? 1.0 : 0.0);
 	
