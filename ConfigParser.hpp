@@ -36,6 +36,7 @@ public:
 	 *	There will be no values in the parser by default.
 	 */
 	ConfigParser();
+	
 	~ConfigParser();
 	
 	/** Delete all values from the configuration parser. */
