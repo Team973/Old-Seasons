@@ -13,6 +13,7 @@
 #ifndef _BOSS_973_CONFIGSTATE_H_
 #define _BOSS_973_CONFIGSTATE_H_
 
+/** The configuration mode for the robot. */
 class ConfigState : public State
 {
 protected:
