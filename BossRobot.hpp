@@ -24,7 +24,7 @@ class KickerSystem;
 
 class BossRobot : public SimpleRobot
 {
-protected:
+private:
 	State *m_state, *m_prevState;
 	DriveSystem *m_driveSystem;
 	KickerSystem *m_kickerSystem;
