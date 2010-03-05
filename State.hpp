@@ -12,6 +12,13 @@
 #ifndef _BOSS_973_STATE_H_
 #define _BOSS_973_STATE_H_
 
+/**
+ *	A certain behavior of the robot.
+ *
+ *	In laymen's terms, each state is a different mode of the robot.  This class
+ *	merely defines the interface that the states must implement so that the
+ *	BossRobot knows how to give control to the state.
+ */
 class State
 {
 protected:
