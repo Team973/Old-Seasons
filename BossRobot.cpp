@@ -1,10 +1,12 @@
-//
-//	BossRobot.cpp
-//	Team 973
-//	2010 "The Boss"
-//
-//	Created on 2/11/10.
-//
+/**
+ *	@file BossRobot.cpp
+ *	Implementation of the BossRobot class.
+ *
+ *	Team 973<br>
+ *	2010 "The Boss"
+ *
+ *	Created on 2/11/10.
+ */
 
 #include "BossRobot.hpp"
 

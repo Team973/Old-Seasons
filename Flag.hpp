@@ -1,10 +1,12 @@
-//
-//	Flag.hpp
-//	Team 973
-//	2010 "The Boss"
-//
-//	Created on 2/26/10.
-//
+/**
+ *	@file Flag.hpp
+ *	Header for the Flag class.
+ *
+ *	Team 973<br>
+ *	2010 "The Boss"
+ *
+ *	Created on 2/26/10.
+ */
 
 #ifndef _BOSS_973_FLAG_H_
 #define _BOSS_973_FLAG_H_

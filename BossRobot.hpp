@@ -1,10 +1,12 @@
-//
-//	BossRobot.hpp
-//	Team 973
-//	2010 "The Boss"
-//
-//	Created on 2/11/10.
-//
+/**
+ *	@file BossRobot.hpp
+ *	Header for the BossRobot class.
+ *
+ *	Team 973<br>
+ *	2010 "The Boss"
+ *
+ *	Created on 2/11/10.
+ */
 
 #include "Options.hpp"
 #include "WPILib.h"
