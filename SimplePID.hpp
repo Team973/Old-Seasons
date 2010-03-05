@@ -13,7 +13,7 @@
 
 class SimplePID
 {
-protected:
+private:
 	double m_P, m_I, m_D;
 	double m_previousError;
 	double m_integral;
