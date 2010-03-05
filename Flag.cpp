@@ -25,6 +25,7 @@ bool Flag::Get()
 
 void Flag::Set(bool v)
 {
+	ClearTrigger();
 	m_value = v;
 }
 
