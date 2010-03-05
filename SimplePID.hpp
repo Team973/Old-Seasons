@@ -1,10 +1,12 @@
-//
-//	SimplePID.hpp
-//	Team 973
-//	2010 "The Boss"
-//
-//	Created on 2/14/10.
-//
+/**
+ *	@file SimplePID.hpp
+ *	Header for the SimplePID class.
+ *
+ *	Team 973<br>
+ *	2010 "The Boss"
+ *
+ *	Created on 2/14/10.
+ */
 
 #include "WPILib.h"
 

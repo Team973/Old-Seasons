@@ -1,10 +1,12 @@
-//
-//	ControlBoard.cpp
-//	Team 973
-//	2010 "The Boss"
-//
-//	Created on 2/11/10.
-//
+/**
+ *	@file ControlBoard.cpp
+ *	Implementation of the ControlBoard class.
+ *
+ *	Team 973<br>
+ *	2010 "The Boss"
+ *
+ *	Created on 2/11/10.
+ */
 
 #include "ControlBoard.hpp"
 

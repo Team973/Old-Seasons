@@ -1,10 +1,12 @@
-//
-//	State.hpp
-//	Team 973
-//	2010 "The Boss"
-//
-//	Created on 2/11/10.
-//
+/**
+ *	@file State.hpp
+ *	The interface for the robot state machine
+ *
+ *	Team 973<br>
+ *	2010 "The Boss"
+ *
+ *	Created on 2/11/10.
+ */
 
 #include "WPILib.h"
 #include "BossRobot.hpp"

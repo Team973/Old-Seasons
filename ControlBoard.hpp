@@ -1,10 +1,12 @@
-//
-//	ControlBoard.hpp
-//	Team 973
-//	2010 "The Boss"
-//
-//	Created on 2/11/10.
-//
+/**
+ *	@file ControlBoard.hpp
+ *	Header for the ControlBoard class.
+ *
+ *	Team 973<br>
+ *	2010 "The Boss"
+ *
+ *	Created on 2/11/10.
+ */
 
 #include "WPILib.h"
 #include "Options.hpp"

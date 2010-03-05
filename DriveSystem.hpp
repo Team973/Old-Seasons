@@ -1,10 +1,12 @@
-//
-//	DriveSystem.hpp
-//	Team 973
-//	2010 "The Boss"
-//
-//	Created on 2/11/10.
-//
+/**
+ *	@file DriveSystem.hpp
+ *	Header for all of the different drive systems.
+ *
+ *	Team 973<br>
+ *	2010 "The Boss"
+ *
+ *	Created on 2/11/10.
+ */
 
 #include "WPILib.h"
 #include "Options.hpp"

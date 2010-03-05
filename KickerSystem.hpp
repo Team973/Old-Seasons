@@ -1,10 +1,12 @@
-//
-//	KickerSystem.hpp
-//	Team 973
-//	2010 "The Boss"
-//
-//	Created on 2/16/10.
-//
+/**
+ *	@file KickerSystem.hpp
+ *	Header for the KickerSystem class.
+ *
+ *	Team 973<br>
+ *	2010 "The Boss"
+ *
+ *	Created on 2/16/10.
+ */
 
 #include "WPILib.h"
 #include "Options.hpp"

@@ -1,10 +1,12 @@
-//
-//	ConfigParser.hpp
-//	Team 973
-//	2010 "The Boss"
-//
-//	Created on 2/16/10.
-//
+/**
+ *	@file ConfigParser.hpp
+ *	Header for the ConfigParser class.
+ *
+ *	Team 973<br>
+ *	2010 "The Boss"
+ *
+ *	Created on 2/16/10.
+ */
 
 #include <map>
 #include <string>
