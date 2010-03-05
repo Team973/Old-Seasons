@@ -105,26 +105,22 @@ bool DriveSystem::IsTurning()
 
 void DriveSystem::Compensate()
 {
-	if (!IsMoving())
+	m_movingFlag.Set(IsMoving());
+	
+	if (!m_movingFlag.Get())
 	{
-		if (m_firstInertComp)
-		{
-			m_firstInertComp = false;
+		if (m_movingFlag.CheckTriggered())
 			InitInertCompensate();
-		}
 		InertCompensate();
-		m_firstMovingComp = true;
 	}
 	else
 	{
-		if (m_firstMovingComp)
-		{
-			m_firstMovingComp = false;
+		if (m_movingFlag.CheckTriggered())
 			InitMovingCompensate();
-		}
 		MovingCompensate();
-		m_firstInertComp = true;
 	}
+	
+	m_movingFlag.Clear();
 	
 #ifdef FEATURE_LCD
 	DS_LCD *lcd = DS_LCD::GetInstance();

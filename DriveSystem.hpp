@@ -10,6 +10,7 @@
 #include "Options.hpp"
 #include "BossRobot.hpp"
 #include "SimplePID.hpp"
+#include "Flag.hpp"
 
 #ifndef _BOSS_973_DRIVESYSTEM_H_
 #define _BOSS_973_DRIVESYSTEM_H_
@@ -21,7 +22,7 @@ protected:
 	RobotDrive *m_drive;
 	
 	float m_leftSpeed, m_rightSpeed;
-	bool m_firstInertComp, m_firstMovingComp;
+	Flag m_movingFlag;
 	int m_gear;
 	SimplePID m_leftPID, m_rightPID;
 	SimplePID m_deadheadPID;
