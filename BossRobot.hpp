@@ -66,7 +66,7 @@ public:
 	BossRobot();
 	
 	/**
-	 *	Handle automous mode.
+	 *	Handle autonomous mode.
 	 *
 	 *	This method will be called when autonomous is started, and it is the
 	 *	responsibility of this method to exit when autonomous is over.
