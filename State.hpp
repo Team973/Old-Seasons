@@ -21,8 +21,33 @@ protected:
 	State(BossRobot *r)    { m_robot = r; }
 public:
 	virtual ~State() {};
+	
+	/**
+	 *	Enter the state.
+	 *
+	 *	This will be called once when the State is initially changed into (via
+	 *	BossRobot::ChangeState), but the same instance may be entered several
+	 *	times during the execution of the program.  This is guaranteed to be
+	 *	called before State::Step.
+	 */
 	virtual void Enter() = 0;
+	
+	/**
+	 *	Exit the state.
+	 *
+	 *	This will be called once when the BossRobot class is changing to a new
+	 *	state (via BossRobot::ChangeState), but the same instance may be exited
+	 *	several times during the execution of the program.  This is guaranteed
+	 *	to be called before the new state's State::Enter.
+	 */
 	virtual void Exit() = 0;
+	
+	/**
+	 *	Do the state's logic.
+	 *
+	 *	BossRobot calls this method once for every iteration of the run loop
+	 *	when the state is active.
+	 */
 	virtual void Step() = 0;
 };
 
