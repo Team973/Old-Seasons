@@ -12,6 +12,7 @@
 #ifndef _BOSS_973_NORMALSTATE_H_
 #define _BOSS_973_NORMALSTATE_H_
 
+/** The ordinary mode of operator-controlled operation */
 class NormalState : public State
 {
 public:
