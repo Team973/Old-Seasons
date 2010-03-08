@@ -1,10 +1,12 @@
-//
-//	SimplePID.cpp
-//	Team 973
-//	2010 "The Boss"
-//
-//	Created on 2/14/10.
-//
+/**
+ *	@file SimplePID.cpp
+ *	Implementation of the SimplePID class.
+ *
+ *	Team 973<br>
+ *	2010 "The Boss"
+ *
+ *	Created on 2/14/10.
+ */
 
 #include "SimplePID.hpp"
 
@@ -69,7 +71,7 @@ double SimplePID::Update(double actual, double time)
 	double error = m_target - actual;
 	double derivative;
 	
-	if (time == 0.0)
+	if (time <= 0.0)
 		time = 0.001;
 	
 	m_integral += error * time;
