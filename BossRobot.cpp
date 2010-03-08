@@ -1,10 +1,12 @@
-//
-//	BossRobot.cpp
-//	Team 973
-//	2010 "The Boss"
-//
-//	Created on 2/11/10.
-//
+/**
+ *	@file BossRobot.cpp
+ *	Implementation of the BossRobot class.
+ *
+ *	Team 973<br>
+ *	2010 "The Boss"
+ *
+ *	Created on 2/11/10.
+ */
 
 #include "BossRobot.hpp"
 
@@ -138,9 +140,6 @@ BossRobot::BossRobot(void)
 #endif
 }
 
-/**
- * Drive left & right motors for 2 seconds then stop
- */
 void BossRobot::Autonomous(void)
 {
 	GetWatchdog().SetEnabled(false);
@@ -149,9 +148,6 @@ void BossRobot::Autonomous(void)
 //	m_drive->Drive(0.0, 0.0); 	// stop robot
 }
 
-/**
- * Runs the motors with arcade steering. 
- */
 void BossRobot::OperatorControl(void)
 {
 	// Main loop
@@ -209,6 +205,7 @@ void BossRobot::OperatorControl(void)
 	}
 }
 
+/** Perform any actions that need to be done before state updates */
 void BossRobot::PreStep(void)
 {
 #ifdef FEATURE_COMPRESSOR
@@ -216,6 +213,7 @@ void BossRobot::PreStep(void)
 #endif
 }
 
+/** Perform any actions that need to be done after state updates */
 void BossRobot::PostStep(void)
 {
 #if defined(FEATURE_LCD) && defined(FEATURE_GYRO)
@@ -247,6 +245,7 @@ void BossRobot::SetDriveSystem(DriveSystem *d)
 	}
 }
 
+/** Send vision statistics to the operator interface */
 void BossRobot::SendVisionData()
 {
 	if (m_visionTimer->Get() < 0.1)
@@ -324,6 +323,7 @@ static UINT16 DIOHardware2Logical(UINT16 dio)
 	return result;
 }
 
+/** Send IO data to the operator interface */
 void BossRobot::SendIOPortData()
 {
 	if (m_ioTimer->Get() < 0.1)

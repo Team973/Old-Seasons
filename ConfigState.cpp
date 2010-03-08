@@ -1,10 +1,12 @@
-//
-//	ConfigState.cpp
-//	Team 973
-//	2010 "The Boss"
-//
-//	Created on 2/26/10.
-//
+/**
+ *	@file ConfigState.cpp
+ *	Implementation of the ConfigState class.
+ *
+ *	Team 973<br>
+ *	2010 "The Boss"
+ *
+ *	Created on 2/26/10.
+ */
 
 #include "ConfigState.hpp"
 #include "NormalState.hpp"

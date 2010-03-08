@@ -1,10 +1,12 @@
-//
-//	KickerSystem.cpp
-//	Team 973
-//	2010 "The Boss"
-//
-//	Created on 2/16/10.
-//
+/**
+ *	@file KickerSystem.cpp
+ *	Implementation of the KickerSystem class.
+ *
+ *	Team 973<br>
+ *	2010 "The Boss"
+ *
+ *	Created on 2/16/10.
+ */
 
 #include "KickerSystem.hpp"
 #include "ControlBoard.hpp"
