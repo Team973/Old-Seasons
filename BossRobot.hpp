@@ -65,13 +65,17 @@ public:
 	
 	inline DriveSystem *GetDriveSystem() 	{ return m_driveSystem; }
 	void SetDriveSystem(DriveSystem *d);
-	RobotDrive *GetDrive();
 	
 	inline KickerSystem *GetKickerSystem() 	{ return m_kickerSystem; }
 	
 	inline ConfigParser &GetConfig()		{ return m_config; }
 	
 	// Accessors
+	inline SpeedController *GetLeftFrontDriveMotor	{ return m_leftMotor1; }
+	inline SpeedController *GetLeftRearDriveMotor	{ return m_leftMotor2; }
+	inline SpeedController *GetRightFrontDriveMotor	{ return m_rightMotor1; }
+	inline SpeedController *GetRightRearDriveMotor	{ return m_rightMotor2; }
+	
 	inline Encoder *GetLeftDriveEncoder() 	{ return m_leftDriveEncoder; }
 	inline Encoder *GetRightDriveEncoder() 	{ return m_rightDriveEncoder; }
 	inline Gyro *GetGyro() 				{ return m_gyro; }
