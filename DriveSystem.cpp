@@ -11,6 +11,7 @@
 #include "DriveSystem.hpp"
 #include "ControlBoard.hpp"
 #include "MyDriverStationLCD.h"
+#include "math.h"
 
 /**
  *	Ensure that a number is within [-1.0, 1.0].
