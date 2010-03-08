@@ -1,10 +1,12 @@
-//
-//	NormalState.cpp
-//	Team 973
-//	2010 "The Boss"
-//
-//	Created on 2/12/10.
-//
+/**
+ *	@file NormalState.cpp
+ *	Implementation of the NormalState class.
+ *
+ *	Team 973<br>
+ *	2010 "The Boss"
+ *
+ *	Created on 2/12/10.
+ */
 
 #include "NormalState.hpp"
 #include "ConfigState.hpp"

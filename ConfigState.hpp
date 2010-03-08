@@ -1,10 +1,12 @@
-//
-//	ConfigState.hpp
-//	Team 973
-//	2010 "The Boss"
-//
-//	Created on 2/26/10.
-//
+/**
+ *	@file ConfigState.hpp
+ *	Header for the ConfigState class.
+ *
+ *	Team 973<br>
+ *	2010 "The Boss"
+ *
+ *	Created on 2/26/10.
+ */
 
 #include "WPILib.h"
 #include "State.hpp"
@@ -13,6 +15,7 @@
 #ifndef _BOSS_973_CONFIGSTATE_H_
 #define _BOSS_973_CONFIGSTATE_H_
 
+/** The configuration mode for the robot. */
 class ConfigState : public State
 {
 protected:

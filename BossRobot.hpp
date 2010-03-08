@@ -1,10 +1,12 @@
-//
-//	BossRobot.hpp
-//	Team 973
-//	2010 "The Boss"
-//
-//	Created on 2/11/10.
-//
+/**
+ *	@file BossRobot.hpp
+ *	Header for the BossRobot class.
+ *
+ *	Team 973<br>
+ *	2010 "The Boss"
+ *
+ *	Created on 2/11/10.
+ */
 
 #include "Options.hpp"
 #include "WPILib.h"
@@ -22,6 +24,13 @@ class State;
 class DriveSystem;
 class KickerSystem;
 
+/**
+ *	Main controller for the robot.
+ *
+ *	Most of what is contained in here is the basic code to get the robot
+ *  initialized and running, and then the core logic is handled by State
+ *	subclasses.
+ */
 class BossRobot : public SimpleRobot
 {
 private:
@@ -55,12 +64,38 @@ private:
 	
 	Timer *m_ioTimer, *m_visionTimer;
 public:
+	/** Initialize the robot */
 	BossRobot();
 	
+	/**
+	 *	Handle autonomous mode.
+	 *
+	 *	This method will be called when autonomous is started, and it is the
+	 *	responsibility of this method to exit when autonomous is over.
+	 */
 	virtual void Autonomous();
+	
+	/**
+	 *	Handle teleoperated mode.
+	 *
+	 *	This method will be called when teleoperated is started, and it is the
+	 *	responsibility of this method to exit when teleoperated is over.
+	 *
+	 *	When this method is called, it will switch the current state to be an
+	 *	instance of NormalState.
+	 */
 	virtual void OperatorControl();
 	
+	/** Get the current state. */
 	inline State *GetState() 				{ return m_state; }
+	
+	/**
+	 *	Switch the current state.
+	 *
+	 *	The new state will not be changed to immediately.  When the run loop
+	 *	hits the next iteration, it will discover that the state has changed,
+	 *	call State::Exit on the old state and State::Enter on the new state.
+	 */
 	void ChangeState(State *);
 	
 	inline DriveSystem *GetDriveSystem() 	{ return m_driveSystem; }
@@ -69,6 +104,12 @@ public:
 	
 	inline KickerSystem *GetKickerSystem() 	{ return m_kickerSystem; }
 	
+	/**
+	 *	Get the robot's configuration.
+	 *
+	 *	The values inside the configuration parser are already initialized with
+	 *	the contents of the "boss.cfg" file.
+	 */
 	inline ConfigParser &GetConfig()		{ return m_config; }
 	
 	// Accessors

@@ -1,10 +1,12 @@
-//
-//	Flag.cpp
-//	Team 973
-//	2010 "The Boss"
-//
-//	Created on 2/26/10.
-//
+/**
+ *	@file Flag.cpp
+ *	Implementation of the Flag class.
+ *
+ *	Team 973<br>
+ *	2010 "The Boss"
+ *
+ *	Created on 2/26/10.
+ */
 
 #include "Flag.hpp"
 
