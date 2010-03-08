@@ -41,7 +41,8 @@ public:
 	/**
 	 *	Update the current value of the flag.
 	 *
-	 *	This may or may not cause a "trigger" event.
+	 *	This may or may not cause a "trigger" event.  Before changing the value,
+	 *	#ClearTrigger will be called.
 	 *
 	 *	@param v
 	 *		The new value of the flag
