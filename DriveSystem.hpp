@@ -70,6 +70,21 @@ public:
 	 */
 	virtual void Compensate();
 	
+	/**
+	 *	Drive a turn programmatically.
+	 *
+	 *	This is essentially the same as WPILib's RobotDrive::Drive, except
+	 *	ported to work on our system.
+	 *
+	 *	@param speed
+	 *		The forward/backward component of the drive, bounded in [-1.0, 1.0].
+	 *	@param curve
+	 *		The amount of curvature bounded in [-1.0, 1.0].  Negative values
+	 *		take the robot to the left, positive values take the robot to the
+	 *		right.
+	 */
+	virtual void Turn(float speed, float curve);
+	
 	/** Stop all motors. */
 	virtual void Stop();
 	
