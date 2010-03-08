@@ -25,6 +25,11 @@ void ConfigState::Enter()
 	lcd->UpdateLCD();
 #endif
 	
+	// Perform a full stop
+	m_robot->GetDriveSystem()->Stop();
+	m_robot->GetDriveSystem()->Drive();
+	
+	// Set up state
 	m_reread = Flag();
 	m_strengthLo = m_strengthMd = m_strengthHi = Flag();
 	m_kickRest = Flag();
