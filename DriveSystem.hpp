@@ -42,11 +42,6 @@ private:
 public:
 	virtual ~DriveSystem() {}
 	
-	inline RobotDrive *GetDrive()
-	{
-		return m_drive;
-	}
-	
 	/**
 	 *	Read controls from whatever source the drive system deems prudent.
 	 *
