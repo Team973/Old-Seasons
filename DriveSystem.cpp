@@ -72,7 +72,17 @@ void DriveSystem::Drive()
 	m_leftSpeed = limit(m_leftSpeed);
 	m_rightSpeed = limit(m_rightSpeed);
 	
-	// TODO: Change motors
+	if (m_robot->GetLeftFrontMotor() != NULL)
+		m_robot->GetLeftFrontMotor()->Set(m_leftSpeed);
+	
+	if (m_robot->GetLeftRearMotor() != NULL)
+		m_robot->GetLeftRearMotor()->Set(m_leftSpeed);
+	
+	if (m_robot->GetRightFrontMotor() != NULL)
+		m_robot->GetRightFrontMotor()->Set(-m_rightSpeed);
+	
+	if (m_robot->GetRightRearMotor() != NULL)
+		m_robot->GetRightRearMotor()->Set(-m_rightSpeed);
 	
 #ifdef FEATURE_GEAR_SWITCH
 	switch (m_gear)
