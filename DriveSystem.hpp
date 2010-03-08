@@ -29,17 +29,17 @@ protected:
 	
 	float m_leftSpeed, m_rightSpeed;
 	bool m_firstInertComp, m_firstMovingComp;
-	int m_gear;
+	short m_gear;
 	SimplePID m_leftPID, m_rightPID;
 	SimplePID m_deadheadPID;
-	
-	enum { kLoGear, kHiGear };
 	
 	DriveSystem();
 	DriveSystem(BossRobot *);
 private:
 	void InitPID();
 public:
+	enum { kLoGear, kHiGear };
+	
 	virtual ~DriveSystem() {}
 	
 	/**
@@ -101,6 +101,27 @@ public:
 	
 	/** Stop all motors. */
 	virtual void Stop();
+	
+	/**
+	 *	Retrieve the current gear.
+	 *
+	 *	@return The current gear setting
+	 */
+	inline short GetGear()
+	{
+		return m_gear;
+	}
+	
+	/**
+	 *	Change the drive gear.
+	 *
+	 *	@param gear
+	 *		The new gear setting
+	 */
+	inline void SetGear(short gear)
+	{
+		m_gear = gear;
+	}
 	
 	/**
 	 *	Check whether the drive system is moving.
