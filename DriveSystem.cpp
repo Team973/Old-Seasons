@@ -1,15 +1,24 @@
-//
-//	DriveSystem.cpp
-//	Team 973
-//	2010 "The Boss"
-//
-//	Created on 2/11/10.
-//
+/**
+ *	@file DriveSystem.cpp
+ *	Implementation of all of the different drive systems.
+ *
+ *	Team 973<br>
+ *	2010 "The Boss"
+ *
+ *	Created on 2/11/10.
+ */
 
 #include "DriveSystem.hpp"
 #include "ControlBoard.hpp"
 #include "MyDriverStationLCD.h"
 
+/**
+ *	Ensure that a number is within [-1.0, 1.0].
+ *
+ *	@param n
+ *		The number to operate on
+ *	@return The clipped number
+ */
 static inline float limit(float n)
 {
 	if (n > 1.0)
@@ -20,11 +29,27 @@ static inline float limit(float n)
 		return n;
 }
 
+/**
+ *	Return the maximum of two floating-point numbers.
+ *
+ *	@param a
+ *		The first floating-point number
+ *	@param b
+ *		The second floating-point number
+ *	@return The greater number of the two.
+ */
 static inline float fmax(float a, float b)
 {
 	return (a >= b) ? a : b;
 }
 
+/**
+ *	Square a number, but keep the sign.
+ *
+ *	@param n
+ *		The number to square
+ *	@return The number squared with the same sign as the original.
+ */
 static inline float sign_square(float n)
 {
 	return (n >= 0.0) ? (n * n) : -(n * n);
@@ -221,7 +246,7 @@ void DriveSystem::MovingCompensate()
 #endif
 }
 
-/**** AUTONOMOUS ****/
+// AUTONOMOUS
 
 AutonomousDriveSystem::AutonomousDriveSystem(BossRobot *r, RobotDrive *d)
     : DriveSystem(r, d)
@@ -232,7 +257,7 @@ void AutonomousDriveSystem::ReadControls()
 {	
 }
 
-/**** ARCADE ****/
+// ARCADE
 
 ArcadeDriveSystem::ArcadeDriveSystem(BossRobot *r, RobotDrive *d)
     : TeleoperatedDriveSystem(r, d)
@@ -303,7 +328,7 @@ bool ArcadeDriveSystem::IsTurning()
 	return (m_rotate > 0.05 || m_rotate < -0.05);
 }
 
-/**** TANK ****/
+// TANK
 
 TankDriveSystem::TankDriveSystem(BossRobot *r, RobotDrive *d)
     : TeleoperatedDriveSystem(r, d)
@@ -336,7 +361,7 @@ void TankDriveSystem::InterpretControls()
 	}
 }
 
-/**** XBOX ****/
+// XBOX
 
 /* 	Xbox controller info
  * 

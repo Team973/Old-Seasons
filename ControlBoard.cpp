@@ -1,10 +1,12 @@
-//
-//	ControlBoard.cpp
-//	Team 973
-//	2010 "The Boss"
-//
-//	Created on 2/11/10.
-//
+/**
+ *	@file ControlBoard.cpp
+ *	Implementation of the ControlBoard class.
+ *
+ *	Team 973<br>
+ *	2010 "The Boss"
+ *
+ *	Created on 2/11/10.
+ */
 
 #include "ControlBoard.hpp"
 
@@ -43,13 +45,6 @@ Joystick &ControlBoard::GetJoystick(int index)
 	}
 }
 
-/**
- * Get the state of a given button on the driver station.
- * 
- * Why don't we just query it directly?
- * General code friendliness, and some of the buttons are wired bizarrely, so we
- * invert the ones we need to here.
- */
 bool ControlBoard::GetButton(UINT16 buttonNum)
 {
 #ifdef FEATURE_IO_BOARD
