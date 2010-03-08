@@ -33,16 +33,14 @@ static inline float sign_square(float n)
 DriveSystem::DriveSystem()
 {
 	m_robot = NULL;
-	m_drive = NULL;
 	m_gear = kLoGear;
 	m_leftSpeed = m_rightSpeed = 0.0;
 	InitPID();
 }
 
-DriveSystem::DriveSystem(BossRobot *r, RobotDrive *d)
+DriveSystem::DriveSystem(BossRobot *r)
 {
     m_robot = r;
-	m_drive = d;
 	m_gear = kLoGear;
 	m_leftSpeed = m_rightSpeed = 0.0;
 	InitPID();
@@ -71,7 +69,10 @@ void DriveSystem::InitPID()
 
 void DriveSystem::Drive()
 {
-	m_drive->SetLeftRightMotorSpeeds(m_leftSpeed, m_rightSpeed);
+	m_leftSpeed = limit(m_leftSpeed);
+	m_rightSpeed = limit(m_rightSpeed);
+	
+	// TODO: Change motors
 	
 #ifdef FEATURE_GEAR_SWITCH
 	switch (m_gear)
@@ -227,8 +228,8 @@ void DriveSystem::MovingCompensate()
 
 /**** AUTONOMOUS ****/
 
-AutonomousDriveSystem::AutonomousDriveSystem(BossRobot *r, RobotDrive *d)
-    : DriveSystem(r, d)
+AutonomousDriveSystem::AutonomousDriveSystem(BossRobot *r)
+    : DriveSystem(r)
 {
 }
 	
@@ -238,8 +239,8 @@ void AutonomousDriveSystem::ReadControls()
 
 /**** ARCADE ****/
 
-ArcadeDriveSystem::ArcadeDriveSystem(BossRobot *r, RobotDrive *d)
-    : TeleoperatedDriveSystem(r, d)
+ArcadeDriveSystem::ArcadeDriveSystem(BossRobot *r)
+    : TeleoperatedDriveSystem(r)
 {
 	m_move = m_rotate = 0.0;
 }
@@ -309,8 +310,8 @@ bool ArcadeDriveSystem::IsTurning()
 
 /**** TANK ****/
 
-TankDriveSystem::TankDriveSystem(BossRobot *r, RobotDrive *d)
-    : TeleoperatedDriveSystem(r, d)
+TankDriveSystem::TankDriveSystem(BossRobot *r)
+    : TeleoperatedDriveSystem(r)
 {
 }
 
@@ -351,8 +352,8 @@ void TankDriveSystem::InterpretControls()
  * 		4 - Right X
  * 		5 - Right Y
  */
-XboxDriveSystem::XboxDriveSystem(BossRobot *r, RobotDrive *d)
-    : ArcadeDriveSystem(r, d)
+XboxDriveSystem::XboxDriveSystem(BossRobot *r)
+    : ArcadeDriveSystem(r)
 {
 }
 

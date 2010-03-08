@@ -18,7 +18,6 @@ class DriveSystem
 {
 protected:
 	BossRobot *m_robot;
-	RobotDrive *m_drive;
 	
 	float m_leftSpeed, m_rightSpeed;
 	bool m_firstInertComp, m_firstMovingComp;
@@ -29,7 +28,7 @@ protected:
 	enum { kLoGear, kHiGear };
 	
 	DriveSystem();
-	DriveSystem(BossRobot *, RobotDrive *);
+	DriveSystem(BossRobot *);
 private:
 	void InitPID();
 public:
@@ -63,7 +62,7 @@ protected:
 class AutonomousDriveSystem : public DriveSystem
 {
 public:
-	AutonomousDriveSystem(BossRobot *, RobotDrive *);
+	AutonomousDriveSystem(BossRobot *);
 	virtual void ReadControls();
 };
 
@@ -71,7 +70,7 @@ class TeleoperatedDriveSystem : public DriveSystem
 {
 protected:
 	TeleoperatedDriveSystem() : DriveSystem() {}
-	TeleoperatedDriveSystem(BossRobot *r, RobotDrive *d) : DriveSystem(r, d) {}
+	TeleoperatedDriveSystem(BossRobot *r) : DriveSystem(r) {}
 	
 	virtual void InterpretControls() = 0;
 };
@@ -83,7 +82,7 @@ protected:
 	
 	virtual void InterpretControls();
 public:
-	ArcadeDriveSystem(BossRobot *, RobotDrive *);
+	ArcadeDriveSystem(BossRobot *);
 	virtual void ReadControls();
 	virtual bool IsMoving();
 	virtual bool IsTurning();
@@ -94,14 +93,14 @@ class TankDriveSystem : public TeleoperatedDriveSystem
 protected:
 	virtual void InterpretControls();
 public:
-	TankDriveSystem(BossRobot *, RobotDrive *);
+	TankDriveSystem(BossRobot *);
 	virtual void ReadControls();
 };
 
 class XboxDriveSystem : public ArcadeDriveSystem
 {
 public:
-	XboxDriveSystem(BossRobot *, RobotDrive *);
+	XboxDriveSystem(BossRobot *);
 	virtual void ReadControls();
 };
 
