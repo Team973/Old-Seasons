@@ -85,6 +85,25 @@ public:
 	 */
 	virtual void Turn(float speed, float curve);
 	
+	/**
+	 *	Set motor speeds programmatically.
+	 *
+	 *	This gives you full manual control of the robot's drive.  The drive
+	 *	system will automatically flip the motor speeds appropriately, so that
+	 *	1.0 means go forward, and -1.0 means go backward.  So something like
+	 *	this:
+	 *
+	 *		<code>robot->GetDriveSystem()->SetSpeeds(1.0, 1.0);</code>
+	 *
+	 *	will make the robot go forward.
+	 *
+	 *	@param left
+	 *		The speed of the left motors.
+	 *	@param right
+	 *		The speed of the right motors.
+	 */
+	virtual void SetSpeeds(float left, float right);
+	
 	/** Stop all motors. */
 	virtual void Stop();
 	

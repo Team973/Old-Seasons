@@ -149,6 +149,12 @@ void DriveSystem::Turn(float speed, float curve)
 	}
 }
 
+void DriveSystem::SetSpeeds(float left, float right)
+{
+	m_leftSpeed = left;
+	m_rightSpeed = right;
+}
+
 void DriveSystem::Stop()
 {
 	m_leftSpeed = m_rightSpeed = 0.0;
