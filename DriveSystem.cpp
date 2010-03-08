@@ -122,6 +122,33 @@ void DriveSystem::Drive()
 #endif
 }
 
+void DriveSystem::Turn(float speed, float curve)
+{
+	float value, ratio;
+	
+	if (curve == 0)
+	{
+		m_leftSpeed = m_rightSpeed = speed;
+	}
+	else
+	{
+		value = log(curve > 0 ? curve : -curve);
+		ratio = (value - 0.5) / (value + 0.5);
+		if (ratio == 0)
+			ratio = .0000000001;
+		if (curve < 0)
+		{
+			m_leftSpeed = speed / ratio;
+			m_rightSpeed = speed;
+		}
+		else
+		{
+			m_leftSpeed = speed;
+			m_rightSpeed = speed / ratio;
+		}
+	}
+}
+
 void DriveSystem::Stop()
 {
 	m_leftSpeed = m_rightSpeed = 0.0;
