@@ -30,7 +30,7 @@ protected:
 	RobotDrive *m_drive;
 	
 	float m_leftSpeed, m_rightSpeed;
-	Flag m_movingFlag;
+	Flag m_inertFlag, m_movingFlag;
 	int m_gear;
 	SimplePID m_leftPID, m_rightPID;
 	SimplePID m_deadheadPID;
