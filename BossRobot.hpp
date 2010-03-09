@@ -49,13 +49,14 @@ private:
 	Relay *m_compressor;
 	DigitalInput *m_pressureSwitch;
 	
-	SpeedController *m_armMotor1, *m_armMotor2;
-	SpeedController *m_intakeMotor;
+	SpeedController *m_shoulderMotor1, *m_shoulderMotor2;
+	AnalogChannel *m_shoulderSensor;
 	
 	SpeedController *m_kickerMotor;
 	Relay *m_kickerWinchRelay1, *m_kickerWinchRelay2;
 	AnalogChannel *m_kickerWinchSensor;
 	AnalogChannel *m_kickerEncoder;
+	SpeedController *m_intakeMotor;
 	
 #ifdef FEATURE_CAMERA
 	AxisCamera *m_camera;
@@ -126,6 +127,10 @@ public:
 	inline SpeedController *GetKickerMotor()	{ return m_kickerMotor; }
 	inline Solenoid *GetGearSwitch()		{ return m_gearSwitch; }
 	inline SpeedController *GetIntakeMotor()	{ return m_intakeMotor; }
+	
+	inline SpeedController *GetShoulderMotor1()	{ return m_shoulderMotor1; }
+	inline SpeedController *GetShoulderMotor2()	{ return m_shoulderMotor2; }
+	inline AnalogChannel *GetShoulderSensor()	{ return m_shoulderSensor; }
 
 protected:
 	void SendIOPortData(void);

@@ -31,6 +31,7 @@ public:
 protected:
 	void HandleStrengthPresetting();
 	void HandleKickPresetting();
+	void HandleShoulderPresetting();
 };
 
 #endif
