@@ -22,6 +22,7 @@ protected:
 	Flag m_reread;
 	Flag m_strengthLo, m_strengthMd, m_strengthHi;
 	Flag m_kickRest;
+	Flag m_shoulderStowed, m_shoulderRaised, m_shoulderGTFU;
 public:
 	ConfigState(BossRobot *r);
 	
