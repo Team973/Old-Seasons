@@ -26,8 +26,8 @@ void FinaleState::Enter()
 	lcd->UpdateLCD();
 #endif
 	
-	m_robot->GetDriveSystem()->Stop();
-	m_robot->GetDriveSystem()->Drive();
+	m_robot->SoftStop();
+	
 	m_robot->GetArmSystem()->SetState(ArmSystem::kRaised);
 }
 

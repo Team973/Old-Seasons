@@ -115,26 +115,38 @@ public:
 	 */
 	inline ConfigParser &GetConfig()		{ return m_config; }
 	
+	/**
+	 *	Stop the robot.
+	 *
+	 *	This simply stops all outputs that the robot has control over.  If you
+	 *	update other subsystems, then the robot may not completely stop, but
+	 *	this should suffice for most cases.
+	 *
+	 *	The basic use for this method is making sure that when you go to switch
+	 *	states that there aren't any lingering motors running.
+	 */
+	void SoftStop();
+	
 	// Accessors
 	inline SpeedController *GetLeftFrontDriveMotor()	{ return m_leftMotor1; }
 	inline SpeedController *GetLeftRearDriveMotor()		{ return m_leftMotor2; }
 	inline SpeedController *GetRightFrontDriveMotor()	{ return m_rightMotor1; }
 	inline SpeedController *GetRightRearDriveMotor()	{ return m_rightMotor2; }
+	inline Solenoid *GetGearSwitch()					{ return m_gearSwitch; }
+	inline Encoder *GetLeftDriveEncoder() 				{ return m_leftDriveEncoder; }
+	inline Encoder *GetRightDriveEncoder() 				{ return m_rightDriveEncoder; }
+	inline Gyro *GetGyro() 								{ return m_gyro; }
 	
-	inline Encoder *GetLeftDriveEncoder() 	{ return m_leftDriveEncoder; }
-	inline Encoder *GetRightDriveEncoder() 	{ return m_rightDriveEncoder; }
-	inline Gyro *GetGyro() 				{ return m_gyro; }
-	inline Relay *GetKickerWinch1()			{ return m_kickerWinchRelay1; }
-	inline Relay *GetKickerWinch2()			{ return m_kickerWinchRelay2; }
-	inline AnalogChannel *GetKickerWinchSensor()	{ return m_kickerWinchSensor; }
-	inline AnalogChannel *GetKickerEncoder()	{ return m_kickerEncoder; }
-	inline SpeedController *GetKickerMotor()	{ return m_kickerMotor; }
-	inline Solenoid *GetGearSwitch()		{ return m_gearSwitch; }
-	inline SpeedController *GetIntakeMotor()	{ return m_intakeMotor; }
+	inline Relay *GetKickerWinch1()						{ return m_kickerWinchRelay1; }
+	inline Relay *GetKickerWinch2()						{ return m_kickerWinchRelay2; }
+	inline AnalogChannel *GetKickerWinchSensor()		{ return m_kickerWinchSensor; }
+	inline AnalogChannel *GetKickerEncoder()			{ return m_kickerEncoder; }
+	inline SpeedController *GetKickerMotor()			{ return m_kickerMotor; }
+	inline SpeedController *GetIntakeMotor()			{ return m_intakeMotor; }
 	
-	inline SpeedController *GetShoulderMotor1()	{ return m_shoulderMotor1; }
-	inline SpeedController *GetShoulderMotor2()	{ return m_shoulderMotor2; }
-	inline AnalogChannel *GetShoulderSensor()	{ return m_shoulderSensor; }
+	inline SpeedController *GetShoulderMotor1()			{ return m_shoulderMotor1; }
+	inline SpeedController *GetShoulderMotor2()			{ return m_shoulderMotor2; }
+	inline AnalogChannel *GetShoulderSensor()			{ return m_shoulderSensor; }
 
 protected:
 	void SendIOPortData(void);

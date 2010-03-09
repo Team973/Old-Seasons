@@ -245,6 +245,20 @@ void BossRobot::SetDriveSystem(DriveSystem *d)
 	}
 }
 
+void BossRobot::SoftStop()
+{
+	m_leftMotor1->Set(0.0);
+	m_leftMotor2->Set(0.0);
+	m_rightMotor1->Set(0.0);
+	m_rightMotor2->Set(0.0);
+	m_shoulderMotor1->Set(0.0);
+	m_shoulderMotor2->Set(0.0);
+	m_kickerMotor->Set(0.0);
+	m_kickerWinchRelay1->Set(Relay::kOff);
+	m_kickerWinchRelay2->Set(Relay::kOff);
+	m_intakeMotor->Set(0.0);
+}
+
 /** Send vision statistics to the operator interface */
 void BossRobot::SendVisionData()
 {
