@@ -1,0 +1,55 @@
+/**
+ *	@file FinaleState.cpp
+ *	Implementation of the FinaleState class.
+ *
+ *	Team 973<br>
+ *	2010 "The Boss"
+ *
+ *	Created on 3/9/10.
+ */
+
+#include "State.hpp"
+#include "DriveSystem.hpp"
+#include "ControlBoard.hpp"
+#include "NormalState.hpp"
+
+FinaleState::FinaleState(BossRobot *r) : State(r)
+{
+}
+
+void FinaleState::Enter()
+{
+#ifdef FEATURE_LCD
+	DS_LCD *lcd = DS_LCD::GetInstance();
+	lcd->PrintfLine(DS_LCD::kUser_Line1, "FINALE!!!!!");
+	lcd->UpdateLCD();
+#endif
+	
+	m_robot->GetDriveSystem()->Stop();
+	m_robot->GetDriveSystem()->Drive();
+}
+
+void FinaleState::Exit()
+{
+}
+
+void FinaleState::Step()
+{
+	TeleoperatedDriveSystem *ds = dynamic_cast<TeleoperatedDriveSystem *>(m_robot->GetDriveSystem());
+	
+	// Check for state finished
+	if (!ControlBoard::GetInstance().GetButton(3))
+	{
+		m_robot->ChangeState(new NormalState(m_robot));
+		return;
+	}
+	
+	if (ds != NULL)
+	{
+		ds->ReadControls();
+		ds->Compensate();
+		m_robot->GetWatchdog().Feed();
+		ds->Drive();
+	}
+	m_robot->GetWatchdog().Feed();
+}

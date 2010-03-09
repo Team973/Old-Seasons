@@ -73,6 +73,12 @@ void NormalState::Step()
 		return;
 	}
 	
+	if (ControlBoard::GetInstance().GetButton(3))
+	{
+		m_robot->ChangeState(new FinaleState(m_robot));
+		return;
+	}
+	
 	if (ds != NULL)
 	{
 		ds->ReadControls();
