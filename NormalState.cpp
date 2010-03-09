@@ -31,20 +31,20 @@ void NormalState::Enter()
 	std::string driveSystemName = m_robot->GetConfig().SetDefault("driveSystem", "arcade");
 	if (driveSystemName == "arcade")
 	{
-		m_robot->SetDriveSystem(new ArcadeDriveSystem(m_robot, m_robot->GetDrive()));
+		m_robot->SetDriveSystem(new ArcadeDriveSystem(m_robot));
 	}
 	else if (driveSystemName == "tank")
 	{
-		m_robot->SetDriveSystem(new TankDriveSystem(m_robot, m_robot->GetDrive()));
+		m_robot->SetDriveSystem(new TankDriveSystem(m_robot));
 	}
 	else if (driveSystemName == "xbox")
 	{
-		m_robot->SetDriveSystem(new XboxDriveSystem(m_robot, m_robot->GetDrive()));
+		m_robot->SetDriveSystem(new XboxDriveSystem(m_robot));
 	}
 	else
 	{
 		// Default to arcade system
-		m_robot->SetDriveSystem(new ArcadeDriveSystem(m_robot, m_robot->GetDrive()));
+		m_robot->SetDriveSystem(new ArcadeDriveSystem(m_robot));
 	}
 	
 #ifdef FEATURE_DRIVE_ENCODERS
