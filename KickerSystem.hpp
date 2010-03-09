@@ -23,7 +23,7 @@ class KickerSystem
 {
 protected:
 	BossRobot *m_robot;
-	short m_strength;
+	short m_strength, m_intakeState;
 	bool m_kicking;
 	Flag m_inDeadband;
 	Flag m_kickTrigger;
@@ -48,6 +48,7 @@ public:
 protected:
 	virtual void UpdateWinch();
 	virtual void UpdateKicker();
+	virtual void UpdateIntake();
 };
 
 #endif
