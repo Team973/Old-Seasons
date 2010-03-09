@@ -67,6 +67,11 @@ class GTFUState : public State
 {
 };
 
+/**
+ *	"User wants to suspend" state.
+ *
+ *	This makes the arm go up and disables kicking.
+ */
 class FinaleState : public State
 {
 public:
