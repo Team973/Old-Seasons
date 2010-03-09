@@ -37,6 +37,22 @@ void KickerSystem::ReadControls()
 	if (m_kickTrigger.GetTriggeredOn())
 		Kick();
 	
+	if (board.GetJoystick(3).GetRawButton(2) ||
+		board.GetJoystick(3).GetRawButton(3) ||
+		board.GetJoystick(3).GetRawButton(4) ||
+		board.GetJoystick(3).GetRawButton(5))
+	{
+		m_intakeState = 1;
+	}
+	else if (board.GetJoystick(3).GetRawButton(8))
+	{
+		m_intakeState = -1;
+	}
+	else
+	{
+		m_intakeState = 0;
+	}
+	
 #ifdef FEATURE_LCD
 	DS_LCD *lcd = DS_LCD::GetInstance();
 	lcd->PrintfLine(DS_LCD::kUser_Line5, "Kicker: %.2fV", m_robot->GetKickerEncoder()->GetVoltage());
@@ -55,6 +71,7 @@ void KickerSystem::Update()
 {
 	UpdateWinch();
 	UpdateKicker();
+	UpdateIntake();
 }
 
 void KickerSystem::UpdateWinch()
@@ -163,4 +180,23 @@ void KickerSystem::UpdateKicker()
 	
 	// We're in the process of kicking.
 	m_robot->GetKickerMotor()->Set(1.0);
+}
+
+void KickerSystem::UpdateIntake()
+{
+	switch (m_intakeState)
+	{
+	case -1:
+		m_robot->GetIntakeMotor()->Set(-1.0);
+		break;
+	case 0:
+		m_robot->GetIntakeMotor()->Set(0.0);
+		break;
+	case 1:
+		m_robot->GetIntakeMotor()->Set(1.0);
+		break;
+	default:
+		m_robot->GetIntakeMotor()->Set(0.0);
+		break;
+	}
 }

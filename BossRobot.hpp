@@ -50,8 +50,7 @@ private:
 	DigitalInput *m_pressureSwitch;
 	
 	SpeedController *m_armMotor1, *m_armMotor2;
-	SpeedController *m_intakeMotor1, *m_intakeMotor2;
-	Relay *m_intakeMotor3, *m_intakeMotor4;
+	SpeedController *m_intakeMotor;
 	
 	SpeedController *m_kickerMotor;
 	Relay *m_kickerWinchRelay1, *m_kickerWinchRelay2;
@@ -126,6 +125,7 @@ public:
 	inline AnalogChannel *GetKickerEncoder()	{ return m_kickerEncoder; }
 	inline SpeedController *GetKickerMotor()	{ return m_kickerMotor; }
 	inline Solenoid *GetGearSwitch()		{ return m_gearSwitch; }
+	inline SpeedController *GetIntakeMotor()	{ return m_intakeMotor; }
 
 protected:
 	void SendIOPortData(void);

@@ -87,10 +87,7 @@ BossRobot::BossRobot(void)
 	m_armMotor1 = new Victor(6, 1);
 	m_armMotor2 = new Victor(6, 2);
 	
-	m_intakeMotor1 = new Victor(6, 3);
-	m_intakeMotor2 = new Victor(6, 4);
-	m_intakeMotor3 = new Relay(6, 1);
-	m_intakeMotor4 = new Relay(6, 2);
+	m_intakeMotor = new Victor(6, 3);
 	
 	m_kickerWinchSensor = new AnalogChannel(1, 3);
 	m_kickerWinchRelay1 = new Relay(6, 3);
