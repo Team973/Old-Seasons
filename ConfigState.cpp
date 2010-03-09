@@ -11,6 +11,7 @@
 #include "ConfigState.hpp"
 #include "NormalState.hpp"
 #include "ControlBoard.hpp"
+#include "DriveSystem.hpp"
 
 ConfigState::ConfigState(BossRobot *r)
 	: State(r)
