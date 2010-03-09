@@ -315,9 +315,9 @@ void ArcadeDriveSystem::ReadControls()
 	m_move = -(ControlBoard::GetInstance().GetJoystick(1).GetY());
 	m_rotate = -(ControlBoard::GetInstance().GetJoystick(2).GetX());
 	
-	if (ControlBoard::GetInstance().GetJoystick(1).GetRawButton(2))
+	if (ControlBoard::GetInstance().GetJoystick(1).GetTrigger())
 		m_gear = kLoGear;
-	else if (ControlBoard::GetInstance().GetJoystick(1).GetRawButton(3))
+	else if (ControlBoard::GetInstance().GetJoystick(2).GetTrigger())
 		m_gear = kHiGear;
 	
 	InterpretControls();
