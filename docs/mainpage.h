@@ -23,7 +23,7 @@
  */
 
 /**
- *  @file main.h
+ *  @file docs/mainpage.h
  *
  *  A documentation-only file that has the content for the Doxygen main page.
  */
