@@ -14,6 +14,7 @@
 #include "NormalState.hpp"
 #include "DriveSystem.hpp"
 #include "KickerSystem.hpp"
+#include "ArmSystem.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -98,6 +99,7 @@ BossRobot::BossRobot(void)
 #endif
 	
 	m_kickerSystem = new KickerSystem(this);
+	m_armSystem = new ArmSystem(this);
 	
 	/* Misc */
 	m_ioTimer = new Timer();

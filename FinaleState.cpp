@@ -10,6 +10,7 @@
 
 #include "State.hpp"
 #include "DriveSystem.hpp"
+#include "ArmSystem.hpp"
 #include "ControlBoard.hpp"
 #include "NormalState.hpp"
 
@@ -27,6 +28,7 @@ void FinaleState::Enter()
 	
 	m_robot->GetDriveSystem()->Stop();
 	m_robot->GetDriveSystem()->Drive();
+	m_robot->GetArmSystem()->SetState(ArmSystem::kRaised);
 }
 
 void FinaleState::Exit()
@@ -52,4 +54,6 @@ void FinaleState::Step()
 		ds->Drive();
 	}
 	m_robot->GetWatchdog().Feed();
+	
+	//m_robot->GetArmSystem()->Update();
 }

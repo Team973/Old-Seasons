@@ -14,6 +14,7 @@
 #include "ControlBoard.hpp"
 #include "DriveSystem.hpp"
 #include "KickerSystem.hpp"
+#include "ArmSystem.hpp"
 
 NormalState::NormalState(BossRobot *r)
 	: State(r)
@@ -53,6 +54,8 @@ void NormalState::Enter()
 	m_robot->GetLeftDriveEncoder()->Reset();
 	m_robot->GetRightDriveEncoder()->Reset();
 #endif
+	
+	m_robot->GetArmSystem()->SetState(ArmSystem::kStowed);
 }
 
 void NormalState::Exit()
@@ -93,6 +96,10 @@ void NormalState::Step()
 		m_robot->GetKickerSystem()->ReadControls();
 		m_robot->GetKickerSystem()->Update();
 	}
+	
+	m_robot->GetWatchdog().Feed();
+	
+	//m_robot->GetArmSystem()->Update();
 	
 	m_robot->GetWatchdog().Feed();
 }

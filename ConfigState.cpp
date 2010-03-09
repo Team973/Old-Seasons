@@ -138,6 +138,24 @@ void ConfigState::HandleShoulderPresetting()
 	m_robot->GetShoulderMotor1()->Set(board.GetJoystick(1).GetY());
 	m_robot->GetShoulderMotor2()->Set(board.GetJoystick(1).GetY());
 	
+	m_shoulderStowed.Set(board.GetJoystick(1).GetRawButton(2));
+	if (m_shoulderStowed.GetTriggeredOn())
+	{
+		m_robot->GetConfig().Set("shoulderStowedPos", m_robot->GetShoulderSensor()->GetVoltage());
+	}
+	
+	m_shoulderRaised.Set(board.GetJoystick(1).GetRawButton(3));
+	if (m_shoulderRaised.GetTriggeredOn())
+	{
+		m_robot->GetConfig().Set("shoulderRaisedPos", m_robot->GetShoulderSensor()->GetVoltage());
+	}
+	
+	m_shoulderGTFU.Set(board.GetJoystick(1).GetTrigger());
+	if (m_shoulderGTFU.GetTriggeredOn())
+	{
+		m_robot->GetConfig().Set("shoulderGTFUPos", m_robot->GetShoulderSensor()->GetVoltage());
+	}
+	
 #ifdef FEATURE_LCD
 	DS_LCD::GetInstance()->PrintfLine(DS_LCD::kUser_Line4,
 		"Shoulder: %.2fV", m_robot->GetShoulderSensor()->GetVoltage());

@@ -23,6 +23,7 @@
 class State;
 class DriveSystem;
 class KickerSystem;
+class ArmSystem;
 
 /**
  *	Main controller for the robot.
@@ -37,6 +38,7 @@ private:
 	State *m_state, *m_prevState;
 	DriveSystem *m_driveSystem;
 	KickerSystem *m_kickerSystem;
+	ArmSystem *m_armSystem;
 	ConfigParser m_config;
 	
 	SpeedController *m_leftMotor1, *m_leftMotor2;   // Front, Back
@@ -102,6 +104,8 @@ public:
 	void SetDriveSystem(DriveSystem *d);
 	
 	inline KickerSystem *GetKickerSystem() 	{ return m_kickerSystem; }
+	
+	inline ArmSystem *GetArmSystem()		{ return m_armSystem; }
 	
 	/**
 	 *	Get the robot's configuration.
