@@ -60,13 +60,21 @@ public:
 	virtual void Step() = 0;
 };
 
-// TODO: Expand acronym without offending people
+/**
+ * The "Get The Frame Upright" state! (TM)
+ */
 class GTFUState : public State
 {
 };
 
 class FinaleState : public State
 {
+public:
+	FinaleState(BossRobot *);
+	
+	virtual void Enter();
+	virtual void Exit();
+	virtual void Step();
 };
 
 class RaisingState : public State
