@@ -22,6 +22,7 @@ void FinaleState::Enter()
 {
 #ifdef FEATURE_LCD
 	DS_LCD *lcd = DS_LCD::GetInstance();
+	lcd->Clear();
 	lcd->PrintfLine(DS_LCD::kUser_Line1, "FINALE!!!!!");
 	lcd->UpdateLCD();
 #endif
