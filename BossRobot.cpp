@@ -56,8 +56,7 @@ BossRobot::BossRobot(void)
 	m_rightMotor2 = new Jaguar(2);
 #endif
 	
-	m_driveSystem = new AutonomousDriveSystem(this, new RobotDrive(
-			m_leftMotor1, m_leftMotor2, m_rightMotor1, m_rightMotor2));
+	m_driveSystem = new AutonomousDriveSystem(this);
 	
 #ifdef FEATURE_DRIVE_ENCODERS
 	m_leftDriveEncoder = new Encoder(2, 3, true);
@@ -244,11 +243,6 @@ void BossRobot::SetDriveSystem(DriveSystem *d)
 			delete m_driveSystem;
 		m_driveSystem = d;
 	}
-}
-
-RobotDrive *BossRobot::GetDrive()
-{
-	return m_driveSystem->GetDrive();
 }
 
 /** Send vision statistics to the operator interface */

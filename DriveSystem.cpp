@@ -11,6 +11,7 @@
 #include "DriveSystem.hpp"
 #include "ControlBoard.hpp"
 #include "MyDriverStationLCD.h"
+#include "math.h"
 
 /**
  *	Ensure that a number is within [-1.0, 1.0].
@@ -58,16 +59,14 @@ static inline float sign_square(float n)
 DriveSystem::DriveSystem()
 {
 	m_robot = NULL;
-	m_drive = NULL;
 	m_gear = kLoGear;
 	m_leftSpeed = m_rightSpeed = 0.0;
 	InitPID();
 }
 
-DriveSystem::DriveSystem(BossRobot *r, RobotDrive *d)
+DriveSystem::DriveSystem(BossRobot *r)
 {
     m_robot = r;
-	m_drive = d;
 	m_gear = kLoGear;
 	m_leftSpeed = m_rightSpeed = 0.0;
 	InitPID();
@@ -94,7 +93,20 @@ void DriveSystem::InitPID()
 
 void DriveSystem::Drive()
 {
-	m_drive->SetLeftRightMotorSpeeds(m_leftSpeed, m_rightSpeed);
+	m_leftSpeed = limit(m_leftSpeed);
+	m_rightSpeed = limit(m_rightSpeed);
+	
+	if (m_robot->GetLeftFrontDriveMotor() != NULL)
+		m_robot->GetLeftFrontDriveMotor()->Set(m_leftSpeed);
+	
+	if (m_robot->GetLeftRearDriveMotor() != NULL)
+		m_robot->GetLeftRearDriveMotor()->Set(m_leftSpeed);
+	
+	if (m_robot->GetRightFrontDriveMotor() != NULL)
+		m_robot->GetRightFrontDriveMotor()->Set(-m_rightSpeed);
+	
+	if (m_robot->GetRightRearDriveMotor() != NULL)
+		m_robot->GetRightRearDriveMotor()->Set(-m_rightSpeed);
 	
 #ifdef FEATURE_GEAR_SWITCH
 	switch (m_gear)
@@ -107,6 +119,39 @@ void DriveSystem::Drive()
 		break;
 	}
 #endif
+}
+
+void DriveSystem::Turn(float speed, float curve)
+{
+	float value, ratio;
+	
+	if (curve == 0)
+	{
+		m_leftSpeed = m_rightSpeed = speed;
+	}
+	else
+	{
+		value = log(curve > 0 ? curve : -curve);
+		ratio = (value - 0.5) / (value + 0.5);
+		if (ratio == 0)
+			ratio = .0000000001;
+		if (curve < 0)
+		{
+			m_leftSpeed = speed / ratio;
+			m_rightSpeed = speed;
+		}
+		else
+		{
+			m_leftSpeed = speed;
+			m_rightSpeed = speed / ratio;
+		}
+	}
+}
+
+void DriveSystem::SetSpeeds(float left, float right)
+{
+	m_leftSpeed = left;
+	m_rightSpeed = right;
 }
 
 void DriveSystem::Stop()
@@ -248,8 +293,8 @@ void DriveSystem::MovingCompensate()
 
 // AUTONOMOUS
 
-AutonomousDriveSystem::AutonomousDriveSystem(BossRobot *r, RobotDrive *d)
-    : DriveSystem(r, d)
+AutonomousDriveSystem::AutonomousDriveSystem(BossRobot *r)
+    : DriveSystem(r)
 {
 }
 	
@@ -259,8 +304,8 @@ void AutonomousDriveSystem::ReadControls()
 
 // ARCADE
 
-ArcadeDriveSystem::ArcadeDriveSystem(BossRobot *r, RobotDrive *d)
-    : TeleoperatedDriveSystem(r, d)
+ArcadeDriveSystem::ArcadeDriveSystem(BossRobot *r)
+    : TeleoperatedDriveSystem(r)
 {
 	m_move = m_rotate = 0.0;
 }
@@ -330,8 +375,8 @@ bool ArcadeDriveSystem::IsTurning()
 
 // TANK
 
-TankDriveSystem::TankDriveSystem(BossRobot *r, RobotDrive *d)
-    : TeleoperatedDriveSystem(r, d)
+TankDriveSystem::TankDriveSystem(BossRobot *r)
+    : TeleoperatedDriveSystem(r)
 {
 }
 
@@ -372,8 +417,8 @@ void TankDriveSystem::InterpretControls()
  * 		4 - Right X
  * 		5 - Right Y
  */
-XboxDriveSystem::XboxDriveSystem(BossRobot *r, RobotDrive *d)
-    : ArcadeDriveSystem(r, d)
+XboxDriveSystem::XboxDriveSystem(BossRobot *r)
+    : ArcadeDriveSystem(r)
 {
 }
 
