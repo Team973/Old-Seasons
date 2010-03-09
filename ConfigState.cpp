@@ -62,6 +62,7 @@ void ConfigState::Step()
 	
 	HandleStrengthPresetting();
 	HandleKickPresetting();
+	HandleShoulderPresetting();
 
 #ifdef FEATURE_LCD
 	DS_LCD::GetInstance()->UpdateLCD();
@@ -127,5 +128,18 @@ void ConfigState::HandleKickPresetting()
 #ifdef FEATURE_LCD
 	DS_LCD::GetInstance()->PrintfLine(DS_LCD::kUser_Line2,
 		"Kicker: %.2fV", m_robot->GetKickerEncoder()->GetVoltage());
+#endif
+}
+
+void ConfigState::HandleShoulderPresetting()
+{
+	ControlBoard &board = ControlBoard::GetInstance();
+	
+	m_robot->GetShoulderMotor1()->Set(board.GetJoystick(1).GetY());
+	m_robot->GetShoulderMotor2()->Set(board.GetJoystick(1).GetY());
+	
+#ifdef FEATURE_LCD
+	DS_LCD::GetInstance()->PrintfLine(DS_LCD::kUser_Line4,
+		"Shoulder: %.2fV", m_robot->GetShoulderSensor()->GetVoltage());
 #endif
 }

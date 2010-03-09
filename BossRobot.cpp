@@ -84,8 +84,9 @@ BossRobot::BossRobot(void)
 	
 	/* Upper board */
 #ifdef FEATURE_UPPER_BOARD
-	m_armMotor1 = new Victor(6, 1);
-	m_armMotor2 = new Victor(6, 2);
+	m_shoulderMotor1 = new Victor(6, 1);
+	m_shoulderMotor2 = new Victor(6, 2);
+	m_shoulderSensor = new AnalogChannel(1, 4);
 	
 	m_intakeMotor = new Victor(6, 3);
 	
