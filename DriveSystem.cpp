@@ -82,8 +82,6 @@ void DriveSystem::InitPID()
 	double movingI = m_robot->GetConfig().SetDefault("movingI", 0.0);
 	double movingD = m_robot->GetConfig().SetDefault("movingD", 0.0);
 	
-	m_firstInertComp = m_firstMovingComp = true;
-	
 	m_leftPID.SetPID(inertP, inertI, inertD);
 	m_leftPID.SetLimits(-1.0, 1.0);
 	
@@ -131,21 +129,23 @@ bool DriveSystem::IsTurning()
 void DriveSystem::Compensate()
 {
 	m_movingFlag.Set(IsMoving());
+	m_inertFlag.Set(!m_movingFlag.Get());
 	
-	if (!m_movingFlag.Get())
+	if (m_inertFlag.Get())
 	{
-		if (m_movingFlag.CheckTriggered())
+		if (m_inertFlag.GetTriggered())
 			InitInertCompensate();
 		InertCompensate();
 	}
 	else
 	{
-		if (m_movingFlag.CheckTriggered())
+		if (m_movingFlag.GetTriggered())
 			InitMovingCompensate();
 		MovingCompensate();
 	}
 	
-	m_movingFlag.Clear();
+	m_movingFlag.ClearTrigger();
+	m_inertFlag.ClearTrigger();
 	
 #ifdef FEATURE_LCD
 	DS_LCD *lcd = DS_LCD::GetInstance();
