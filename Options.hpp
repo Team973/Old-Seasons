@@ -64,7 +64,7 @@
 #define FEATURE_UPPER_BOARD			/**< Use the upper board sidecar */
 #define FEATURE_GEAR_SWITCH			/**< Allow gear switching */
 //#define FEATURE_GYRO				/**< Enable deadheading compensation based on gyro data */
-//#define FEATURE_DRIVE_ENCODERS	/**< Enable inert compensation based on drive encoders */
+#define FEATURE_DRIVE_ENCODERS	/**< Enable inert compensation based on drive encoders */
 #define FEATURE_DRIVE_VICTORS		/**< Drive uses Victors or Jaguars (default is Jaguars) */
 
 #endif
