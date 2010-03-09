@@ -27,27 +27,21 @@ class DriveSystem
 {
 protected:
 	BossRobot *m_robot;
-	RobotDrive *m_drive;
 	
 	float m_leftSpeed, m_rightSpeed;
 	Flag m_inertFlag, m_movingFlag;
-	int m_gear;
+	short m_gear;
 	SimplePID m_leftPID, m_rightPID;
 	SimplePID m_deadheadPID;
 	
-	enum { kLoGear, kHiGear };
-	
 	DriveSystem();
-	DriveSystem(BossRobot *, RobotDrive *);
+	DriveSystem(BossRobot *);
 private:
 	void InitPID();
 public:
-	virtual ~DriveSystem() {}
+	enum { kLoGear, kHiGear };
 	
-	inline RobotDrive *GetDrive()
-	{
-		return m_drive;
-	}
+	virtual ~DriveSystem() {}
 	
 	/**
 	 *	Read controls from whatever source the drive system deems prudent.
@@ -72,8 +66,63 @@ public:
 	 */
 	virtual void Compensate();
 	
+	/**
+	 *	Drive a turn programmatically.
+	 *
+	 *	This is essentially the same as WPILib's RobotDrive::Drive, except
+	 *	ported to work on our system.
+	 *
+	 *	@param speed
+	 *		The forward/backward component of the drive, bounded in [-1.0, 1.0].
+	 *	@param curve
+	 *		The amount of curvature bounded in [-1.0, 1.0].  Negative values
+	 *		take the robot to the left, positive values take the robot to the
+	 *		right.
+	 */
+	virtual void Turn(float speed, float curve);
+	
+	/**
+	 *	Set motor speeds programmatically.
+	 *
+	 *	This gives you full manual control of the robot's drive.  The drive
+	 *	system will automatically flip the motor speeds appropriately, so that
+	 *	1.0 means go forward, and -1.0 means go backward.  So something like
+	 *	this:
+	 *
+	 *		<code>robot->GetDriveSystem()->SetSpeeds(1.0, 1.0);</code>
+	 *
+	 *	will make the robot go forward.
+	 *
+	 *	@param left
+	 *		The speed of the left motors.
+	 *	@param right
+	 *		The speed of the right motors.
+	 */
+	virtual void SetSpeeds(float left, float right);
+	
 	/** Stop all motors. */
 	virtual void Stop();
+	
+	/**
+	 *	Retrieve the current gear.
+	 *
+	 *	@return The current gear setting
+	 */
+	inline short GetGear()
+	{
+		return m_gear;
+	}
+	
+	/**
+	 *	Change the drive gear.
+	 *
+	 *	@param gear
+	 *		The new gear setting
+	 */
+	inline void SetGear(short gear)
+	{
+		m_gear = gear;
+	}
 	
 	/**
 	 *	Check whether the drive system is moving.
@@ -113,7 +162,7 @@ protected:
 class AutonomousDriveSystem : public DriveSystem
 {
 public:
-	AutonomousDriveSystem(BossRobot *, RobotDrive *);
+	AutonomousDriveSystem(BossRobot *);
 	virtual void ReadControls();
 };
 
@@ -127,7 +176,7 @@ class TeleoperatedDriveSystem : public DriveSystem
 {
 protected:
 	TeleoperatedDriveSystem() : DriveSystem() {}
-	TeleoperatedDriveSystem(BossRobot *r, RobotDrive *d) : DriveSystem(r, d) {}
+	TeleoperatedDriveSystem(BossRobot *r) : DriveSystem(r) {}
 	
 	/**
 	 *	Compute the left and right motor speeds.
@@ -151,7 +200,7 @@ protected:
 	
 	virtual void InterpretControls();
 public:
-	ArcadeDriveSystem(BossRobot *, RobotDrive *);
+	ArcadeDriveSystem(BossRobot *);
 	virtual void ReadControls();
 	virtual bool IsMoving();
 	virtual bool IsTurning();
@@ -167,7 +216,7 @@ class TankDriveSystem : public TeleoperatedDriveSystem
 protected:
 	virtual void InterpretControls();
 public:
-	TankDriveSystem(BossRobot *, RobotDrive *);
+	TankDriveSystem(BossRobot *);
 	virtual void ReadControls();
 };
 
@@ -180,7 +229,7 @@ public:
 class XboxDriveSystem : public ArcadeDriveSystem
 {
 public:
-	XboxDriveSystem(BossRobot *, RobotDrive *);
+	XboxDriveSystem(BossRobot *);
 	virtual void ReadControls();
 };
 
