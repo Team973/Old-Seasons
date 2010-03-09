@@ -102,6 +102,11 @@ void ConfigState::HandleStrengthPresetting()
 		m_robot->GetKickerWinch2()->Set(Relay::kOff);
 	}
 #endif
+
+#ifdef FEATURE_LCD
+	DS_LCD::GetInstance()->PrintfLine(DS_LCD::kUser_Line3,
+		"Winch: %.2fV", m_robot->GetKickerWinchSensor()->GetVoltage());
+#endif
 }
 
 void ConfigState::HandleKickPresetting()
