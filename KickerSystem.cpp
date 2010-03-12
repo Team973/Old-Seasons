@@ -16,6 +16,12 @@ KickerSystem::KickerSystem(BossRobot *r)
 	m_robot = r;
 	m_strength = kStrengthLo;
 	m_kicking = false;
+
+	m_kickerPID.SetPID(m_robot->GetConfig().SetDefault("kickerP", 0.8),
+					   m_robot->GetConfig().SetDefault("kickerI", 0.0),
+					   m_robot->GetConfig().SetDefault("kickerD", 0.0));
+	m_kickerPID.SetLimits(0.0, 1.0);
+	m_kickerPID.SetTarget(m_robot->GetConfig().SetDefault("kickerRestAngle", 4.5));
 }
 
 KickerSystem::~KickerSystem()
@@ -63,15 +69,16 @@ void KickerSystem::ReadControls()
 void KickerSystem::Kick()
 {
 	m_kicking = true;
-	m_inDeadband.Set(true);
-	m_inDeadband.ClearTrigger();
+	m_robot->GetKickerEncoder()->ResetAccumulator();
 }
 
 void KickerSystem::Update()
 {
+	UpdateIntake();
 	UpdateWinch();
 	UpdateKicker();
-	UpdateIntake();
+	
+	m_intakeFlag.ClearTrigger();
 }
 
 void KickerSystem::UpdateWinch()
@@ -138,48 +145,45 @@ void KickerSystem::UpdateWinch()
 
 void KickerSystem::UpdateKicker()
 {
-	float encoderVoltage;
-	double restVoltage, deadbandVoltage, encoderMaxVoltage;
+	AbsoluteEncoder *encoder = m_robot->GetKickerEncoder();
+	float encoderVoltage, encoderMaxVoltage;
+	double restVoltage, cockedVoltage;
 	
-	if (!m_kicking)
-	{
-		m_robot->GetKickerMotor()->Set(0.0);
-		return;
-	}
-	
-	encoderVoltage = m_robot->GetKickerEncoder()->GetVoltage();
+	encoderVoltage = encoder->GetIncrementalVoltage();
+	encoderMaxVoltage = encoder->GetMaxVoltage();
 	
 	// Get config values
-	encoderMaxVoltage = m_robot->GetConfig().SetDefault("kickerEncoderVoltage", 5.0);
-	restVoltage = m_robot->GetConfig().SetDefault("kickerRestAngle", 4.710);
-	deadbandVoltage = restVoltage - m_robot->GetConfig().SetDefault("kickerDeadband", 0.5);
-	if (deadbandVoltage < 0)
-		deadbandVoltage += encoderMaxVoltage;
+	restVoltage = m_robot->GetConfig().SetDefault("kickerRestAngle", 4.5);
+	cockedVoltage = m_robot->GetConfig().SetDefault("kickerCockedAngle", 4.710);
+
+	m_kickerPID.SetPID(m_robot->GetConfig().GetDouble("kickerP"),
+					   m_robot->GetConfig().GetDouble("kickerI"),
+					   m_robot->GetConfig().GetDouble("kickerD"));
 	
-	// Calculate whether we're in the deadband
-	if (deadbandVoltage < restVoltage)
+	// Determine target
+	// Note that this relies on the fact that the cocked angle is farther than rest, so the motor won't
+	// backpedal.
+	if (!m_kicking && m_intakeFlag.CheckTriggeredOn())
 	{
-		// The simple case: the deadband doesn't wrap.
-		m_inDeadband.Set(encoderVoltage > deadbandVoltage &&
-						 encoderVoltage < restVoltage);
+		// Move the kicker to cocked if the operator starts the intake
+		m_kickerPID.SetTarget((cockedVoltage >= restVoltage)
+							  ? cockedVoltage
+							  : cockedVoltage + encoderMaxVoltage);
 	}
-	else
+	else if (m_kicking)
 	{
-		// The less simple case: the deadband does wrap (i.e. the deadband start
-		// is larger than the rest position)
-		m_inDeadband.Set(encoderVoltage > deadbandVoltage ||
-						 encoderVoltage < restVoltage);
-	}
-	// Stop the kicking if we are inside the deadband
-	if (m_inDeadband.GetTriggeredOn())
-	{
-		m_kicking = false;
-		m_robot->GetKickerMotor()->Set(0.0);
-		return;
+		m_kickerPID.SetTarget(restVoltage + encoderMaxVoltage);
+		if (encoderVoltage > m_kickerPID.GetTarget())
+		{
+			// We've finished kicking. Clean up.
+			m_kicking = false;
+			encoder->ResetAccumulator();
+			m_kickerPID.SetTarget(restVoltage);
+		}
 	}
 	
-	// We're in the process of kicking.
-	m_robot->GetKickerMotor()->Set(1.0);
+	// Run the motor!
+	m_robot->GetKickerMotor()->Set(m_kickerPID.Update(encoderVoltage));
 }
 
 void KickerSystem::UpdateIntake()
@@ -199,4 +203,6 @@ void KickerSystem::UpdateIntake()
 		m_robot->GetIntakeMotor()->Set(0.0);
 		break;
 	}
+	
+	m_intakeFlag.Set(m_intakeState != 0);
 }
