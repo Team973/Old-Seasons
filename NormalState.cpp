@@ -100,7 +100,7 @@ void NormalState::Step()
 	
 	m_robot->GetWatchdog().Feed();
 	
-	//m_robot->GetArmSystem()->Update();
+	m_robot->GetArmSystem()->Update();
 	
 	m_robot->GetWatchdog().Feed();
 }
