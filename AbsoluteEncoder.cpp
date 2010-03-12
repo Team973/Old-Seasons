@@ -44,16 +44,16 @@ AbsoluteEncoder::~AbsoluteEncoder()
 	}
 }
 
-float AbsoluteEncoder::Get()
-{
-	Update();
-	return m_accumulator + m_voltage;
-}
-
 float AbsoluteEncoder::GetVoltage()
 {
 	Update();
 	return m_voltage;
+}
+
+float AbsoluteEncoder::GetIncrementalVoltage()
+{
+	Update();
+	return m_accumulator + m_voltage;
 }
 
 void AbsoluteEncoder::ResetAccumulator()
