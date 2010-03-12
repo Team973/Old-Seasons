@@ -11,6 +11,7 @@
 #include "WPILib.h"
 #include "Options.hpp"
 #include "BossRobot.hpp"
+#include "SimplePID.hpp"
 #include "Flag.hpp"
 
 #ifndef _BOSS_973_KICKERSYSTEM_H_
@@ -25,8 +26,8 @@ protected:
 	BossRobot *m_robot;
 	short m_strength, m_intakeState;
 	bool m_kicking;
-	Flag m_inDeadband;
-	Flag m_kickTrigger;
+	SimplePID m_kickerPID;
+	Flag m_kickTrigger, m_intakeFlag;
 	
 	enum {kStrengthLo, kStrengthMd, kStrengthHi};
 public:

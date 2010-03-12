@@ -115,12 +115,21 @@ void ConfigState::HandleKickPresetting()
 	// Run kicker motor when holding trigger
 	m_robot->GetKickerMotor()->Set(board.GetJoystick(3).GetTrigger() ? 1.0 : 0.0);
 	
-	// Set point for kicker
+	// Set rest point for kicker
 	m_kickRest.Set(board.GetJoystick(3).GetRawButton(2));
 	if (m_kickRest.GetTriggeredOn())
 	{
 #ifdef FEATURE_UPPER_BOARD
 		m_robot->GetConfig().Set("kickerRestAngle", m_robot->GetKickerEncoder()->GetVoltage());
+#endif
+	}
+	
+	// Set cocked point for kicker
+	m_kickCocked.Set(board.GetJoystick(3).GetRawButton(3));
+	if (m_kickCocked.GetTriggeredOn())
+	{
+#ifdef FEATURE_UPPER_BOARD
+		m_robot->GetConfig().Set("kickerCockedAngle", m_robot->GetKickerEncoder()->GetVoltage());
 #endif
 	}
 	
