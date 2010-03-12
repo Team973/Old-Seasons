@@ -68,7 +68,7 @@ void AbsoluteEncoder::Update()
 {
 	float newVoltage = m_channel->GetVoltage();
 	
-	if (fabsf(newVoltage - m_voltage) > (m_maxVoltage / 2))
+	if (fabs(newVoltage - m_voltage) > (m_maxVoltage / 2))
 	{
 		if (newVoltage > m_voltage)
 		{
