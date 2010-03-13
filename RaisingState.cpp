@@ -12,6 +12,7 @@
 #include "DriveSystem.hpp"
 #include "ArmSystem.hpp"
 #include "SimplePID.hpp"
+#include <math.h>
 
 RaisingState::RaisingState(BossRobot *r) : State(r)
 {
@@ -50,6 +51,12 @@ void RaisingState::Step()
 {
 	float elbowVoltage = m_robot->GetElbowSensor()->GetVoltage();
 	double output;
+	
+	if (fabs(elbowVoltage - m_elbowPID.GetTarget()) < m_robot->GetConfig().SetDefault("elbowTol", 0.01))
+	{
+		m_robot->ChangeState(new DisabledState(m_robot, NULL));
+		return;
+	}
 	
 	m_robot->GetElbowSwitch()->Set(true);
 	m_robot->GetArmSystem()->SetState(ArmSystem::kRaised);

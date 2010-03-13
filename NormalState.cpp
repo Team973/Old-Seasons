@@ -76,8 +76,12 @@ void NormalState::Step()
 		m_robot->ChangeState(new ConfigState(m_robot));
 		return;
 	}
-	
-	if (ControlBoard::GetInstance().GetButton(3))
+	else if (ControlBoard::GetInstance().GetButton(2))
+	{
+		m_robot->ChangeState(new DisabledState(m_robot, this));
+		return;
+	}
+	else if (ControlBoard::GetInstance().GetButton(3))
 	{
 		m_robot->ChangeState(new FinaleState(m_robot));
 		return;
