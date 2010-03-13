@@ -72,6 +72,11 @@ DriveSystem::DriveSystem(BossRobot *r)
 	InitPID();
 }
 
+DriveSystem::~DriveSystem()
+{
+	delete m_inertTimer;
+}
+
 void DriveSystem::InitPID()
 {
 	double inertP = m_robot->GetConfig().SetDefault("inertP", 0.01);
@@ -89,6 +94,8 @@ void DriveSystem::InitPID()
 	
 	m_deadheadPID.SetPID(movingP, movingI, movingD);
 	m_deadheadPID.SetLimits(-0.25, 0.25);
+	
+	m_inertTimer = new Timer();
 }
 
 void DriveSystem::Drive()
@@ -200,18 +207,9 @@ void DriveSystem::Compensate()
 
 void DriveSystem::InitInertCompensate()
 {
-#ifdef FEATURE_DRIVE_ENCODERS
-	m_robot->GetLeftDriveEncoder()->Reset();
-	m_robot->GetRightDriveEncoder()->Reset();
-#endif
-	
-	m_leftPID.Reset();
-	m_leftPID.SetTarget(0.0);
-	m_leftPID.Start();
-	
-	m_rightPID.Reset();
-	m_rightPID.SetTarget(0.0);
-	m_rightPID.Start();
+	m_inertTimerFinished = false;
+	m_inertTimer->Reset();
+	m_inertTimer->Start();
 }
 
 void DriveSystem::InertCompensate()
@@ -219,7 +217,34 @@ void DriveSystem::InertCompensate()
 	INT32 encoderL, encoderR;
 	float encoderLAngle, encoderRAngle;
 	int ticksPerRevolution = m_robot->GetConfig().SetDefault("driveEncoderTicksPerRev", 300);
-
+	
+	if (!m_inertTimerFinished)
+	{
+		if (m_inertTimer->Get() < m_robot->GetConfig().SetDefault("inertDelay", 0.5))
+		{
+			m_leftSpeed = 0.0;
+			m_rightSpeed = 0.0;
+			return;
+		}
+		else
+		{
+#ifdef FEATURE_DRIVE_ENCODERS
+			m_robot->GetLeftDriveEncoder()->Reset();
+			m_robot->GetRightDriveEncoder()->Reset();
+#endif
+			
+			m_leftPID.Reset();
+			m_leftPID.SetTarget(0.0);
+			m_leftPID.Start();
+			
+			m_rightPID.Reset();
+			m_rightPID.SetTarget(0.0);
+			m_rightPID.Start();
+			
+			m_inertTimerFinished = true;
+		}
+	}
+	
 #ifdef FEATURE_DRIVE_ENCODERS
 	encoderL = m_robot->GetLeftDriveEncoder()->Get();
 	encoderR = m_robot->GetRightDriveEncoder()->Get();
@@ -233,10 +258,8 @@ void DriveSystem::InertCompensate()
 	m_leftPID.Update(encoderLAngle);
 	m_rightPID.Update(encoderRAngle);
 	
-	if ((encoderLAngle > 5 && encoderLAngle < 180) || (encoderLAngle < -5 && encoderLAngle > -180))
-		m_leftSpeed = m_leftPID.GetOutput();
-	if ((encoderRAngle > 5 && encoderRAngle < 180) || (encoderRAngle < -5 && encoderRAngle > -180))
-		m_rightSpeed = m_rightPID.GetOutput();
+	m_leftSpeed = m_leftPID.GetOutput();
+	m_rightSpeed = m_rightPID.GetOutput();
 		
 #ifdef FEATURE_LCD
 	DS_LCD *lcd = DS_LCD::GetInstance();
