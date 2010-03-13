@@ -89,6 +89,9 @@ BossRobot::BossRobot(void)
 	m_shoulderMotor2 = new Victor(6, 2);
 	m_shoulderSensor = new AnalogChannel(1, 4);
 	
+	m_elbowSwitch = new Solenoid(2);
+	m_elbowSensor = new AnalogChannel(1, 5);
+	
 	m_intakeMotor = new Victor(6, 3);
 	
 	m_kickerWinchSensor = new AnalogChannel(1, 3);
@@ -211,6 +214,8 @@ void BossRobot::PreStep(void)
 #ifdef FEATURE_COMPRESSOR
 	m_compressor->Set(m_pressureSwitch->Get() ? Relay::kOff : Relay::kOn);
 #endif
+	
+	m_elbowSwitch->Set(false);
 }
 
 /** Perform any actions that need to be done after state updates */
@@ -422,7 +427,8 @@ void BossRobot::SendIOPortData()
 		dash.FinalizeCluster();
 
 		// Solenoids (must have objects for each)
-		dash.AddU8((unsigned char)m_gearSwitch->Get());
+		dash.AddU8((unsigned char)m_gearSwitch->Get() |
+				   ((unsigned char)m_elbowSwitch->Get() << 1));
 	}
 	dash.FinalizeCluster();
 	dash.Finalize();
