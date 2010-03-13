@@ -41,7 +41,12 @@ void FinaleState::Step()
 	TeleoperatedDriveSystem *ds = dynamic_cast<TeleoperatedDriveSystem *>(m_robot->GetDriveSystem());
 	
 	// Check for state finished
-	if (!ControlBoard::GetInstance().GetButton(3))
+	if (ControlBoard::GetInstance().GetButton(2))
+	{
+		m_robot->ChangeState(new DisabledState(m_robot, this));
+		return;
+	}
+	else if (!ControlBoard::GetInstance().GetButton(3))
 	{
 		m_robot->ChangeState(new NormalState(m_robot));
 		return;

@@ -11,6 +11,7 @@
 #include "WPILib.h"
 #include "BossRobot.hpp"
 #include "SimplePID.hpp"
+#include "Flag.hpp"
 
 #ifndef _BOSS_973_STATE_H_
 #define _BOSS_973_STATE_H_
@@ -89,6 +90,19 @@ private:
 	SimplePID m_elbowPID;
 public:
 	RaisingState(BossRobot *);
+	
+	virtual void Enter();
+	virtual void Exit();
+	virtual void Step();
+};
+
+class DisabledState : public State
+{
+private:
+	State *m_prevState;
+	Flag m_switch;
+public:
+	DisabledState(BossRobot *, State *);
 	
 	virtual void Enter();
 	virtual void Exit();
