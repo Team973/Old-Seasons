@@ -12,6 +12,7 @@
 #include "WPILib.h"
 #include "MyDriverStationLCD.h"
 #include "ConfigParser.hpp"
+#include "AbsoluteEncoder.hpp"
 
 #ifdef FEATURE_CAMERA
 #	include "Vision/AxisCamera.h"
@@ -57,7 +58,7 @@ private:
 	SpeedController *m_kickerMotor;
 	Relay *m_kickerWinchRelay1, *m_kickerWinchRelay2;
 	AnalogChannel *m_kickerWinchSensor;
-	AnalogChannel *m_kickerEncoder;
+	AbsoluteEncoder *m_kickerEncoder;
 	SpeedController *m_intakeMotor;
 	
 #ifdef FEATURE_CAMERA
@@ -140,7 +141,7 @@ public:
 	inline Relay *GetKickerWinch1()						{ return m_kickerWinchRelay1; }
 	inline Relay *GetKickerWinch2()						{ return m_kickerWinchRelay2; }
 	inline AnalogChannel *GetKickerWinchSensor()		{ return m_kickerWinchSensor; }
-	inline AnalogChannel *GetKickerEncoder()			{ return m_kickerEncoder; }
+	inline AbsoluteEncoder *GetKickerEncoder()			{ return m_kickerEncoder; }
 	inline SpeedController *GetKickerMotor()			{ return m_kickerMotor; }
 	inline SpeedController *GetIntakeMotor()			{ return m_intakeMotor; }
 	
