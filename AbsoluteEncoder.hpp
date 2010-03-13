@@ -34,6 +34,18 @@ public:
 	~AbsoluteEncoder();
 	
 	/**
+	 *	Get the maximum voltage of the encoder.
+	 *
+	 *	This value must have been set in the constructor.
+	 *
+	 *	@return The encoder's maximum voltage
+	 */
+	inline float GetMaxVoltage()
+	{
+		return m_maxVoltage;
+	}
+	
+	/**
 	 *	Get the current voltage of the encoder.
 	 *
 	 *	This is the absolute position of the encoder, not the calculated
