@@ -46,6 +46,11 @@ void FinaleState::Step()
 		m_robot->ChangeState(new NormalState(m_robot));
 		return;
 	}
+	else if (ControlBoard::GetInstance().GetJoystick(3).GetTrigger())
+	{
+		m_robot->ChangeState(new RaisingState(m_robot));
+		return;
+	}
 	
 	if (ds != NULL)
 	{

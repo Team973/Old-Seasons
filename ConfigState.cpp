@@ -62,11 +62,12 @@ void ConfigState::Step()
 	HandleStrengthPresetting();
 	HandleKickPresetting();
 	HandleShoulderPresetting();
+	HandleElbowPresetting();
 
 #ifdef FEATURE_LCD
 	DS_LCD::GetInstance()->UpdateLCD();
 #endif
-}
+} // END STEP
 
 #ifdef FEATURE_UPPER_BOARD
 #define STRENGTH_PRESET(button, name) \
@@ -167,5 +168,33 @@ void ConfigState::HandleShoulderPresetting()
 #ifdef FEATURE_LCD
 	DS_LCD::GetInstance()->PrintfLine(DS_LCD::kUser_Line4,
 		"Shoulder: %.2fV", m_robot->GetShoulderSensor()->GetVoltage());
+#endif
+}
+
+void ConfigState::HandleElbowPresetting()
+{
+	ControlBoard &board = ControlBoard::GetInstance();
+	
+	m_elbowTarget.Set(board.GetJoystick(2).GetTrigger());
+	if (m_elbowTarget.GetTriggeredOn())
+	{
+		m_robot->GetConfig().Set("elbowTarget", m_robot->GetElbowSensor()->GetVoltage());
+	}
+	
+	m_elbowMin.Set(board.GetJoystick(2).GetRawButton(4));
+	if (m_elbowMin.GetTriggeredOn())
+	{
+		m_robot->GetConfig().Set("elbowMinimum", m_robot->GetElbowSensor()->GetVoltage());
+	}
+	
+	m_elbowMax.Set(board.GetJoystick(2).GetRawButton(5));
+	if (m_elbowMax.GetTriggeredOn())
+	{
+		m_robot->GetConfig().Set("elbowMaximum", m_robot->GetElbowSensor()->GetVoltage());
+	}
+
+#ifdef FEATURE_LCD
+	DS_LCD::GetInstance()->PrintfLine(DS_LCD::kUser_Line5,
+		"Elbow: %.2fV", m_robot->GetElbowSensor()->GetVoltage());
 #endif
 }

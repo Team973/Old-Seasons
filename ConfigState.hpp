@@ -23,6 +23,7 @@ protected:
 	Flag m_strengthLo, m_strengthMd, m_strengthHi;
 	Flag m_kickRest, m_kickCocked;
 	Flag m_shoulderStowed, m_shoulderRaised, m_shoulderGTFU;
+	Flag m_elbowTarget, m_elbowMin, m_elbowMax;
 public:
 	ConfigState(BossRobot *r);
 	
@@ -33,6 +34,7 @@ protected:
 	void HandleStrengthPresetting();
 	void HandleKickPresetting();
 	void HandleShoulderPresetting();
+	void HandleElbowPresetting();
 };
 
 #endif

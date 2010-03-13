@@ -55,6 +55,9 @@ private:
 	SpeedController *m_shoulderMotor1, *m_shoulderMotor2;
 	AnalogChannel *m_shoulderSensor;
 	
+	Solenoid *m_elbowSwitch;
+	AnalogChannel *m_elbowSensor;
+	
 	SpeedController *m_kickerMotor;
 	Relay *m_kickerWinchRelay1, *m_kickerWinchRelay2;
 	AnalogChannel *m_kickerWinchSensor;
@@ -148,6 +151,9 @@ public:
 	inline SpeedController *GetShoulderMotor1()			{ return m_shoulderMotor1; }
 	inline SpeedController *GetShoulderMotor2()			{ return m_shoulderMotor2; }
 	inline AnalogChannel *GetShoulderSensor()			{ return m_shoulderSensor; }
+	
+	inline Solenoid *GetElbowSwitch()					{ return m_elbowSwitch; }
+	inline AnalogChannel *GetElbowSensor()				{ return m_elbowSensor; }
 
 protected:
 	void SendIOPortData(void);

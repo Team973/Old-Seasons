@@ -10,6 +10,7 @@
 
 #include "WPILib.h"
 #include "BossRobot.hpp"
+#include "SimplePID.hpp"
 
 #ifndef _BOSS_973_STATE_H_
 #define _BOSS_973_STATE_H_
@@ -84,6 +85,14 @@ public:
 
 class RaisingState : public State
 {
+private:
+	SimplePID m_elbowPID;
+public:
+	RaisingState(BossRobot *);
+	
+	virtual void Enter();
+	virtual void Exit();
+	virtual void Step();
 };
 
 #endif
