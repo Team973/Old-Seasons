@@ -8,6 +8,9 @@
  *	Created on 3/12/10.
  */
 
+#include "AbsoluteEncoder.hpp"
+#include <math.h>
+
 AbsoluteEncoder::AbsoluteEncoder(UINT32 channel, float maxVoltage)
 {
 	m_channel = new AnalogChannel(channel);
