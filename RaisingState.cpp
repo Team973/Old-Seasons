@@ -59,6 +59,7 @@ void RaisingState::Step()
 	}
 	
 	m_robot->GetElbowSwitch()->Set(true);
+	m_robot->GetGearSwitch()->Set(false);
 	m_robot->GetArmSystem()->SetState(ArmSystem::kRaised);
 	m_robot->GetArmSystem()->Update();
 	
