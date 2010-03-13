@@ -34,6 +34,9 @@ protected:
 	SimplePID m_leftPID, m_rightPID;
 	SimplePID m_deadheadPID;
 	
+	Timer *m_inertTimer;
+	bool m_inertTimerFinished;
+	
 	DriveSystem();
 	DriveSystem(BossRobot *);
 private:
@@ -41,7 +44,7 @@ private:
 public:
 	enum { kLoGear, kHiGear };
 	
-	virtual ~DriveSystem() {}
+	virtual ~DriveSystem();
 	
 	/**
 	 *	Read controls from whatever source the drive system deems prudent.
