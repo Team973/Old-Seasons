@@ -220,13 +220,7 @@ void BossRobot::PreStep(void)
 
 /** Perform any actions that need to be done after state updates */
 void BossRobot::PostStep(void)
-{
-#if defined(FEATURE_LCD) && defined(FEATURE_GYRO)
-	DS_LCD *lcd = DS_LCD::GetInstance();
-	lcd->PrintfLine(DS_LCD::kUser_Line3, "Gyro: %.2fV %.2f", m_gyroChannel->GetVoltage(), m_gyro->GetAngle());
-	lcd->UpdateLCD();
-#endif
-		
+{	
 	// Send I/O data
 	SendVisionData();
 	GetWatchdog().Feed();
