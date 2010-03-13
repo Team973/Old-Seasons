@@ -9,6 +9,7 @@
  */
 
 #include "ArmSystem.hpp"
+#include <math.h>
 
 ArmSystem::ArmSystem(BossRobot *r)
 {
@@ -52,8 +53,17 @@ void ArmSystem::Update()
 	if (shoulderVoltage > config.SetDefault("shoulderMinPos", 0.1) &&
 		shoulderVoltage < config.SetDefault("shoulderMaxPos", 4.9))
 	{
-		m_robot->GetShoulderMotor1()->Set(-m_pidControl.GetOutput());
-		m_robot->GetShoulderMotor2()->Set(-m_pidControl.GetOutput());
+		if (fabs(m_pidControl.GetOutput()) < config.SetDefault("shoulderDeadband", 0.1))
+		{
+			m_robot->GetShoulderMotor1()->Set(-m_pidControl.GetOutput());
+			m_robot->GetShoulderMotor2()->Set(-m_pidControl.GetOutput());
+		}
+		else
+		{
+			// Difference is negligible.
+			m_robot->GetShoulderMotor1()->Set(0.0);
+			m_robot->GetShoulderMotor2()->Set(0.0);
+		}
 	}
 	else
 	{
