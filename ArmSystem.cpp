@@ -53,7 +53,7 @@ void ArmSystem::Update()
 	if (shoulderVoltage > config.SetDefault("shoulderMinPos", 0.1) &&
 		shoulderVoltage < config.SetDefault("shoulderMaxPos", 4.9))
 	{
-		if (fabs(m_pidControl.GetOutput()) < config.SetDefault("shoulderDeadband", 0.1))
+		if (fabs(m_pidControl.GetOutput()) > config.SetDefault("shoulderDeadband", 0.1))
 		{
 			m_robot->GetShoulderMotor1()->Set(-m_pidControl.GetOutput());
 			m_robot->GetShoulderMotor2()->Set(-m_pidControl.GetOutput());
