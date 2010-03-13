@@ -95,7 +95,7 @@ BossRobot::BossRobot(void)
 	m_kickerWinchRelay1 = new Relay(6, 3);
 	m_kickerWinchRelay2 = new Relay(6, 4);
 	m_kickerMotor = new Victor(6, 5);
-	m_kickerEncoder = new AnalogChannel(1, 2);
+	m_kickerEncoder = new AbsoluteEncoder(1, 2, m_config.SetDefault("kickerEncoderVoltage", 5.0));
 #endif
 	
 	m_kickerSystem = new KickerSystem(this);
