@@ -172,7 +172,8 @@ void KickerSystem::UpdateKicker()
 		if (!m_startedKicking)
 		{
 			encoder->ResetAccumulator();
-			if (m_cocked && cockedVoltage < restVoltage)
+			encoderVoltage = encoder->GetIncrementalVoltage();
+			if (encoderVoltage < restVoltage - tol)
 			{
 				m_kickerPID.SetTarget(restVoltage);
 			}
@@ -200,6 +201,7 @@ void KickerSystem::UpdateKicker()
 		if (!m_cocked)
 		{
 			encoder->ResetAccumulator();
+			encoderVoltage = encoder->GetIncrementalVoltage();
 			m_kickerPID.SetTarget((cockedVoltage >= restVoltage)
 								  ? cockedVoltage
 								  : cockedVoltage + encoderMaxVoltage);
@@ -213,6 +215,7 @@ void KickerSystem::UpdateKicker()
 		{
 			// Done cocking, hold position.
 			encoder->ResetAccumulator();
+			encoderVoltage = encoder->GetIncrementalVoltage();
 			m_kickerPID.SetTarget(cockedVoltage);
 		}
 	}
