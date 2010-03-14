@@ -25,7 +25,7 @@ class KickerSystem
 protected:
 	BossRobot *m_robot;
 	short m_strength, m_intakeState;
-	bool m_kicking;
+	bool m_kicking, m_startedKicking, m_cocked;
 	SimplePID m_kickerPID;
 	Flag m_kickTrigger, m_intakeFlag;
 	

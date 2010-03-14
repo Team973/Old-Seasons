@@ -16,6 +16,8 @@ KickerSystem::KickerSystem(BossRobot *r)
 	m_robot = r;
 	m_strength = kStrengthLo;
 	m_kicking = false;
+	m_startedKicking = false;
+	m_cocked = false;
 
 	m_kickerPID.SetPID(m_robot->GetConfig().SetDefault("kickerP", 0.8),
 					   m_robot->GetConfig().SetDefault("kickerI", 0.0),
@@ -147,7 +149,7 @@ void KickerSystem::UpdateKicker()
 {
 	AbsoluteEncoder *encoder = m_robot->GetKickerEncoder();
 	float encoderVoltage, encoderMaxVoltage;
-	double restVoltage, cockedVoltage;
+	double restVoltage, cockedVoltage, tol;
 	
 	encoderVoltage = encoder->GetIncrementalVoltage();
 	encoderMaxVoltage = encoder->GetMaxVoltage();
@@ -155,6 +157,7 @@ void KickerSystem::UpdateKicker()
 	// Get config values
 	restVoltage = m_robot->GetConfig().SetDefault("kickerRestAngle", 4.5);
 	cockedVoltage = m_robot->GetConfig().SetDefault("kickerCockedAngle", 4.710);
+	tol = m_robot->GetConfig().SetDefault("kickerPosTolerance", 0.05);
 
 	m_kickerPID.SetPID(m_robot->GetConfig().GetDouble("kickerP"),
 					   m_robot->GetConfig().GetDouble("kickerI"),
@@ -163,22 +166,54 @@ void KickerSystem::UpdateKicker()
 	// Determine target
 	// Note that this relies on the fact that the cocked angle is farther than rest, so the motor won't
 	// backpedal.
-	if (!m_kicking && m_intakeFlag.CheckTriggeredOn())
+	if (m_kicking)
 	{
-		// Move the kicker to cocked if the operator starts the intake
-		m_kickerPID.SetTarget((cockedVoltage >= restVoltage)
-							  ? cockedVoltage
-							  : cockedVoltage + encoderMaxVoltage);
-	}
-	else if (m_kicking)
-	{
-		m_kickerPID.SetTarget(restVoltage + encoderMaxVoltage);
-		if (encoderVoltage > m_kickerPID.GetTarget())
+		// This is our first kicking cycle.  Set the target.
+		if (!m_startedKicking)
+		{
+			encoder->ResetAccumulator();
+			if (m_cocked && cockedVoltage < restVoltage)
+			{
+				m_kickerPID.SetTarget(restVoltage);
+			}
+			else
+			{
+				m_kickerPID.SetTarget(restVoltage + encoderMaxVoltage);
+			}
+		}
+		m_startedKicking = true;
+		
+		// Check to see if we're finished kicking
+		if (encoderVoltage > m_kickerPID.GetTarget() - tol)
 		{
 			// We've finished kicking. Clean up.
 			m_kicking = false;
+			m_startedKicking = false;
+			m_cocked = false;
 			encoder->ResetAccumulator();
 			m_kickerPID.SetTarget(restVoltage);
+		}
+	}
+	else if (m_intakeFlag.CheckTriggeredOn())
+	{
+		// Move the kicker to cocked if the operator starts the intake
+		if (!m_cocked)
+		{
+			encoder->ResetAccumulator();
+			m_kickerPID.SetTarget((cockedVoltage >= restVoltage)
+								  ? cockedVoltage
+								  : cockedVoltage + encoderMaxVoltage);
+		}
+		
+		m_cocked = true;
+	}
+	else if (m_cocked)
+	{
+		if (encoderVoltage > m_kickerPID.GetTarget() - tol)
+		{
+			// Done cocking, hold position.
+			encoder->ResetAccumulator();
+			m_kickerPID.SetTarget(cockedVoltage);
 		}
 	}
 	
