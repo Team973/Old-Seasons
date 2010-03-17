@@ -50,6 +50,9 @@ public:
 	/** Reset kicker values */
 	void ResetKicker();
 	
+	/** Check whether the kicker is posessing a ball. */
+	virtual bool HasPossession();
+	
 	/**
 	 *	Perform a kick.
 	 *

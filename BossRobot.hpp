@@ -63,6 +63,7 @@ private:
 	AnalogChannel *m_kickerWinchSensor;
 	AbsoluteEncoder *m_kickerEncoder;
 	SpeedController *m_intakeMotor;
+	Encoder *m_intakeEncoder;
 	
 #ifdef FEATURE_CAMERA
 	AxisCamera *m_camera;
@@ -147,6 +148,7 @@ public:
 	inline AbsoluteEncoder *GetKickerEncoder()			{ return m_kickerEncoder; }
 	inline SpeedController *GetKickerMotor()			{ return m_kickerMotor; }
 	inline SpeedController *GetIntakeMotor()			{ return m_intakeMotor; }
+	inline Encoder *GetIntakeEncoder()					{ return m_intakeEncoder; }
 	
 	inline SpeedController *GetShoulderMotor1()			{ return m_shoulderMotor1; }
 	inline SpeedController *GetShoulderMotor2()			{ return m_shoulderMotor2; }
