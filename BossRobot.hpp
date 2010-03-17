@@ -159,6 +159,7 @@ protected:
 	void SendIOPortData(void);
 	void SendVisionData(void);
 	
+	void RunIteration(void);
 	void PreStep(void);
 	void PostStep(void);
 };

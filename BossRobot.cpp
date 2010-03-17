@@ -171,41 +171,46 @@ void BossRobot::OperatorControl(void)
 			ChangeState(new NormalState(this));
 		}
 		
-		if (m_state != m_prevState)
-		{
-			// We must have changed states since the last iteration
-			// 1. Exit out of "old" state
-			if (m_prevState != NULL)
-				m_prevState->Exit();
-			GetWatchdog().Feed();
-			// 2. Enter "new" state
-			if (m_state != NULL)
-				m_state->Enter();
-			GetWatchdog().Feed();
-			// 3. Record the state change as successful
-			m_prevState = m_state;
-		}
-		
-		// Do any pre-step logic
-		PreStep();
-		GetWatchdog().Feed();
-		
-		// Do what the state wants
-		if (m_state != NULL)
-		{
-			m_state->Step();
-		}
-		GetWatchdog().Feed();
-		
-		// Do any post-step logic
-		PostStep();
-		GetWatchdog().Feed();
+		RunIteration();
 		
 		// Post-iteration clean up
 		GetWatchdog().Feed();
 		Wait(TELEOP_LOOP_LAG);				// wait for a motor update time
 		GetWatchdog().Feed();
 	}
+}
+
+void BossRobot::RunIteration(void)
+{
+	if (m_state != m_prevState)
+	{
+		// We must have changed states since the last iteration
+		// 1. Exit out of "old" state
+		if (m_prevState != NULL)
+			m_prevState->Exit();
+		GetWatchdog().Feed();
+		// 2. Enter "new" state
+		if (m_state != NULL)
+			m_state->Enter();
+		GetWatchdog().Feed();
+		// 3. Record the state change as successful
+		m_prevState = m_state;
+	}
+	
+	// Do any pre-step logic
+	PreStep();
+	GetWatchdog().Feed();
+	
+	// Do what the state wants
+	if (m_state != NULL)
+	{
+		m_state->Step();
+	}
+	GetWatchdog().Feed();
+	
+	// Do any post-step logic
+	PostStep();
+	GetWatchdog().Feed();
 }
 
 /** Perform any actions that need to be done before state updates */
