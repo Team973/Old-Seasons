@@ -25,7 +25,8 @@ class KickerSystem
 protected:
 	BossRobot *m_robot;
 	short m_strength, m_intakeState;
-	bool m_kicking, m_startedKicking, m_cocked;
+	bool m_kicking, m_startedKicking;
+	bool m_cocking, m_cockingBegan, m_cockingEnded;
 	SimplePID m_kickerPID;
 	Flag m_kickTrigger, m_intakeFlag;
 	
@@ -40,8 +41,14 @@ public:
 	/** Send data to the kicker motors */
 	virtual void Update();
 	
-	/** Reset kicker values **/
+	/** Check whether the winch should be changed */
+	virtual bool NeedsWinchUpdate();
+	
+	/** Reset all kick system values */
 	void Reset();
+	
+	/** Reset kicker values */
+	void ResetKicker();
 	
 	/**
 	 *	Perform a kick.
@@ -50,6 +57,8 @@ public:
 	 */
 	virtual void Kick();
 protected:
+	virtual double GetWinchTarget();
+	
 	virtual void UpdateWinch();
 	virtual void UpdateKicker();
 	virtual void UpdateIntake();
