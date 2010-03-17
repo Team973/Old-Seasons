@@ -40,6 +40,9 @@ public:
 	/** Send data to the kicker motors */
 	virtual void Update();
 	
+	/** Reset kicker values **/
+	void Reset();
+	
 	/**
 	 *	Perform a kick.
 	 *
