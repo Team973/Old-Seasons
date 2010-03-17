@@ -14,6 +14,15 @@
 KickerSystem::KickerSystem(BossRobot *r)
 {
 	m_robot = r;
+	Reset();
+}
+
+KickerSystem::~KickerSystem()
+{
+}
+
+void KickerSystem::Reset()
+{
 	m_strength = kStrengthLo;
 	m_kicking = false;
 	m_startedKicking = false;
@@ -24,10 +33,6 @@ KickerSystem::KickerSystem(BossRobot *r)
 					   m_robot->GetConfig().SetDefault("kickerD", 0.0));
 	m_kickerPID.SetLimits(0.0, 1.0);
 	m_kickerPID.SetTarget(m_robot->GetConfig().SetDefault("kickerRestAngle", 4.5));
-}
-
-KickerSystem::~KickerSystem()
-{
 }
 	
 void KickerSystem::ReadControls()

@@ -12,6 +12,7 @@
 #include "NormalState.hpp"
 #include "ControlBoard.hpp"
 #include "DriveSystem.hpp"
+#include "KickerSystem.hpp"
 
 ConfigState::ConfigState(BossRobot *r)
 	: State(r)
@@ -39,6 +40,8 @@ void ConfigState::Enter()
 void ConfigState::Exit()
 {
 	m_robot->GetConfig().Write("boss.cfg", "This is the main configuration file and was automatically generated.");
+	m_robot->GetKickerEncoder()->ResetAccumulator();
+	m_robot->GetKickerSystem()->Reset();
 }
 
 void ConfigState::Step()
