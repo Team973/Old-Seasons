@@ -33,7 +33,7 @@ void RaisingState::Enter()
 	
 	m_robot->GetArmSystem()->SetState(ArmSystem::kRaised);
 	
-	m_elbowPID.SetLimits(-1.0, 1.0);
+	m_elbowPID.SetLimits(0.0, 1.0); // we have a ratchet on the drive now
 	m_elbowPID.SetPID(c.SetDefault("elbowP", 7.5),
 					  c.SetDefault("elbowI", 0.0),
 					  c.SetDefault("elbowD", 0.0));
@@ -54,7 +54,14 @@ void RaisingState::Step()
 	
 	if (fabs(elbowVoltage - m_elbowPID.GetTarget()) < m_robot->GetConfig().SetDefault("elbowTol", 0.01))
 	{
+		// We've raised ourselves.  Don't let the operators do anything.
 		m_robot->ChangeState(new DisabledState(m_robot, NULL));
+		return;
+	}
+	else if (ControlBoard::GetInstance().GetButton(2))
+	{
+		// Operator ordered a premature soft-disable.
+		m_robot->ChangeState(new DisabledState(m_robot, this));
 		return;
 	}
 	
