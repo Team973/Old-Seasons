@@ -9,6 +9,6 @@ Physical
 Programming
 
 [ ] Autonomous
-[ ] HUD light
+[-] HUD light (prototyped)
 [ ] Check for possession
 [ ] Apply elbow brake (first figure out when)
