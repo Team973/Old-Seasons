@@ -1,9 +1,14 @@
 TODO
 
+Physical
+
 [ ] Check outputs
+[ ] Verify that gear-shifting code works
+[ ] Calibrate encoders
+
+Programming
+
 [ ] Autonomous
 [ ] HUD light
 [ ] Check for possession
-[ ] Calibrate encoders
 [ ] Apply elbow brake (first figure out when)
-[ ] Verify that gear-shifting code works
