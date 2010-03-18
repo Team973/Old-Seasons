@@ -58,6 +58,7 @@ bool KickerSystem::HasPossession()
 void KickerSystem::ReadControls()
 {
 	ControlBoard &board = ControlBoard::GetInstance();
+	short hudState = ControlBoard::kLightOff;
 	
 	// Update winch controls
 	if (board.GetButton(15))
@@ -109,6 +110,24 @@ void KickerSystem::ReadControls()
 	m_intakeFlag.Set(m_intakeState != 0);
 	if (m_intakeFlag.GetTriggeredOn())
 		m_cocking = true;
+	
+	// Change display on the HUD
+	if (m_cockingEnded)
+	{
+		if (!NeedsWinchUpdate() && HasPossession())
+		{
+			hudState = ControlBoard::kLightGreen;
+		}
+		else
+		{
+			hudState = ControlBoard::kLightYellow;
+		}
+	}
+	else
+	{
+		hudState = ControlBoard::kLightRed;
+	}
+	// board.SetMultiLight(green, red, hudState);
 	
 #ifdef FEATURE_LCD
 	DS_LCD *lcd = DS_LCD::GetInstance();
