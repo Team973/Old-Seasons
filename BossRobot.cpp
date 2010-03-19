@@ -46,8 +46,10 @@ BossRobot::BossRobot(void)
 	
 	/* Drive system */
 #ifdef FEATURE_DRIVE_VICTORS
+	// Adam indicates that the 3rd PWM pin is dead.
+	// Luckily, we're flexible.
 	m_leftMotor1 = new Victor(1);
-	m_leftMotor2 = new Victor(3);
+	m_leftMotor2 = new Victor(5);
 	m_rightMotor1 = new Victor(4);
 	m_rightMotor2 = new Victor(2);
 #else
