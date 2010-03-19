@@ -88,6 +88,7 @@ class RaisingState : public State
 {
 private:
 	SimplePID m_elbowPID;
+	Timer *m_timer;
 public:
 	RaisingState(BossRobot *);
 	
