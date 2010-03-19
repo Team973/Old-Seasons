@@ -119,10 +119,10 @@ void DriveSystem::Drive()
 	switch (m_gear)
 	{
 	case kLoGear:
-		m_robot->GetGearSwitch()->Set(0);
+		m_robot->GetGearSwitch()->Set(1);
 		break;
 	case kHiGear:
-		m_robot->GetGearSwitch()->Set(1);
+		m_robot->GetGearSwitch()->Set(0);
 		break;
 	}
 #endif

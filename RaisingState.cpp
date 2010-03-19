@@ -17,6 +17,7 @@
 
 RaisingState::RaisingState(BossRobot *r) : State(r)
 {
+	m_timer = NULL;
 }
 
 void RaisingState::Enter()
@@ -41,11 +42,15 @@ void RaisingState::Enter()
 	m_elbowPID.Reset();
 	m_elbowPID.SetTarget(c.SetDefault("elbowTarget", 1.0));
 	m_elbowPID.Start();
+	
+	m_timer = new Timer();
 }
 
 void RaisingState::Exit()
 {
 	m_elbowPID.Stop();
+	delete m_timer;
+	m_timer = NULL;
 }
 
 void RaisingState::Step()
@@ -65,11 +70,17 @@ void RaisingState::Step()
 		m_robot->ChangeState(new DisabledState(m_robot, this));
 		return;
 	}
-	
-	m_robot->GetElbowSwitch()->Set(true);
-	m_robot->GetGearSwitch()->Set(false);
+
+	m_robot->GetGearSwitch()->Set(1);
 	m_robot->GetArmSystem()->SetState(ArmSystem::kRaised);
 	m_robot->GetArmSystem()->Update();
+	
+	if (m_timer->Get() < m_robot->GetConfig().SetDefault("quasiNeutralDelay", 0.1))
+	{
+		return;
+	}
+
+	m_robot->GetElbowSwitch()->Set(1);
 	
 	m_elbowPID.Update(elbowVoltage);
 	
