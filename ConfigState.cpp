@@ -62,6 +62,8 @@ void ConfigState::Step()
 		m_robot->GetConfig().Read("boss.cfg");
 	}
 	
+	m_robot->GetShoulderBrake()->Set(1); // This actually unbrakes.
+	
 	HandleStrengthPresetting();
 	HandleKickPresetting();
 	HandleShoulderPresetting();

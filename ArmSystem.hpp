@@ -33,6 +33,7 @@ protected:
 	BossRobot *m_robot;
 	SimplePID m_pidControl;
 	short m_state;
+	bool m_braked;
 public:
 	enum {kStowed, kRaised, kGTFU};
 	
@@ -52,6 +53,15 @@ public:
 	
 	/** Update the arm motors. */
 	virtual void Update();
+	
+	/** See whether we're moving. */
+	virtual bool NeedsMove();
+	
+	/** Brake the system. */
+	virtual void Brake();
+	
+	/** Unbrake the system. */
+	virtual void Unbrake();
 };
 
 #endif

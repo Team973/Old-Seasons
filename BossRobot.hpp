@@ -54,6 +54,7 @@ private:
 	
 	SpeedController *m_shoulderMotor1, *m_shoulderMotor2;
 	AnalogChannel *m_shoulderSensor;
+	Solenoid *m_shoulderBrakeSolenoid;
 	
 	Solenoid *m_elbowSwitch;
 	AnalogChannel *m_elbowSensor;
@@ -153,6 +154,7 @@ public:
 	inline SpeedController *GetShoulderMotor1()			{ return m_shoulderMotor1; }
 	inline SpeedController *GetShoulderMotor2()			{ return m_shoulderMotor2; }
 	inline AnalogChannel *GetShoulderSensor()			{ return m_shoulderSensor; }
+	inline Solenoid *GetShoulderBrake()					{ return m_shoulderBrakeSolenoid; }
 	
 	inline Solenoid *GetElbowSwitch()					{ return m_elbowSwitch; }
 	inline AnalogChannel *GetElbowSensor()				{ return m_elbowSensor; }

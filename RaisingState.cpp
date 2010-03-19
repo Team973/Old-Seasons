@@ -73,6 +73,14 @@ void RaisingState::Step()
 
 	m_robot->GetGearSwitch()->Set(1);
 	m_robot->GetArmSystem()->SetState(ArmSystem::kRaised);
+	if (!m_robot->GetArmSystem()->NeedsMove())
+	{
+		m_robot->GetArmSystem()->Brake();
+	}
+	else
+	{
+		m_robot->GetArmSystem()->Unbrake();
+	}
 	m_robot->GetArmSystem()->Update();
 	
 	if (m_timer->Get() < m_robot->GetConfig().SetDefault("quasiNeutralDelay", 0.1))
@@ -81,6 +89,7 @@ void RaisingState::Step()
 	}
 
 	m_robot->GetElbowSwitch()->Set(1);
+	// Solenoid 3 high and solenoid 4 low (or vice versa)
 	
 	m_elbowPID.Update(elbowVoltage);
 	
