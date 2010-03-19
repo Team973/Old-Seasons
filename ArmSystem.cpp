@@ -15,6 +15,7 @@ ArmSystem::ArmSystem(BossRobot *r)
 {
 	m_robot = r;
 	m_state = kStowed;
+	m_braked = false;
 	m_pidControl.SetPID(m_robot->GetConfig().SetDefault("shoulderP", 5.0),
 						m_robot->GetConfig().SetDefault("shoulderI", 0.0),
 						m_robot->GetConfig().SetDefault("shoulderD", 0.0));
@@ -70,5 +71,29 @@ void ArmSystem::Update()
 		// We are out of acceptable bounds, stop the motors to prevent damage.
 		m_robot->GetShoulderMotor1()->Set(0.0);
 		m_robot->GetShoulderMotor2()->Set(0.0);
+		Brake();
 	}
+	
+	// Update brake
+	m_robot->GetShoulderBrake()->Set(!m_braked);
+}
+
+bool ArmSystem::NeedsMove()
+{
+	ConfigParser &config = m_robot->GetConfig();
+	float shoulderVoltage = m_robot->GetShoulderSensor()->GetVoltage();
+	
+	return (shoulderVoltage > config.SetDefault("shoulderMinPos", 0.1) &&
+			shoulderVoltage < config.SetDefault("shoulderMaxPos", 4.9) &&
+			m_pidControl.GetOutput() > config.SetDefault("shoulderDeadband", 0.1));
+}
+
+void ArmSystem::Brake()
+{
+	m_braked = true;
+}
+	
+void ArmSystem::Unbrake()
+{
+	m_braked = false;
 }

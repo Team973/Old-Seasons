@@ -10,6 +10,7 @@
 
 #include "State.hpp"
 #include "ControlBoard.hpp"
+#include "ArmSystem.hpp"
 
 DisabledState::DisabledState(BossRobot *r, State *s) : State(r)
 {
@@ -46,4 +47,5 @@ void DisabledState::Step()
 		m_robot->ChangeState(m_prevState);
 		return;
 	}
+	m_robot->GetArmSystem()->Brake();
 }
