@@ -12,6 +12,7 @@
 #include "DriveSystem.hpp"
 #include "ArmSystem.hpp"
 #include "SimplePID.hpp"
+#include "ControlBoard.hpp"
 #include <math.h>
 
 RaisingState::RaisingState(BossRobot *r) : State(r)
