@@ -72,6 +72,8 @@ bool KickerSystem::HasPossession()
 	if (timeElapsed <= 0)
 		timeElapsed = 0.002;
 	rate = m_robot->GetIntakeEncoder()->GetDistance() / timeElapsed;
+	DS_LCD::GetInstance()->PrintfLine(DS_LCD::kUser_Line6, "Intake d: %.2f",
+			m_robot->GetIntakeEncoder()->GetDistance());
 	return (m_intakeState == 1) && (rate < 180);
 }
 
