@@ -17,6 +17,7 @@ KickerSystem::KickerSystem(BossRobot *r)
 	m_robot = r;
 	m_intakeTimer = new Timer();
 	m_intakeTimer->Start();
+	m_intakePossess = false;
 	Reset();
 }
 
@@ -65,16 +66,7 @@ void KickerSystem::StopIntake()
 
 bool KickerSystem::HasPossession()
 {
-	double timeElapsed, rate;
-	
-	timeElapsed = m_intakeTimer->Get();
-	
-	if (timeElapsed <= 0)
-		timeElapsed = 0.002;
-	rate = m_robot->GetIntakeEncoder()->GetDistance() / timeElapsed;
-	DS_LCD::GetInstance()->PrintfLine(DS_LCD::kUser_Line6, "Intake d: %.2f",
-			m_robot->GetIntakeEncoder()->GetDistance());
-	return (m_intakeState == 1) && (rate < 180);
+	return m_intakePossess;
 }
 
 void KickerSystem::Cock()
@@ -143,21 +135,6 @@ void KickerSystem::ReadControls()
 		Cock();
 	
 	// Change display on the HUD
-//	if (m_cockingEnded)
-//	{
-//		if (!NeedsWinchUpdate() && HasPossession())
-//		{
-//			hudState = ControlBoard::kLightGreen;
-//		}
-//		else
-//		{
-//			hudState = ControlBoard::kLightYellow;
-//		}
-//	}
-//	else
-//	{
-//		hudState = ControlBoard::kLightRed;
-//	}
 	hudState = HasPossession() ? ControlBoard::kLightGreen : ControlBoard::kLightRed;
 	board.SetMultiLight(16, 12, hudState);
 	
@@ -187,12 +164,7 @@ void KickerSystem::Update()
 	UpdateIntake();
 	UpdateWinch();
 	UpdateKicker();
-	
-	if (m_intakeTimer->Get() > 0.1)
-	{
-		m_intakeTimer->Reset();
-		m_robot->GetIntakeEncoder()->Reset();
-	}
+	UpdatePossession();
 }
 
 bool KickerSystem::NeedsWinchUpdate()
@@ -349,5 +321,34 @@ void KickerSystem::UpdateIntake()
 	default:
 		m_robot->GetIntakeMotor()->Set(0.0);
 		break;
+	}
+}
+
+void KickerSystem::UpdatePossession()
+{
+	double timeElapsed, rate;
+	
+	if (m_intakeState != 1)
+	{
+		m_intakePossess = false;
+		m_intakeTimer->Reset();
+		m_intakeTimer->Stop();
+		return;
+	}
+	
+	m_intakeTimer->Start();
+	timeElapsed = m_intakeTimer->Get();
+	if (timeElapsed <= 0)
+		timeElapsed = 0.002;
+	
+	if (timeElapsed > 0.1)
+	{
+		rate = m_robot->GetIntakeEncoder()->GetDistance() / timeElapsed;
+		m_intakePossess = (m_intakeState == 1) && (rate < 180);
+		DS_LCD::GetInstance()->PrintfLine(DS_LCD::kUser_Line6, "Intake: %.2f", rate);
+		
+		// Reset state
+		m_intakeTimer->Reset();
+		m_robot->GetIntakeEncoder()->Reset();
 	}
 }
