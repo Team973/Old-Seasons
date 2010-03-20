@@ -60,7 +60,7 @@ void KickerSystem::RunIntake()
 
 void KickerSystem::StopIntake()
 {
-	m_intakeSystem = 0;
+	m_intakeState = 0;
 }
 
 bool KickerSystem::HasPossession()
