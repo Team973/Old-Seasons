@@ -37,7 +37,7 @@
 #define _BOSS_973_OPTIONS_H_
 
 // Operator interface
-#define FEATURE_CAMERA 				/**< Camera is enabled */
+//#define FEATURE_CAMERA 				/**< Camera is enabled */
 #define FEATURE_LCD					/**< Printing to the driver station is enabled */
 #define FEATURE_IO_BOARD			/**< Operator interface has the Cypress module */
 
