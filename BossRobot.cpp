@@ -15,6 +15,7 @@
 #include "DriveSystem.hpp"
 #include "KickerSystem.hpp"
 #include "ArmSystem.hpp"
+#include "Autonomous.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -155,9 +156,7 @@ BossRobot::BossRobot(void)
 void BossRobot::Autonomous(void)
 {
 	GetWatchdog().SetEnabled(false);
-//	m_drive->Drive(0.5, 0.0); 	// drive forwards half speed
-//	Wait(2.0); 				//    for 2 seconds
-//	m_drive->Drive(0.0, 0.0); 	// stop robot
+	CalibrateEncoderAutonomous(this);
 }
 
 void BossRobot::OperatorControl(void)
