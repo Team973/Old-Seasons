@@ -44,6 +44,7 @@ void RaisingState::Enter()
 	m_elbowPID.Start();
 	
 	m_timer = new Timer();
+	m_timer->Start();
 }
 
 void RaisingState::Exit()
@@ -55,7 +56,7 @@ void RaisingState::Exit()
 
 void RaisingState::Step()
 {
-	float elbowVoltage = m_robot->GetElbowSensor()->GetVoltage();
+	float elbowVoltage = 5.0 - m_robot->GetElbowSensor()->GetVoltage();
 	double output;
 	
 	if (fabs(elbowVoltage - m_elbowPID.GetTarget()) < m_robot->GetConfig().SetDefault("elbowTol", 0.01))
@@ -73,14 +74,7 @@ void RaisingState::Step()
 
 	m_robot->GetGearSwitch()->Set(1);
 	m_robot->GetArmSystem()->SetState(ArmSystem::kRaised);
-	if (!m_robot->GetArmSystem()->NeedsMove())
-	{
-		m_robot->GetArmSystem()->Brake();
-	}
-	else
-	{
-		m_robot->GetArmSystem()->Unbrake();
-	}
+	m_robot->GetArmSystem()->Brake();
 	m_robot->GetArmSystem()->Update();
 	
 	if (m_timer->Get() < m_robot->GetConfig().SetDefault("quasiNeutralDelay", 0.1))
@@ -92,11 +86,13 @@ void RaisingState::Step()
 	// Solenoid 3 high and solenoid 4 low (or vice versa)
 	
 	m_elbowPID.Update(elbowVoltage);
+	DS_LCD::GetInstance()->PrintfLine(DS_LCD::kUser_Line3, "PID: %f", m_elbowPID.GetOutput());
+	DS_LCD::GetInstance()->UpdateLCD();
 	
 	if (elbowVoltage > m_robot->GetConfig().SetDefault("elbowMinimum", 0.1) &&
 		elbowVoltage < m_robot->GetConfig().SetDefault("elbowMaximum", 4.9))
 	{
-		output = -m_elbowPID.GetOutput();
+		output = m_elbowPID.GetOutput();
 		m_robot->GetLeftFrontDriveMotor()->Set(output);
 		m_robot->GetLeftRearDriveMotor()->Set(output);
 		m_robot->GetRightFrontDriveMotor()->Set(-output);

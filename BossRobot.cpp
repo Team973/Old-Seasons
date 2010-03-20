@@ -90,7 +90,7 @@ BossRobot::BossRobot(void)
 	m_shoulderMotor1 = new Victor(6, 1);
 	m_shoulderMotor2 = new Victor(6, 2);
 	m_shoulderSensor = new AnalogChannel(1, 4);
-	m_shoulderBrakeSolenoid = new Solenoid(5);
+	m_shoulderBrakeSolenoid = new Solenoid(7);
 	
 	m_elbowSwitch = new Solenoid(2);
 	m_elbowSensor = new AnalogChannel(1, 5);

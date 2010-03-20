@@ -71,7 +71,6 @@ void ArmSystem::Update()
 		// We are out of acceptable bounds, stop the motors to prevent damage.
 		m_robot->GetShoulderMotor1()->Set(0.0);
 		m_robot->GetShoulderMotor2()->Set(0.0);
-		Brake();
 	}
 	
 	// Update brake
@@ -85,7 +84,7 @@ bool ArmSystem::NeedsMove()
 	
 	return (shoulderVoltage > config.SetDefault("shoulderMinPos", 0.1) &&
 			shoulderVoltage < config.SetDefault("shoulderMaxPos", 4.9) &&
-			m_pidControl.GetOutput() > config.SetDefault("shoulderDeadband", 0.1));
+			fabs(shoulderVoltage - m_pidControl.GetTarget()) > config.SetDefault("shoulderDeadband", 0.1));
 }
 
 void ArmSystem::Brake()

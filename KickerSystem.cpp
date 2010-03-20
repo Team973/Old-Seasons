@@ -68,6 +68,10 @@ void KickerSystem::ReadControls()
 	else if (board.GetButton(7))
 		m_strength = kStrengthHi;
 	
+	m_resetFlag.Set(board.GetJoystick(3).GetRawButton(10));
+	if (m_resetFlag.GetTriggeredOn())
+		ResetKicker();
+	
 	board.SetMultiLight(6, ControlBoard::kLightOff);
 	board.SetMultiLight(14, ControlBoard::kLightOff);
 	board.SetMultiLight(10, ControlBoard::kLightOff);
@@ -127,7 +131,7 @@ void KickerSystem::ReadControls()
 	{
 		hudState = ControlBoard::kLightRed;
 	}
-	// board.SetMultiLight(green, red, hudState);
+	board.SetMultiLight(16, 12, hudState);
 	
 #ifdef FEATURE_LCD
 	DS_LCD *lcd = DS_LCD::GetInstance();
@@ -140,15 +144,8 @@ void KickerSystem::Kick()
 {
 	if (!m_kicking)
 	{
-		if (!NeedsWinchUpdate())
-		{
-			m_kicking = true;
-			m_robot->GetKickerEncoder()->ResetAccumulator();
-		}
-		else
-		{
-			m_cocking = true;
-		}
+		m_kicking = true;
+		m_robot->GetKickerEncoder()->ResetAccumulator();
 	}
 }
 
@@ -191,7 +188,7 @@ void KickerSystem::UpdateWinch()
 	return;
 #endif
 	
-	if (!m_cockingEnded || !NeedsWinchUpdate() || m_startedKicking)
+	if (!m_cockingEnded || m_startedKicking)
 	{
 		m_robot->GetKickerWinch1()->Set(Relay::kOff);
 		m_robot->GetKickerWinch2()->Set(Relay::kOff);
