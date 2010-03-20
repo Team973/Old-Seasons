@@ -179,7 +179,7 @@ void ConfigState::HandleShoulderPresetting()
 void ConfigState::HandleElbowPresetting()
 {
 	ControlBoard &board = ControlBoard::GetInstance();
-	double voltage = m_robot->GetElbowSensor()->GetVoltage();
+	double voltage = 5.0 - m_robot->GetElbowSensor()->GetVoltage();
 	
 	m_elbowTarget.Set(board.GetJoystick(2).GetTrigger());
 	if (m_elbowTarget.GetTriggeredOn())
@@ -201,6 +201,6 @@ void ConfigState::HandleElbowPresetting()
 
 #ifdef FEATURE_LCD
 	DS_LCD::GetInstance()->PrintfLine(DS_LCD::kUser_Line5,
-		"Elbow: %.2fV", m_robot->GetElbowSensor()->GetVoltage());
+		"Elbow: %.2fV", voltage);
 #endif
 }
