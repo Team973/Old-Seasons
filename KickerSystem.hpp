@@ -29,6 +29,9 @@ protected:
 	bool m_cocking, m_cockingBegan, m_cockingEnded;
 	SimplePID m_kickerPID;
 	Flag m_kickTrigger, m_intakeFlag, m_resetFlag;
+	int m_intakePrevCount;
+	
+	Timer *m_intakeTimer;
 	
 	enum {kStrengthLo, kStrengthMd, kStrengthHi};
 public:

@@ -15,11 +15,14 @@
 KickerSystem::KickerSystem(BossRobot *r)
 {
 	m_robot = r;
+	m_intakeTimer = new Timer();
+	m_intakeTimer->Start();
 	Reset();
 }
 
 KickerSystem::~KickerSystem()
 {
+	delete m_intakeTimer;
 }
 
 void KickerSystem::Reset()
@@ -52,7 +55,14 @@ void KickerSystem::ResetKicker()
 
 bool KickerSystem::HasPossession()
 {
-	return (m_intakeState == 1) && (m_robot->GetIntakeEncoder()->GetRate() < 42);
+	double timeElapsed, rate;
+	
+	timeElapsed = m_intakeTimer->Get();
+	
+	if (timeElapsed <= 0)
+		timeElapsed = 0.002;
+	rate = m_robot->GetIntakeEncoder()->GetDistance() / timeElapsed;
+	return (m_intakeState == 1) && (rate < 180);
 }
 	
 void KickerSystem::ReadControls()
@@ -116,21 +126,22 @@ void KickerSystem::ReadControls()
 		m_cocking = true;
 	
 	// Change display on the HUD
-	if (m_cockingEnded)
-	{
-		if (!NeedsWinchUpdate() && HasPossession())
-		{
-			hudState = ControlBoard::kLightGreen;
-		}
-		else
-		{
-			hudState = ControlBoard::kLightYellow;
-		}
-	}
-	else
-	{
-		hudState = ControlBoard::kLightRed;
-	}
+//	if (m_cockingEnded)
+//	{
+//		if (!NeedsWinchUpdate() && HasPossession())
+//		{
+//			hudState = ControlBoard::kLightGreen;
+//		}
+//		else
+//		{
+//			hudState = ControlBoard::kLightYellow;
+//		}
+//	}
+//	else
+//	{
+//		hudState = ControlBoard::kLightRed;
+//	}
+	hudState = HasPossession() ? ControlBoard::kLightGreen : ControlBoard::kLightRed;
 	board.SetMultiLight(16, 12, hudState);
 	
 #ifdef FEATURE_LCD
@@ -154,6 +165,12 @@ void KickerSystem::Update()
 	UpdateIntake();
 	UpdateWinch();
 	UpdateKicker();
+	
+	if (m_intakeTimer->Get() > 0.1)
+	{
+		m_intakeTimer->Reset();
+		m_robot->GetIntakeEncoder()->Reset();
+	}
 }
 
 bool KickerSystem::NeedsWinchUpdate()
