@@ -30,6 +30,7 @@ protected:
 	SimplePID m_kickerPID;
 	Flag m_kickTrigger, m_intakeFlag, m_resetFlag;
 	
+	bool m_intakePossess;
 	Timer *m_intakeTimer;
 public:
 	enum {kStrengthLo, kStrengthMd, kStrengthHi};
@@ -83,6 +84,9 @@ protected:
 	virtual void UpdateWinch();
 	virtual void UpdateKicker();
 	virtual void UpdateIntake();
+
+private:
+	void UpdatePossession();
 };
 
 #endif
