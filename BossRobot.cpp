@@ -97,7 +97,7 @@ BossRobot::BossRobot(void)
 	
 	m_intakeMotor = new Victor(6, 3);
 	m_intakeEncoder = new Encoder(6, 1, 6, 2);
-	m_intakeEncoder->SetDistancePerPulse(1.0);
+	m_intakeEncoder->SetDistancePerPulse(360.0 / 100.0);
 	
 	m_kickerWinchSensor = new AnalogChannel(1, 3);
 	m_kickerWinchRelay1 = new Relay(6, 3);
