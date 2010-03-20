@@ -28,6 +28,7 @@ BossRobot::BossRobot(void)
 #ifdef FEATURE_LCD
 	DS_LCD *lcd = DS_LCD::GetInstance();
 #endif
+	double driveDist;
 	
 	GetWatchdog().SetExpiration(0.25);
 
@@ -62,9 +63,12 @@ BossRobot::BossRobot(void)
 	m_driveSystem = new AutonomousDriveSystem(this);
 	
 #ifdef FEATURE_DRIVE_ENCODERS
+	driveDist = m_config.SetDefault("driveEncoderDistancePerPulse");
 	m_leftDriveEncoder = new Encoder(2, 3, true);
+	m_leftDriveEncoder->SetDistancePerPulse(driveDist);
 	m_leftDriveEncoder->Start();
 	m_rightDriveEncoder = new Encoder(4, 5);
+	m_rightDriveEncoder->SetDistancePerPulse(driveDist);
 	m_rightDriveEncoder->Start();
 #else
 	m_leftDriveEncoder = m_rightDriveEncoder = NULL;
