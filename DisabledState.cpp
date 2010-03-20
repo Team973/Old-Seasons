@@ -47,5 +47,5 @@ void DisabledState::Step()
 		m_robot->ChangeState(m_prevState);
 		return;
 	}
-	m_robot->GetArmSystem()->Brake();
+	m_robot->GetShoulderBrake()->Set(0); // braked
 }

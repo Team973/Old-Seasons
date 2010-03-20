@@ -62,7 +62,7 @@ void ConfigState::Step()
 		m_robot->GetConfig().Read("boss.cfg");
 	}
 	
-	m_robot->GetShoulderBrake()->Set(1); // This actually unbrakes.
+	m_robot->GetShoulderBrake()->Set(1); // to unbrake
 	
 	HandleStrengthPresetting();
 	HandleKickPresetting();
@@ -179,23 +179,24 @@ void ConfigState::HandleShoulderPresetting()
 void ConfigState::HandleElbowPresetting()
 {
 	ControlBoard &board = ControlBoard::GetInstance();
+	double voltage = m_robot->GetElbowSensor()->GetVoltage();
 	
 	m_elbowTarget.Set(board.GetJoystick(2).GetTrigger());
 	if (m_elbowTarget.GetTriggeredOn())
 	{
-		m_robot->GetConfig().Set("elbowTarget", m_robot->GetElbowSensor()->GetVoltage());
+		m_robot->GetConfig().Set("elbowTarget", voltage);
 	}
 	
 	m_elbowMin.Set(board.GetJoystick(2).GetRawButton(4));
 	if (m_elbowMin.GetTriggeredOn())
 	{
-		m_robot->GetConfig().Set("elbowMinimum", m_robot->GetElbowSensor()->GetVoltage());
+		m_robot->GetConfig().Set("elbowMinimum", voltage);
 	}
 	
 	m_elbowMax.Set(board.GetJoystick(2).GetRawButton(5));
 	if (m_elbowMax.GetTriggeredOn())
 	{
-		m_robot->GetConfig().Set("elbowMaximum", m_robot->GetElbowSensor()->GetVoltage());
+		m_robot->GetConfig().Set("elbowMaximum", voltage);
 	}
 
 #ifdef FEATURE_LCD
