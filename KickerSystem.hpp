@@ -50,6 +50,12 @@ public:
 	/** Reset kicker values */
 	void ResetKicker();
 	
+	/** Turn on intake */
+	virtual void RunIntake();
+	
+	/** Turn intake off */
+	virtual void StopIntake();
+	
 	/** Check whether the kicker is posessing a ball. */
 	virtual bool HasPossession();
 	
