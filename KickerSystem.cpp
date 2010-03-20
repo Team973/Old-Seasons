@@ -53,6 +53,16 @@ void KickerSystem::ResetKicker()
 						  : restAngle - m_robot->GetKickerEncoder()->GetMaxVoltage());
 }
 
+void KickerSystem::RunIntake()
+{
+	m_intakeState = 1;
+}
+
+void KickerSystem::StopIntake()
+{
+	m_intakeSystem = 0;
+}
+
 bool KickerSystem::HasPossession()
 {
 	double timeElapsed, rate;
@@ -64,6 +74,11 @@ bool KickerSystem::HasPossession()
 	rate = m_robot->GetIntakeEncoder()->GetDistance() / timeElapsed;
 	return (m_intakeState == 1) && (rate < 180);
 }
+
+void KickerSystem::Cock()
+{
+	m_cocking = true;
+}
 	
 void KickerSystem::ReadControls()
 {
@@ -72,11 +87,11 @@ void KickerSystem::ReadControls()
 	
 	// Update winch controls
 	if (board.GetButton(15))
-		m_strength = kStrengthLo;
+		SetStrength(kStrengthLo);
 	else if (board.GetButton(11))
-		m_strength = kStrengthMd;
+		SetStrength(kStrengthMd);
 	else if (board.GetButton(7))
-		m_strength = kStrengthHi;
+		SetStrength(kStrengthHi);
 	
 	m_resetFlag.Set(board.GetJoystick(3).GetRawButton(10));
 	if (m_resetFlag.GetTriggeredOn())
@@ -110,7 +125,7 @@ void KickerSystem::ReadControls()
 		board.GetJoystick(3).GetRawButton(4) ||
 		board.GetJoystick(3).GetRawButton(5))
 	{
-		m_intakeState = 1;
+		RunIntake();
 	}
 	else if (board.GetJoystick(3).GetRawButton(8))
 	{
@@ -118,12 +133,12 @@ void KickerSystem::ReadControls()
 	}
 	else
 	{
-		m_intakeState = 0;
+		StopIntake();
 	}
 
 	m_intakeFlag.Set(m_intakeState != 0);
 	if (m_intakeFlag.GetTriggeredOn())
-		m_cocking = true;
+		Cock();
 	
 	// Change display on the HUD
 //	if (m_cockingEnded)
@@ -158,6 +173,11 @@ void KickerSystem::Kick()
 		m_kicking = true;
 		m_robot->GetKickerEncoder()->ResetAccumulator();
 	}
+}
+
+void KickerSystem::SetStrength(short s)
+{
+	m_strength = s;
 }
 
 void KickerSystem::Update()

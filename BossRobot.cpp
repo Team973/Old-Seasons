@@ -15,6 +15,7 @@
 #include "DriveSystem.hpp"
 #include "KickerSystem.hpp"
 #include "ArmSystem.hpp"
+#include "Autonomous.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -28,6 +29,7 @@ BossRobot::BossRobot(void)
 #ifdef FEATURE_LCD
 	DS_LCD *lcd = DS_LCD::GetInstance();
 #endif
+	double driveDist;
 	
 	GetWatchdog().SetExpiration(0.25);
 
@@ -62,9 +64,12 @@ BossRobot::BossRobot(void)
 	m_driveSystem = new AutonomousDriveSystem(this);
 	
 #ifdef FEATURE_DRIVE_ENCODERS
+	driveDist = m_config.SetDefault("driveEncoderDistancePerPulse");
 	m_leftDriveEncoder = new Encoder(2, 3, true);
+	m_leftDriveEncoder->SetDistancePerPulse(driveDist);
 	m_leftDriveEncoder->Start();
 	m_rightDriveEncoder = new Encoder(4, 5);
+	m_rightDriveEncoder->SetDistancePerPulse(driveDist);
 	m_rightDriveEncoder->Start();
 #else
 	m_leftDriveEncoder = m_rightDriveEncoder = NULL;
@@ -151,9 +156,7 @@ BossRobot::BossRobot(void)
 void BossRobot::Autonomous(void)
 {
 	GetWatchdog().SetEnabled(false);
-//	m_drive->Drive(0.5, 0.0); 	// drive forwards half speed
-//	Wait(2.0); 				//    for 2 seconds
-//	m_drive->Drive(0.0, 0.0); 	// stop robot
+	CalibrateEncoderAutonomous(this);
 }
 
 void BossRobot::OperatorControl(void)

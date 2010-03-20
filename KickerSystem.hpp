@@ -29,12 +29,11 @@ protected:
 	bool m_cocking, m_cockingBegan, m_cockingEnded;
 	SimplePID m_kickerPID;
 	Flag m_kickTrigger, m_intakeFlag, m_resetFlag;
-	int m_intakePrevCount;
 	
 	Timer *m_intakeTimer;
-	
-	enum {kStrengthLo, kStrengthMd, kStrengthHi};
 public:
+	enum {kStrengthLo, kStrengthMd, kStrengthHi};
+	
 	KickerSystem(BossRobot *);
 	virtual ~KickerSystem();
 	
@@ -52,6 +51,22 @@ public:
 	
 	/** Reset kicker values */
 	void ResetKicker();
+	
+	virtual void SetStrength(short s);
+	
+	/**
+	 *	Set the kicker to the cocked position.
+	 *
+	 *	Yes.  Please laugh at this function's name.  It's the only place where I
+	 *	will use the word in its shortened form.
+	 */
+	virtual void Cock();
+	
+	/** Turn on intake */
+	virtual void RunIntake();
+	
+	/** Turn intake off */
+	virtual void StopIntake();
 	
 	/** Check whether the kicker is posessing a ball. */
 	virtual bool HasPossession();
