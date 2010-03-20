@@ -10,6 +10,7 @@
 
 #include "Autonomous.hpp"
 #include "DriveSystem.hpp"
+#include "KickerSystem.hpp"
 
 void MainAutonomous(BossRobot *robot)
 {
@@ -17,8 +18,17 @@ void MainAutonomous(BossRobot *robot)
 	
 	SetupAutonomous(robot);
 	
+	// Wind up winch
+//	robot->GetKickerSystem()->SetStrength(KickerSystem::kStrengthHi);
+//	robot->GetKickerSystem()->Cock();
+//	while (robot->GetKickerSystem()->NeedsWinchUpdate())
+//	{
+//		robot->GetKickerSystem()->Update();
+//	}
+	
 	autoDist = robot->GetConfig().SetDefault("autonomousMaxDistance");
 	
+	// Main loop
 	while (robot->GetLeftDriveEncoder()->GetDistance() < autoDist &&
 		   robot->GetRightDriveEncoder()->GetDistance() < autoDist)
 	{
