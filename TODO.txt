@@ -1,0 +1,14 @@
+TODO
+
+Physical
+
+[ ] Check outputs
+[ ] Verify that gear-shifting code works
+[ ] Calibrate encoders
+
+Programming
+
+[ ] Autonomous
+[-] HUD light (prototyped)
+[-] Check for possession (simplified)
+[ ] Apply elbow brake (first figure out when)
