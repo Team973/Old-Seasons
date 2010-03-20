@@ -21,6 +21,8 @@
 #ifndef _BOSS_973_BOSSROBOT_H_
 #define _BOSS_973_BOSSROBOT_H_
 
+#define PI 3.14159265359
+
 class State;
 class DriveSystem;
 class KickerSystem;
