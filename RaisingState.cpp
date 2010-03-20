@@ -34,6 +34,7 @@ void RaisingState::Enter()
 	m_robot->SoftStop();
 	
 	m_robot->GetArmSystem()->SetState(ArmSystem::kRaised);
+	m_robot->GetArmSystem()->Update();
 	
 	m_elbowPID.SetLimits(0.0, 1.0); // we have a ratchet on the drive now
 	m_elbowPID.SetPID(c.SetDefault("elbowP", 7.5),
@@ -73,9 +74,10 @@ void RaisingState::Step()
 	}
 
 	m_robot->GetGearSwitch()->Set(1);
-	m_robot->GetArmSystem()->SetState(ArmSystem::kRaised);
 	m_robot->GetArmSystem()->Brake();
 	m_robot->GetArmSystem()->Update();
+	m_robot->GetShoulderMotor1()->Set(0.0);
+	m_robot->GetShoulderMotor2()->Set(0.0);
 	
 	if (m_timer->Get() < m_robot->GetConfig().SetDefault("quasiNeutralDelay", 0.1))
 	{
