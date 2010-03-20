@@ -24,7 +24,7 @@ void MainAutonomous(BossRobot *robot)
 	{
 		// Run drive
 		// Drive forward
-		robot->GetDriveSystem()->Turn(1.0, 0.0);
+		robot->GetDriveSystem()->Turn(0.2, 0.0);
 		robot->GetDriveSystem()->Update();
 		
 		// Run kicker system
@@ -52,7 +52,7 @@ void CalibrateEncoderAutonomous(BossRobot *robot)
 		   robot->GetRightDriveEncoder()->GetRaw() < tickDist * 4)
 	{
 		// Run drive forward
-		robot->GetDriveSystem()->Turn(1.0, 0.0);
+		robot->GetDriveSystem()->Turn(0.5, 0.0);
 		robot->GetDriveSystem()->Update();
 	}
 	
