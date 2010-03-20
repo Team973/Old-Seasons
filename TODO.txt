@@ -10,5 +10,5 @@ Programming
 
 [ ] Autonomous
 [-] HUD light (prototyped)
-[ ] Check for possession
+[-] Check for possession (simplified)
 [ ] Apply elbow brake (first figure out when)
