@@ -136,6 +136,9 @@ public:
 	void SoftStop();
 	
 	// Accessors
+	inline Relay *GetCompressor()						{ return m_compressor; }
+	inline DigitalInput *GetPressureSwitch()			{ return m_pressureSwitch; }
+	
 	inline SpeedController *GetLeftFrontDriveMotor()	{ return m_leftMotor1; }
 	inline SpeedController *GetLeftRearDriveMotor()		{ return m_leftMotor2; }
 	inline SpeedController *GetRightFrontDriveMotor()	{ return m_rightMotor1; }

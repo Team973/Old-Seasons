@@ -11,10 +11,12 @@
 #include "Autonomous.hpp"
 #include "DriveSystem.hpp"
 #include "KickerSystem.hpp"
+#include "Options.hpp"
 
 void MainAutonomous(BossRobot *robot)
 {
 	double autoDist;
+	Timer t;
 	
 	SetupAutonomous(robot);
 	
@@ -26,12 +28,28 @@ void MainAutonomous(BossRobot *robot)
 //		robot->GetKickerSystem()->Update();
 //	}
 	
-	autoDist = robot->GetConfig().SetDefault("autonomousMaxDistance", 6 * 12);
+	// Run compressor
+#ifdef FEATURE_COMPRESSOR
+	robot->GetCompressor()->Set(Relay::kOn);
+	while (!robot->GetPressureSwitch()->Get())
+		;
+	robot->GetCompressor()->Set(Relay::kOff);
+#endif
+	
+	autoDist = robot->GetConfig().SetDefault("autonomousMaxDistance", 12 * 12);
+	robot->GetKickerSystem()->Reset();
+	robot->GetKickerSystem()->RunIntake();
 	
 	// Main loop
+	t.Start();
 	while (robot->GetLeftDriveEncoder()->GetDistance() < autoDist &&
 		   robot->GetRightDriveEncoder()->GetDistance() < autoDist)
 	{
+		robot->GetShoulderBrake()->Set(1); // to unbrake
+#ifdef FEATURE_COMPRESSOR
+		robot->GetCompressor()->Set(robot->GetPressureSwitch()->Get() ? Relay::kOff : Relay::kOn);
+#endif
+		
 		// Run drive
 		// Drive forward
 		robot->GetDriveSystem()->Turn(0.2, 0.0);
@@ -39,10 +57,10 @@ void MainAutonomous(BossRobot *robot)
 		
 		// Run kicker system
 		// Kick if we have a ball
-		robot->GetKickerSystem()->RunIntake();
-		if (robot->GetKickerSystem()->HasPossession())
+		if (t.Get() > 2.0 && robot->GetKickerSystem()->HasPossession())
 		{
 			robot->GetKickerSystem()->Kick();
+			t.Reset();
 		}
 		robot->GetKickerSystem()->Update();
 	}
