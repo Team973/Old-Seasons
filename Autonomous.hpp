@@ -11,6 +11,7 @@
 #include "BossRobot.hpp"
 
 void MainAutonomous(BossRobot *robot);
+void CalibrateEncoderAutonomous(BossRobot *robot);
 
 void SetupAutonomous(BossRobot *robot);
 void DriveFor(BossRobot *robot, double time, double speed, double curve);

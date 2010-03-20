@@ -37,7 +37,28 @@ void MainAutonomous(BossRobot *robot)
 		robot->GetKickerSystem()->Update();
 	}
 	
+	// Stop
 	robot->GetDriveSystem()->Stop();
+	robot->GetDriveSystem()->Update();
+}
+
+void CalibrateEncoderAutonomous(BossRobot *robot)
+{
+	UINT32 tickDist = 300 * 10; // 10 revolutions
+	
+	SetupAutonomous(robot);
+	
+	while (robot->GetLeftDriveEncoder()->GetRaw() < tickDist * 4 &&
+		   robot->GetRightDriveEncoder()->GetRaw() < tickDist * 4)
+	{
+		// Run drive forward
+		robot->GetDriveSystem()->Turn(1.0, 0.0);
+		robot->GetDriveSystem()->Update();
+	}
+	
+	// Stop
+	robot->GetDriveSystem()->Stop();
+	robot->GetDriveSystem()->Update();
 }
 
 void SetupAutonomous(BossRobot *robot)
