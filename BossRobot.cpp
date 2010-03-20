@@ -64,7 +64,7 @@ BossRobot::BossRobot(void)
 	m_driveSystem = new AutonomousDriveSystem(this);
 	
 #ifdef FEATURE_DRIVE_ENCODERS
-	driveDist = m_config.SetDefault("driveEncoderDistancePerPulse");
+	driveDist = m_config.SetDefault("driveEncoderDistancePerPulse", 4.25 * 2 * PI / 300);
 	m_leftDriveEncoder = new Encoder(2, 3, true);
 	m_leftDriveEncoder->SetDistancePerPulse(driveDist);
 	m_leftDriveEncoder->Start();
