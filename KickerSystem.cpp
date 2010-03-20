@@ -50,6 +50,16 @@ void KickerSystem::ResetKicker()
 						  : restAngle - m_robot->GetKickerEncoder()->GetMaxVoltage());
 }
 
+void KickerSystem::RunIntake()
+{
+	m_intakeState = 1;
+}
+
+void KickerSystem::StopIntake()
+{
+	m_intakeSystem = 0;
+}
+
 bool KickerSystem::HasPossession()
 {
 	return (m_intakeState == 1) && (m_robot->GetIntakeEncoder()->GetRate() < 42);
