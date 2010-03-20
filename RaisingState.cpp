@@ -84,7 +84,8 @@ void RaisingState::Step()
 		return;
 	}
 
-	m_robot->GetElbowSwitch()->Set(1);
+	// Adam doesn't want this anymore.  I just program here.
+	//m_robot->GetElbowSwitch()->Set(1);
 	// Solenoid 3 high and solenoid 4 low (or vice versa)
 	
 	m_elbowPID.Update(elbowVoltage);
