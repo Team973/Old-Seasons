@@ -26,7 +26,7 @@ void MainAutonomous(BossRobot *robot)
 //		robot->GetKickerSystem()->Update();
 //	}
 	
-	autoDist = robot->GetConfig().SetDefault("autonomousMaxDistance");
+	autoDist = robot->GetConfig().SetDefault("autonomousMaxDistance", 6 * 12);
 	
 	// Main loop
 	while (robot->GetLeftDriveEncoder()->GetDistance() < autoDist &&
@@ -35,7 +35,7 @@ void MainAutonomous(BossRobot *robot)
 		// Run drive
 		// Drive forward
 		robot->GetDriveSystem()->Turn(0.2, 0.0);
-		robot->GetDriveSystem()->Update();
+		robot->GetDriveSystem()->Drive();
 		
 		// Run kicker system
 		// Kick if we have a ball
@@ -49,12 +49,12 @@ void MainAutonomous(BossRobot *robot)
 	
 	// Stop
 	robot->GetDriveSystem()->Stop();
-	robot->GetDriveSystem()->Update();
+	robot->GetDriveSystem()->Drive();
 }
 
 void CalibrateEncoderAutonomous(BossRobot *robot)
 {
-	UINT32 tickDist = 300 * 10; // 10 revolutions
+	INT32 tickDist = 300 * 10; // 10 revolutions
 	
 	SetupAutonomous(robot);
 	
@@ -63,12 +63,12 @@ void CalibrateEncoderAutonomous(BossRobot *robot)
 	{
 		// Run drive forward
 		robot->GetDriveSystem()->Turn(0.5, 0.0);
-		robot->GetDriveSystem()->Update();
+		robot->GetDriveSystem()->Drive();
 	}
 	
 	// Stop
 	robot->GetDriveSystem()->Stop();
-	robot->GetDriveSystem()->Update();
+	robot->GetDriveSystem()->Drive();
 }
 
 void SetupAutonomous(BossRobot *robot)
