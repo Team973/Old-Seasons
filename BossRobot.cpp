@@ -115,6 +115,17 @@ BossRobot::BossRobot(void)
 	m_kickerSystem = new KickerSystem(this);
 	m_armSystem = new ArmSystem(this);
 	
+	/* Auto switch */
+	m_autoSwitchA1 = new DigitalInput(6, 3);
+	m_autoSwitchA2 = new DigitalInput(6, 4);
+	m_autoSwitchA4 = new DigitalInput(6, 5);
+	m_autoSwitchA8 = new DigitalInput(6, 6);
+	
+	m_autoSwitchB1 = new DigitalInput(6, 7);
+	m_autoSwitchB2 = new DigitalInput(6, 8);
+	m_autoSwitchB4 = new DigitalInput(6, 9);
+	m_autoSwitchB8 = new DigitalInput(6, 10);
+	
 	/* Misc */
 	m_ioTimer = new Timer();
 	m_ioTimer->Start();
@@ -152,6 +163,22 @@ BossRobot::BossRobot(void)
 	lcd->PrintfLine(DS_LCD::kUser_Line1, "Robot ready");
 	lcd->UpdateLCD();
 #endif
+}
+
+unsigned char BossRobot::GetAutoValueA()
+{
+	return ~(m_autoSwitchA1->Get() |
+			 m_autoSwitchA2->Get() << 1 |
+			 m_autoSwitchA4->Get() << 2 |
+			 m_autoSwitchA8->Get() << 3) & 0x0f;
+}
+
+unsigned char BossRobot::GetAutoValueB()
+{
+	return ~(m_autoSwitchB1->Get() |
+			 m_autoSwitchB2->Get() << 1 |
+			 m_autoSwitchB4->Get() << 2 |
+			 m_autoSwitchB8->Get() << 3) & 0x0f;
 }
 
 void BossRobot::Autonomous(void)
