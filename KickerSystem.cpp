@@ -31,6 +31,7 @@ void KickerSystem::Reset()
 	ResetKicker();
 	
 	m_strength = kStrengthLo;
+	m_intakeState = 0;
 }
 
 void KickerSystem::ResetKicker()
