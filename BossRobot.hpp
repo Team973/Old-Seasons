@@ -68,6 +68,9 @@ private:
 	SpeedController *m_intakeMotor;
 	Encoder *m_intakeEncoder;
 	
+	DigitalInput *m_autoSwitchA1, *m_autoSwitchA2, *m_autoSwitchA4, *m_autoSwitchA8;
+	DigitalInput *m_autoSwitchB1, *m_autoSwitchB2, *m_autoSwitchB4, *m_autoSwitchB8;
+	
 #ifdef FEATURE_CAMERA
 	AxisCamera *m_camera;
 #endif
@@ -163,6 +166,9 @@ public:
 	
 	inline Solenoid *GetElbowSwitch()					{ return m_elbowSwitch; }
 	inline AnalogChannel *GetElbowSensor()				{ return m_elbowSensor; }
+	
+	unsigned char GetAutoValueA();
+	unsigned char GetAutoValueB();
 
 protected:
 	void SendIOPortData(void);

@@ -70,6 +70,8 @@ void ConfigState::Step()
 	HandleElbowPresetting();
 
 #ifdef FEATURE_LCD
+	DS_LCD::GetInstance()->PrintfLine(DS_LCD::kUser_Line6,
+		"Auto: %.2x", m_robot->GetAutoValueA() << 4 | m_robot->GetAutoValueB());
 	DS_LCD::GetInstance()->UpdateLCD();
 #endif
 } // END STEP
