@@ -15,8 +15,9 @@
 
 void MainAutonomous(BossRobot *robot)
 {
-	double autoDist;
+	double autoDist, jogBackTime = -1.0;
 	Timer t;
+	bool started = false;
 	
 	SetupAutonomous(robot);
 	
@@ -28,39 +29,61 @@ void MainAutonomous(BossRobot *robot)
 //		robot->GetKickerSystem()->Update();
 //	}
 	
-	// Run compressor
-#ifdef FEATURE_COMPRESSOR
-	robot->GetCompressor()->Set(Relay::kOn);
-	while (!robot->GetPressureSwitch()->Get())
-		;
-	robot->GetCompressor()->Set(Relay::kOff);
-#endif
-	
 	autoDist = robot->GetConfig().SetDefault("autonomousMaxDistance", 12 * 12);
 	robot->GetKickerSystem()->Reset();
+	robot->GetKickerSystem()->Cock();
 	robot->GetKickerSystem()->RunIntake();
 	
 	// Main loop
 	t.Start();
+	robot->GetDriveSystem()->Turn(0.2, 0.0);
 	while (robot->GetLeftDriveEncoder()->GetDistance() < autoDist &&
-		   robot->GetRightDriveEncoder()->GetDistance() < autoDist)
+		   robot->GetRightDriveEncoder()->GetDistance() < autoDist &&
+		   robot->IsAutonomous())
 	{
 		robot->GetShoulderBrake()->Set(1); // to unbrake
 #ifdef FEATURE_COMPRESSOR
 		robot->GetCompressor()->Set(robot->GetPressureSwitch()->Get() ? Relay::kOff : Relay::kOn);
 #endif
 		
+		if (!started)
+		{
+			if (t.Get() > 3.0)
+			{
+				started = true;
+				t.Reset();
+			}
+			else
+			{
+				continue;
+			}
+		}
+		
 		// Run drive
-		// Drive forward
-		robot->GetDriveSystem()->Turn(0.2, 0.0);
 		robot->GetDriveSystem()->Drive();
 		
 		// Run kicker system
 		// Kick if we have a ball
-		if (t.Get() > 2.0 && robot->GetKickerSystem()->HasPossession())
+		if (jogBackTime >= 0)
 		{
-			robot->GetKickerSystem()->Kick();
-			t.Reset();
+			if (t.Get() - jogBackTime >= 1.0)
+			{
+				robot->GetKickerSystem()->Kick();
+				robot->GetDriveSystem()->Stop();
+				t.Reset();
+				jogBackTime = -1.0;
+			}
+		}
+		else if (t.Get() > 1.0 && robot->GetKickerSystem()->HasPossession())
+		{
+			jogBackTime = t.Get();
+			robot->GetDriveSystem()->Turn(-0.2, 0.0);
+		}
+		else if (!robot->GetKickerSystem()->IsKicking())
+		{
+			robot->GetKickerSystem()->Cock();
+			robot->GetDriveSystem()->Turn(0.2, 0.0);
+			jogBackTime = -1.0;
 		}
 		robot->GetKickerSystem()->Update();
 	}
@@ -92,6 +115,8 @@ void CalibrateEncoderAutonomous(BossRobot *robot)
 void SetupAutonomous(BossRobot *robot)
 {
 	robot->SetDriveSystem(new AutonomousDriveSystem(robot));
+	robot->GetLeftDriveEncoder()->Reset();
+	robot->GetRightDriveEncoder()->Reset();
 }
 
 void DriveFor(BossRobot *robot, double time, double speed, double curve)

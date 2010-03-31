@@ -157,7 +157,7 @@ BossRobot::BossRobot(void)
 void BossRobot::Autonomous(void)
 {
 	GetWatchdog().SetEnabled(false);
-	//MainAutonomous(this);
+	MainAutonomous(this);
 }
 
 void BossRobot::OperatorControl(void)

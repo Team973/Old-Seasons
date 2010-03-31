@@ -78,6 +78,11 @@ public:
 	 *	If the robot is already making a kick, then this method will do nothing.
 	 */
 	virtual void Kick();
+	
+	inline bool IsKicking()
+	{
+		return m_kicking;
+	}
 protected:
 	virtual double GetWinchTarget();
 	
