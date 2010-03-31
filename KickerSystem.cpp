@@ -39,6 +39,7 @@ void KickerSystem::ResetKicker()
 	
 	m_kicking = false;
 	m_startedKicking = false;
+	m_manualRunKicker = false;
 	m_cocking = false;
 	m_cockingBegan = false;
 	m_cockingEnded = false;
@@ -112,6 +113,17 @@ void KickerSystem::ReadControls()
 	m_kickTrigger.Set(board.GetJoystick(3).GetTrigger());
 	if (m_kickTrigger.GetTriggeredOn())
 		Kick();
+	
+	// Update manual kicker mode
+	m_manualMode.Set(board.GetJoystick(3).GetRawButton(6) && board.GetJoystick(3).GetRawButton(7));
+	if (m_manualMode.Get())
+	{
+		m_manualRunKicker = m_kickTrigger.Get();
+	}
+	else
+	{
+		m_manualRunKicker = false;
+	}
 	
 	// Update intake controls
 	if (board.GetJoystick(3).GetRawButton(2) ||
@@ -239,6 +251,17 @@ void KickerSystem::UpdateKicker()
 	AbsoluteEncoder *encoder = m_robot->GetKickerEncoder();
 	float encoderVoltage, encoderMaxVoltage;
 	double restVoltage, cockedVoltage, tol;
+	
+	if (m_manualMode.Get())
+	{
+		// ADAM FORCED ME TO DO THIS.  I CUT MY WRISTS AFTER THIS LINE OF CODE.
+		m_robot->GetKickerMotor()->Set(m_manualRunKicker ? 1.0 : 0.0);
+		return;
+	}
+	else if (m_manualMode.CheckTriggeredOff())
+	{
+		ResetKicker();
+	}
 	
 	encoderVoltage = encoder->GetIncrementalVoltage();
 	encoderMaxVoltage = encoder->GetMaxVoltage();

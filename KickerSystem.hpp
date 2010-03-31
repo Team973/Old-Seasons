@@ -26,6 +26,8 @@ protected:
 	BossRobot *m_robot;
 	short m_strength, m_intakeState;
 	bool m_kicking, m_startedKicking;
+	Flag m_manualMode;
+	bool m_manualRunKicker;
 	bool m_cocking, m_cockingBegan, m_cockingEnded;
 	SimplePID m_kickerPID;
 	Flag m_kickTrigger, m_intakeFlag, m_resetFlag;
