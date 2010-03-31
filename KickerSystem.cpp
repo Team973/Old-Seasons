@@ -170,7 +170,7 @@ void KickerSystem::Update()
 bool KickerSystem::NeedsWinchUpdate()
 {
 	double actual = m_robot->GetKickerWinchSensor()->GetVoltage();
-	double tolerance = m_robot->GetConfig().SetDefault("kickerPosTolerance", 0.02);
+	double tolerance = m_robot->GetConfig().SetDefault("winchPosTolerance", 0.02);
 	double target = GetWinchTarget();
 	
 	return (fabs(actual - target) > tolerance * 2);
@@ -216,7 +216,7 @@ void KickerSystem::UpdateWinch()
 
 	target = GetWinchTarget();
 	actual = m_robot->GetKickerWinchSensor()->GetVoltage();
-	tolerance = m_robot->GetConfig().SetDefault("kickerPosTolerance", 0.02);
+	tolerance = m_robot->GetConfig().SetDefault("winchPosTolerance", 0.02);
 	if (actual < (target - tolerance))
 	{
 		m_robot->GetKickerWinch1()->Set(Relay::kForward);
