@@ -19,20 +19,14 @@ void MainAutonomous(BossRobot *robot)
 	Timer t;
 	bool started = false;
 	
+	// Set up everything!
 	SetupAutonomous(robot);
-	
-	// Wind up winch
-//	robot->GetKickerSystem()->SetStrength(KickerSystem::kStrengthHi);
-//	robot->GetKickerSystem()->Cock();
-//	while (robot->GetKickerSystem()->NeedsWinchUpdate())
-//	{
-//		robot->GetKickerSystem()->Update();
-//	}
+
+	robot->GetKickerSystem()->Reset();
+	robot->GetKickerSystem()->SetStrength(KickerSystem::kStrengthMd);
+	robot->GetKickerSystem()->Cock();
 	
 	autoDist = robot->GetConfig().SetDefault("autonomousMaxDistance", 12 * 12);
-	robot->GetKickerSystem()->Reset();
-	robot->GetKickerSystem()->Cock();
-	robot->GetKickerSystem()->RunIntake();
 	
 	// Main loop
 	t.Start();
@@ -45,12 +39,14 @@ void MainAutonomous(BossRobot *robot)
 #ifdef FEATURE_COMPRESSOR
 		robot->GetCompressor()->Set(robot->GetPressureSwitch()->Get() ? Relay::kOff : Relay::kOn);
 #endif
+		robot->GetKickerSystem()->Update();
 		
 		if (!started)
 		{
 			if (t.Get() > 3.0)
 			{
 				started = true;
+				robot->GetKickerSystem()->RunIntake();
 				t.Reset();
 			}
 			else
@@ -64,28 +60,28 @@ void MainAutonomous(BossRobot *robot)
 		
 		// Run kicker system
 		// Kick if we have a ball
-		if (jogBackTime >= 0)
-		{
-			if (t.Get() - jogBackTime >= 1.0)
-			{
-				robot->GetKickerSystem()->Kick();
-				robot->GetDriveSystem()->Stop();
-				t.Reset();
-				jogBackTime = -1.0;
-			}
-		}
-		else if (t.Get() > 1.0 && robot->GetKickerSystem()->HasPossession())
-		{
-			jogBackTime = t.Get();
-			robot->GetDriveSystem()->Turn(-0.2, 0.0);
-		}
-		else if (!robot->GetKickerSystem()->IsKicking())
-		{
-			robot->GetKickerSystem()->Cock();
-			robot->GetDriveSystem()->Turn(0.2, 0.0);
-			jogBackTime = -1.0;
-		}
-		robot->GetKickerSystem()->Update();
+//		if (jogBackTime >= 0)
+//		{
+//			if (t.Get() - jogBackTime >= 1.0)
+//			{
+//				robot->GetKickerSystem()->Kick();
+//				robot->GetDriveSystem()->Stop();
+//				t.Reset();
+//				jogBackTime = -1.0;
+//			}
+//		}
+//		else if (t.Get() > 1.0 && robot->GetKickerSystem()->HasPossession())
+//		{
+//			jogBackTime = t.Get();
+//			robot->GetDriveSystem()->Turn(-0.2, 0.0);
+//		}
+//		else if (!robot->GetKickerSystem()->IsKicking())
+//		{
+//			robot->GetKickerSystem()->Cock();
+//			robot->GetDriveSystem()->Turn(0.2, 0.0);
+//			jogBackTime = -1.0;
+//		}
+//		robot->GetKickerSystem()->Update();
 	}
 	
 	// Stop
@@ -117,6 +113,9 @@ void SetupAutonomous(BossRobot *robot)
 	robot->SetDriveSystem(new AutonomousDriveSystem(robot));
 	robot->GetLeftDriveEncoder()->Reset();
 	robot->GetRightDriveEncoder()->Reset();
+	robot->GetDriveSystem()->Stop();
+	robot->GetDriveSystem()->Drive();
+	robot->GetKickerSystem()->Reset();
 }
 
 void DriveFor(BossRobot *robot, double time, double speed, double curve)
