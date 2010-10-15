@@ -212,7 +212,7 @@ void KickerSystem::UpdateWinch()
 	return;
 #endif
 	
-	if (!m_cockingEnded || m_startedKicking)
+	if (m_startedKicking)
 	{
 		m_robot->GetKickerWinch1()->Set(Relay::kOff);
 		m_robot->GetKickerWinch2()->Set(Relay::kOff);

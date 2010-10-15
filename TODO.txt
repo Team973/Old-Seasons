@@ -12,3 +12,6 @@ Programming
 [-] HUD light (prototyped)
 [-] Check for possession (simplified)
 [ ] Apply elbow brake (first figure out when)
+
+
+[ ] Print to LCD if passing min or max while raising
