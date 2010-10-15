@@ -1,14 +1,9 @@
 -- robot.lua
 -- Based on RossTest.cpp
 
-module(..., package.seeall)
+require "config"
 
-features =
-{
-    compressor = false,
-    gearSwitch = false,
-    lcd = true,
-}
+module(..., package.seeall)
 
 local TELEOP_LOOP_LAG = 0.005
 
@@ -16,27 +11,9 @@ stick1 = wpilib.Joystick(1)
 stick2 = wpilib.Joystick(2)
 stick3 = wpilib.Joystick(3)
 
--- Drive
-leftMotor1 = wpilib.Victor(1)
-leftMotor2 = wpilib.Victor(3)
-rightMotor1 = wpilib.Victor(2)
-rightMotor2 = wpilib.Victor(4)
-
-drive = wpilib.RobotDrive(leftMotor1, leftMotor2, rightMotor1, rightMotor2)
-
-gearSwitch = wpilib.Solenoid(1)
-hiGear = false
-
-intakeMotor = wpilib.Victor(6, 3)
-
--- Pneumatics
-compressor = wpilib.Relay(1, wpilib.Relay_kForwardOnly)
-pressureSwitch = wpilib.DigitalInput(1)
-
 -- WPILib shortcuts
 local printLCD, updateLCD
-
-if features.lcd then
+if config.features.lcd then
     local lcd = wpilib.DriverStationLCD_GetInstance()
     
     function printLCD(line, msg)
@@ -47,28 +24,53 @@ if features.lcd then
         lcd:UpdateLCD()
     end
 else
-    function printLCD() end
-    function updateLCD() end
+    printLCD = function() end
+    updateLCD = function() end
 end
 
-local function feedWatchdog()
-    local dog = wpilib.getWatchdog()
-    dog:Feed()
-end
+-- Watchdog shortcuts
+local feedWatchdog, enableWatchdog, disableWatchdog
+if config.watchdogEnabled then
+    function feedWatchdog()
+        local dog = wpilib.getWatchdog()
+        dog:Feed()
+    end
 
-local function enableWatchdog()
-    local dog = wpilib.getWatchdog()
-    dog:SetEnabled(true)
-end
+    function enableWatchdog()
+        local dog = wpilib.getWatchdog()
+        dog:SetEnabled(true)
+    end
 
-local function disableWatchdog()
+    function disableWatchdog()
+        local dog = wpilib.getWatchdog()
+        dog:SetEnabled(false)
+    end
+else
     local dog = wpilib.getWatchdog()
     dog:SetEnabled(false)
+    
+    feedWatchdog = function() end
+    enableWatchdog = function() end
+    disableWatchdog = function() end
 end
+
+-- I/O
+leftMotor1 = config.leftMotor1
+leftMotor2 = config.leftMotor2
+rightMotor1 = config.rightMotor1
+rightMotor2 = config.rightMotor2
+gearSwitch = config.gearSwitch
+intakeMotor = config.intakeMotor
+compressor = config.compressor
+pressureSwitch = config.pressureSwitch
+
+-- Globals
+drive = wpilib.RobotDrive(leftMotor1, leftMotor2, rightMotor1, rightMotor2)
+hiGear = false
 
 -- Robot running
 function run()
-    wpilib.getWatchdog():SetExpiration(0.25)
+    --wpilib.getWatchdog():SetExpiration(0.25)
     
     printLCD(wpilib.DriverStationLCD_kUser_Line1, "Robot init")
     updateLCD()
@@ -100,6 +102,12 @@ function teleop()
         enableWatchdog()
         feedWatchdog()
         
+        if stick3:GetRawButton(6) then
+            printLCD(wpilib.DriverStationLCD_kUser_Line2, "Did RESTART!")
+            updateLCD()
+            restartRobot()
+        end
+        
         driveJoysticks()
         feedWatchdog()
         
@@ -107,15 +115,19 @@ function teleop()
         updateLCD()
         
         -- Pneumatics
-        if features.compressor then
+        
+        compressor:Set(wpilib.Relay_kOn)
+        --[[
+        if config.features.compressor then
             if pressureSwitch:Get() then
                 compressor:Set(wpilib.Relay_kOff)
             else
                 compressor:Set(wpilib.Relay_kOn)
             end
         end
+        --]]
         
-        if features.gearSwitch then
+        if config.features.gearSwitch then
             gearSwitch:Set(not hiGear)
         end
         
@@ -138,6 +150,17 @@ function teleop()
     end
 end
 
-function driveJoysticks()
-    drive:ArcadeDrive(-stick1:GetY(), -stick2:GetX())
+do
+    local lastLo, lastHi = false, false
+    function driveJoysticks()
+        drive:ArcadeDrive(-stick1:GetY(), -stick2:GetX())
+        
+        if stick1:GetRawButton(2) and not lastLo then
+            hiGear = false
+        elseif stick1:GetRawButton(1) and not lastHi then
+            hiGear = true
+        end
+        
+        lastLo, lastHi = stick1:GetRawButton(2), stick1:GetRawButton(1)
+    end
 end
