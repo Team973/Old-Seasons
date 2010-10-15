@@ -43,11 +43,11 @@ void MainAutonomous(BossRobot *robot)
 	robot->GetKickerSystem()->SetStrength(strength);
 	robot->GetKickerSystem()->Cock();
 	
-	autoDist = robot->GetConfig().SetDefault("autonomousMaxDistance", 12 * 12);
-	
+	autoDist = robot->GetConfig().SetDefault("autonomousMaxDistance", 12 * 18);
+	autoDist = 12.0 * 18;
 	// Main loop
 	t.Start();
-	robot->GetDriveSystem()->Turn(0.2, 0.0);
+	robot->GetDriveSystem()->Turn(0.6, 0.0);
 	while (robot->GetLeftDriveEncoder()->GetDistance() < autoDist &&
 		   robot->GetRightDriveEncoder()->GetDistance() < autoDist &&
 		   robot->IsAutonomous() && !robot->IsDisabled())
@@ -89,8 +89,13 @@ void MainAutonomous(BossRobot *robot)
 		}
 		else if (t.Get() > 1.0 && robot->GetKickerSystem()->HasPossession())
 		{
-			jogBackTime = t.Get();
-			robot->GetDriveSystem()->Turn(-0.2, 0.0);
+//			bool left_distance = robot->GetLeftDriveEncoder()->GetDistance() >= -12;
+//			
+//			if(!left_distance)
+//			{
+				jogBackTime = t.Get();
+				robot->GetDriveSystem()->Turn(-0.2, 0.0);
+//			}
 		}
 		else if (!robot->GetKickerSystem()->IsKicking())
 		{

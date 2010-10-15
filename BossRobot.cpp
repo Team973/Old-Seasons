@@ -100,6 +100,10 @@ BossRobot::BossRobot(void)
 	m_elbowSwitch = new Solenoid(2);
 	m_elbowSensor = new AnalogChannel(1, 5);
 	
+	//init 
+	m_elbowSwitch->Set(false);
+	
+	
 	m_intakeMotor = new Victor(6, 3);
 	m_intakeEncoder = new Encoder(6, 1, 6, 2);
 	m_intakeEncoder->SetDistancePerPulse(360.0 / 100.0);
@@ -256,7 +260,8 @@ void BossRobot::PreStep(void)
 	m_compressor->Set(m_pressureSwitch->Get() ? Relay::kOff : Relay::kOn);
 #endif
 	
-	m_elbowSwitch->Set(false);
+	
+	//m_elbowSwitch->Set(false);
 }
 
 /** Perform any actions that need to be done after state updates */

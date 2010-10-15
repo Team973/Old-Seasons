@@ -92,8 +92,9 @@ void RaisingState::Step()
 	DS_LCD::GetInstance()->PrintfLine(DS_LCD::kUser_Line3, "PID: %f", m_elbowPID.GetOutput());
 	DS_LCD::GetInstance()->UpdateLCD();
 	
-	if (elbowVoltage > m_robot->GetConfig().SetDefault("elbowMinimum", 0.1) &&
-		elbowVoltage < m_robot->GetConfig().SetDefault("elbowMaximum", 4.9))
+	//if (elbowVoltage > m_robot->GetConfig().SetDefault("elbowMinimum", 0.1) &&
+	//	elbowVoltage < m_robot->GetConfig().SetDefault("elbowMaximum", 4.9))
+	if((elbowVoltage > 0.1) && elbowVoltage < 4.9)
 	{
 		output = m_elbowPID.GetOutput();
 		m_robot->GetLeftFrontDriveMotor()->Set(output);
