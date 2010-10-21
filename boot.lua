@@ -55,6 +55,20 @@ local keepPackage =
     ["wpilib"] = true,
 }
 
+-- This function handles destroying a package from globals.
+-- This is based off the setfield example in the Lua book.
+local function destroyPackage(pkg)
+    local t = _G
+    for word, dot in string.gmatch(pkg, "([%w_]+)(.?)") do
+        if d == "." then                -- not the last identifier?
+            if not t[w] then break end  -- stop if a parent table doesn't exist
+            t = t[w]                    -- get the table
+        else                            -- last identifier
+            t[w] = nil                  -- set the package to nil
+        end
+    end
+end
+
 while true do
     local function handleError(msg)
         if msg == restartError then
@@ -78,7 +92,7 @@ while true do
             for name, _ in pairs(package.loaded) do
                 if not keepPackage[name] then
                     package.loaded[name] = nil
-                    _G[name] = nil
+                    destroyPackage(name)
                 end
             end
             -- Run garbage collector before restarting

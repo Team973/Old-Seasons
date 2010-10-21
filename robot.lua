@@ -31,22 +31,24 @@ end
 -- Watchdog shortcuts
 local feedWatchdog, enableWatchdog, disableWatchdog
 if config.watchdogEnabled then
+    wpilib.GetWatchdog():SetExpiration(0.25)
+    
     function feedWatchdog()
-        local dog = wpilib.getWatchdog()
+        local dog = wpilib.GetWatchdog()
         dog:Feed()
     end
 
     function enableWatchdog()
-        local dog = wpilib.getWatchdog()
+        local dog = wpilib.GetWatchdog()
         dog:SetEnabled(true)
     end
 
     function disableWatchdog()
-        local dog = wpilib.getWatchdog()
+        local dog = wpilib.GetWatchdog()
         dog:SetEnabled(false)
     end
 else
-    local dog = wpilib.getWatchdog()
+    local dog = wpilib.GetWatchdog()
     dog:SetEnabled(false)
     
     feedWatchdog = function() end
@@ -70,22 +72,20 @@ hiGear = false
 
 -- Robot running
 function run()
-    --wpilib.getWatchdog():SetExpiration(0.25)
-    
     printLCD(wpilib.DriverStationLCD_kUser_Line1, "Robot init")
     updateLCD()
     
     -- Main loop
     while true do
-        if wpilib.isDisabled() then
+        if wpilib.IsDisabled() then
             -- TODO: run disabled function
-            repeat wpilib.Wait(0.01) until not wpilib.isDisabled()
-        elseif wpilib.isAutonomous() then
+            repeat wpilib.Wait(0.01) until not wpilib.IsDisabled()
+        elseif wpilib.IsAutonomous() then
             autonomous()
-            repeat wpilib.Wait(0.01) until not wpilib.isAutonomous() or not wpilib.isEnabled()
+            repeat wpilib.Wait(0.01) until not wpilib.IsAutonomous() or not wpilib.IsEnabled()
         else
             teleop()
-            repeat wpilib.Wait(0.01) until not wpilib.isOperatorControl() or not wpilib.isEnabled()
+            repeat wpilib.Wait(0.01) until not wpilib.IsOperatorControl() or not wpilib.IsEnabled()
         end
     end
 end
@@ -98,7 +98,7 @@ function autonomous()
 end
 
 function teleop()
-    while wpilib.isOperatorControl() and wpilib.isEnabled() do
+    while wpilib.IsOperatorControl() and wpilib.IsEnabled() do
         enableWatchdog()
         feedWatchdog()
         
@@ -116,8 +116,6 @@ function teleop()
         
         -- Pneumatics
         
-        compressor:Set(wpilib.Relay_kOn)
-        --[[
         if config.features.compressor then
             if pressureSwitch:Get() then
                 compressor:Set(wpilib.Relay_kOff)
@@ -125,7 +123,6 @@ function teleop()
                 compressor:Set(wpilib.Relay_kOn)
             end
         end
-        --]]
         
         if config.features.gearSwitch then
             gearSwitch:Set(not hiGear)
