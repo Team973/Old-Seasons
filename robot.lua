@@ -142,13 +142,14 @@ function teleop()
             intakeMotor:Set(0.0)
         end
         feedWatchdog()
-
+        
         -- Kicker
         kicker.setThirdZoneEnabled(stick3:GetRawButton(6))
         if stick3:GetRawButton(1) then
             kicker.fire()
         end
         kicker.update()
+        feedWatchdog()
         
         -- Iteration cleanup
         feedWatchdog()
