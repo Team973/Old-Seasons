@@ -65,6 +65,8 @@ gearSwitch = config.gearSwitch
 intakeMotor = config.intakeMotor
 compressor = config.compressor
 pressureSwitch = config.pressureSwitch
+gateLatch = config.gateLatch
+kickerCylinder = config.kickerCylinder
 
 -- Globals
 drive = wpilib.RobotDrive(leftMotor1, leftMotor2, rightMotor1, rightMotor2)
@@ -90,6 +92,49 @@ function run()
     end
 end
 
+local kickerState = "cocked"
+local kickerTimer = wpilib.Timer()
+
+function fireKicker()
+    if kickerState ~= "cocked" or kickerTimer:Get() < config.kickerReloadTime then
+        return 
+    end
+    kickerState = "firing"
+    kickerTimer:Reset()
+end
+
+function updateKicker()
+    if kickerState == "cocked" then
+        gateLatch:Set(false)
+        kickerCylinder:Set(true)
+    elseif kickerState == "firing" then
+        gateLatch:Set(true)
+        kickerCylinder:Set(true)
+        if kickerTimer:Get() > config.kickerFireTime then
+            kickerState = "return"
+            kickerTimer:Reset()
+        end
+    elseif kickerState == "return" then
+        gateLatch:Set(true)
+        kickerCylinder:Set(false)
+        if kickerTimer:Get() > config.kickerReturnTime then
+            kickerState = "catch"
+            kickerTimer:Reset()
+        end
+    elseif kickerState == "catch" then
+        gateLatch:Set(false)
+        kickerCylinder:Set(false)
+        if kickerTimer:Get() > config.kickerCatchTime then
+            kickerState = "cocked"
+            kickerTimer:Reset()
+        end
+    else
+        -- Failsafe for kicker, just in case the kicker state is set wrong.
+        gateLatch:Set(false)
+        kickerCylinder:Set(false)
+    end
+end
+
 function autonomous()
     disableWatchdog()
     drive:Drive(0.5, 0.0)
@@ -98,7 +143,7 @@ function autonomous()
 end
 
 function teleop()
-    while wpilib.IsOperatorControl() and wpilib.IsEnabled() do
+	while wpilib.IsOperatorControl() and wpilib.IsEnabled() do
         enableWatchdog()
         feedWatchdog()
         
@@ -131,15 +176,21 @@ function teleop()
         feedWatchdog()
         
         -- Intake
-        if stick3:GetRawButton(2) then
+        if stick3:GetRawButton(3) then
             intakeMotor:Set(-1.0)
-        elseif stick3:GetRawButton(1) then
+        elseif stick3:GetRawButton(2) then
             intakeMotor:Set(1.0)
         else
             intakeMotor:Set(0.0)
         end
         feedWatchdog()
 
+        -- Kicker
+        if stick3:GetRawButton(1) then
+            fireKicker()
+        end
+        updateKicker()
+        
         -- Iteration cleanup
         feedWatchdog()
         wpilib.Wait(TELEOP_LOOP_LAG)

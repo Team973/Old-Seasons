@@ -24,3 +24,12 @@ intakeMotor = wpilib.Victor(6, 3)
 -- Pneumatics
 compressor = wpilib.Relay(4, 1, wpilib.Relay_kForwardOnly)
 pressureSwitch = wpilib.DigitalInput(1)
+
+
+-- Kicker(To do)
+gateLatch = wpilib.Solenoid(2)
+kickerCylinder = wpilib.Solenoid(3)
+kickerReloadTime = 1
+kickerFireTime = 1
+kickerReturnTime = 1
+kickerCatchTime = 1
