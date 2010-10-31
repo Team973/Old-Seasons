@@ -143,7 +143,7 @@ function autonomous()
 end
 
 function teleop()
-	while wpilib.IsOperatorControl() and wpilib.IsEnabled() do
+    while wpilib.IsOperatorControl() and wpilib.IsEnabled() do
         enableWatchdog()
         feedWatchdog()
         
