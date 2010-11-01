@@ -60,11 +60,11 @@ local keepPackage =
 local function destroyPackage(pkg)
     local t = _G
     for word, dot in string.gmatch(pkg, "([%w_]+)(.?)") do
-        if d == "." then                -- not the last identifier?
-            if not t[w] then break end  -- stop if a parent table doesn't exist
-            t = t[w]                    -- get the table
-        else                            -- last identifier
-            t[w] = nil                  -- set the package to nil
+        if dot == "." then                -- not the last identifier?
+            if not t[word] then break end -- stop if parent table doesn't exist
+            t = t[word]                   -- get the table
+        else                              -- last identifier
+            t[word] = nil                 -- set the package to nil
         end
     end
 end
