@@ -3,6 +3,7 @@
 
 require "config"
 require "kicker"
+require "wpilib"
 
 module(..., package.seeall)
 
