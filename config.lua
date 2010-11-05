@@ -13,7 +13,7 @@ features =
 
 -- Drive
 leftMotor1 = wpilib.Victor(1)
-leftMotor2 = wpilib.Victor(5)
+leftMotor2 = wpilib.Victor(3)
 rightMotor1 = wpilib.Victor(2)
 rightMotor2 = wpilib.Victor(4)
 
