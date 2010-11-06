@@ -9,6 +9,7 @@ features =
     compressor = true,
     gearSwitch = true,
     lcd = true,
+    softClutch = false,
 }
 
 -- Drive
@@ -34,3 +35,6 @@ kickerReloadTime = 1
 kickerFireTime = 1
 kickerReturnTime = 1
 kickerCatchTime = 1
+
+-- Arm
+PTOSwitch = wpilib.Solenoid(2)

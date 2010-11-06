@@ -134,10 +134,11 @@ function teleop()
         feedWatchdog()
         
         -- Intake
+        local intakeSpeed = 1.0
         if stick3:GetRawButton(3) then
-            intakeMotor:Set(-1.0)
+            intakeMotor:Set(-intakeSpeed)
         elseif stick3:GetRawButton(2) then
-            intakeMotor:Set(1.0)
+            intakeMotor:Set(intakeSpeed)
         else
             intakeMotor:Set(0.0)
         end
