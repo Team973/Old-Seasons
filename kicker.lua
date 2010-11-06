@@ -12,15 +12,15 @@ local thirdZoneCylinder = config.thirdZoneCylinder
 local state = "cocked"
 local timer = wpilib.Timer()
 
+-- Check whether the kicker is ready to fire.
+function isReady()
+    return state == "cocked" and timer:Get() >= config.kickerReloadTime
+end
+
 function fire()
     if not isReady() then return end
     state = "firing"
     timer:Reset()
-end
-
--- Check whether the kicker is ready to fire.
-function isReady()
-    return state == "cocked" and timer:Get() >= config.kickerReloadTime
 end
 
 function update()
