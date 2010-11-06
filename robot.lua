@@ -1,5 +1,4 @@
 -- robot.lua
--- Based on RossTest.cpp
 
 require "config"
 require "kicker"
