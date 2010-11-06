@@ -27,9 +27,9 @@ pressureSwitch = wpilib.DigitalInput(1)
 
 
 -- Kicker(To do)
-gateLatch = wpilib.Solenoid(2)
-kickerCylinder = wpilib.Solenoid(3)
-thirdZoneCylinder = wpilib.Solenoid(4)
+gateLatch = wpilib.Solenoid(3)
+kickerCylinder = wpilib.Solenoid(4)
+thirdZoneCylinder = wpilib.Solenoid(5)
 kickerReloadTime = 1
 kickerFireTime = 1
 kickerReturnTime = 1
