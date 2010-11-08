@@ -103,13 +103,9 @@ function teleop()
         enableWatchdog()
         feedWatchdog()
         
-        --[==[
-        if stick3:GetRawButton(6) then
-            printLCD(wpilib.DriverStationLCD_kUser_Line2, "Did RESTART!")
-            updateLCD()
+        if stick3:GetRawButton(9) then
             restartRobot()
         end
-        --]==]
         
         driveJoysticks()
         feedWatchdog()
