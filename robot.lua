@@ -116,7 +116,7 @@ function teleop()
         -- Pneumatics
         
         if config.features.compressor then
-            if pressureSwitch:Get() then
+            if pressureSwitch:Get() ~= 0 then
                 compressor:Set(wpilib.Relay_kOff)
             else
                 compressor:Set(wpilib.Relay_kOn)
