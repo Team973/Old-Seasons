@@ -98,6 +98,7 @@ function autonomous()
     drive:Drive(0.0, 0.0)
 end
 
+local lastKickTrigger = false
 function teleop()
     while wpilib.IsOperatorControl() and wpilib.IsEnabled() do
         enableWatchdog()
@@ -142,10 +143,11 @@ function teleop()
         feedWatchdog()
         
         -- Kicker
-        if stick3:GetRawButton(1) then
+        if stick3:GetRawButton(1) and not lastKickerTrigger then
             kicker.fire()
         end
         kicker.update()
+        lastKickerTrigger = stick3:GetRawButton(1)
         feedWatchdog()
         
         -- Iteration cleanup
