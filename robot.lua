@@ -116,7 +116,7 @@ function teleop()
         -- Pneumatics
         
         if config.features.compressor then
-            if pressureSwitch:Get() ~= 0 then
+            if pressureSwitch:Get() then
                 compressor:Set(wpilib.Relay_kOff)
             else
                 compressor:Set(wpilib.Relay_kOn)
@@ -141,7 +141,6 @@ function teleop()
         feedWatchdog()
         
         -- Kicker
-        kicker.setThirdZoneEnabled(stick3:GetRawButton(6))
         if stick3:GetRawButton(1) then
             kicker.fire()
         end
