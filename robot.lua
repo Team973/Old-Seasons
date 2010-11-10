@@ -132,10 +132,10 @@ function teleop()
         -- Intake
         -- Make sure this always runs before kicker.
         local intakeSpeed = 1.0
-        if stick3:GetRawButton(3) then
-            intakeMotor:Set(-intakeSpeed)
-        elseif stick3:GetRawButton(2) then
+        if stick3:GetRawButton(2) or stick3:GetRawButton(3) or stick3:GetRawButton(4) or stick3:GetRawButton(5) then
             intakeMotor:Set(intakeSpeed)
+        elseif stick3:GetRawButton(6) then
+            intakeMotor:Set(-intakeSpeed)
         else
             intakeMotor:Set(0.0)
         end
