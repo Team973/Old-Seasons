@@ -10,6 +10,7 @@ local kickerCylinder = config.kickerCylinder
 
 local state = "cocked"
 local timer = wpilib.Timer()
+timer:Start()
 
 -- Check whether the kicker is ready to fire.
 function isReady()
@@ -20,6 +21,7 @@ function fire()
     if not isReady() then return end
     state = "firing"
     timer:Reset()
+    timer:Start()
 end
 
 function update()
@@ -27,8 +29,13 @@ function update()
         if timer:Get() > time then
             state = newState
             timer:Reset()
+            timer:Start()
         end
     end
+    
+    local lcd = wpilib.DriverStationLCD_GetInstance()
+    lcd:PrintLine(wpilib.DriverStationLCD_kUser_Line3, state)
+    lcd:UpdateLCD()
     
     if state == "cocked" then
         gateLatch:Set(false)

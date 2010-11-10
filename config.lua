@@ -31,9 +31,9 @@ pressureSwitch = wpilib.DigitalInput(1)
 gateLatch = wpilib.Solenoid(3)
 kickerCylinder = wpilib.Solenoid(2)
 kickerReloadTime = 1
-kickerFireTime = 1
+kickerFireTime = .3
 kickerReturnTime = 1
-kickerCatchTime = 1
+kickerCatchTime = .5
 
 -- Arm
 PTOSwitch = wpilib.Solenoid(2)
