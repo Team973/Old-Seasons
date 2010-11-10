@@ -7,7 +7,6 @@ module(..., package.seeall)
 
 local gateLatch = config.gateLatch
 local kickerCylinder = config.kickerCylinder
-local thirdZoneCylinder = config.thirdZoneCylinder
 
 local state = "cocked"
 local timer = wpilib.Timer()
@@ -51,10 +50,4 @@ function update()
         gateLatch:Set(false)
         kickerCylinder:Set(false)
     end
-end
-
--- Change whether third zone cylinder is engaged.
-function setThirdZoneEnabled(flag)
-    if state ~= "cocked" then return end
-    thirdZoneCylinder:Set(flag)
 end
