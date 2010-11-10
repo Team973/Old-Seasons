@@ -19,7 +19,7 @@ end
 
 function fire()
     if not isReady() then return end
-    state = "firing"
+    state = "stopIntake"
     timer:Reset()
     timer:Start()
 end
@@ -40,9 +40,15 @@ function update()
     if state == "cocked" then
         gateLatch:Set(false)
         kickerCylinder:Set(true)
+    elseif state == "stopIntake" then
+        gateLatch:Set(false)   
+        kickerCylinder:Set(true)
+        config.intakeMotor:Set(0)
+        changeAfter("firing", config.kickerStopIntakeTime)
     elseif state == "firing" then
         gateLatch:Set(true)
-        kickerCylinder:Set(true)
+        kickerCylinder:Set(true) 
+        config.intakeMotor:Set(0)
         changeAfter("return", config.kickerFireTime)
     elseif state == "return" then
         gateLatch:Set(true)

@@ -130,6 +130,7 @@ function teleop()
         feedWatchdog()
         
         -- Intake
+        -- Make sure this always runs before kicker.
         local intakeSpeed = 1.0
         if stick3:GetRawButton(3) then
             intakeMotor:Set(-intakeSpeed)

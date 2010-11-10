@@ -34,6 +34,7 @@ kickerReloadTime = 1
 kickerFireTime = .3
 kickerReturnTime = 1
 kickerCatchTime = .5
+kickerStopIntakeTime = .2
 
 -- Arm
 PTOSwitch = wpilib.Solenoid(2)
