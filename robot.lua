@@ -185,11 +185,11 @@ function teleop()
         feedWatchdog()
         
         -- Kicker
-        if stick3:GetRawButton(1) and not lastKickerTrigger then
+        if stick3:GetRawButton(1) and not lastKickTrigger then
             kicker.fire()
         end
         kicker.update()
-        lastKickerTrigger = stick3:GetRawButton(1)
+        lastKickTrigger = stick3:GetRawButton(1)
         feedWatchdog()
         
         -- Iteration cleanup
