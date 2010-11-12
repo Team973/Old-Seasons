@@ -21,6 +21,9 @@ rightMotor2 = wpilib.Victor(4)
 gearSwitch = wpilib.Solenoid(1)
 
 intakeMotor = wpilib.Victor(6, 3)
+intakeEncoder = wpilib.Encoder(6, 1, 6, 2)
+intakeEncoder:SetDistancePerPulse(360.0 / 300.0) -- the second number is the
+                                                 -- pulses per rotation
 
 -- Pneumatics
 compressor = wpilib.Relay(4, 1, wpilib.Relay_kForwardOnly)

@@ -1,6 +1,7 @@
 -- robot.lua
 
 require "config"
+require "intake"
 require "kicker"
 require "wpilib"
 
@@ -63,7 +64,6 @@ leftMotor2 = config.leftMotor2
 rightMotor1 = config.rightMotor1
 rightMotor2 = config.rightMotor2
 gearSwitch = config.gearSwitch
-intakeMotor = config.intakeMotor
 compressor = config.compressor
 pressureSwitch = config.pressureSwitch
 
@@ -75,6 +75,7 @@ hiGear = false
 function run()
     printLCD(wpilib.DriverStationLCD_kUser_Line1, "Robot init")
     updateLCD()
+    config.intakeEncoder:Start()
     
     -- Main loop
     while true do
@@ -132,14 +133,17 @@ function teleop()
         
         -- Intake
         -- Make sure this always runs before kicker.
-        local intakeSpeed = 1.0
-        if stick3:GetRawButton(2) or stick3:GetRawButton(3) or stick3:GetRawButton(4) or stick3:GetRawButton(5) then
-            intakeMotor:Set(intakeSpeed)
+	
+    	if stick3:GetRawButton(2) or stick3:GetRawButton(3) or stick3:GetRawButton(4) or stick3:GetRawButton(5) then
+            intake.changeState(1)
         elseif stick3:GetRawButton(6) then
-            intakeMotor:Set(-intakeSpeed)
+            intake.changeState(-1)
         else
-            intakeMotor:Set(0.0)
+            intake.changeState(0)
         end
+        intake.update()
+        printLCD(wpilib.DriverStationLCD_kUser_Line4, "Ball: " .. tostring(intake.hasBall()) )
+        updateLCD()
         feedWatchdog()
         
         -- Kicker
