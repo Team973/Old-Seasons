@@ -41,3 +41,8 @@ kickerStopIntakeTime = .2
 
 -- Arm
 PTOSwitch = wpilib.Solenoid(2)
+
+-- Autonomous
+defaultInitialDelay = 2
+longInitialDelay = 7
+autonomousSwitch = wpilib.DigitalInput(6,3)
