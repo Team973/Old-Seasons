@@ -204,9 +204,9 @@ do
     function driveJoysticks()
         drive:ArcadeDrive(-stick1:GetY(), -stick2:GetX())
         
-        if stick1:GetRawButton(2) and not lastLo then
+        if stick1:GetRawButton(1) and not lastLo then
             hiGear = false
-        elseif stick1:GetRawButton(1) and not lastHi then
+        elseif stick2:GetRawButton(1) and not lastHi then
             hiGear = true
         end
         
