@@ -171,8 +171,7 @@ function teleop()
         
         -- Intake
         -- Make sure this always runs before kicker.
-	
-    	if stick3:GetRawButton(2) or stick3:GetRawButton(3) or stick3:GetRawButton(4) or stick3:GetRawButton(5) then
+        if stick3:GetRawButton(2) or stick3:GetRawButton(3) or stick3:GetRawButton(4) or stick3:GetRawButton(5) then
             intake.changeState(1)
         elseif stick3:GetRawButton(6) then
             intake.changeState(-1)
@@ -180,7 +179,7 @@ function teleop()
             intake.changeState(0)
         end
         intake.update()
-        printLCD(wpilib.DriverStationLCD_kUser_Line4, "Ball: " .. tostring(intake.hasBall()) )
+        printLCD(wpilib.DriverStationLCD_kUser_Line4, "Ball: " .. tostring(intake.hasBall()))
         updateLCD()
         feedWatchdog()
         

@@ -29,7 +29,6 @@ intakeEncoder:SetDistancePerPulse(360.0 / 300.0) -- the second number is the
 compressor = wpilib.Relay(4, 1, wpilib.Relay_kForwardOnly)
 pressureSwitch = wpilib.DigitalInput(1)
 
-
 -- Kicker(To do)
 gateLatch = wpilib.Solenoid(3)
 kickerCylinder = wpilib.Solenoid(2)

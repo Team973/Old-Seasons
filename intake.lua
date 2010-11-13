@@ -34,5 +34,5 @@ function hasBall()
 end
 
 function changeState(newState)
-   state = newState 
+    state = newState 
 end
