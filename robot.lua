@@ -154,7 +154,6 @@ function teleop()
         updateLCD()
         
         -- Pneumatics
-        
         if config.features.compressor then
             if pressureSwitch:Get() then
                 compressor:Set(wpilib.Relay_kOff)
