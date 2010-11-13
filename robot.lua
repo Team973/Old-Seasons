@@ -129,7 +129,7 @@ function autonomous()
                 drive:Drive(0.0,0.0)
                 stopTime = timer:Get() 
             elseif kicker.isReady() then
-                drive:Drive(0.7,0.0)
+                drive:Drive(0.4,0.0)
                 stopTime = -1
             end
         end
