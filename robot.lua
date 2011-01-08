@@ -1,8 +1,6 @@
 -- robot.lua
 
 require "config"
-require "intake"
-require "kicker"
 require "wpilib"
 
 module(..., package.seeall)
@@ -75,7 +73,6 @@ hiGear = false
 function run()
     printLCD(wpilib.DriverStationLCD_kUser_Line1, "Robot init")
     updateLCD()
-    config.intakeEncoder:Start()    
     -- Main loop
     while true do
         if wpilib.IsDisabled() then
@@ -93,53 +90,9 @@ end
 
 function autonomous()
     disableWatchdog()
-    local timer = wpilib.Timer() 
-    local started = false
-    local jogBackTime = -1
-    local initialDelay = config.defaultInitialDelay
-    if config.autonomousSwitch:Get() then
-        initialDelay = config.longInitialDelay
-    end
-    timer:Start()
-    drive:Drive(0.0, 0.0)
-    intake.changeState(0)
-    while wpilib.IsAutonomous() and not wpilib.IsDisabled() do
-        if config.features.compressor then
-            if pressureSwitch:Get() then
-                compressor:Set(wpilib.Relay_kOff)
-            else
-                compressor:Set(wpilib.Relay_kOn)
-            end
-        end
-        intake.update()
-        kicker.update()
-        if not started then
-            if timer:Get() > initialDelay then
-               started = true
-               intake.changeState(1)
-               timer:Reset()
-            end
-        else
-            if jogBackTime >= 0 then
-                drive:Drive(-0.4, 0.0)
-                if timer:Get() - jogBackTime >= 1 then
-                    drive:Drive(0.0, 0.0)
-                    kicker.fire()
-                    timer:Reset()
-                    jogBackTime = -1
-                end
-            elseif timer:Get() > 1 and intake.hasBall() then
-                jogBackTime = timer:Get() 
-            elseif kicker.isReady() then
-                drive:Drive(0.4,0.0)
-                jogBackTime = -1
-            end
-        end
-        wpilib.Wait(TELEOP_LOOP_LAG)
-    end
+    -- Do nothing...
 end
 
-local lastKickTrigger = false
 function teleop()
     while wpilib.IsOperatorControl() and wpilib.IsEnabled() do
         enableWatchdog()
@@ -168,28 +121,6 @@ function teleop()
             gearSwitch:Set(not hiGear)
         end
         
-        feedWatchdog()
-        
-        -- Intake
-        -- Make sure this always runs before kicker.
-        if stick3:GetRawButton(2) or stick3:GetRawButton(3) or stick3:GetRawButton(4) or stick3:GetRawButton(5) then
-            intake.changeState(1)
-        elseif stick3:GetRawButton(6) then
-            intake.changeState(-1)
-        else
-            intake.changeState(0)
-        end
-        intake.update()
-        printLCD(wpilib.DriverStationLCD_kUser_Line4, "Ball: " .. tostring(intake.hasBall()))
-        updateLCD()
-        feedWatchdog()
-        
-        -- Kicker
-        if stick3:GetRawButton(1) and not lastKickTrigger then
-            kicker.fire()
-        end
-        kicker.update()
-        lastKickTrigger = stick3:GetRawButton(1)
         feedWatchdog()
         
         -- Iteration cleanup
