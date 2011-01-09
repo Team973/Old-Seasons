@@ -1,6 +1,5 @@
 --[[
 pid.lua - PID loops!
-Based on RossTest.cpp
 
 Useful indexes of a PID table:
     p, i, and d: The constants of the loop
