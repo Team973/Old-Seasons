@@ -10,8 +10,7 @@ Useful indexes of a PID table:
 There are other indexes, but you shouldn't touch them.
 --]]
 
--- TODO: require "wpilib"
-local wpilib = wpilib
+local wpilib = require "wpilib"
 
 module(...)
 
