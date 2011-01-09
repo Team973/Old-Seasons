@@ -104,3 +104,5 @@ function PID:update(actual, time)
     
     return self.output
 end
+
+-- vim: ft=lua et ts=4 sts=4

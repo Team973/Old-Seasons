@@ -109,3 +109,5 @@ while true do
         end
     end
 end
+
+-- vim: ft=lua et ts=4 sts=4

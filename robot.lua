@@ -144,3 +144,5 @@ do
         lastLo, lastHi = stick1:GetRawButton(2), stick1:GetRawButton(1)
     end
 end
+
+-- vim: ft=lua et ts=4 sts=4
