@@ -1,6 +1,8 @@
 -- config.lua
 
-module(..., package.seeall)
+local wpilib = require "wpilib"
+
+module(...)
 
 watchdogEnabled = false
 
