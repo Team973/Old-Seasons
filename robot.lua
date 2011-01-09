@@ -77,13 +77,19 @@ function run()
     while true do
         if wpilib.IsDisabled() then
             -- TODO: run disabled function
+            disableWatchdog()
             repeat wpilib.Wait(0.01) until not wpilib.IsDisabled()
+            enableWatchdog()
         elseif wpilib.IsAutonomous() then
             autonomous()
+            disableWatchdog()
             repeat wpilib.Wait(0.01) until not wpilib.IsAutonomous() or not wpilib.IsEnabled()
+            enableWatchdog()
         else
             teleop()
+            disableWatchdog()
             repeat wpilib.Wait(0.01) until not wpilib.IsOperatorControl() or not wpilib.IsEnabled()
+            enableWatchdog()
         end
     end
 end
