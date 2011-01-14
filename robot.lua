@@ -1,6 +1,7 @@
 -- robot.lua
 
 require "config"
+require "drive"
 require "wpilib"
 
 module(..., package.seeall)
@@ -69,10 +70,6 @@ if config.features.gripper then
     gripperMotor = config.gripperMotor
 end
 
--- Globals
-drive = wpilib.RobotDrive(leftMotor1, leftMotor2, rightMotor1, rightMotor2)
-hiGear = false
-
 -- Robot running
 function run()
     printLCD(wpilib.DriverStationLCD_kUser_Line1, "Robot init")
@@ -112,7 +109,7 @@ function teleop()
             restartRobot()
         end
         
-        driveJoysticks()
+        drive.drive(stick1, stick2)
         feedWatchdog()
         
         printLCD(wpilib.DriverStationLCD_kUser_Line1, "Running!")
@@ -125,10 +122,6 @@ function teleop()
             else
                 compressor:Set(wpilib.Relay_kOn)
             end
-        end
-        
-        if config.features.gearSwitch then
-            gearSwitch:Set(not hiGear)
         end
 
         -- Manual Gripper Control
@@ -148,21 +141,6 @@ function teleop()
         feedWatchdog()
         wpilib.Wait(TELEOP_LOOP_LAG)
         feedWatchdog()
-    end
-end
-
-do
-    local lastLo, lastHi = false, false
-    function driveJoysticks()
-        drive:ArcadeDrive(-stick1:GetY(), -stick2:GetX())
-        
-        if stick1:GetRawButton(1) and not lastLo then
-            hiGear = false
-        elseif stick2:GetRawButton(1) and not lastHi then
-            hiGear = true
-        end
-        
-        lastLo, lastHi = stick1:GetRawButton(2), stick1:GetRawButton(1)
     end
 end
 
