@@ -66,10 +66,8 @@ compressor = config.compressor
 pressureSwitch = config.pressureSwitch
 
 if config.features.gripper then
-   gripperMotor = config.gripperMotor
+    gripperMotor = config.gripperMotor
 end
-
-
 
 -- Globals
 drive = wpilib.RobotDrive(leftMotor1, leftMotor2, rightMotor1, rightMotor2)
@@ -168,4 +166,4 @@ do
     end
 end
 
--- vim: ft=lua et ts=4 sts=4
+-- vim: ft=lua et ts=4 sts=4 sw=4
