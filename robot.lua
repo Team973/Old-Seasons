@@ -65,6 +65,12 @@ gearSwitch = config.gearSwitch
 compressor = config.compressor
 pressureSwitch = config.pressureSwitch
 
+if config.features.gripper then
+   gripperMotor = config.gripperMotor
+end
+
+
+
 -- Globals
 drive = wpilib.RobotDrive(leftMotor1, leftMotor2, rightMotor1, rightMotor2)
 hiGear = false
@@ -126,6 +132,17 @@ function teleop()
         if config.features.gearSwitch then
             gearSwitch:Set(not hiGear)
         end
+
+        -- Manual Gripper Control
+        if config.features.gripper then
+            if stick3:GetRawButton(6) then
+                gripperMotor:Set(config.gripperManualSpeed) 
+            elseif stick3:GetRawButton(7) then
+                gripperMotor:Set(-(config.gripperManualSpeed))
+            else
+                gripperMotor:Set(0)
+            end
+        end    
         
         feedWatchdog()
         
