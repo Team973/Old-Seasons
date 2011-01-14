@@ -32,4 +32,4 @@ end
 compressor = wpilib.Relay(4, 1, wpilib.Relay_kForwardOnly)
 pressureSwitch = wpilib.DigitalInput(1)
 
--- vim: ft=lua et ts=4 sts=4
+-- vim: ft=lua et ts=4 sts=4 sw=4
