@@ -7,6 +7,7 @@ watchdogEnabled = false
 features =
 {
     compressor = true,
+    gripper = false, 
     gearSwitch = true,
     lcd = true,
     softClutch = false,
@@ -19,6 +20,11 @@ rightMotor1 = wpilib.Victor(2)
 rightMotor2 = wpilib.Victor(4)
 
 gearSwitch = wpilib.Solenoid(1)
+
+if features.gripper then
+    gripperManualSpeed = 0.3
+    gripperMotor = wpilib.Victor(6)
+end
 
 -- Pneumatics
 compressor = wpilib.Relay(4, 1, wpilib.Relay_kForwardOnly)
