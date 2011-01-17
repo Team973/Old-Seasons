@@ -16,9 +16,17 @@ stick3 = wpilib.Joystick(3)
 local printLCD, updateLCD
 if config.features.lcd then
     local lcd = wpilib.DriverStationLCD_GetInstance()
-    
+    local lineConstants = {
+        wpilib.DriverStationLCD_kUser_Line1,
+        wpilib.DriverStationLCD_kUser_Line2,
+        wpilib.DriverStationLCD_kUser_Line3,
+        wpilib.DriverStationLCD_kUser_Line4,
+        wpilib.DriverStationLCD_kUser_Line5,
+        wpilib.DriverStationLCD_kUser_Line6,
+    }
+
     function printLCD(line, msg)
-        lcd:PrintLine(line, msg)
+        lcd:PrintLine(lineConstants[line], msg)
     end
     
     function updateLCD()
@@ -75,7 +83,7 @@ local sendVisionData, sendIOPortData
 
 -- Robot running
 function run()
-    printLCD(wpilib.DriverStationLCD_kUser_Line1, "Robot init")
+    printLCD(1, "Robot init")
     updateLCD()
     -- Main loop
     while true do
@@ -115,7 +123,7 @@ function teleop()
         drive.drive(stick1, stick2)
         feedWatchdog()
         
-        printLCD(wpilib.DriverStationLCD_kUser_Line1, "Running!")
+        printLCD(1, "Running!")
         updateLCD()
         
         -- Pneumatics
