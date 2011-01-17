@@ -11,6 +11,7 @@ There are other indexes, but you shouldn't touch them.
 --]]
 
 local wpilib = require "wpilib"
+local setmetatable = setmetatable
 
 module(...)
 
