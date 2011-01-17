@@ -71,6 +71,8 @@ if config.features.grabber then
     grabberMotor = config.grabberMotor
 end
 
+local sendVisionData, sendIOPortData
+
 -- Robot running
 function run()
     printLCD(wpilib.DriverStationLCD_kUser_Line1, "Robot init")
@@ -140,12 +142,134 @@ function teleop()
         end    
         
         feedWatchdog()
+
+        -- Send dashboard data
+        sendVisionData()
+        feedWatchdog()
+        sendIOPortData()
+        feedWatchdog()
         
         -- Iteration cleanup
         feedWatchdog()
         wpilib.Wait(TELEOP_LOOP_LAG)
         feedWatchdog()
     end
+end
+
+-- Dashboard Data
+local visionTimer = wpilib.Timer()
+function sendVisionData()
+    if not visionTimer:HasPeriodPassed(0.1) then
+        return
+    end
+    local dash = wpilib.DriverStation_GetInstance():GetHighPriorityDashboardPacker()
+
+    dash:AddCluster()
+    do
+        dash:AddCluster()   -- tracking data
+        do
+            dash:AddDouble(0.0) -- Joystick X
+            dash:AddDouble(0.0) -- Angle
+            dash:AddDouble(0.0) -- Angular Rate
+            dash:AddDouble(0.0) -- Other X
+        end
+        dash:FinalizeCluster()
+        dash:AddCluster()   -- target info (2 elements)
+        do
+            dash:AddArray() -- targets
+            dash:FinalizeArray()
+
+            dash:AddU32(0)  -- Timestamp
+        end
+        dash:FinalizeCluster()
+        dash:Finalize()
+    end
+end
+
+local function dIOHardware2Logical(dio)
+    local result = 0
+    local bit = require "bit"
+
+    for i = 0, 15 do
+        if bit.band(dio, bit.lshift(1, i)) ~= 0 then
+            result = bit.bor(result, bit.rshift(1, 16 - i - 1))
+        end
+    end
+    return result
+end
+
+local ioTimer = wpilib.Timer()
+function sendIOPortData()
+    if not visionTimer:HasPeriodPassed(0.1) then return end
+    local dash = wpilib.DriverStation_GetInstance():GetLowPriorityDashboardPacker()
+    dash:AddCluster()
+    do
+        dash:AddCluster()   -- analog modules
+        do
+            dash:AddCluster()
+            for i = 1, 8 do
+                dash:AddFloat(wpilib.AnalogModule_GetInstance(1):GetAverageVoltage(i))
+            end
+            dash:FinalizeCluster()
+            dash:AddCluster()
+            for i = 1, 8 do
+                --dash:AddFloat(AnalogModule_GetInstance(2):GetAverageVoltage(i))
+                dash:AddFloat(0.0)
+            end
+            dash:FinalizeCluster()
+        end
+        dash:FinalizeCluster()
+
+        dash:AddCluster()   -- digital modules
+        do
+            dash:AddCluster()
+            do
+                dash:AddCluster()
+                do
+                    local m = wpilib.DigitalModule_GetInstance(4)
+                    dash:AddU8(m:GetRelayForward())
+                    dash:AddU8(m:GetRelayReverse())
+                    dash:AddU16(dIOHardware2Logical(m:GetDIO()))
+                    dash:AddU16(dIOHardware2Logical(m:GetDIODirection()))
+                    dash:AddCluster()
+                    do
+                        for i = 1, 10 do
+                            dash:AddU8(m:GetPWM(i))
+                        end
+                    end
+                    dash:FinalizeCluster()
+                end
+                dash:FinalizeCluster()
+            end
+            dash:FinalizeCluster()
+            dash:AddCluster()
+            do
+                dash:AddCluster()
+                do
+                    local m = wpilib.DigitalModule_GetInstance(4)
+                    dash:AddU8(0)
+                    dash:AddU8(0)
+                    dash:AddU16(0)
+                    dash:AddU16(0)
+                    dash:AddCluster()
+                    do
+                        for i = 1, 10 do
+                            dash:AddU8(0)
+                        end
+                    end
+                    dash:FinalizeCluster()
+                end
+                dash:FinalizeCluster()
+            end
+            dash:FinalizeCluster()
+        end
+        dash:FinalizeCluster()
+
+        -- Solenoids
+        dash:AddU8(0)
+    end
+    dash:FinalizeCluster()
+    dash:Finalize()
 end
 
 -- vim: ft=lua et ts=4 sts=4 sw=4
