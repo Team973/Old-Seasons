@@ -65,6 +65,7 @@ rightMotor2 = config.rightMotor2
 gearSwitch = config.gearSwitch
 compressor = config.compressor
 pressureSwitch = config.pressureSwitch
+armMotor = config.armMotor
 
 if config.features.grabber then
     grabberMotor = config.grabberMotor
@@ -124,7 +125,10 @@ function teleop()
             end
         end
 
-        -- Manual Gripper Control
+        -- Arm joint
+        armMotor:Set(stick3:GetY())
+
+        -- Manual grabber control
         if config.features.grabber then
             if stick3:GetRawButton(6) then
                 grabberMotor:Set(config.grabberManualSpeed) 

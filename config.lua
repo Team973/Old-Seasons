@@ -23,6 +23,9 @@ rightMotor2 = wpilib.Victor(4)
 
 gearSwitch = wpilib.Solenoid(1)
 
+-- Arm
+-- TODO: Fill in for actual motors
+armMotor = wpilib.Jaguar(5)
 if features.grabber then
     grabberManualSpeed = 0.3
     grabberMotor = wpilib.Victor(6)
