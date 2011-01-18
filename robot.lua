@@ -144,13 +144,13 @@ function teleop()
         -- Arm joint
         if stick3:GetRawButton(4) then
             armPID.target = config.armPreset1
-            armMotor:Set(armPID:update(config.armPot:GetVoltage())) 
+            armMotor:Set(-armPID:update(config.armPot:GetVoltage())) 
         elseif stick3:GetRawButton(3) then
             armPID.target = config.armPreset2
-            armMotor:Set(armPID:update(config.armPot:GetVoltage())) 
+            armMotor:Set(-armPID:update(config.armPot:GetVoltage())) 
         elseif stick3:GetRawButton(5) then
             armPID.target = config.armPreset3
-            armMotor:Set(armPID:update(config.armPot:GetVoltage())) 
+            armMotor:Set(-armPID:update(config.armPot:GetVoltage())) 
         else
             armMotor:Set(0)
         end
