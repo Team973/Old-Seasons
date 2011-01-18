@@ -66,8 +66,8 @@ gearSwitch = config.gearSwitch
 compressor = config.compressor
 pressureSwitch = config.pressureSwitch
 
-if config.features.gripper then
-    gripperMotor = config.gripperMotor
+if config.features.grabber then
+    grabberMotor = config.grabberMotor
 end
 
 -- Robot running
@@ -125,13 +125,13 @@ function teleop()
         end
 
         -- Manual Gripper Control
-        if config.features.gripper then
+        if config.features.grabber then
             if stick3:GetRawButton(6) then
-                gripperMotor:Set(config.gripperManualSpeed) 
+                grabberMotor:Set(config.grabberManualSpeed) 
             elseif stick3:GetRawButton(7) then
-                gripperMotor:Set(-(config.gripperManualSpeed))
+                grabberMotor:Set(-(config.grabberManualSpeed))
             else
-                gripperMotor:Set(0)
+                grabberMotor:Set(0)
             end
         end    
         
