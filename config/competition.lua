@@ -1,4 +1,4 @@
--- config.lua
+-- config/competition.lua
 
 local wpilib = require "wpilib"
 local pid = require "pid"
