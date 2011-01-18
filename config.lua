@@ -26,6 +26,11 @@ gearSwitch = wpilib.Solenoid(1)
 -- Arm
 -- TODO: Fill in for actual motors
 armMotor = wpilib.Jaguar(5)
+armPID = pid.PID:new(1,0,0)
+armPID.min, armPID.max = -.5,.5
+armPreset1 = .45
+armPreset2 = .87
+armPreset3 = 1.45
 if features.grabber then
     grabberManualSpeed = 0.3
     grabberMotor = wpilib.Victor(6)
