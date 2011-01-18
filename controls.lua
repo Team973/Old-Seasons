@@ -1,7 +1,12 @@
 -- controls.lua
 
+-- Imports
 local wpilib = require("wpilib")
+local drive = require("drive")
+
+-- Globals
 local ipairs = ipairs
+local restartRobot = restartRobot
 
 module(...)
 
@@ -15,12 +20,17 @@ controls =
 {
     -- Joystick 1
     {
+        ["y"] = function(axis) drive.arcade(axis, nil) end,
+        [1] = function() drive.setGear(false) end
     },
     -- Joystick 2
     {
+        ["x"] = function(axis) drive.arcade(nil, axis) end,
+        [1] = function() drive.setGear(true) end
     },
     -- Joystick 3
     {
+        [9] = restartRobot
     }
 }
 
