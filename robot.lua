@@ -1,16 +1,12 @@
 -- robot.lua
 
-require "config"
-require "controls"
-require "wpilib"
+local config = require "config"
+local controls = require "controls"
+local wpilib = require "wpilib"
 
 module(..., package.seeall)
 
 local TELEOP_LOOP_LAG = 0.005
-
-stick1 = wpilib.Joystick(1)
-stick2 = wpilib.Joystick(2)
-stick3 = wpilib.Joystick(3)
 
 -- WPILib shortcuts
 local printLCD, updateLCD
@@ -66,14 +62,9 @@ else
 end
 
 -- I/O
-leftMotor1 = config.leftMotor1
-leftMotor2 = config.leftMotor2
-rightMotor1 = config.rightMotor1
-rightMotor2 = config.rightMotor2
 gearSwitch = config.gearSwitch
 compressor = config.compressor
 pressureSwitch = config.pressureSwitch
-armMotor = config.armMotor
 
 if config.features.grabber then
     grabberMotor = config.grabberMotor
@@ -111,12 +102,7 @@ function autonomous()
     -- Do nothing...
 end
 
-
-local armPID = config.armPID
 function teleop()
-    armPID:reset()
-    armPID:start()
-    armPID.target = config.armPreset1
     while wpilib.IsOperatorControl() and wpilib.IsEnabled() do
         enableWatchdog()
         feedWatchdog()
@@ -135,34 +121,6 @@ function teleop()
                 compressor:Set(wpilib.Relay_kOn)
             end
         end
-
-        -- Arm joint
-        if stick3:GetRawButton(4) then
-            armPID.target = config.armPreset1
-            armMotor:Set(-armPID:update(config.armPot:GetVoltage())) 
-        elseif stick3:GetRawButton(3) then
-            armPID.target = config.armPreset2
-            armMotor:Set(-armPID:update(config.armPot:GetVoltage())) 
-        elseif stick3:GetRawButton(5) then
-            armPID.target = config.armPreset3
-            armMotor:Set(-armPID:update(config.armPot:GetVoltage())) 
-        else
-            armMotor:Set(-stick3:GetY())
-        end
-        
-
-        -- Manual grabber control
-        if config.features.grabber then
-            if stick3:GetRawButton(6) then
-                grabberMotor:Set(config.grabberManualSpeed) 
-            elseif stick3:GetRawButton(7) then
-                grabberMotor:Set(-(config.grabberManualSpeed))
-            else
-                grabberMotor:Set(0)
-            end
-        end    
-        
-        feedWatchdog()
 
         -- Send dashboard data
         sendVisionData()
