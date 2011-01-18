@@ -24,6 +24,8 @@ rightMotor2 = wpilib.Victor(4)
 
 gearSwitch = wpilib.Solenoid(1)
 
+flipDriveY = false
+
 -- Arm
 -- TODO: Fill in for actual motors
 armMotor = wpilib.Jaguar(5)
