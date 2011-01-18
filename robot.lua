@@ -152,7 +152,7 @@ function teleop()
             armPID.target = config.armPreset3
             armMotor:Set(-armPID:update(config.armPot:GetVoltage())) 
         else
-            armMotor:Set(0)
+            armMotor:Set(-stick3:GetY())
         end
         
 
