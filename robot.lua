@@ -1,8 +1,7 @@
 -- robot.lua
 
-require "pid"
 require "config"
-require "drive"
+require "controls"
 require "wpilib"
 
 module(..., package.seeall)
@@ -121,16 +120,12 @@ function teleop()
     while wpilib.IsOperatorControl() and wpilib.IsEnabled() do
         enableWatchdog()
         feedWatchdog()
-        
-        if stick3:GetRawButton(9) then
-            restartRobot()
-        end
-        
-        drive.drive(stick1, stick2)
-        feedWatchdog()
-        
+
         printLCD(1, "Running!")
         updateLCD()
+
+        controls.update(controls.controls)
+        feedWatchdog()
         
         -- Pneumatics
         if config.features.compressor then
