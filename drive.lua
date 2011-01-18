@@ -14,7 +14,11 @@ local hiGear = false
 local lastLo, lastHi = false, false
 
 function drive(stick1, stick2)
-    d:ArcadeDrive(-stick1:GetY(), -stick2:GetX())
+    local y, x = -stick1:GetY(), -stick2:GetX()
+    if config.flipDriveY then
+        y = -y
+    end
+    d:ArcadeDrive(y, x)
 
     if stick1:GetRawButton(1) and not lastLo then
         hiGear = false

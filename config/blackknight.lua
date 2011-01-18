@@ -25,6 +25,8 @@ rightMotor2 = wpilib.Jaguar(4)
 
 gearSwitch = fakesolenoid.new(4, 2)
 
+flipDriveY = true
+
 -- Arm
 -- TODO: Fill in for actual motors
 armMotor = wpilib.Jaguar(5)
