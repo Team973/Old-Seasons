@@ -29,6 +29,7 @@ flipDriveY = false
 -- Arm
 -- TODO: Fill in for actual motors
 armMotor = wpilib.Jaguar(5)
+armPot = wpilib.AnalogChannel(1)
 armPID = pid.PID:new(5.0, 0, 0)
 armPID.min, armPID.max = -1, 1
 armPreset1 = .13
