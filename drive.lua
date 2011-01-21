@@ -11,21 +11,23 @@ local d = wpilib.RobotDrive(
 )
 
 local hiGear = false
-local lastLo, lastHi = false, false
+local x, y = 0, 0
 
-function drive(stick1, stick2)
-    local y, x = -stick1:GetY(), -stick2:GetX()
+function setGear(gear)
+    hiGear = gear
+end
+
+function arcade(newY, newX)
+    if newY then y = newY end
+    if newX then x = newX end
+end
+
+function update()
     if config.flipDriveY then
-        y = -y
+        d:ArcadeDrive(-y, x)
+    else
+        d:ArcadeDrive(y, x)
     end
-    d:ArcadeDrive(y, x)
-
-    if stick1:GetRawButton(1) and not lastLo then
-        hiGear = false
-    elseif stick2:GetRawButton(1) and not lastHi then
-        hiGear = true
-    end
-    lastLo, lastHi = stick1:GetRawButton(1), stick2:GetRawButton(1)
 
     if config.features.gearSwitch then
         config.gearSwitch:Set(not hiGear)
