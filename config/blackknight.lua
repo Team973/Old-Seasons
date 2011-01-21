@@ -33,9 +33,7 @@ armMotor = wpilib.Jaguar(5)
 armPot = wpilib.AnalogChannel(1)
 armPID = pid.PID:new(8.4, 0, 0)
 armPID.min, armPID.max = -1, 1
-armPreset1 = .13
-armPreset2 = 1.16
-armPreset3 = 2.70
+armPresets = {.13, 1.16, 2.70}
 if features.grabber then
     grabberManualSpeed = 0.3
     grabberMotor = wpilib.Victor(6)
