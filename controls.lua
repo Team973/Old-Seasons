@@ -31,6 +31,7 @@ defaultControls =
     },
     -- Joystick 3
     {
+        ["y"] = arm.setMovement,
         [3] = {
             down=function() arm.setPreset(2); arm.setManual(false) end,
             up=function() arm.setManual(true) end
