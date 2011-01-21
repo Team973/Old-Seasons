@@ -1,7 +1,9 @@
 -- robot.lua
 
+local arm = require "arm"
 local config = require "config"
 local controls = require "controls"
+local drive = require "drive"
 local wpilib = require "wpilib"
 
 module(..., package.seeall)
@@ -76,6 +78,8 @@ local sendVisionData, sendIOPortData
 function run()
     printLCD(1, "Robot init")
     updateLCD()
+    -- Initialize subsystems
+    arm.init()
     -- Main loop
     while true do
         if wpilib.IsDisabled() then
@@ -111,7 +115,7 @@ function teleop()
         updateLCD()
 
         -- Read controls
-        controls.update(controls.controls)
+        controls.update(controls.defaultControls)
         feedWatchdog()
 
         -- Update subsystems
