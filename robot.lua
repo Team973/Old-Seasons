@@ -110,7 +110,13 @@ function teleop()
         printLCD(1, "Running!")
         updateLCD()
 
+        -- Read controls
         controls.update(controls.controls)
+        feedWatchdog()
+
+        -- Update subsystems
+        drive.update()
+        arm.update()
         feedWatchdog()
         
         -- Pneumatics
