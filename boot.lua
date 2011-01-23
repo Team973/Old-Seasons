@@ -29,6 +29,8 @@ This file is public domain.
     bootloader will recognize that signal and reload your source.
 --]]
 
+local wpilib = require("wpilib")
+
 local restartError = {"Robot Restart xyzzy"}
 
 --[[
