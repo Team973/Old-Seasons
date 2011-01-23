@@ -16,7 +16,7 @@ function init()
     setPreset(1)
 end
 
-function setManualMode(on)
+function setManual(on)
     manual = on
 end
 
