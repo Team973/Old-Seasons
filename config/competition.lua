@@ -34,6 +34,7 @@ armPID.min, armPID.max = -1, 1
 armPresets = {.13, 1.16, 2.70}
 armPos90 = 1.16
 armPos180 = 2.70
+armDriveBackAmplitude = 0
 if features.grabber then
     grabberManualSpeed = 0.3
     grabberMotor = wpilib.Victor(6)
