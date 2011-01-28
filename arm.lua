@@ -44,10 +44,12 @@ function update()
     local motorOutput
     if manual then
         motorOutput = movement
+        if movement < config.armDriveBackDeadband and movement > 0 then
+            motorOutput = motorOutput + calculateFeedForward()
+        end
     else
         motorOutput = -PID:update(config.armPot:GetVoltage())
     end
-    motorOutput = motorOutput + calculateFeedForward()
     motor:Set(motorOutput)
 end
 
