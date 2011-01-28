@@ -5,6 +5,8 @@ local config = require "config"
 local controls = require "controls"
 local drive = require "drive"
 local wpilib = require "wpilib"
+local grabber = require "grabber" 
+
 
 module(..., package.seeall)
 
@@ -68,9 +70,6 @@ gearSwitch = config.gearSwitch
 compressor = config.compressor
 pressureSwitch = config.pressureSwitch
 
-if config.features.grabber then
-    grabberMotor = config.grabberMotor
-end
 
 local sendVisionData, sendIOPortData
 
@@ -112,6 +111,8 @@ function teleop()
         feedWatchdog()
 
         printLCD(1, "Running!")
+        printLCD(4, "Potentiometer: "..tostring(config.armPot:GetVoltage()))
+        printLCD(5, "Arm Amplitude: "..tostring(config.armCompensateAmplitude))
         updateLCD()
 
         -- Read controls
@@ -120,6 +121,7 @@ function teleop()
 
         -- Update subsystems
         drive.update()
+        grabber.update()
         arm.update()
         feedWatchdog()
         

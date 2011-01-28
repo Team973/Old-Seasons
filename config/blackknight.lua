@@ -1,17 +1,21 @@
 -- config/blackknight.lua
 
+
+-- Requires --
 local fakesolenoid = require "fakesolenoid"
 local wpilib = require "wpilib"
 local pid = require "pid"
 
 module(...)
+--------------
 
 watchdogEnabled = false
+
 
 features =
 {
     compressor = true,
-    grabber = false, 
+    grabber = true, 
     gearSwitch = true,
     lcd = true,
     softClutch = false,
@@ -27,16 +31,29 @@ gearSwitch = fakesolenoid.new(4, 2)
 
 flipDriveY = true
 
--- Arm
+
+
+-- Arm --
 -- TODO: Fill in for actual motors
+
+--Arm feedForward 
+armCompensateAmplitude = 1
+armVoltsIn90Degrees = 1.093  
+armVoltsIn180Degrees = 2.67
+
+--Motors and PID
 armMotor = wpilib.Jaguar(5)
 armPot = wpilib.AnalogChannel(1)
 armPID = pid.PID:new(8.4, 0, 0)
 armPID.min, armPID.max = -1, 1
-armPresets = {.13, 1.16, 2.70}
+armPresets = {0, 1.16, 2.70}
+
+
+-- Grabber --
 if features.grabber then
-    grabberManualSpeed = 0.3
-    grabberMotor = wpilib.Victor(6)
+    --grabberManualSpeed = 1
+    grabberPickUpMotor = wpilib.Victor(7)
+    grabberWristMotor = wpilib.Jaguar(10)
 end
 
 -- Pneumatics
