@@ -35,12 +35,10 @@ armPID.min, armPID.max = -1, 1
 armPos90 = 1.62
 armPos180 = 3.22
 armPresets = {.13, armPos90, armPos180}
-armDriveBackAmplitude = 0.3
+armDriveBackAmplitude = 0
 armDriveBackDeadband = 0.1
 --Grabber
 if features.grabber then
-    gripSpeed = 1
-    wristSpeed = 1
     gripMotor = wpilib.Victor(7)
     wristMotor = wpilib.Jaguar(10)
 end
