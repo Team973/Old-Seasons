@@ -36,11 +36,11 @@ defaultControls =
     {
         ["y"] = arm.setMovement,
         [1] = {
-            down=function() arm.setGripMotor(config.gripSpeed) end
+            down=function() arm.setGripMotor(1) end,
             up=function() arm.setGripMotor(0) end
         },
         [2] = {
-            down=function() arm.setGripMotor(-config.gripSpeed) end
+            down=function() arm.setGripMotor(-1) end,
             up=function() arm.setGripMotor(0) end 
         },
         [3] = {
@@ -56,11 +56,11 @@ defaultControls =
             up=function() arm.setManual(true) end
         },
         [10] = {
-            down=function() arm.setWristMotor(config.wristSpeed) end
+            down=function() arm.setWristMotor(-1) end,
             up=function() arm.setWristMotor(0) end
         },
         [11] = {
-            down=function() arm.setWristMotor(-config.wristSpeed) end
+            down=function() arm.setWristMotor(1) end,
             up=function() arm.setWristMotor(0) end 
         },
         [9] = {down=restartRobot}
