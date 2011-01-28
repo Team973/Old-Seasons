@@ -28,12 +28,13 @@ gearSwitch = fakesolenoid.new(4, 2)
 flipDriveY = true
 
 -- Arm
--- TODO: Fill in for actual motors
 armMotor = wpilib.Jaguar(5)
 armPot = wpilib.AnalogChannel(1)
 armPID = pid.PID:new(8.4, 0, 0)
 armPID.min, armPID.max = -1, 1
 armPresets = {.13, 1.16, 2.70}
+armPos90 = 1.16
+armPos180 = 2.70
 if features.grabber then
     grabberManualSpeed = 0.3
     grabberMotor = wpilib.Victor(6)

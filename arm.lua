@@ -1,6 +1,7 @@
 -- arm.lua
 
 local config = require("config")
+local math = require("math")
 local wpilib = require("wpilib")
 
 module(...)
@@ -28,12 +29,26 @@ function setPreset(preset)
     PID.target = config.armPresets[preset]
 end
 
+local function getArmAngle()
+    local voltage = config.armPot:GetVoltage()
+    local scale = 90 / (config.armPos180 - config.armPos90)
+    local offset = 90 - scale * config.armPos90
+    return voltage * scale + offset
+end
+
+local function calculateFeedForward()
+    return config.armDriveBackAmplitude * math.sin(getArmAngle())
+end
+
 function update()
+    local motorOutput
     if manual then
-        motor:Set(movement)
+        motorOutput = movement
     else
-        motor:Set(-PID:update(config.armPot:GetVoltage()))
+        motorOutput = -PID:update(config.armPot:GetVoltage())
     end
+    motorOutput = motorOutput + calculateFeedForward()
+    motor:Set(motorOutput)
 end
 
 -- vim: ft=lua et ts=4 sts=4 sw=4
