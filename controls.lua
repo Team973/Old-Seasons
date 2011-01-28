@@ -4,8 +4,6 @@
 local arm = require("arm")
 local drive = require("drive")
 local wpilib = require("wpilib")
-local grabber = require("grabber")
-local config = require("config")
 
 -- Globals
 local ipairs = ipairs
@@ -23,14 +21,12 @@ defaultControls =
 {
     -- Joystick 1
     {
-        --["y"] = function(axis) drive.arcade(-axis, nil) end,
-        ["y"] = grabber.setGripMotor,
+        ["y"] = function(axis) drive.arcade(-axis, nil) end,
         [1] = {down=function() drive.setGear(false) end}
     },
     -- Joystick 2
     {
-        --["x"] = function(axis) drive.arcade(nil, -axis) end,
-        ["y"] = grabber.setWristMotor,
+        ["x"] = function(axis) drive.arcade(nil, -axis) end,
         [1] = {down=function() drive.setGear(true) end}
     },
     -- Joystick 3
@@ -48,12 +44,6 @@ defaultControls =
             down=function() arm.setPreset(3); arm.setManual(false) end,
             up=function() arm.setManual(true) end
         },
-        [6] = {
-            down=function() config.armCompensateAmplitude=(config.armCompensateAmplitude)+(0.1) end
-        }, 
-        [7] = {
-            down=function() config.armCompensateAmplitude=(config.armCompensateAmplitude)-(0.1) end
-        },       
         [9] = {down=restartRobot}
     }
 }
@@ -84,8 +74,6 @@ local function handleButton(buttonTable, prev, curr)
         if buttonTable.up then buttonTable.up() end
     end
 end
-
-
 
 -- update calls the event handlers.
 function update(map)
