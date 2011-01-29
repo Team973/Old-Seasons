@@ -4,13 +4,13 @@
 --Requires--
 local config = require("config")
 local wpilib = require("wpilib")
-require "math.lua"
+local math = require "math"
 
 module(...)
 -------------
 
 
---Varriables--
+--Variables--
 local motor = config.armMotor
 local PID = config.armPID
 local movement = 0
@@ -39,10 +39,14 @@ end
 
 
 function update()
-    feedForward = (config.armCompensateAmplitude)*(math.sin(( (config.armPot:GetVoltage()(180-90)/(config.armVoltsIn180Degrees - config.armVoltsIn90Degrees)))))
-    
-   --feedForward temporarily disabled
-   motor:Set((movement + (-PID:update(config.armPot:GetVoltage())))) --+ feedForward)) --Manual + PID + Feed Forward
+    local armVoltage = config.armPot:GetVoltage()
+    local armAngle = armVoltage * (180 - 90) / (config.armVoltsIn180Degrees - config.armVoltsIn90Degrees)
+    local feedForward = config.armCompensateAmplitude * math.sin(armAngle)
+   if manual then
+        motor:Set(movement + feedForward) --Manual + Feed Forward
+   else
+        motor:Set(-PID:update(config.armPot:GetVoltage()) + feedForward) --PID + Feed Forward
+   end
 end
 
 
