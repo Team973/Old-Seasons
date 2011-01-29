@@ -11,7 +11,7 @@ watchdogEnabled = false
 features =
 {
     compressor = true,
-    grabber = false, 
+    grabber = true, 
     gearSwitch = true,
     lcd = true,
     softClutch = false,
@@ -37,9 +37,12 @@ armPos180 = 3.22
 armPresets = {.13, armPos90, armPos180}
 armDriveBackAmplitude = 0.3
 armDriveBackDeadband = 0.1
+--Grabber
 if features.grabber then
-    grabberManualSpeed = 0.3
-    grabberMotor = wpilib.Victor(6)
+    gripSpeed = 1
+    wristSpeed = 1
+    gripMotor = wpilib.Victor(7)
+    wristMotor = wpilib.Jaguar(10)
 end
 
 -- Pneumatics

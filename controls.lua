@@ -5,6 +5,9 @@ local arm = require("arm")
 local drive = require("drive")
 local wpilib = require("wpilib")
 
+
+
+
 -- Globals
 local ipairs = ipairs
 local restartRobot = restartRobot
@@ -32,6 +35,14 @@ defaultControls =
     -- Joystick 3
     {
         ["y"] = arm.setMovement,
+        [1] = {
+            down=function() arm.setGripMotor(config.gripSpeed) end
+            up=function() arm.setGripMotor(0) end
+        },
+        [2] = {
+            down=function() arm.setGripMotor(-config.gripSpeed) end
+            up=function() arm.setGripMotor(0) end 
+        },
         [3] = {
             down=function() arm.setPreset(2); arm.setManual(false) end,
             up=function() arm.setManual(true) end
@@ -43,6 +54,14 @@ defaultControls =
         [5] = {
             down=function() arm.setPreset(3); arm.setManual(false) end,
             up=function() arm.setManual(true) end
+        },
+        [10] = {
+            down=function() arm.setWristMotor(config.wristSpeed) end
+            up=function() arm.setWristMotor(0) end
+        },
+        [11] = {
+            down=function() arm.setWristMotor(-config.wristSpeed) end
+            up=function() arm.setWristMotor(0) end 
         },
         [9] = {down=restartRobot}
     }

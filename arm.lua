@@ -11,6 +11,12 @@ local PID = config.armPID
 local movement = 0
 local manual = true
 
+
+local wristSpeedSet = 0
+local gripSpeedSet = 0
+
+
+---- FUNCTIONS ----
 function init()
     PID:reset()
     PID:start()
@@ -40,7 +46,22 @@ local function calculateFeedForward()
     return config.armDriveBackAmplitude * math.sin(getArmAngle())
 end
 
+
+function setGripMotor(speed)
+    gripSpeedSet = speed
+end
+
+function setWristMotor(speed)
+    wristSpeedSet = speed
+end
+-----------------------
+
+
+
+
+
 function update()
+    --Arm Portion
     local motorOutput
     if manual then
         motorOutput = movement
@@ -51,6 +72,13 @@ function update()
         motorOutput = -PID:update(config.armPot:GetVoltage())
     end
     motor:Set(motorOutput)
+
+    --Grabber Portion
+    config.gripMotor:Set(gripSpeedSet)
+    config.wristMotor:Set(wristSpeedSet)
 end
+
+
+
 
 -- vim: ft=lua et ts=4 sts=4 sw=4
