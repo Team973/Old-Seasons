@@ -14,6 +14,7 @@ features =
     gearSwitch = true,
     lcd = true,
     softClutch = false,
+    driveYCable = true
 }
 
 -- Drive

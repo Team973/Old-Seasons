@@ -15,6 +15,7 @@ features =
     gearSwitch = true,
     lcd = true,
     softClutch = false,
+    driveYCable = false
 }
 
 -- Drive
@@ -35,8 +36,9 @@ armPID.min, armPID.max = -1, 1
 armPos90 = 1.62
 armPos180 = 3.22
 armPresets = {.13, armPos90, armPos180}
-armDriveBackAmplitude = 0
+armDriveBackAmplitude = 0.3
 armDriveBackDeadband = 0.1
+
 --Grabber
 if features.grabber then
     gripMotor = wpilib.Victor(7)
