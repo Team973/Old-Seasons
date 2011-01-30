@@ -12,23 +12,24 @@ features =
 {
     compressor = true,
     grabber = false, 
-    gearSwitch = true,
+    gearSwitch = false, --Pneumatics not setup on practice bot 
     lcd = true,
     softClutch = false,
+    driveYCable = true
 }
 
 -- Drive
-leftMotor1 = wpilib.Jaguar(1)
-leftMotor2 = wpilib.Jaguar(3)
-rightMotor1 = wpilib.Jaguar(2)
-rightMotor2 = wpilib.Jaguar(4)
+leftMotor1 = wpilib.Victor(1)
+leftMotor2 = wpilib.Victor(1)
+rightMotor1 = wpilib.Victor(2)
+rightMotor2 = wpilib.Victor(2)
 
 gearSwitch = fakesolenoid.new(4, 2)
 
 flipDriveY = true
 
 -- Arm
-armMotor = wpilib.Jaguar(5)
+armMotor = wpilib.Jaguar(7)
 armPot = wpilib.AnalogChannel(1)
 armPID = pid.PID:new(8.4, 0, 0)
 armPID.min, armPID.max = -1, 1
@@ -37,10 +38,13 @@ armPos180 = 3.22
 armPresets = {.13, armPos90, armPos180}
 armDriveBackAmplitude = 0.3
 armDriveBackDeadband = 0.1
+
+--Grabber Variables
 if features.grabber then
-    grabberManualSpeed = 0.3
-    grabberMotor = wpilib.Victor(6)
+    gripMotor = wpilib.Victor(6)
+    wristMotor = wpilib.Victor(5)
 end
+
 
 -- Pneumatics
 compressor = wpilib.Relay(4, 1, wpilib.Relay_kForwardOnly)
