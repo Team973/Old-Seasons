@@ -5,14 +5,15 @@ local wpilib = require "wpilib"
 
 module(...)
 
-local d = wpilib.RobotDrive(
-    config.leftMotor1, 
-    config.rightMotor1, 
-    if features.driveYCable then
-        config.rightMotor2,
-        config.leftMotor2,
-    end
-)
+local d
+if config.leftMotor2 and config.rightMotor2 then
+    d = wpilib.RobotDrive(
+        config.leftMotor1, config.leftMotor2,
+        config.rightMotor1, config.rightMotor2
+    )
+else
+    d = wpilib.RobotDrive(config.leftMotor1, config.rightMotor1)
+end
 
 local hiGear = false
 local x, y = 0, 0
