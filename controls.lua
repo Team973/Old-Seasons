@@ -43,18 +43,6 @@ defaultControls =
             down=function() arm.setGripMotor(-1) end,
             up=function() arm.setGripMotor(0) end 
         },
-        [3] = {
-            down=function() arm.setPreset(2); arm.setManual(false) end,
-            up=function() arm.setManual(true) end
-        },
-        [4] = {
-            down=function() arm.setPreset(1); arm.setManual(false) end,
-            up=function() arm.setManual(true) end
-        },
-        [5] = {
-            down=function() arm.setPreset(3); arm.setManual(false) end,
-            up=function() arm.setManual(true) end
-        },
         [10] = {
             down=function() arm.setWristMotor(-1) end,
             up=function() arm.setWristMotor(0) end
