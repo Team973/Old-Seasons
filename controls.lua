@@ -10,6 +10,7 @@ local restartRobot = restartRobot
 module(...)
 
 local sticks = {}
+local cypress = wpilib.DriverStation_GetInstance():GetEnhancedIO()
 
 for i = 1, 3 do
     sticks[i] = wpilib.Joystick(i)
@@ -50,6 +51,9 @@ defaultControls =
             end
         end,
     },
+    -- Cypress Module
+    cypress={
+    },
 }
 
 -- Initialize previous state table
@@ -57,6 +61,7 @@ local previousState = {}
 for i = 1, #sticks do
     previousState[i] = {}
 end
+previousState.cypress = {}
 
 -- storeState stores the current state of the controls into the previousState
 -- table.
@@ -64,6 +69,11 @@ local function storeState()
     for i, stick in ipairs(sticks) do
         for button = 1, 11 do
             previousState[i][button] = stick:GetRawButton(button)
+        end
+    end
+    if cypress then
+        for button = 1, 16 do
+            previousState.cypress[button] = cypress:GetDigital(button)
         end
     end
 end
@@ -97,6 +107,19 @@ function update(map)
         -- Call update
         if stickMap.update then stickMap.update(stick) end
     end
+    -- Cypress
+    if cypress then
+        for button = 1, 16 do
+            local currValue = cypress:GetDigital(button)
+            local buttonTable = map.cypress[button]
+            if buttonTable then
+                handleButton(buttonTable, previousState.cypress[button], currValue)
+            end
+        end
+        -- Call update
+        if map.cypress.update then map.cypress.update(cypress) end
+    end
+
     -- Call update
     if map.update then map.update() end
     -- Save previous state
