@@ -40,6 +40,8 @@ armDriveBackDeadband = 0.1
 gripMotor = wpilib.Victor(7)
 wristMotor = wpilib.Jaguar(10)
 
+clawPiston = wpilib.Relay(4, 3, wpilib.Relay_kBothDirections)
+
 -- Pneumatics
 compressor = wpilib.Relay(4, 1, wpilib.Relay_kForwardOnly)
 pressureSwitch = wpilib.DigitalInput(1)

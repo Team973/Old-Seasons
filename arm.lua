@@ -10,13 +10,11 @@ local motor = config.armMotor
 local PID = config.armPID
 local movement = 0
 local manual = true
-
+local clawOpen = true
 
 local wristSpeedSet = 0
 local gripSpeedSet = 0
 
-
----- FUNCTIONS ----
 function init()
     PID:reset()
     PID:start()
@@ -46,7 +44,6 @@ local function calculateFeedForward()
     return config.armDriveBackAmplitude * math.sin(getArmAngle())
 end
 
-
 function setGripMotor(speed)
     gripSpeedSet = speed
 end
@@ -54,14 +51,13 @@ end
 function setWristMotor(speed)
     wristSpeedSet = speed
 end
------------------------
 
+function openClaw() clawOpen = true end
 
-
-
+function closeClaw() clawOpen = false end
 
 function update()
-    --Arm Portion
+    -- Primary Joint
     local motorOutput
     if manual then
         motorOutput = movement
@@ -73,12 +69,14 @@ function update()
     end
     motor:Set(motorOutput)
 
-    --Grabber Portion
+    -- Grabber
     config.gripMotor:Set(gripSpeedSet)
     config.wristMotor:Set(wristSpeedSet)
+    if clawOpen then
+        config.clawPiston:Set(wpilib.Relay_kForward)
+    else
+        config.clawPiston:Set(wpilib.Relay_kReverse)
+    end
 end
-
-
-
 
 -- vim: ft=lua et ts=4 sts=4 sw=4
