@@ -30,23 +30,25 @@ defaultControls =
     -- Joystick 3
     {
         ["y"] = arm.setMovement,
-        [1] = {
-            down=function() arm.setGripMotor(1) end,
-            up=function() arm.setGripMotor(0) end
-        },
-        [2] = {
-            down=function() arm.setGripMotor(-1) end,
-            up=function() arm.setGripMotor(0) end 
-        },
-        [10] = {
-            down=function() arm.setWristMotor(-1) end,
-            up=function() arm.setWristMotor(0) end
-        },
-        [11] = {
+        [1] = {down=function() arm.openClaw() end},
+        [6] = {
             down=function() arm.setWristMotor(1) end,
-            up=function() arm.setWristMotor(0) end 
+            up=function() arm.setWristMotor(0) end,
         },
-        [9] = {down=restartRobot}
+        [7] = {
+            down=function() arm.setWristMotor(-1) end,
+            up=function() arm.setWristMotor(0) end,
+        },
+        [9] = {down=restartRobot},
+
+        update = function(stick)
+            if stick:GetRawButton(2) or stick:GetRawButton(3) or stick:GetRawButton(4) or stick:GetRawButton(5) then
+                arm.closeClaw()
+                arm.setGripMotor(1)
+            else
+                arm.setGripMotor(0)
+            end
+        end,
     },
 }
 
