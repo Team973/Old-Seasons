@@ -30,15 +30,11 @@ defaultControls =
     },
     -- Joystick 3
     {
-        ["y"] = arm.setMovement,
+        ["y"] = function(axis) if arm.getManual() then arm.setMovement(axis) else arm.setWristMotor(axis) end,
         [1] = {down=function() arm.openClaw() end},
         [6] = {
-            down=function() arm.setWristMotor(1) end,
-            up=function() arm.setWristMotor(0) end,
-        },
-        [7] = {
-            down=function() arm.setWristMotor(-1) end,
-            up=function() arm.setWristMotor(0) end,
+            down=function() arm.setManual(true) end,
+            up=function() arm.setManual(false) end,
         },
         [9] = {down=restartRobot},
 
@@ -53,6 +49,9 @@ defaultControls =
     },
     -- Cypress Module
     cypress={
+        [13] = {down=function() arm.setPreset("pickup") end},
+        [9] = {down=function() arm.setPreset("stow") end},
+        [5] = {down=function() arm.setPreset("slot") end},
     },
 }
 
