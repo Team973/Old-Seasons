@@ -30,7 +30,13 @@ defaultControls =
     },
     -- Joystick 3
     {
-        ["y"] = function(axis) if arm.getManual() then arm.setMovement(axis) else arm.setWristMotor(axis) end,
+        ["y"] = function(axis)
+            if arm.getManual() then
+                arm.setMovement(axis) 
+            else
+                arm.setWristMotor(axis) 
+            end 
+        end,
         [1] = {down=function() arm.openClaw() end},
         [6] = {
             down=function() arm.setManual(true) end,
