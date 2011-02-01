@@ -19,7 +19,7 @@ local gripSpeedSet = 0
 function init()
     PID:reset()
     PID:start()
-    setPreset(1)
+    setPreset("stow")
 end
 
 function getManual()

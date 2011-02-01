@@ -31,9 +31,20 @@ armMotor = wpilib.Jaguar(5)
 armPot = wpilib.AnalogChannel(1)
 armPID = pid.PID:new(8.4, 0, 0)
 armPID.min, armPID.max = -1, 1
-armPos90 = 1.62
-armPos180 = 3.22
-armPresets = {.13, armPos90, armPos180}
+armPositionForward = 1.9
+armPositionReverse = 3.22
+armPresets = {
+    forward={
+        pickup={arm=0, wrist=0},
+        stow={arm=0, wrist=0},
+        slot={arm=0, wrist=0},
+    },
+    reverse={
+        pickup={arm=0, wrist=0},
+        stow={arm=0, wrist=0},
+        slot={arm=0, wrist=0},
+    },
+}
 armDriveBackAmplitude = 0
 armDriveBackDeadband = 0.1
 
