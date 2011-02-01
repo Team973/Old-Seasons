@@ -9,8 +9,9 @@ module(...)
 local motor = config.armMotor
 local PID = config.armPID
 local movement = 0
-local manual = true
+local manual = false
 local clawOpen = true
+local isForward = true
 
 local wristSpeedSet = 0
 local gripSpeedSet = 0
@@ -19,6 +20,10 @@ function init()
     PID:reset()
     PID:start()
     setPreset(1)
+end
+
+function getManual()
+    return manual
 end
 
 function setManual(on)
@@ -30,7 +35,11 @@ function setMovement(delta)
 end
 
 function setPreset(preset)
-    PID.target = config.armPresets[preset]
+    if isForward then
+        PID.target = config.armPresets.forward[preset].arm + config.armPositionForward
+    else
+        PID.target = config.armPresets.reverse[preset].arm + config.armPositionReverse
+    end
 end
 
 local function getArmAngle()
@@ -61,9 +70,6 @@ function update()
     local motorOutput
     if manual then
         motorOutput = movement
-        if movement < config.armDriveBackDeadband and movement > 0 then
-            motorOutput = motorOutput + calculateFeedForward()
-        end
     else
         motorOutput = -PID:update(config.armPot:GetVoltage())
     end

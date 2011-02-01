@@ -5,6 +5,7 @@ local config = require "config"
 local controls = require "controls"
 local drive = require "drive"
 local wpilib = require "wpilib"
+local format = string.format
 
 module(..., package.seeall)
 
@@ -112,6 +113,7 @@ function teleop()
         feedWatchdog()
 
         printLCD(1, "Running!")
+        printLCD(3, format("Arm: %.2f", config.armPot:GetVoltage()))
         updateLCD()
 
         -- Read controls
