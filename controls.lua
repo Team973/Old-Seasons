@@ -1,14 +1,9 @@
 -- controls.lua
 
--- Imports
 local arm = require("arm")
 local drive = require("drive")
 local wpilib = require("wpilib")
 
-
-
-
--- Globals
 local ipairs = ipairs
 local restartRobot = restartRobot
 
@@ -52,7 +47,7 @@ defaultControls =
             up=function() arm.setWristMotor(0) end 
         },
         [9] = {down=restartRobot}
-    }
+    },
 }
 
 -- Initialize previous state table
@@ -97,7 +92,11 @@ function update(map)
                 handleButton(buttonTable, previousState[i][button], currValue)
             end
         end
+        -- Call update
+        if stickMap.update then stickMap.update(stick) end
     end
+    -- Call update
+    if map.update then map.update() end
     -- Save previous state
     storeState()
 end
