@@ -12,6 +12,7 @@ local movement = 0
 local manual = false
 local clawOpen = true
 local isForward = true
+local presetName = nil
 
 local wristSpeedSet = 0
 local gripSpeedSet = 0
@@ -34,12 +35,22 @@ function setMovement(delta)
     movement = delta
 end
 
-function setPreset(preset)
+local function updateTarget()
     if isForward then
-        PID.target = config.armPresets.forward[preset].arm + config.armPositionForward
+        PID.target = config.armPresets.forward[presetName].arm + config.armPositionForward
     else
-        PID.target = config.armPresets.reverse[preset].arm + config.armPositionReverse
+        PID.target = config.armPresets.reverse[presetName].arm + config.armPositionReverse
     end
+end
+
+function setForward(f)
+    isForward = f
+    updateTarget()
+end
+
+function setPreset(preset)
+    presetName = preset
+    updateTarget()
 end
 
 local function getArmAngle()

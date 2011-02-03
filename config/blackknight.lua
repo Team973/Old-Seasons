@@ -29,20 +29,22 @@ flipDriveY = true
 -- Arm
 armMotor = wpilib.Jaguar(5)
 armPot = wpilib.AnalogChannel(1)
-armPID = pid.PID:new(8.4, 0, 0)
+armPID = pid.PID:new(42.0, 0, 0)
 armPID.min, armPID.max = -1, 1
-armPositionForward = 2.00
-armPositionReverse = 3.22
+armPositionForward = 1.71
+armPositionReverse = 1.95
 armPresets = {
     forward={
-        pickup={arm=-1, wrist=0},
-        stow={arm=1.78, wrist=0},
+        pickup={arm=-0.08, wrist=0},
+        stow={arm=-0.08, wrist=0},
         slot={arm=0, wrist=0},
+        vertical={arm=0.08, wrist=0},
     },
     reverse={
-        pickup={arm=0, wrist=0},
-        stow={arm=0, wrist=0},
+        pickup={arm=0.08, wrist=0},
+        stow={arm=0.08, wrist=0},
         slot={arm=0, wrist=0},
+        vertical={arm=-0.08, wrist=0},
     },
 }
 armDriveBackAmplitude = 0
