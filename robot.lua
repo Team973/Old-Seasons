@@ -113,7 +113,8 @@ function teleop()
         feedWatchdog()
 
         printLCD(1, "Running!")
-        printLCD(3, format("Arm: %.2f", config.armPot:GetVoltage()))
+        printLCD(2, format("Arm: %.2f", config.armPot:GetVoltage()))
+        printLCD(3, format("Err Fwd: %.2f", config.armPot:GetVoltage() - config.armPositionForward))
         updateLCD()
 
         -- Read controls
