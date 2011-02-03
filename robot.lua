@@ -115,6 +115,7 @@ function teleop()
         printLCD(1, "Running!")
         printLCD(2, format("Arm: %.2f", config.armPot:GetVoltage()))
         printLCD(3, format("Err Fwd: %.2f", config.armPot:GetVoltage() - config.armPositionForward))
+        printLCD(4, format("Err Rev: %.2f", config.armPot:GetVoltage() - config.armPositionReverse))
         updateLCD()
 
         -- Read controls
