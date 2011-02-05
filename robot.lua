@@ -112,10 +112,8 @@ function teleop()
         enableWatchdog()
         feedWatchdog()
 
-        local armPIDOut = config.armPID.output
-        if armPIDOut then armPIDOut = -armPIDOut else armPIDOut = 0 end
+        local armPIDOut = -config.armPID.output
         local wristPIDOut = config.wristPID.output
-        if wristPIDOut then wristPIDOut = -wristPIDOut else wristPIDOut = 0 end
 
         printLCD(1, "Running!")
         printLCD(2, format("Arm:%.2f Out:%.2f", config.armPot:GetVoltage(), armPIDOut))

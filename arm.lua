@@ -21,6 +21,8 @@ local gripSpeed = 0
 function init()
     PID:reset()
     PID:start()
+    wristPID:reset()
+    wristPID:start()
     setPreset("pickup")
 end
 
@@ -44,11 +46,15 @@ local function updateTarget()
     -- If we don't have a specific preset, don't change the target.
     if not presetName then return end
 
-    -- Look up preset value in config and change PID target
+    -- Look up preset value in config and change PID targets
     if isForward then
-        PID.target = config.armPresets.forward[presetName].arm + config.armPositionForward
+        local preset = config.armPresets.forward[presetName]
+        PID.target = preset.arm + config.armPositionForward
+        wristPID.target = preset.wrist + config.wristPositionForward
     else
-        PID.target = config.armPresets.reverse[presetName].arm + config.armPositionReverse
+        local preset = config.armPresets.reverse[presetName]
+        PID.target = preset.arm + config.armPositionReverse
+        wristPID.target = preset.wrist + config.wristPositionReverse
     end
 end
 
@@ -78,6 +84,9 @@ function setGripMotor(speed)
 end
 
 function setWristMotor(speed)
+    if wristSpeed ~= 0 and speed == 0 then
+        wristPID.target = config.wristPot:GetVoltage()
+    end
     wristSpeed = speed
 end
 
@@ -86,8 +95,9 @@ function openClaw() clawOpen = true end
 function closeClaw() clawOpen = false end
 
 function update()
-    -- Primary Joint
     local motorOutput
+
+    -- Primary Joint
     if manual then
         motorOutput = movement
     else
@@ -95,9 +105,16 @@ function update()
     end
     motor:Set(motorOutput)
 
-    -- Grabber
+    -- Wrist
+    if wristSpeed ~= 0 then
+        motorOutput = wristSpeed
+    else
+        motorOutput = wristPID:update(config.wristPot:GetVoltage())
+    end
+    config.wristMotor:Set(motorOutput)
+
+    -- Grip
     config.gripMotor:Set(gripSpeed)
-    config.wristMotor:Set(wristSpeed)
     if clawOpen then
         config.clawPiston:Set(wpilib.Relay_kForward)
     else
