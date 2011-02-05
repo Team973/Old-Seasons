@@ -27,7 +27,7 @@ gearSwitch = fakesolenoid.new(4, 2)
 flipDriveY = true
 
 -- Arm
-armMotor = wpilib.Jaguar(5)
+armMotor = wpilib.Victor(5)
 armPot = wpilib.AnalogChannel(1)
 armPID = pid.PID:new(42.0, 0, 0)
 armPID.min, armPID.max = -1, 1
