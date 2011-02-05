@@ -27,7 +27,7 @@ gearSwitch = fakesolenoid.new(4, 2)
 flipDriveY = true
 
 -- Arm
-armMotor = wpilib.Victor(5)
+armMotor = wpilib.Jaguar(5)
 armPot = wpilib.AnalogChannel(1)
 armPID = pid.PID:new(42.0, 0, 0)
 armPID.min, armPID.max = -1, 1
@@ -42,7 +42,7 @@ armDriveBackAmplitude = 0
 armDriveBackDeadband = 0.1
 
 gripMotor = wpilib.Victor(7)
-wristMotor = wpilib.Jaguar(10)
+wristMotor = wpilib.Victor(10)
 wristPot = wpilib.AnalogChannel(2)
 
 clawPiston = wpilib.Relay(4, 3, wpilib.Relay_kBothDirections)
