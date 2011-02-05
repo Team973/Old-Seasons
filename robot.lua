@@ -112,9 +112,14 @@ function teleop()
         enableWatchdog()
         feedWatchdog()
 
+        local armPIDOut = config.armPID.output
+        if armPIDOut then armPIDOut = -armPIDOut else armPIDOut = 0 end
+        local wristPIDOut = config.wristPID.output
+        if wristPIDOut then wristPIDOut = -wristPIDOut else wristPIDOut = 0 end
+
         printLCD(1, "Running!")
-        printLCD(2, format("Arm: %.2f", config.armPot:GetVoltage()))
-        printLCD(3, format("Wrist: %.2f", config.wristPot:GetVoltage()))
+        printLCD(2, format("Arm:%.2f Out:%.2f", config.armPot:GetVoltage(), armPIDOut))
+        printLCD(3, format("Wrist:%.2f Out:%.2f", config.wristPot:GetVoltage(), wristPIDOut))
         printLCD(4, format("Err Fwd: %.2f", config.armPot:GetVoltage() - config.armPositionForward))
         printLCD(5, format("Err Rev: %.2f", config.armPot:GetVoltage() - config.armPositionReverse))
         updateLCD()
