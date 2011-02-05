@@ -2,6 +2,7 @@
 
 local arm = require("arm")
 local drive = require("drive")
+local math = require("math")
 local wpilib = require("wpilib")
 
 local ipairs = ipairs
@@ -34,7 +35,11 @@ defaultControls =
             if arm.getManual() then
                 arm.setMovement(axis) 
             else
-                arm.setWristMotor(axis) 
+                if math.abs(axis) > 0.1 then
+                    arm.setWristMotor(axis) 
+                else
+                    arm.setWristMotor(0)
+                end
             end 
         end,
         [1] = {down=function() arm.openClaw() end},
@@ -59,9 +64,10 @@ defaultControls =
             down=function() arm.setForward(false) end,
             up=function() arm.setForward(true) end,
         },
-        [13] = {down=function() arm.setPreset("pickup") end},
-        [9] = {down=function() arm.setPreset("stow") end},
+        [13] = {down=function() arm.setPreset("stow") end},
+        [9] = {down=function() arm.setPreset("pickup") end},
         [5] = {down=function() arm.setPreset("slot") end},
+        [7] = {down=function() arm.setPreset("vertical") end},
     },
 }
 
