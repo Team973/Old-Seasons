@@ -33,6 +33,20 @@ armPID = pid.PID:new(42.0, 0, 0)
 armPID.min, armPID.max = -1, 1
 armPositionForward = 1.71
 armPositionReverse = 1.95
+
+wristPID = pid.PID:new(10.0, 0, 0)
+wristPID.min, wristPID.max = -1, 1
+wristPositionForward = 1.95
+
+armDriveBackAmplitude = 0
+armDriveBackDeadband = 0.1
+
+gripMotor = wpilib.Victor(7)
+wristMotor = wpilib.Jaguar(10)
+wristPot = wpilib.AnalogChannel(2)
+
+clawPiston = wpilib.Relay(4, 3, wpilib.Relay_kBothDirections)
+
 armPresets = {
     forward={
         pickup={arm=-0.08, wrist=0},
@@ -47,13 +61,6 @@ armPresets = {
         vertical={arm=-0.08, wrist=0},
     },
 }
-armDriveBackAmplitude = 0
-armDriveBackDeadband = 0.1
-
-gripMotor = wpilib.Victor(7)
-wristMotor = wpilib.Jaguar(10)
-
-clawPiston = wpilib.Relay(4, 3, wpilib.Relay_kBothDirections)
 
 -- Pneumatics
 compressor = wpilib.Relay(4, 1, wpilib.Relay_kForwardOnly)

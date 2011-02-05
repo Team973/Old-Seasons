@@ -8,14 +8,15 @@ module(...)
 
 local motor = config.armMotor
 local PID = config.armPID
+local wristPID = config.wristPID
 local movement = 0
 local manual = false
 local clawOpen = true
 local isForward = true
 local presetName = nil
 
-local wristSpeedSet = 0
-local gripSpeedSet = 0
+local wristSpeed = 0
+local gripSpeed = 0
 
 function init()
     PID:reset()
@@ -65,11 +66,11 @@ local function calculateFeedForward()
 end
 
 function setGripMotor(speed)
-    gripSpeedSet = speed
+    gripSpeed = speed
 end
 
 function setWristMotor(speed)
-    wristSpeedSet = speed
+    wristSpeed = speed
 end
 
 function openClaw() clawOpen = true end
@@ -87,8 +88,8 @@ function update()
     motor:Set(motorOutput)
 
     -- Grabber
-    config.gripMotor:Set(gripSpeedSet)
-    config.wristMotor:Set(wristSpeedSet)
+    config.gripMotor:Set(gripSpeed)
+    config.wristMotor:Set(wristSpeed)
     if clawOpen then
         config.clawPiston:Set(wpilib.Relay_kForward)
     else
