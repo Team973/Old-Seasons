@@ -29,6 +29,10 @@ function getManual()
 end
 
 function setManual(on)
+    if manual and not on then
+        PID.target = config.armPot:GetVoltage()
+        setPreset(nil)
+    end
     manual = on
 end
 
@@ -37,6 +41,10 @@ function setMovement(delta)
 end
 
 local function updateTarget()
+    -- If we don't have a specific preset, don't change the target.
+    if not presetName then return end
+
+    -- Look up preset value in config and change PID target
     if isForward then
         PID.target = config.armPresets.forward[presetName].arm + config.armPositionForward
     else
