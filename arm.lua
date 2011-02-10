@@ -68,11 +68,18 @@ function setPreset(preset)
     updateTarget()
 end
 
-local function getArmAngle()
-    local voltage = config.armPot:GetVoltage()
-    local scale = 90 / (config.armPos180 - config.armPos90)
-    local offset = 90 - scale * config.armPos90
+local function voltageToDegrees(voltage, forwardVoltage, reverseVoltage)
+    local scale = 180 / (reverseVoltage - forwardVoltage)
+    local offset = 90 - scale * forwardVoltage
     return voltage * scale + offset
+end
+
+local function getArmAngle()
+    return voltageToDegrees(config.armPot:GetVoltage(), config.armPositionForward, config.armPositionReverse)
+end
+
+local function getWristAngle()
+    return voltageToDegrees(config.wristPot:GetVoltage(), config.wristPositionForward, config.wristPositionReverse)
 end
 
 local function calculateFeedForward()
