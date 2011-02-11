@@ -127,6 +127,19 @@ function update()
     else
         config.clawPiston:Set(wpilib.Relay_kReverse)
     end
+    
+    --Wrist Safety
+    --Wrist arm angle is from the wrist to the arm. Wrist arm angle is positive for counter-clockwise
+    local wristArmAngle = 180 + getArmAngle() - getWristAngle()
+    if wristArmAngle >= 180 then
+        wristArmAngle = wristArmAngle - 360
+    end
+    if wristArmAngle <= -180 then
+        wristArmAngle = wristArmAngle + 360
+    end
+    if math.abs(wristArmAngle) <= k then
+        config.wristMotor:Set( -wristArmAngle / math.abs(wristArmAngle))
+    end
 end
 
 -- vim: ft=lua et ts=4 sts=4 sw=4
