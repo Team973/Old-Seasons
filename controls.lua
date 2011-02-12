@@ -12,8 +12,10 @@ module(...)
 
 local sticks = {}
 local cypress = wpilib.DriverStation_GetInstance():GetEnhancedIO()
+local numButtons = 12
+local numCypressButtons = 16
 
-for i = 1, 3 do
+for i = 1, 4 do
     sticks[i] = wpilib.Joystick(i)
 end
 
@@ -58,12 +60,17 @@ defaultControls =
             end
         end,
     },
+    -- Joystick 4 (eStop Module)
+    {
+        [12] = {tick=function(on) arm.setForward(not on) end},
+        [2] = {down=function() arm.setPreset("vertical") end},
+        [5] = {down=function() arm.setPreset("stow") end},
+        [6] = {down=function() arm.setPreset("pickup") end},
+        [7] = {down=function() arm.setPreset("slot") end},
+    },
     -- Cypress Module
     cypress={
-        [1] = {
-            down=function() arm.setForward(false) end,
-            up=function() arm.setForward(true) end,
-        },
+        --[1] = {tick=function(on) arm.setForward(not on) end},
         [13] = {down=function() arm.setPreset("stow") end},
         [9] = {down=function() arm.setPreset("pickup") end},
         [5] = {down=function() arm.setPreset("slot") end},
@@ -82,12 +89,12 @@ previousState.cypress = {}
 -- table.
 local function storeState()
     for i, stick in ipairs(sticks) do
-        for button = 1, 11 do
+        for button = 1, numButtons do
             previousState[i][button] = stick:GetRawButton(button)
         end
     end
     if cypress then
-        for button = 1, 16 do
+        for button = 1, numCypressButtons do
             previousState.cypress[button] = cypress:GetDigital(button)
         end
     end
@@ -102,6 +109,7 @@ local function handleButton(buttonTable, prev, curr)
     elseif not curr and prev then
         if buttonTable.up then buttonTable.up() end
     end
+    if buttonTable.tick then buttonTable.tick(curr) end
 end
 
 -- update calls the event handlers.
@@ -112,7 +120,7 @@ function update(map)
         if stickMap.x then stickMap.x(stick:GetX()) end
         if stickMap.y then stickMap.y(stick:GetY()) end
         -- Update button events
-        for button = 1, 11 do
+        for button = 1, numButtons do
             local currValue = stick:GetRawButton(button)
             local buttonTable = stickMap[button]
             if buttonTable then
@@ -124,7 +132,7 @@ function update(map)
     end
     -- Cypress
     if cypress then
-        for button = 1, 16 do
+        for button = 1, numCypressButtons do
             local currValue = cypress:GetDigital(button)
             local buttonTable = map.cypress[button]
             if buttonTable then
