@@ -137,7 +137,7 @@ function update()
     if wristArmAngle <= -180 then
         wristArmAngle = wristArmAngle + 360
     end
-    if math.abs(wristArmAngle) <= k then
+    if math.abs(wristArmAngle) <= config.wristSafetyAngle then
         config.wristMotor:Set( -wristArmAngle / math.abs(wristArmAngle))
     end
 end
