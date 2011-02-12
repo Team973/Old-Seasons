@@ -11,7 +11,7 @@ local restartRobot = restartRobot
 module(...)
 
 local sticks = {}
-local cypress = wpilib.DriverStation_GetInstance():GetEnhancedIO()
+local cypress = nil
 local numButtons = 12
 local numCypressButtons = 16
 
