@@ -36,8 +36,8 @@ armPositionReverse = 3.02
 
 wristPID = pid.PID:new(10.0, 0, 0)
 wristPID.min, wristPID.max = -1, 1
-wristPositionForward = 2.40
-wristPositionReverse = 4.11
+wristPositionForward = 2.13
+wristPositionReverse = 3.94
 wristSafetyAngle = 35 -- in degrees
 
 armDriveBackAmplitude = 0
