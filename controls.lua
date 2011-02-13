@@ -66,19 +66,12 @@ defaultControls =
             down=function() arm.setForward(false) end,
             up=function() arm.setForward(true) end,
         },
-        [5] = {down=function() arm.setPreset("stow") end},
-        [6] = {down=function() arm.setPreset("pickup") end},
-        [7] = {down=function() arm.setPreset("slot") end},
-        [10] = {down=function() arm.setPreset("vertical") end},
+        [2] = {down=function() arm.setPreset("stow") end},
+        [3] = {down=function() arm.setPreset("slot") end},
+        [4] = {down=function() arm.setPreset("pickup") end},
     },
     -- Cypress Module
-    cypress={
-        --[1] = {tick=function(on) arm.setForward(not on) end},
-        [13] = {down=function() arm.setPreset("stow") end},
-        [9] = {down=function() arm.setPreset("pickup") end},
-        [5] = {down=function() arm.setPreset("slot") end},
-        [7] = {down=function() arm.setPreset("vertical") end},
-    },
+    cypress={},
 }
 
 -- Initialize previous state table
