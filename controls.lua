@@ -33,30 +33,30 @@ defaultControls =
     },
     -- Joystick 3
     {
-        ["y"] = function(axis)
-            if arm.getManual() then
-                arm.setMovement(axis) 
-            else
-                if math.abs(axis) > 0.1 then
-                    arm.setWristMotor(axis) 
-                else
-                    arm.setWristMotor(0)
-                end
-            end 
-        end,
         [1] = {down=function() arm.openClaw() end},
-        [6] = {
-            down=function() arm.setManual(true) end,
-            up=function() arm.setManual(false) end,
-        },
         [9] = {down=restartRobot},
 
         update = function(stick)
+            -- Intake
             if stick:GetRawButton(2) or stick:GetRawButton(3) or stick:GetRawButton(4) or stick:GetRawButton(5) then
                 arm.closeClaw()
                 arm.setGripMotor(1)
             else
                 arm.setGripMotor(0)
+            end
+            -- Arm Control
+            if stick:GetRawButton(7) then
+                arm.setManual(true)
+                arm.setMovement(stick:GetY())
+            else
+                arm.setManual(false)
+                arm.setMovement(0)
+            end
+            -- Wrist Control
+            if stick:GetRawButton(6) then
+                arm.setWristMotor(stick:GetY())
+            else
+                arm.setWristMotor(0)
             end
         end,
     },
