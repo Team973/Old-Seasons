@@ -71,7 +71,8 @@ local function destroyPackage(pkg)
     end
 end
 
-while true do
+local errorOccurred = false
+repeat
     local function handleError(msg)
         if msg == restartError then
             return restartError
@@ -102,14 +103,16 @@ while true do
         else
             -- This is an unexpected error. Write the traceback to
             -- boot-error.txt at the root of the filesystem.
+            -- 2010-02-13: This will also fully stop the interpreter now.  This
+            --             is the safest possible behavior.
             local f = io.open("lua-error.txt", "w")
             if f then
                 f:write(err)
                 f:close()
             end
-            wpilib.Wait(5.0)
+            errorOccurred = true
         end
     end
-end
+until errorOccurred
 
 -- vim: ft=lua et ts=4 sts=4 sw=4
