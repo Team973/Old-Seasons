@@ -11,10 +11,12 @@ local PID = config.armPID
 local wristPID = config.wristPID
 local movement = 0
 local manual = false
-local clawOpen = true
+local clawOpen = false
 local isForward = true
 local presetName = nil
+local possessionTimer = nil
 
+local hasTube = false
 local wristSpeed = 0
 local gripSpeed = 0
 
@@ -63,6 +65,10 @@ function setForward(f)
     updateTarget()
 end
 
+function getPreset()
+    return presetName
+end
+
 function setPreset(preset)
     presetName = preset
     updateTarget()
@@ -101,9 +107,36 @@ function openClaw() clawOpen = true end
 
 function closeClaw() clawOpen = false end
 
+function getHasTube() return hasTube end
+
 function update()
     local motorOutput
 
+    -- If we don't have a tube, we're running the intake, and we're in one of the approved presets...
+    if not hasTube and gripSpeed > 0 and not clawOpen and (presetName == "pickup" or presetName == "slot") then
+         if not config.wristIntakeSwitch:Get() then
+             if not possessionTimer then
+                 -- The limit switch just got activated
+                 possessionTimer = wpilib.Timer()
+                 possessionTimer:Start()
+             elseif possessionTimer:Get() > config.wristIntakeTime then
+                 -- We've waited for the set time. We now have a tube.
+                 possessionTimer:Stop()
+                 possessionTimer = nil
+                 hasTube = true
+                 setPreset("carry")
+            end
+        else
+            -- Limit switch is off. Reset the timer.
+            if possessionTimer then
+                possessionTimer:Stop()
+                possessionTimer = nil
+            end
+        end
+    elseif hasTube and clawOpen then
+        -- The operator pulled the trigger. Let it go. JUST LET IT GO.
+        hasTube = false
+    end
     -- Primary Joint
     if manual then
         motorOutput = movement
@@ -119,9 +152,12 @@ function update()
         motorOutput = wristPID:update(config.wristPot:GetVoltage())
     end
     config.wristMotor:Set(motorOutput)
-
     -- Grip
     config.gripMotor:Set(gripSpeed)
+    if hasTube and config.wristIntakeSwitch:Get() then
+        -- If we're supposedly in possession and the tube is slipping, run intake.
+        config.gripMotor:Set(1)
+    end
     if clawOpen then
         config.clawPiston:Set(wpilib.Relay_kForward)
     else
