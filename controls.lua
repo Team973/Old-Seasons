@@ -63,8 +63,8 @@ defaultControls =
     -- Joystick 4 (eStop Module)
     {
         [12] = {
-            down=function() arm.setForward(true) end,
-            up=function() arm.setForward(false) end,
+            down=function() arm.setForward(false) end,
+            up=function() arm.setForward(true) end,
         },
         [5] = {down=function() arm.setPreset("stow") end},
         [6] = {down=function() arm.setPreset("pickup") end},
