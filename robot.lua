@@ -156,9 +156,8 @@ end
 -- Dashboard Data
 local visionTimer = wpilib.Timer()
 function sendVisionData()
-    if not visionTimer:HasPeriodPassed(0.1) then
-        return
-    end
+    visionTimer:Start()
+    if not visionTimer:HasPeriodPassed(0.1) then return end
     local dash = wpilib.DriverStation_GetInstance():GetHighPriorityDashboardPacker()
 
     dash:AddCluster()
@@ -179,8 +178,9 @@ function sendVisionData()
             dash:AddU32(0)  -- Timestamp
         end
         dash:FinalizeCluster()
-        dash:Finalize()
     end
+    dash:FinalizeCluster()
+    dash:Finalize()
 end
 
 local function dIOHardware2Logical(dio)
@@ -197,7 +197,8 @@ end
 
 local ioTimer = wpilib.Timer()
 function sendIOPortData()
-    if not visionTimer:HasPeriodPassed(0.1) then return end
+    ioTimer:Start()
+    if not ioTimer:HasPeriodPassed(0.1) then return end
     local dash = wpilib.DriverStation_GetInstance():GetLowPriorityDashboardPacker()
     dash:AddCluster()
     do
