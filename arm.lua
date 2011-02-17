@@ -51,10 +51,16 @@ local function updateTarget()
     -- Look up preset value in config and change PID targets
     if isForward then
         local preset = config.armPresets.forward[presetName]
+        if preset.claw ~= nil then
+           clawOpen = preset.claw 
+        end
         PID.target = preset.arm + config.armPositionForward
         wristPID.target = preset.wrist + config.wristPositionForward
     else
         local preset = config.armPresets.reverse[presetName]
+        if preset.claw ~= nil then
+           clawOpen = preset.claw 
+        end
         PID.target = preset.arm + config.armPositionReverse
         wristPID.target = preset.wrist + config.wristPositionReverse
     end

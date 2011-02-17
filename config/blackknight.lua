@@ -53,16 +53,16 @@ clawPiston = wpilib.Relay(4, 3, wpilib.Relay_kBothDirections)
 
 armPresets = {
     forward={
-        pickup={arm=-0.42, wrist=-0.27},
+        pickup={arm=-0.42, wrist=-0.27, claw=false},
         stow={arm=-0.42, wrist=-0.27},
-        slot={arm=0, wrist=0},
+        slot={arm=0, wrist=0, claw=false},
         vertical={arm=0.65, wrist=0.53},
         carry={arm=-0.43, wrist=0.74},
     },
     reverse={
-        pickup={arm=0.45, wrist=0.3},
+        pickup={arm=0.45, wrist=0.3, claw=false},
         stow={arm=0.45, wrist=0.3},
-        slot={arm=0, wrist=0},
+        slot={arm=0, wrist=0, claw=false},
         vertical={arm=-0.57, wrist=-0.36},
         carry={arm=0.45, wrist=-0.68},
     },
