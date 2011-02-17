@@ -62,7 +62,6 @@ end
 
 function setForward(f)
     isForward = f
-    updateTarget()
 end
 
 function getPreset()
