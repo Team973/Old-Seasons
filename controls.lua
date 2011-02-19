@@ -10,7 +10,7 @@ local restartRobot = restartRobot
 
 module(...)
 
-local sticks = {}
+sticks = {}
 local cypress = nil
 local numButtons = 12
 local numCypressButtons = 16

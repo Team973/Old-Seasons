@@ -2,6 +2,7 @@
 
 local arm = require "arm"
 local config = require "config"
+local configmode = require "configmode"
 local controls = require "controls"
 local drive = require "drive"
 local wpilib = require "wpilib"
@@ -109,14 +110,27 @@ function autonomous()
 end
 
 function teleop()
+    local inConfig = controls.sticks[4]:GetRawButton(11)
     while wpilib.IsOperatorControl() and wpilib.IsEnabled() do
         enableWatchdog()
         feedWatchdog()
 
+        if controls.sticks[4]:GetRawButton(11) and not inConfig then
+            configmode.start()
+            inConfig = true
+        elseif not controls.sticks[4]:GetRawButton(11) and inConfig then
+            configmode.finish()
+            inConfig = false
+        end
+
+        if inConfig then
+            printLCD(1, "CONFIG MODE")
+        else
+            printLCD(1, "Running!")
+        end
+
         local armPIDOut = -config.armPID.output
         local wristPIDOut = config.wristPID.output
-
-        printLCD(1, "Running!")
         printLCD(2, format("Arm:%.2f Out:%.2f", config.armPot:GetVoltage(), armPIDOut))
         printLCD(3, format("Wrist:%.2f Out:%.2f", config.wristPot:GetVoltage(), wristPIDOut))
         printLCD(4, format("Err Fwd: %.2f", config.armPot:GetVoltage() - config.armPositionForward))
@@ -124,7 +138,11 @@ function teleop()
         updateLCD()
 
         -- Read controls
-        controls.update(controls.defaultControls)
+        if not inConfig then
+            controls.update(controls.defaultControls)
+        else
+            controls.update(configmode.controlMap)
+        end
         feedWatchdog()
 
         -- Update subsystems
