@@ -10,7 +10,7 @@ module(...)
 
 -- End Global Settings
 
-local profileName = "competition"
+profileName = "competition"
 do
     -- Read file profile.txt
     local f, err = open("profile.txt")
