@@ -266,6 +266,13 @@ function sendIOPortData()
 
         -- Solenoids
         dash:AddU8(0)
+
+        --Robot Variables
+        if arm.getPreset() ~= nil then
+            dash:AddString(arm.getPreset())
+        else
+            dash:AddString("")
+        end
     end
     dash:FinalizeCluster()
     dash:Finalize()
