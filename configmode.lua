@@ -5,6 +5,7 @@ local config = require("config")
 local controls = require("controls")
 local drive = require("drive")
 local io = require("io")
+local ipairs = ipairs
 local pairs = pairs
 local restartRobot = restartRobot
 local string = string
@@ -13,7 +14,11 @@ local type = type
 
 module(...)
 
-local armPositionForward, armPositionReverse
+local newValues = {}
+local valueNames = {
+    "armPositionForward", 
+    "armPositionReverse",
+}
 
 local function uberTostring(val, indent)
     local t = type(val)
@@ -43,8 +48,8 @@ controlMap = {
     -- Joystick 3
     {
         ["y"] = function(axis) arm.setMovement(axis) end,
-        [11] = {down=function() armPositionForward = config.armPot:GetVoltage() end},
-        [10] = {down=function() armPositionReverse = config.armPot:GetVoltage() end},
+        [11] = {down=function() newValues.armPositionForward = config.armPot:GetVoltage() end},
+        [10] = {down=function() newValues.armPositionReverse = config.armPot:GetVoltage() end},
     },
     -- Joystick 4 (eStop)
     {},
@@ -57,8 +62,9 @@ function start()
     arm.setWristMotor(0)
     arm.setGripMotor(0)
 
-    armPositionForward = config.armPositionForward
-    armPositionReverse = config.armPositionReverse
+    for i, name in ipairs(valueNames) do
+        newValues[name] = config[name]
+    end
 end
 
 function finish()
@@ -66,8 +72,9 @@ function finish()
         local f = io.open("lua/config/override.lua", "w")
         f:write("-- config/override.lua\n")
         f:write("module(...)\n")
-        f:write("armPositionForward = " .. tostring(armPositionForward) .. "\n")
-        f:write("armPositionReverse = " .. tostring(armPositionReverse) .. "\n")
+        for i, name in ipairs(valueNames) do
+            f:write(name .. "=" .. uberTostring(newValues[name]) .. "\n")
+        end
         f:close()
     end
     restartRobot()
