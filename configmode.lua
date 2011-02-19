@@ -5,12 +5,35 @@ local config = require("config")
 local controls = require("controls")
 local drive = require("drive")
 local io = require("io")
+local pairs = pairs
 local restartRobot = restartRobot
+local string = string
 local tostring = tostring
+local type = type
 
 module(...)
 
 local armPositionForward, armPositionReverse
+
+local function uberTostring(val, indent)
+    local t = type(val)
+    if not indent then
+        indent = ""
+    end
+    local nextIndent = indent .. "\t"
+    if t == "number" or t == "boolean" then
+        return tostring(val)
+    elseif t == "string" then
+        -- Return quoted string
+        return string.format("%q", val)
+    elseif t == "table" then
+        local s = "{\n"
+        for k, v in pairs(val) do
+            s = s .. nextIndent .. string.format("[%s] = %s,\n", uberTostring(k), uberTostring(v, nextIndent))
+        end
+        return s .. indent .. "}"
+    end
+end
 
 controlMap = {
     -- Joystick 1
