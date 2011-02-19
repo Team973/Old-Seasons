@@ -77,7 +77,8 @@ local sendVisionData, sendIOPortData
 
 -- Robot running
 function run()
-    printLCD(1, "Robot init")
+    printLCD(1, "Ready")
+    printLCD(2, config.profileName)
     updateLCD()
     -- Initialize subsystems
     arm.init()
