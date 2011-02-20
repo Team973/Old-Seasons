@@ -114,6 +114,15 @@ function closeClaw() clawOpen = false end
 
 function getHasTube() return hasTube end
 
+local function sign(k)
+    if k == 0 then
+        return 0
+    elseif k > 0 then
+        return 1
+    elseif k < 0 then
+        return -1
+    end
+end
 function update()
     local motorOutput
 
@@ -148,8 +157,16 @@ function update()
     else
         motorOutput = -PID:update(config.armPot:GetVoltage())
     end
+    --Arm Safety    
+    local armSafetyVoltageForward = config.armPresets.forward.stow.arm - 0.02
+    if config.armPot:GetVoltage() < armSafetyVoltageForward and motorOutput >= 0 then
+        motorOutput = 0 
+    end
+    local armSafetyVoltageReverse = config.armPresets.reverse.stow.arm + 0.02
+    if config.armPot:GetVoltage() > armSafetyVoltageReverse and motorOutput <= 0 then
+        motorOutput = 0
+    end
     motor:Set(motorOutput)
-
     -- Wrist
     if wristSpeed ~= 0 then
         motorOutput = wristSpeed
@@ -168,7 +185,6 @@ function update()
     else
         config.clawPiston:Set(wpilib.Relay_kReverse)
     end
-    
     --Wrist Safety
     --Wrist arm angle is from the wrist to the arm. Wrist arm angle is positive for counter-clockwise
     local wristArmAngle = 180 + getArmAngle() - getWristAngle()
@@ -178,8 +194,8 @@ function update()
     if wristArmAngle <= -180 then
         wristArmAngle = wristArmAngle + 360
     end
-    if math.abs(wristArmAngle) <= config.wristSafetyAngle then
-        config.wristMotor:Set( -wristArmAngle / math.abs(wristArmAngle))
+    if math.abs(wristArmAngle) < config.wristSafetyAngle and sign(motorOutput) == sign(wristArmAngle) then
+       config.wristMotor:Set(0)
     end
 end
 
