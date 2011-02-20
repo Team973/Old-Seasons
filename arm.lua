@@ -25,7 +25,10 @@ function init()
     PID:start()
     wristPID:reset()
     wristPID:start()
-    setPreset("pickup")
+
+    presetName = nil
+    PID.target = config.armPot:GetVoltage()
+    wristPID.target = config.wristPot:GetVoltage()
 end
 
 function getManual()
