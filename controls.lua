@@ -66,8 +66,8 @@ defaultControls =
             down=function() arm.setForward(false) end,
             up=function() arm.setForward(true) end,
         },
-        [2] = {down=function() arm.setPreset("stow") end},
-        [3] = {down=function() arm.setPreset("slot") end},
+        [2] = {down=function() arm.setPreset("slot") end},
+        [3] = {down=function() arm.setPreset("stow") end},
         [4] = {down=function() arm.setPreset("pickup") end},
     },
     -- Cypress Module

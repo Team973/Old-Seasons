@@ -18,6 +18,9 @@ local newValues = {}
 local valueNames = {
     "armPositionForward", 
     "armPositionReverse",
+    "wristPositionForward", 
+    "wristPositionReverse",
+    "armPresets",
 }
 
 local function uberTostring(val, indent)
@@ -26,7 +29,7 @@ local function uberTostring(val, indent)
         indent = ""
     end
     local nextIndent = indent .. "\t"
-    if t == "number" or t == "boolean" then
+    if t == "number" or t == "boolean" or t == "nil" then
         return tostring(val)
     elseif t == "string" then
         -- Return quoted string
@@ -37,6 +40,8 @@ local function uberTostring(val, indent)
             s = s .. nextIndent .. string.format("[%s] = %s,\n", uberTostring(k), uberTostring(v, nextIndent))
         end
         return s .. indent .. "}"
+    else
+        return t
     end
 end
 
@@ -48,6 +53,8 @@ controlMap = {
     -- Joystick 3
     {
         ["y"] = function(axis) arm.setMovement(axis) end,
+        [6] = {down=function() newValues.wristPositionForward = config.wristPot:GetVoltage() end},
+        [7] = {down=function() newValues.wristPositionReverse = config.wristPot:GetVoltage() end},
         [11] = {down=function() newValues.armPositionForward = config.armPot:GetVoltage() end},
         [10] = {down=function() newValues.armPositionReverse = config.armPot:GetVoltage() end},
     },
