@@ -15,6 +15,7 @@ local type = type
 module(...)
 
 local newValues = {}
+local isForward = true
 local valueNames = {
     "armPositionForward", 
     "armPositionReverse",
@@ -49,7 +50,9 @@ controlMap = {
     -- Joystick 1
     {},
     -- Joystick 2
-    {},
+    {
+        ["y"] = function(axis) arm.setWristMotor(axis) end,
+    },
     -- Joystick 3
     {
         ["y"] = function(axis) arm.setMovement(axis) end,
@@ -59,8 +62,30 @@ controlMap = {
         [10] = {down=function() newValues.armPositionReverse = config.armPot:GetVoltage() end},
     },
     -- Joystick 4 (eStop)
-    {},
+    {
+        [2] = {down=function() storePreset("slot") end},
+        [3] = {down=function() storePreset("stow") end},
+        [4] = {down=function() storePreset("pickup") end},
+        update = function(stick)
+            isForward = not stick:GetRawButton(12)
+        end,
+    },
 }
+
+function storePreset(name)
+    local preset, armRefPoint, wristRefPoint
+    if isForward then
+        preset = newValues.armPresets.forward[name]
+        armRefPoint = newValues.armPositionForward
+        wristRefPoint = newValues.wristPositionForward
+    else
+        preset = newValues.armPresets.reverse[name]
+        armRefPoint = newValues.armPositionReverse
+        wristRefPoint = newValues.wristPositionReverse
+    end
+    preset.arm = config.armPot:GetVoltage() - armRefPoint
+    preset.wrist = config.wristPot:GetVoltage() - wristRefPoint
+end
 
 function start()
     drive.arcade(0, 0)
