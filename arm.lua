@@ -162,11 +162,11 @@ function update()
     end
     --Arm Safety    
     local armSafetyVoltageForward = config.armPresets.forward.stow.arm - 0.02
-    if config.armPot:GetVoltage() < armSafetyVoltageForward and math.abs(motorOutput) >= 0 then
+    if config.armPot:GetVoltage() < armSafetyVoltageForward and motorOutput <= 0 then
         motorOutput = 0 
     end
     local armSafetyVoltageReverse = config.armPresets.reverse.stow.arm + 0.02
-    if config.armPot:GetVoltage() > armSafetyVoltageReverse and math.abs(motorOutput) <= 0 then
+    if config.armPot:GetVoltage() > armSafetyVoltageReverse and motorOutput >= 0 then
         motorOutput = 0
     end
     motor:Set(motorOutput)
