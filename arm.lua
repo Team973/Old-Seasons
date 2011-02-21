@@ -160,13 +160,15 @@ function update()
     else
         motorOutput = -PID:update(config.armPot:GetVoltage())
     end
-    --Arm Safety    
-    local armSafetyVoltageForward = config.armPresets.forward.stow.arm - 0.02
-    if config.armPot:GetVoltage() < armSafetyVoltageForward and motorOutput <= 0 then
-        motorOutput = 0 
+    -- Arm Safety
+    local armSafetyVoltageForward = config.armPositionForward + config.armPresets.forward.stow.arm - 0.02
+    if config.armPot:GetVoltage() < armSafetyVoltageForward and motorOutput >= 0 then
+        -- Only allow the operator to go CCW (negative)
+        motorOutput = 0
     end
-    local armSafetyVoltageReverse = config.armPresets.reverse.stow.arm + 0.02
-    if config.armPot:GetVoltage() > armSafetyVoltageReverse and motorOutput >= 0 then
+    local armSafetyVoltageReverse = config.armPositionReverse + config.armPresets.reverse.stow.arm + 0.02
+    if config.armPot:GetVoltage() > armSafetyVoltageReverse and motorOutput <= 0 then
+        -- Only allow the operator to go CW (positive)
         motorOutput = 0
     end
     motor:Set(motorOutput)
