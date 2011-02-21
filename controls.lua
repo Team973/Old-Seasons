@@ -62,13 +62,12 @@ defaultControls =
     },
     -- Joystick 4 (eStop Module)
     {
-        [12] = {
-            down=function() arm.setForward(false) end,
-            up=function() arm.setForward(true) end,
-        },
         [2] = {down=function() arm.setPreset("slot") end},
         [3] = {down=function() arm.setPreset("stow") end},
         [4] = {down=function() arm.setPreset("pickup") end},
+        update = function(stick)
+            arm.setForward(not stick:GetRawButton(12))
+        end,
     },
     -- Cypress Module
     cypress={},
