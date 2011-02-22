@@ -54,7 +54,7 @@ defaultControls =
             end
             -- Wrist Control
             if stick:GetRawButton(6) then
-                arm.setWristMotor(stick:GetY())
+                arm.setWristMotor(-stick:GetY())
             else
                 arm.setWristMotor(0)
             end
