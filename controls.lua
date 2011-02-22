@@ -65,6 +65,12 @@ defaultControls =
         [2] = {down=function() arm.setPreset("slot") end},
         [3] = {down=function() arm.setPreset("stow") end},
         [4] = {down=function() arm.setPreset("pickup") end},
+        [5] = {down=function() arm.setPreset("low") end},
+        [6] = {down=function() arm.setPreset("middle") end},
+        [7] = {down=function() arm.setPreset("high") end},
+        [8] = {down=function() arm.setPreset("midLow") end},
+        [9] = {down=function() arm.setPreset("midMiddle") end},
+        [10] = {down=function() arm.setPreset("midHigh") end},
         update = function(stick)
             arm.setForward(not stick:GetRawButton(12))
         end,
