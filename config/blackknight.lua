@@ -58,6 +58,12 @@ armPresets = {
         slot={arm=0, wrist=0, claw=false},
         vertical={arm=0.65, wrist=0.53},
         carry={arm=-0.43, wrist=0.74},
+        low={arm=0, wrist=0},
+        middle={arm=0, wrist=0},
+        high={arm=0, wrist=0},
+        midLow={arm=0, wrist=0},
+        midMiddle={arm=0, wrist=0},
+        midHigh={arm=0, wrist=0},
     },
     reverse={
         pickup={arm=0.45, wrist=0.3, claw=false},
@@ -65,6 +71,12 @@ armPresets = {
         slot={arm=0, wrist=0, claw=false},
         vertical={arm=-0.57, wrist=-0.36},
         carry={arm=0.45, wrist=-0.68},
+        low={arm=0, wrist=0},
+        middle={arm=0, wrist=0},
+        high={arm=0, wrist=0},
+        midLow={arm=0, wrist=0},
+        midMiddle={arm=0, wrist=0},
+        midHigh={arm=0, wrist=0},
     },
 }
 

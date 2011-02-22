@@ -66,6 +66,12 @@ controlMap = {
         [2] = {down=function() storePreset("slot") end},
         [3] = {down=function() storePreset("stow") end},
         [4] = {down=function() storePreset("pickup") end},
+        [5] = {down=function() storePreset("low") end},
+        [6] = {down=function() storePreset("middle") end},
+        [7] = {down=function() storePreset("high") end},
+        [8] = {down=function() storePreset("midLow") end},
+        [9] = {down=function() storePreset("midMiddle") end},
+        [10] = {down=function() storePreset("midHigh") end},
         update = function(stick)
             isForward = not stick:GetRawButton(12)
         end,
