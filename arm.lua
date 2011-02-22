@@ -15,7 +15,7 @@ local clawOpen = false
 local isForward = true
 local presetName = nil
 local possessionTimer = nil
-
+local safety = true
 local hasTube = false
 local wristSpeed = 0
 local gripSpeed = 0
@@ -45,6 +45,10 @@ end
 
 function setMovement(delta)
     movement = delta
+end
+
+function setSafety(on)
+    safety = on
 end
 
 local function updateTarget()
@@ -162,21 +166,38 @@ function update()
     end
     -- Arm Safety
     local armSafetyVoltageForward = config.armPositionForward + config.armPresets.forward.stow.arm - 0.02
-    if config.armPot:GetVoltage() < armSafetyVoltageForward and motorOutput >= 0 then
+    if safety and config.armPot:GetVoltage() < armSafetyVoltageForward and motorOutput >= 0 then
         -- Only allow the operator to go CCW (negative)
         motorOutput = 0
     end
     local armSafetyVoltageReverse = config.armPositionReverse + config.armPresets.reverse.stow.arm + 0.02
-    if config.armPot:GetVoltage() > armSafetyVoltageReverse and motorOutput <= 0 then
+    if safety and config.armPot:GetVoltage() > armSafetyVoltageReverse and motorOutput <= 0 then
         -- Only allow the operator to go CW (positive)
         motorOutput = 0
     end
+
     motor:Set(motorOutput)
     -- Wrist
     if wristSpeed ~= 0 then
         motorOutput = wristSpeed
     else
         motorOutput = wristPID:update(config.wristPot:GetVoltage())
+    end
+    --Wrist Safety
+    --Wrist arm angle is from the wrist to the arm. Wrist arm angle is positive for counter-clockwise
+    local wristArmAngle = 180 + getArmAngle() - getWristAngle()
+    if wristArmAngle >= 180 then
+        wristArmAngle = wristArmAngle - 360
+    end
+    if wristArmAngle <= -180 then
+        wristArmAngle = wristArmAngle + 360
+    end
+    if safety and math.abs(wristArmAngle) < config.wristSafetyAngle and sign(motorOutput) == sign(wristArmAngle) then
+       motorOutput = 0
+    end
+
+    if config.flipWrist then
+        motorOutput = -motorOutput
     end
     config.wristMotor:Set(motorOutput)
     -- Grip
@@ -189,18 +210,6 @@ function update()
         config.clawPiston:Set(wpilib.Relay_kForward)
     else
         config.clawPiston:Set(wpilib.Relay_kReverse)
-    end
-    --Wrist Safety
-    --Wrist arm angle is from the wrist to the arm. Wrist arm angle is positive for counter-clockwise
-    local wristArmAngle = 180 + getArmAngle() - getWristAngle()
-    if wristArmAngle >= 180 then
-        wristArmAngle = wristArmAngle - 360
-    end
-    if wristArmAngle <= -180 then
-        wristArmAngle = wristArmAngle + 360
-    end
-    if math.abs(wristArmAngle) < config.wristSafetyAngle and sign(motorOutput) == sign(wristArmAngle) then
-       config.wristMotor:Set(0)
     end
 end
 

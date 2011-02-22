@@ -28,16 +28,17 @@ flipDriveY = true
 -- Arm
 armMotor = wpilib.Jaguar(5)
 armPot = wpilib.AnalogChannel(2)
-armPID = pid.PID:new(1, 0, 0)
+armPID = pid.PID:new(10, 0, 0)
 armPID.min, armPID.max = -1, 1
 armPositionForward = 1.69
 armPositionReverse = 3.24
 
-wristPID = pid.PID:new(10.0, 0, 0)
+wristPID = pid.PID:new(10, 0, 0)
 wristPID.min, wristPID.max = -1, 1
 wristPositionForward = 2.21
 wristPositionReverse = 3.95
 wristSafetyAngle = 35 -- in degrees
+flipWrist = true
 
 armDriveBackAmplitude = 0
 armDriveBackDeadband = 0.1

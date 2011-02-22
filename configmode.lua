@@ -99,6 +99,7 @@ function start()
     arm.setMovement(0)
     arm.setWristMotor(0)
     arm.setGripMotor(0)
+    arm.setSafety(false)
 
     for i, name in ipairs(valueNames) do
         newValues[name] = config[name]
