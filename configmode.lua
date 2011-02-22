@@ -56,6 +56,7 @@ controlMap = {
     -- Joystick 3
     {
         ["y"] = function(axis) arm.setMovement(axis) end,
+        [3] = {down=function() storePreset("stow") end},
         [6] = {down=function() newValues.wristPositionForward = config.wristPot:GetVoltage() end},
         [7] = {down=function() newValues.wristPositionReverse = config.wristPot:GetVoltage() end},
         [11] = {down=function() newValues.armPositionForward = config.armPot:GetVoltage() end},
@@ -64,7 +65,7 @@ controlMap = {
     -- Joystick 4 (eStop)
     {
         [2] = {down=function() storePreset("slot") end},
-        [3] = {down=function() storePreset("stow") end},
+        [3] = {down=function() storePreset("carry") end},
         [4] = {down=function() storePreset("pickup") end},
         [5] = {down=function() storePreset("low") end},
         [6] = {down=function() storePreset("middle") end},

@@ -63,7 +63,7 @@ defaultControls =
     -- Joystick 4 (eStop Module)
     {
         [2] = {down=function() arm.setPreset("slot") end},
-        [3] = {down=function() arm.setPreset("stow") end},
+        [3] = {down=function() arm.setPreset("carry") end},
         [4] = {down=function() arm.setPreset("pickup") end},
         [5] = {down=function() arm.setPreset("low") end},
         [6] = {down=function() arm.setPreset("middle") end},
