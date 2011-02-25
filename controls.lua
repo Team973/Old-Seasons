@@ -39,7 +39,9 @@ defaultControls =
         update = function(stick)
             -- Intake
             if stick:GetRawButton(2) or stick:GetRawButton(3) or stick:GetRawButton(4) or stick:GetRawButton(5) then
-                arm.closeClaw()
+                if not arm.getHasTube() then
+                    arm.closeClaw()
+                end
                 arm.setGripMotor(1)
             else
                 arm.setGripMotor(0)

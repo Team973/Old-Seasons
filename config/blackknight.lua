@@ -50,6 +50,7 @@ wristPot = wpilib.AnalogChannel(2)
 wristIntakeSwitch = wpilib.DigitalInput(5)
 wristIntakeTime = 0.5
 
+clawSolenoids = true
 clawPiston = wpilib.Relay(4, 3, wpilib.Relay_kBothDirections)
 
 armPresets = {

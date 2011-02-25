@@ -1,7 +1,6 @@
 -- config/lockjaw.lua
 -- Practice Bot
 
-local fakesolenoid = require "fakesolenoid"
 local wpilib = require "wpilib"
 local pid = require "pid"
 
@@ -21,7 +20,7 @@ features =
 leftMotor1 = wpilib.Victor(1)
 rightMotor1 = wpilib.Victor(2)
 
-gearSwitch = fakesolenoid.new(4, 2)
+gearSwitch = wpilib.Solenoid(1)
 
 flipDriveY = true
 
@@ -49,7 +48,9 @@ wristPot = wpilib.AnalogChannel(3)
 wristIntakeSwitch = wpilib.DigitalInput(5)
 wristIntakeTime = 0.5
 
-clawPiston = wpilib.Relay(4, 3, wpilib.Relay_kBothDirections)
+clawSolenoids = true
+clawOpenPiston = wpilib.Solenoid(2)
+clawClosePiston = wpilib.Solenoid(3)
 
 armPresets = {
     forward={
