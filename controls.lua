@@ -33,16 +33,19 @@ defaultControls =
     },
     -- Joystick 3
     {
-        [1] = {down=function() arm.openClaw() end},
+        [1] = {down=arm.openClaw},
+        [2] = {down=arm.closeClaw},
         [9] = {down=restartRobot},
 
         update = function(stick)
             -- Intake
-            if stick:GetRawButton(2) or stick:GetRawButton(3) or stick:GetRawButton(4) or stick:GetRawButton(5) then
+            if stick:GetRawButton(3) then
                 if not arm.getHasTube() then
-                    arm.closeClaw()
+                    arm.releaseClaw()
                 end
                 arm.setGripMotor(1)
+            elseif stick:GetRawButton(4) or stick:GetRawButton(5) then
+                arm.setGripMotor(-1)
             else
                 arm.setGripMotor(0)
             end
