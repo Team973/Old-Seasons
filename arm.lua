@@ -11,7 +11,7 @@ local PID = config.armPID
 local wristPID = config.wristPID
 local movement = 0
 local manual = false
-local clawOpen = false
+local clawState = -1 -- 0 for closed, 1 for open, -1 for neutral
 local isForward = true
 local presetName = nil
 local possessionTimer = nil
@@ -59,14 +59,14 @@ local function updateTarget()
     if isForward then
         local preset = config.armPresets.forward[presetName]
         if preset.claw ~= nil then
-           clawOpen = preset.claw 
+           clawState = preset.claw 
         end
         PID.target = preset.arm + config.armPositionForward
         wristPID.target = preset.wrist + config.wristPositionForward
     else
         local preset = config.armPresets.reverse[presetName]
         if preset.claw ~= nil then
-           clawOpen = preset.claw 
+           clawState = preset.claw 
         end
         PID.target = preset.arm + config.armPositionReverse
         wristPID.target = preset.wrist + config.wristPositionReverse
@@ -115,9 +115,9 @@ function setWristMotor(speed)
     wristSpeed = speed
 end
 
-function openClaw() clawOpen = true end
-
-function closeClaw() clawOpen = false end
+function openClaw() clawState = 1 end
+function closeClaw() clawState = 0 end
+function releaseClaw() clawState = -1 end
 
 function getHasTube() return hasTube end
 
@@ -134,7 +134,7 @@ function update()
     local motorOutput
 
     -- If we don't have a tube, we're running the intake, and we're in one of the approved presets...
-    if not hasTube and gripSpeed > 0 and not clawOpen and (presetName == "pickup" or presetName == "slot") then
+    if not hasTube and gripSpeed > 0 and clawState == -1 and (presetName == "pickup" or presetName == "slot") then
          if not config.wristIntakeSwitch:Get() then
              if not possessionTimer then
                  -- The limit switch just got activated
@@ -154,7 +154,7 @@ function update()
                 possessionTimer = nil
             end
         end
-    elseif hasTube and clawOpen then
+    elseif hasTube and clawState == 1 then
         -- The operator pulled the trigger. Let it go. JUST LET IT GO.
         hasTube = false
     end
@@ -206,10 +206,28 @@ function update()
         -- If we're supposedly in possession and the tube is slipping, run intake.
         config.gripMotor:Set(1)
     end
-    if clawOpen then
-        config.clawPiston:Set(wpilib.Relay_kForward)
+    if config.clawSolenoids then
+        -- Pro setup
+        if clawState == 1 then
+            -- Open
+            config.clawOpenPiston:Set(true)
+            config.clawClosePiston:Set(false)
+        elseif clawState == 0 then
+            -- Closed
+            config.clawOpenPiston:Set(false)
+            config.clawClosePiston:Set(true)
+        else
+            -- Neutral
+            config.clawOpenPiston:Set(false)
+            config.clawClosePiston:Set(false)
+        end
     else
-        config.clawPiston:Set(wpilib.Relay_kReverse)
+        -- Black Knight crap setup
+        if clawState == 1 then
+            config.clawPiston:Set(wpilib.Relay_kForward)
+        else
+            config.clawPiston:Set(wpilib.Relay_kReverse)
+        end
     end
 end
 
