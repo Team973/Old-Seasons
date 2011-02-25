@@ -130,6 +130,7 @@ local function sign(k)
         return -1
     end
 end
+
 function update()
     local motorOutput
 
@@ -146,6 +147,7 @@ function update()
                  possessionTimer = nil
                  hasTube = true
                  setPreset("carry")
+                 closeClaw()
             end
         else
             -- Limit switch is off. Reset the timer.
