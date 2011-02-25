@@ -5,7 +5,7 @@ local io = require("io")
 local math = require("math")
 local ipairs = ipairs
 local string = require("string")
-local tostring = require("tostring")
+local tostring = tostring
 local wpilib = require("wpilib")
 
 module(...)
