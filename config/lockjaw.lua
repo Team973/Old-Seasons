@@ -22,7 +22,7 @@ rightMotor1 = wpilib.Victor(2)
 
 gearSwitch = wpilib.Solenoid(1)
 
-flipDriveY = true
+flipDriveY = false
 
 -- Arm
 armMotor = wpilib.Jaguar(5)
@@ -54,9 +54,9 @@ clawClosePiston = wpilib.Solenoid(3)
 
 armPresets = {
     forward={
-        pickup={arm=-0.60, wrist=-0.27, claw=false},
+        pickup={arm=-0.60, wrist=-0.27, claw=-1},
         stow={arm=-0.74, wrist=-0.27},
-        slot={arm=0, wrist=0, claw=false},
+        slot={arm=0, wrist=0, claw=-1},
         vertical={arm=0.75, wrist=0.53},
         carry={arm=-0.68, wrist=0.74},
         low={arm=0, wrist=0},
@@ -67,9 +67,9 @@ armPresets = {
         midHigh={arm=0, wrist=0},
     },
     reverse={
-        pickup={arm=0.55, wrist=0.3, claw=false},
+        pickup={arm=0.55, wrist=0.3, claw=-1},
         stow={arm=0.65, wrist=0.3},
-        slot={arm=0, wrist=0, claw=false},
+        slot={arm=0, wrist=0, claw=-1},
         vertical={arm=-0.80, wrist=-0.36},
         carry={arm=0.62, wrist=-0.68},
         low={arm=0, wrist=0},
