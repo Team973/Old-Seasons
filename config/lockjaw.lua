@@ -52,6 +52,9 @@ clawSolenoids = true
 clawOpenPiston = wpilib.Solenoid(2)
 clawClosePiston = wpilib.Solenoid(3)
 
+armLength = 42.75 -- inches
+armRunDelta = 8 -- inches
+
 armPresets = {
     forward={
         pickup={arm=-0.60, wrist=-0.27, claw=-1},
