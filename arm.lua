@@ -127,7 +127,7 @@ function runArmBack()
     -- If this is physically possible, then update the target.
     -- (NaN ~= NaN in Lua)
     if targetAngle == targetAngle then
-        PID.target = degreesToVoltage(targetAngle)
+        PID.target = degreesToVoltage(targetAngle, config.armPositionForward, config.armPositionReverse)
     end
 end
 
