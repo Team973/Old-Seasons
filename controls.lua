@@ -33,7 +33,13 @@ defaultControls =
     },
     -- Joystick 3
     {
-        [1] = {down=arm.openClaw},
+        [1] = {down=function()
+            arm.openClaw()
+            local presetName = arm.getPreset()
+            if presetName == "high" or presetName == "middle" or presetName == "midHigh" or presetName == "midMiddle" then
+                arm.runArmBack()
+            end
+        end},
         [2] = {down=arm.closeClaw},
         [9] = {down=restartRobot},
 

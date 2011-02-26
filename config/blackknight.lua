@@ -50,8 +50,11 @@ wristPot = wpilib.AnalogChannel(2)
 wristIntakeSwitch = wpilib.DigitalInput(5)
 wristIntakeTime = 0.5
 
-clawSolenoids = true
+clawSolenoids = false
 clawPiston = wpilib.Relay(4, 3, wpilib.Relay_kBothDirections)
+
+armLength = 42.75 -- inches
+armRunDelta = 8 -- inches
 
 armPresets = {
     forward={

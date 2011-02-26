@@ -96,6 +96,12 @@ local function voltageToDegrees(voltage, forwardVoltage, reverseVoltage)
     return voltage * scale + offset
 end
 
+local function degreesToVoltage(degrees, forwardVoltage, reverseVoltage)
+    local scale = (reverseVoltage - forwardVoltage) / 180
+    local offset = forwardVoltage - scale * 90
+    return degrees * scale + offset
+end
+
 local function getArmAngle()
     return voltageToDegrees(config.armPot:GetVoltage(), config.armPositionForward, config.armPositionReverse)
 end
@@ -106,6 +112,23 @@ end
 
 local function calculateFeedForward()
     return config.armDriveBackAmplitude * math.sin(getArmAngle())
+end
+
+function runArmBack()
+    setPreset(nil)
+    local armAngle = getArmAngle()
+    local armSin = math.sin(math.rad(armAngle - 90))
+    local targetAngle = math.deg(math.asin(armSin - config.armRunDelta / config.armLength))
+    if armAngle <= 180 then
+        targetAngle = 90 + targetAngle
+    else
+        targetAngle = 270 - targetAngle
+    end
+    -- If this is physically possible, then update the target.
+    -- (NaN ~= NaN in Lua)
+    if targetAngle == targetAngle then
+        PID.target = degreesToVoltage(targetAngle)
+    end
 end
 
 function setGripMotor(speed)
