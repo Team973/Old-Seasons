@@ -109,6 +109,14 @@ function autonomous()
     -- Do nothing...
 end
 
+local function bool2yn(bool)
+    if bool then
+        return "Y"
+    else
+        return "N"
+    end
+end
+
 function teleop()
     local inConfig = controls.sticks[4]:GetRawButton(11)
     while wpilib.IsOperatorControl() and wpilib.IsEnabled() do
@@ -131,10 +139,11 @@ function teleop()
 
         local armPIDOut = -config.armPID.output
         local wristPIDOut = config.wristPID.output
-        printLCD(2, format("Arm:%.2f Out:%.2f", config.armPot:GetVoltage(), armPIDOut))
-        printLCD(3, format("Wrist:%.2f Out:%.2f", config.wristPot:GetVoltage(), wristPIDOut))
-        printLCD(4, format("Err Fwd: %.2f", config.armPot:GetVoltage() - config.armPositionForward))
-        printLCD(5, format("Err Rev: %.2f", config.armPot:GetVoltage() - config.armPositionReverse))
+        printLCD(2, format("Arm=%.2f Out=%.2f", config.armPot:GetVoltage(), armPIDOut))
+        printLCD(3, format("F=%.2f R=%.2f", config.armPot:GetVoltage() - config.armPositionForward, config.armPot:GetVoltage() - config.armPositionReverse))
+        printLCD(4, format("Wrist=%.2f Out=%.2f", config.wristPot:GetVoltage(), wristPIDOut))
+        printLCD(5, format("F=%.2f R=%.2f", config.wristPot:GetVoltage() - config.wristPositionForward, config.wristPot:GetVoltage() - config.wristPositionReverse))
+        printLCD(6, format("Tube=%s Switch=%s", bool2yn(arm.getHasTube()), bool2yn(not config.wristIntakeSwitch:Get())))
         updateLCD()
 
         -- Read controls
