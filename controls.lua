@@ -83,7 +83,7 @@ defaultControls =
         [9] = {down=function() arm.setPreset("midMiddle") end},
         [10] = {down=function() arm.setPreset("midHigh") end},
         update = function(stick)
-            arm.setForward(not stick:GetRawButton(12))
+            arm.setForward(not stick:GetRawButton(1))
         end,
     },
     -- Cypress Module
