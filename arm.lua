@@ -176,9 +176,22 @@ local function writeTask()
     end
 end
 
+local function isValidAnalogVoltage(voltage)
+    return voltage >= 0.1
+end
+
+local function isAnalogConnected()
+    for i=1,8 do
+        if isValidAnalogVoltage(wpilib.AnalogModule_GetInstance(1):GetVoltage(i)) then
+            return true
+        end
+    end
+    return false
+end
+
 function update()
     local motorOutput
-
+    
     writeTask()
 
     -- If we don't have a tube, we're running the intake, and we're in one of the approved presets...
@@ -210,8 +223,11 @@ function update()
     -- Primary Joint
     if manual then
         motorOutput = movement
-    else
+    elseif isValidAnalogVoltage(config.armPot:GetVoltage()) then
         motorOutput = -PID:update(config.armPot:GetVoltage())
+    else 
+        motorOutput = 0
+        safety = false
     end
     -- Arm Safety
     local armSafetyVoltageForward = config.armPositionForward + config.armPresets.forward.stow.arm - 0.02
@@ -231,8 +247,11 @@ function update()
     -- Wrist
     if wristSpeed ~= 0 then
         motorOutput = wristSpeed
-    else
+    elseif isValidAnalogVoltage(config.armPot:GetVoltage()) and isValidAnalogVoltage(config.wristPot:GetVoltage()) then
         motorOutput = wristPID:update(config.wristPot:GetVoltage())
+    else
+        motorOutput = 0
+        safety = false
     end
     --Wrist Safety
     --Wrist arm angle is from the wrist to the arm. Wrist arm angle is positive for counter-clockwise
