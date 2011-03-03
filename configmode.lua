@@ -57,10 +57,10 @@ controlMap = {
     {
         ["y"] = function(axis) arm.setMovement(axis) end,
         [3] = {down=function() storePreset("stow") end},
-        [6] = {down=function() newValues.wristPositionForward = config.wristPot:GetVoltage() end},
-        [7] = {down=function() newValues.wristPositionReverse = config.wristPot:GetVoltage() end},
-        [11] = {down=function() newValues.armPositionForward = config.armPot:GetVoltage() end},
-        [10] = {down=function() newValues.armPositionReverse = config.armPot:GetVoltage() end},
+        [6] = {down=function() storeHorizontal("wrist") end},
+        [7] = {down=function() storeHorizontal("wrist") end},
+        [11] = {down=function() storeHorizontal("arm") end},
+        [10] = {down=function() storeHorizontal("arm") end},
     },
     -- Joystick 4 (eStop)
     {
@@ -74,10 +74,20 @@ controlMap = {
         [9] = {down=function() storePreset("midMiddle") end},
         [10] = {down=function() storePreset("midHigh") end},
         update = function(stick)
-            isForward = not stick:GetRawButton(12)
+            isForward = not stick:GetRawButton(1)
         end,
     },
 }
+
+function storeHorizontal(joint)
+    local key = joint .. "Position"
+    if isForward then
+        key = key .. "Forward"
+    else
+        key = key .. "Reverse"
+    end
+    newValues[key] = config.wristPot:GetVoltage()
+end
 
 function storePreset(name)
     local preset, armRefPoint, wristRefPoint
@@ -115,6 +125,7 @@ function finish()
         for i, name in ipairs(valueNames) do
             f:write(name .. "=" .. uberTostring(newValues[name]) .. "\n")
         end
+        f:flush()
         f:close()
     end
     restartRobot()
