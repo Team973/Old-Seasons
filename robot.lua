@@ -118,7 +118,7 @@ local function bool2yn(bool)
 end
 
 function teleop()
-    local inConfig = controls.sticks[4]:GetRawButton(11)
+    local inConfig = false
     while wpilib.IsOperatorControl() and wpilib.IsEnabled() do
         enableWatchdog()
         feedWatchdog()
