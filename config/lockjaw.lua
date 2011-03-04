@@ -29,6 +29,8 @@ armMotor = wpilib.Jaguar(5)
 armPot = wpilib.AnalogChannel(2)
 armPID = pid.PID:new(10, 0, 0)
 armPID.min, armPID.max = -1, 1
+armUpwardP = 10
+armDownwardP = 10
 armPositionForward = 1.69
 armPositionReverse = 3.24
 
