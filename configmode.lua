@@ -25,7 +25,7 @@ local valueNames = {
     "armPresets",
 }
 
-local armPID_p, armPID_i, armPID_d
+local armPID_p, armPID_i, armPID_d = 0, 0, 0
 
 local function uberTostring(val, indent)
     local t = type(val)
@@ -55,9 +55,17 @@ controlMap = {
     -- Joystick 1
     {
         [6] = {down=function() armPID_p = armPID_p + 0.1 end},
-        [7] = {down=function() armPID_p = armPID_p - 0.1 end},
+        [7] = {down=function()
+            if armPID_p >= 0.1 then
+                armPID_p = armPID_p - 0.1
+            end
+        end},
         [11] = {down=function() armPID_d = armPID_d + 0.1 end},
-        [10] = {down=function() armPID_d = armPID_d - 0.1 end},
+        [10] = {down=function()
+            if armPID_d >= 0.1 then
+                armPID_d = armPID_d - 0.1
+            end
+        end},
     },
     -- Joystick 2
     {
@@ -131,8 +139,8 @@ function start()
 end
 
 function update()
-    lcd.print(2, format("AP=%.1f AI=%.1f AD=%.1f", armPID_p, armPID_i, armPID_d))
-    lcd.print(3, format("WP=%.1f WI=%.1f WD=%.1f", wristPID_p, wristPID_i, wristPID_d))
+    lcd.print(2, string.format("AP=%.1f AI=%.1f AD=%.1f", armPID_p, armPID_i, armPID_d))
+    lcd.print(3, string.format("WP=%.1f WI=%.1f WD=%.1f", config.wristPID.p, config.wristPID.i, config.wristPID.d))
     lcd.print(4, "")
     lcd.print(5, "")
     lcd.print(6, "")
