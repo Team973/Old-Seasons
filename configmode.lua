@@ -23,9 +23,11 @@ local valueNames = {
     "wristPositionForward", 
     "wristPositionReverse",
     "armPresets",
+    "armUpwardP",
+    "armDownwardP",
 }
 
-local armPID_p, armPID_i, armPID_d = 0, 0, 0
+local armPID_i, armPID_d = 0, 0, 0
 
 local function uberTostring(val, indent)
     local t = type(val)
@@ -54,16 +56,22 @@ local storeHorizontal, storePreset
 controlMap = {
     -- Joystick 1
     {
-        [6] = {down=function() armPID_p = armPID_p + 0.1 end},
-        [7] = {down=function()
-            if armPID_p >= 0.1 then
-                armPID_p = armPID_p - 0.1
-            end
-        end},
-        [11] = {down=function() armPID_d = armPID_d + 0.1 end},
-        [10] = {down=function()
+        [3] = {down=function() armPID_d = armPID_d + 0.1 end},
+        [2] = {down=function()
             if armPID_d >= 0.1 then
                 armPID_d = armPID_d - 0.1
+            end
+        end},
+        [6] = {down=function() newValues.armUpwardP = newValues.armUpwardP + 0.1 end},
+        [7] = {down=function()
+            if newValues.armUpwardP >= 0.1 then
+                newValues.armUpwardP = newValues.armUpwardP - 0.1
+            end
+        end},
+        [11] = {down=function() newValues.armDownwardP = newValues.armDownwardP + 0.1 end},
+        [10] = {down=function()
+            if newValues.armDownwardP >= 0.1 then
+                newValues.armDownwardP = newValues.armDownwardP - 0.1
             end
         end},
     },
@@ -133,15 +141,14 @@ function start()
     for i, name in ipairs(valueNames) do
         newValues[name] = config[name]
     end
-    armPID_p = config.armPID.p
     armPID_i = config.armPID.i
     armPID_d = config.armPID.d
 end
 
 function update()
-    lcd.print(2, string.format("AP=%.1f AI=%.1f AD=%.1f", armPID_p, armPID_i, armPID_d))
-    lcd.print(3, string.format("WP=%.1f WI=%.1f WD=%.1f", config.wristPID.p, config.wristPID.i, config.wristPID.d))
-    lcd.print(4, "")
+    lcd.print(2, string.format("PUp=%.1f PDown=%.1f", newValues.armUpwardP, newValues.armDownwardP))
+    lcd.print(3, string.format("AI=%.1f AD=%.1f", armPID_i, armPID_d))
+    lcd.print(4, string.format("WP=%.1f WI=%.1f WD=%.1f", config.wristPID.p, config.wristPID.i, config.wristPID.d))
     lcd.print(5, "")
     lcd.print(6, "")
     lcd.update()
@@ -156,7 +163,7 @@ function finish()
         for i, name in ipairs(valueNames) do
             f:write(name .. "=" .. uberTostring(newValues[name]) .. "\n")
         end
-        f:write(string.format("armPID = pid.PID:new(%s, %s, %s)\n", tostring(armPID_p), tostring(armPID_i), tostring(armPID_d)))
+        f:write(string.format("armPID = pid.PID:new(%s, %s, %s)\n", newValues.armUpwardP, tostring(armPID_i), tostring(armPID_d)))
         f:write("armPID.min, armPID.max = -1, 1\n")
         f:flush()
         f:close()
