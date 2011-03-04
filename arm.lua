@@ -158,6 +158,16 @@ local function sign(k)
     end
 end
 
+local function updateArmP()
+    local armIsForward = (getArmAngle() < 180)
+    local positiveError = (config.armPot:GetVoltage() < PID.target)
+    if armIsForward == positiveError then
+        PID.p = config.armUpwardP
+    else
+        PID.p = config.armDownwardP
+    end
+end
+
 local writeTimer = wpilib.Timer()
 local samples = {}
 
@@ -193,6 +203,8 @@ function update()
     local motorOutput
     
     writeTask()
+
+    updateArmP()
 
     -- If we don't have a tube, we're running the intake, and we're in one of the approved presets...
     if not hasTube and gripSpeed > 0 and clawState == -1 and (presetName == "pickup" or presetName == "slot") then
