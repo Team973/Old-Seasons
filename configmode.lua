@@ -6,6 +6,7 @@ local controls = require("controls")
 local drive = require("drive")
 local io = require("io")
 local ipairs = ipairs
+local lcd = require("lcd")
 local pairs = pairs
 local restartRobot = restartRobot
 local string = string
@@ -23,6 +24,8 @@ local valueNames = {
     "wristPositionReverse",
     "armPresets",
 }
+
+local armPID_p, armPID_i, armPID_d
 
 local function uberTostring(val, indent)
     local t = type(val)
@@ -50,7 +53,12 @@ local storeHorizontal, storePreset
 
 controlMap = {
     -- Joystick 1
-    {},
+    {
+        [6] = {down=function() armPID_p = armPID_p + 0.1 end},
+        [7] = {down=function() armPID_p = armPID_p - 0.1 end},
+        [11] = {down=function() armPID_d = armPID_d + 0.1 end},
+        [10] = {down=function() armPID_d = armPID_d - 0.1 end},
+    },
     -- Joystick 2
     {
         ["y"] = function(axis) arm.setWristMotor(axis) end,
@@ -117,11 +125,14 @@ function start()
     for i, name in ipairs(valueNames) do
         newValues[name] = config[name]
     end
+    armPID_p = config.armPID.p
+    armPID_i = config.armPID.i
+    armPID_d = config.armPID.d
 end
 
 function update()
-    lcd.print(2, format("AP=%.1f AI=%.1f AD=%.1f", config.armPID.p, config.armPID.i, config.armPID.d))
-    lcd.print(3, format("WP=%.1f WI=%.1f WD=%.1f", config.wristPID.p, config.wristPID.i, config.wristPID.d))
+    lcd.print(2, format("AP=%.1f AI=%.1f AD=%.1f", armPID_p, armPID_i, armPID_d))
+    lcd.print(3, format("WP=%.1f WI=%.1f WD=%.1f", wristPID_p, wristPID_i, wristPID_d))
     lcd.print(4, "")
     lcd.print(5, "")
     lcd.print(6, "")
@@ -132,10 +143,13 @@ function finish()
     do
         local f = io.open("lua/config/override.lua", "w")
         f:write("-- config/override.lua\n")
+        f:write("local pid = require(\"pid\")\n")
         f:write("module(...)\n")
         for i, name in ipairs(valueNames) do
             f:write(name .. "=" .. uberTostring(newValues[name]) .. "\n")
         end
+        f:write(string.format("armPID = pid.PID:new(%s, %s, %s)\n", tostring(armPID_p), tostring(armPID_i), tostring(armPID_d)))
+        f:write("armPID.min, armPID.max = -1, 1\n")
         f:flush()
         f:close()
     end
