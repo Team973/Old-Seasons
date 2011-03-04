@@ -46,6 +46,8 @@ local function uberTostring(val, indent)
     end
 end
 
+local storeHorizontal, storePreset
+
 controlMap = {
     -- Joystick 1
     {},
