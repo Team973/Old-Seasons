@@ -119,6 +119,12 @@ function start()
     end
 end
 
+function update()
+    lcd.print(2, format("ArmP=%.2f ArmI=%.2f ArmD=%.2f", config.armPID.p, config.armPID.i, config.armPID.d))
+    lcd.print(3, format("WristP=%.2f WristI=%.2f WristD=%.2f", config.wristPID.p, config.wristPID.i, config.wristPID.d))
+    lcd.update()
+end
+
 function finish()
     do
         local f = io.open("lua/config/override.lua", "w")

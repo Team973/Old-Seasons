@@ -127,6 +127,7 @@ function teleop()
             controls.update(controls.defaultControls)
         else
             controls.update(configmode.controlMap)
+            configmode.update()
         end
         feedWatchdog()
 
