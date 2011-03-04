@@ -5,37 +5,13 @@ local config = require "config"
 local configmode = require "configmode"
 local controls = require "controls"
 local drive = require "drive"
+local lcd = require "lcd"
 local wpilib = require "wpilib"
 local format = string.format
 
 module(..., package.seeall)
 
 local TELEOP_LOOP_LAG = 0.005
-
--- WPILib shortcuts
-local printLCD, updateLCD
-if config.features.lcd then
-    local lcd = wpilib.DriverStationLCD_GetInstance()
-    local lineConstants = {
-        wpilib.DriverStationLCD_kUser_Line1,
-        wpilib.DriverStationLCD_kUser_Line2,
-        wpilib.DriverStationLCD_kUser_Line3,
-        wpilib.DriverStationLCD_kUser_Line4,
-        wpilib.DriverStationLCD_kUser_Line5,
-        wpilib.DriverStationLCD_kUser_Line6,
-    }
-
-    function printLCD(line, msg)
-        lcd:PrintLine(lineConstants[line], msg)
-    end
-    
-    function updateLCD()
-        lcd:UpdateLCD()
-    end
-else
-    printLCD = function() end
-    updateLCD = function() end
-end
 
 -- Watchdog shortcuts
 local feedWatchdog, enableWatchdog, disableWatchdog
@@ -78,9 +54,9 @@ local sendVisionData, sendIOPortData
 
 -- Robot running
 function run()
-    printLCD(1, "Ready")
-    printLCD(2, config.profileName)
-    updateLCD()
+    lcd.print(1, "Ready")
+    lcd.print(2, config.profileName)
+    lcd.update()
     -- Initialize subsystems
     arm.init()
     -- Main loop
@@ -132,19 +108,19 @@ function teleop()
         end
 
         if inConfig then
-            printLCD(1, "CONFIG MODE")
+            lcd.print(1, "CONFIG MODE")
         else
-            printLCD(1, "Running!")
+            lcd.print(1, "Running!")
         end
 
         local armPIDOut = -config.armPID.output
         local wristPIDOut = config.wristPID.output
-        printLCD(2, format("Arm=%.2f Out=%.2f", config.armPot:GetVoltage(), armPIDOut))
-        printLCD(3, format("F=%.2f R=%.2f", config.armPot:GetVoltage() - config.armPositionForward, config.armPot:GetVoltage() - config.armPositionReverse))
-        printLCD(4, format("Wrist=%.2f Out=%.2f", config.wristPot:GetVoltage(), wristPIDOut))
-        printLCD(5, format("F=%.2f R=%.2f", config.wristPot:GetVoltage() - config.wristPositionForward, config.wristPot:GetVoltage() - config.wristPositionReverse))
-        printLCD(6, format("Tube=%s Switch=%s", bool2yn(arm.getHasTube()), bool2yn(not config.wristIntakeSwitch:Get())))
-        updateLCD()
+        lcd.print(2, format("Arm=%.2f Out=%.2f", config.armPot:GetVoltage(), armPIDOut))
+        lcd.print(3, format("F=%.2f R=%.2f", config.armPot:GetVoltage() - config.armPositionForward, config.armPot:GetVoltage() - config.armPositionReverse))
+        lcd.print(4, format("Wrist=%.2f Out=%.2f", config.wristPot:GetVoltage(), wristPIDOut))
+        lcd.print(5, format("F=%.2f R=%.2f", config.wristPot:GetVoltage() - config.wristPositionForward, config.wristPot:GetVoltage() - config.wristPositionReverse))
+        lcd.print(6, format("Tube=%s Switch=%s", bool2yn(arm.getHasTube()), bool2yn(not config.wristIntakeSwitch:Get())))
+        lcd.update()
 
         -- Read controls
         if not inConfig then
