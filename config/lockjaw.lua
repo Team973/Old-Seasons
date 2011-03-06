@@ -59,7 +59,7 @@ armRunDelta = 8 -- inches
 
 armPresets = {
     forward={
-        pickup={arm=-0.60, wrist=-0.27, claw=0},
+        pickup={arm=-0.60, wrist=-0.27, claw=-1},
         stow={arm=-0.74, wrist=-0.27, claw=0},
         slot={arm=0, wrist=0, claw=-1},
         vertical={arm=0.75, wrist=0.53},
@@ -72,8 +72,8 @@ armPresets = {
         midHigh={arm=0, wrist=0},
     },
     reverse={
-        pickup={arm=0.55, wrist=0.3, claw=0},
-        stow={arm=0.65, wrist=0.3},
+        pickup={arm=0.55, wrist=0.3, claw=-1},
+        stow={arm=0.65, wrist=0.3, claw=0},
         slot={arm=0, wrist=0, claw=-1},
         vertical={arm=-0.80, wrist=-0.36},
         carry={arm=0.62, wrist=-0.68, claw=0},
