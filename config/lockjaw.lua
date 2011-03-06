@@ -45,7 +45,7 @@ armDriveBackAmplitude = 0
 armDriveBackDeadband = 0.1
 
 gripMotor = wpilib.Victor(6)
-wristMotor = wpilib.Victor(7)
+wristMotor = wpilib.Victor(8)
 wristPot = wpilib.AnalogChannel(3)
 wristIntakeSwitch = wpilib.DigitalInput(5)
 wristIntakeTime = 0.5

@@ -9,6 +9,10 @@ local lcd = require "lcd"
 local wpilib = require "wpilib"
 local format = string.format
 
+
+local presetTable = {pickup=0,stow=1,slot=2,vertical=3,carry=4,low=5,middle=6,high=7,midLow=8,midMiddle=9,midHigh=10}--Preset table for Dashboard use
+
+
 module(..., package.seeall)
 
 local TELEOP_LOOP_LAG = 0.005
@@ -272,10 +276,18 @@ function sendIOPortData()
 
         --Robot Variables
         if arm.getPreset() ~= nil then
-            dash:AddString(arm.getPreset())
+            dash:AddU8(presetTable[arm.getPreset()])
         else
-            dash:AddString("")
+            dash:AddU8(255)
         end
+        
+        local stateTable = arm.getGripperState()
+        if stateTable.clawNumb ~= nil then
+            dash:AddI8(stateTable.clawNumb)
+        else
+            dash:AddI8(100)
+        end                
+
     end
     dash:FinalizeCluster()
     dash:Finalize()
