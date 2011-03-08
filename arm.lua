@@ -39,7 +39,7 @@ local function getArmAngle()
     return voltageToDegrees(config.armPot:GetVoltage(), config.armPositionForward, config.armPositionReverse)
 end
 
-local function getWristVoltage()
+function getWristVoltage()
     local voltage = config.wristPot:GetVoltage()
     if config.flipWristPot then
         voltage = 5 - voltage

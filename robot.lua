@@ -124,8 +124,8 @@ function teleop()
             local wristPIDOut = config.wristPID.output
             lcd.print(2, format("Arm=%.2f Out=%.2f", config.armPot:GetVoltage(), armPIDOut))
             lcd.print(3, format("Err=%.2f", config.armPID.target - config.armPot:GetVoltage()))
-            lcd.print(4, format("Wrist=%.2f Out=%.2f", config.wristPot:GetVoltage(), wristPIDOut))
-            lcd.print(5, format("Err=%.2f", config.wristPID.target - config.wristPot:GetVoltage()))
+            lcd.print(4, format("Wrist=%.2f Out=%.2f", arm.getWristVoltage(), wristPIDOut))
+            lcd.print(5, format("Err=%.2f", config.wristPID.target - arm.getWristVoltage()))
             lcd.print(6, format("Tube=%s Switch=%s", bool2yn(arm.getHasTube()), bool2yn(not config.wristIntakeSwitch:Get())))
             lcd.update()
         else

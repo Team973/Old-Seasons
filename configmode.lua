@@ -112,7 +112,7 @@ function storeHorizontal(joint)
     else
         key = key .. "Reverse"
     end
-    newValues[key] = config.wristPot:GetVoltage()
+    newValues[key] = arm.getWristVoltage()
 end
 
 function storePreset(name)
@@ -127,7 +127,7 @@ function storePreset(name)
         wristRefPoint = newValues.wristPositionReverse
     end
     preset.arm = config.armPot:GetVoltage() - armRefPoint
-    preset.wrist = config.wristPot:GetVoltage() - wristRefPoint
+    preset.wrist = arm.getWristVoltage() - wristRefPoint
 end
 
 function start()

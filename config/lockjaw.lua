@@ -39,7 +39,7 @@ wristPID.min, wristPID.max = -1, 1
 wristPositionForward = 2.21
 wristPositionReverse = 3.95
 wristSafetyAngle = 35 -- in degrees
-flipWrist = true
+flipWrist = false
 flipWristPot = true
 
 armDriveBackAmplitude = 0
