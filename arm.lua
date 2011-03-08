@@ -1,7 +1,6 @@
 -- arm.lua
 
 local config = require("config")
-local io = require("io")
 local math = require("math")
 local ipairs = ipairs
 local string = require("string")
@@ -182,24 +181,6 @@ local function updateArmP()
     end
 end
 
-local writeTimer = wpilib.Timer()
-local samples = {}
-
-local function writeTask()
-    writeTimer:Start()
-    if writeTimer:HasPeriodPassed(1.0) and #samples > 0 then
-        do
-            local f = io.open("samples.txt", "a")
-            for i, samp in ipairs(samples) do
-                f:write(samp .. "\n")
-            end
-            f:write("******************************\n")
-            f:close()
-        end
-        samples = {}
-    end
-end
-
 local function isValidAnalogVoltage(voltage)
     return voltage >= 0.1
 end
@@ -216,8 +197,6 @@ end
 function update()
     local motorOutput
     
-    writeTask()
-
     updateArmP()
 
     -- If we don't have a tube, we're running the intake, and we're in one of the approved presets...
@@ -260,13 +239,11 @@ function update()
     if safety and config.armPot:GetVoltage() < armSafetyVoltageForward and motorOutput >= 0 then
         -- Only allow the operator to go CCW (negative)
         motorOutput = 0
-        samples[#samples + 1] = string.format("CCW %s %.3f %.3f %.1f", tostring(presetName), config.armPot:GetVoltage(), armSafetyVoltageForward, motorOutput)
     end
     local armSafetyVoltageReverse = config.armPositionReverse + config.armPresets.reverse.stow.arm + 0.02
     if safety and config.armPot:GetVoltage() > armSafetyVoltageReverse and motorOutput <= 0 then
         -- Only allow the operator to go CW (positive)
         motorOutput = 0
-        samples[#samples + 1] = string.format("CW %s %.3f %.3f %.1f", tostring(presetName), config.armPot:GetVoltage(), armSafetyVoltageReverse, motorOutput)
     end
 
     motor:Set(motorOutput)
@@ -290,7 +267,6 @@ function update()
     end
     if safety and math.abs(wristArmAngle) < config.wristSafetyAngle and sign(motorOutput) == sign(wristArmAngle) then
        motorOutput = 0
-        samples[#samples + 1] = string.format("Wrist %s %.3f %.1f", tostring(presetName), wristArmAngle, motorOutput)
     end
 
     if config.flipWrist then
