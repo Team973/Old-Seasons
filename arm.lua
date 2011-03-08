@@ -23,6 +23,34 @@ local hasTube = false
 local wristSpeed = 0
 local gripSpeed = 0
 
+local function voltageToDegrees(voltage, forwardVoltage, reverseVoltage)
+    local scale = 180 / (reverseVoltage - forwardVoltage)
+    local offset = 90 - scale * forwardVoltage
+    return voltage * scale + offset
+end
+
+local function degreesToVoltage(degrees, forwardVoltage, reverseVoltage)
+    local scale = (reverseVoltage - forwardVoltage) / 180
+    local offset = forwardVoltage - scale * 90
+    return degrees * scale + offset
+end
+
+local function getArmAngle()
+    return voltageToDegrees(config.armPot:GetVoltage(), config.armPositionForward, config.armPositionReverse)
+end
+
+local function getWristVoltage()
+    local voltage = config.wristPot:GetVoltage()
+    if config.flipWristPot then
+        voltage = 5 - voltage
+    end
+    return voltage
+end
+
+local function getWristAngle()
+    return voltageToDegrees(getWristVoltage(), config.wristPositionForward, config.wristPositionReverse)
+end
+
 function init()
     PID:reset()
     PID:start()
@@ -31,7 +59,7 @@ function init()
 
     presetName = nil
     PID.target = config.armPot:GetVoltage()
-    wristPID.target = config.wristPot:GetVoltage()
+    wristPID.target = getWristVoltage()
 end
 
 function getManual()
@@ -93,26 +121,6 @@ function setPreset(preset)
     updateTarget()
 end
 
-local function voltageToDegrees(voltage, forwardVoltage, reverseVoltage)
-    local scale = 180 / (reverseVoltage - forwardVoltage)
-    local offset = 90 - scale * forwardVoltage
-    return voltage * scale + offset
-end
-
-local function degreesToVoltage(degrees, forwardVoltage, reverseVoltage)
-    local scale = (reverseVoltage - forwardVoltage) / 180
-    local offset = forwardVoltage - scale * 90
-    return degrees * scale + offset
-end
-
-local function getArmAngle()
-    return voltageToDegrees(config.armPot:GetVoltage(), config.armPositionForward, config.armPositionReverse)
-end
-
-local function getWristAngle()
-    return voltageToDegrees(config.wristPot:GetVoltage(), config.wristPositionForward, config.wristPositionReverse)
-end
-
 local function calculateFeedForward()
     return config.armDriveBackAmplitude * math.sin(getArmAngle())
 end
@@ -140,7 +148,7 @@ end
 
 function setWristMotor(speed)
     if wristSpeed ~= 0 and speed == 0 then
-        wristPID.target = config.wristPot:GetVoltage()
+        wristPID.target = getWristVoltage()
     end
     wristSpeed = speed
 end
@@ -175,17 +183,8 @@ local function updateArmP()
     end
 end
 
-local function isValidAnalogVoltage(voltage)
-    return voltage >= 0.1
-end
-
-local function isAnalogConnected()
-    for i=1,8 do
-        if isValidAnalogVoltage(wpilib.AnalogModule_GetInstance(1):GetVoltage(i)) then
-            return true
-        end
-    end
-    return false
+local function isAnalogConnected(channel)
+    return channel:GetVoltage() >= 0.1
 end
 
 function update()
@@ -222,7 +221,7 @@ function update()
     -- Primary Joint
     if manual then
         motorOutput = movement
-    elseif isValidAnalogVoltage(config.armPot:GetVoltage()) then
+    elseif isAnalogConnected(config.armPot) then
         motorOutput = -PID:update(config.armPot:GetVoltage())
     else 
         motorOutput = 0
@@ -244,8 +243,8 @@ function update()
     -- Wrist
     if wristSpeed ~= 0 then
         motorOutput = wristSpeed
-    elseif isValidAnalogVoltage(config.armPot:GetVoltage()) and isValidAnalogVoltage(config.wristPot:GetVoltage()) then
-        motorOutput = wristPID:update(config.wristPot:GetVoltage())
+    elseif isAnalogConnected(config.armPot) and isAnalogConnected(config.wristPot) then
+        motorOutput = wristPID:update(getWristVoltage())
     else
         motorOutput = 0
         safety = false
