@@ -185,7 +185,7 @@ end
 local function updateArmP()
     local armIsForward = (getArmAngle() < 180)
     local positiveError = (config.armPot:GetVoltage() < PID.target)
-    if armIsForward ~= positiveError then
+    if armIsForward == positiveError then
         PID.p = config.armUpwardP
     else
         PID.p = config.armDownwardP
