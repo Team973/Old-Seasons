@@ -42,6 +42,7 @@ wristPositionForward = 2.21
 wristPositionReverse = 3.95
 wristSafetyAngle = 35 -- in degrees
 flipWrist = false
+flipWristPot = false
 
 armDriveBackAmplitude = 0
 armDriveBackDeadband = 0.1
