@@ -34,10 +34,10 @@ defaultControls =
     -- Joystick 3
     {
         [1] = {down=function()
-            arm.openClaw()
             local presetName = arm.getPreset()
+            arm.openClaw()
             if presetName == "high" or presetName == "middle" or presetName == "midHigh" or presetName == "midMiddle" then
-                arm.runArmBack()
+                arm.runWristHorizontal()
             end
         end},
         [2] = {down=arm.closeClaw},
