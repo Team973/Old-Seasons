@@ -142,6 +142,15 @@ function runArmBack()
     end
 end
 
+function runWristHorizontal()
+    setPreset(nil)
+    if isForward then
+        wristPID.target = config.wristPositionForward
+    else
+        wristPID.target = config.wristPositionReverse
+    end
+end
+
 function setGripMotor(speed)
     gripSpeed = speed
 end
