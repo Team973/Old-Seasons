@@ -81,12 +81,7 @@ function setForward(f)
 end
 
 function getForward()
-    local dashArmForwad =false
-    if isForward then
-        dashArmForward = true
-    end
-
-    return dashArmForward
+    return isForward 
 end
 
 function getPreset()
@@ -155,8 +150,7 @@ function closeClaw() clawState = 0 end
 function releaseClaw() clawState = -1 end
 
 function getGripperState()
-    gripTable = {clawNumb=clawState,gripNumb=gripSpeed}
-    return gripTable
+    return {clawNumb=clawState,gripNumb=gripSpeed}
 end
 
 function getHasTube() return hasTube end

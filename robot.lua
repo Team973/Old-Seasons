@@ -288,6 +288,8 @@ function sendIOPortData()
             dash:AddI8(100)
         end                
 
+        dash:AddBoolean(arm.getForward())
+
     end
     dash:FinalizeCluster()
     dash:Finalize()
