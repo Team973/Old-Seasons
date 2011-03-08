@@ -126,7 +126,7 @@ function storePreset(name)
         armRefPoint = newValues.armPositionReverse
         wristRefPoint = newValues.wristPositionReverse
     end
-    preset.arm = config.armPot:GetVoltage() - armRefPoint
+    preset.arm = arm.getArmVoltage() - armRefPoint
     preset.wrist = arm.getWristVoltage() - wristRefPoint
 end
 

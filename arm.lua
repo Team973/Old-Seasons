@@ -35,8 +35,12 @@ local function degreesToVoltage(degrees, forwardVoltage, reverseVoltage)
     return degrees * scale + offset
 end
 
+function getArmVoltage()
+    return config.armPot:GetVoltage()
+end
+
 local function getArmAngle()
-    return voltageToDegrees(config.armPot:GetVoltage(), config.armPositionForward, config.armPositionReverse)
+    return voltageToDegrees(getArmVoltage(), config.armPositionForward, config.armPositionReverse)
 end
 
 function getWristVoltage()
@@ -58,7 +62,7 @@ function init()
     wristPID:start()
 
     presetName = nil
-    PID.target = config.armPot:GetVoltage()
+    PID.target = getArmVoltage()
     wristPID.target = getWristVoltage()
 end
 
@@ -68,7 +72,7 @@ end
 
 function setManual(on)
     if manual and not on then
-        PID.target = config.armPot:GetVoltage()
+        PID.target = getArmVoltage()
         setPreset(nil)
     end
     manual = on
@@ -184,7 +188,7 @@ end
 
 local function updateArmP()
     local armIsForward = (getArmAngle() < 180)
-    local positiveError = (config.armPot:GetVoltage() < PID.target)
+    local positiveError = (getArmVoltage() < PID.target)
     if armIsForward == positiveError then
         PID.p = config.armUpwardP
     else
@@ -231,19 +235,19 @@ function update()
     if manual then
         motorOutput = movement
     elseif isAnalogConnected(config.armPot) then
-        motorOutput = -PID:update(config.armPot:GetVoltage())
+        motorOutput = -PID:update(getArmVoltage())
     else 
         motorOutput = 0
         safety = false
     end
     -- Arm Safety
     local armSafetyVoltageForward = config.armPositionForward + config.armPresets.forward.stow.arm - 0.02
-    if safety and config.armPot:GetVoltage() < armSafetyVoltageForward and motorOutput >= 0 then
+    if safety and getArmVoltage() < armSafetyVoltageForward and motorOutput >= 0 then
         -- Only allow the operator to go CCW (negative)
         motorOutput = 0
     end
     local armSafetyVoltageReverse = config.armPositionReverse + config.armPresets.reverse.stow.arm + 0.02
-    if safety and config.armPot:GetVoltage() > armSafetyVoltageReverse and motorOutput <= 0 then
+    if safety and getArmVoltage() > armSafetyVoltageReverse and motorOutput <= 0 then
         -- Only allow the operator to go CW (positive)
         motorOutput = 0
     end
