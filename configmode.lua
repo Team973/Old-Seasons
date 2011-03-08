@@ -83,10 +83,10 @@ controlMap = {
     {
         ["y"] = function(axis) arm.setMovement(axis) end,
         [3] = {down=function() storePreset("stow") end},
-        [6] = {down=function() storeHorizontal("wrist") end},
-        [7] = {down=function() storeHorizontal("wrist") end},
-        [11] = {down=function() storeHorizontal("arm") end},
-        [10] = {down=function() storeHorizontal("arm") end},
+        [6] = {down=function() storeHorizontal("wrist", arm.getWristVoltage()) end},
+        [7] = {down=function() storeHorizontal("wrist", arm.getWristVoltage()) end},
+        [11] = {down=function() storeHorizontal("arm", arm.getArmVoltage()) end},
+        [10] = {down=function() storeHorizontal("arm", arm.getArmVoltage()) end},
     },
     -- Joystick 4 (eStop)
     {
@@ -105,14 +105,14 @@ controlMap = {
     },
 }
 
-function storeHorizontal(joint)
+function storeHorizontal(joint, value)
     local key = joint .. "Position"
     if isForward then
         key = key .. "Forward"
     else
         key = key .. "Reverse"
     end
-    newValues[key] = arm.getWristVoltage()
+    newValues[key] = value
 end
 
 function storePreset(name)
