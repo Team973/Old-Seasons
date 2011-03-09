@@ -5,6 +5,11 @@ local wpilib = require "wpilib"
 
 module(...)
 
+function init()
+    config.leftDriveEncoder:Start()
+    config.rightDriveEncoder:Start()
+end
+
 local d
 if config.leftMotor2 and config.rightMotor2 then
     d = wpilib.RobotDrive(
@@ -35,7 +40,7 @@ function update()
     end
 
     if config.features.gearSwitch then
-        config.gearSwitch:Set(not hiGear)
+        config.gearSwitch:Set(hiGear)
     end
 end
 

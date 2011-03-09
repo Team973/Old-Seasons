@@ -22,6 +22,14 @@ rightMotor1 = wpilib.Victor(2)
 
 gearSwitch = wpilib.Solenoid(1)
 
+leftDriveEncoder = wpilib.Encoder(8, 9)
+leftDriveEncoder:SetReverseDirection(true)
+leftDriveEncoder:SetDistancePerPulse(6 / 2050)
+rightDriveEncoder = wpilib.Encoder(6, 7)
+rightDriveEncoder:SetDistancePerPulse(6 / 2050)
+driveEncoderTicksPerRev = 360
+--driveP = 0.0
+
 flipDriveY = false
 
 -- Arm

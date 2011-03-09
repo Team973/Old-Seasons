@@ -62,6 +62,7 @@ function run()
     lcd.print(2, config.profileName)
     lcd.update()
     -- Initialize subsystems
+    drive.init()
     arm.init()
     -- Main loop
     while true do
@@ -86,7 +87,18 @@ end
 
 function autonomous()
     disableWatchdog()
-    -- Do nothing...
+    while config.leftDriveEncoder:GetDistance() < 3 and wpilib.IsAutonomous() and wpilib.IsEnabled() do
+        drive.arcade(0.5, 0)
+        drive.update()
+        arm.update()
+        wpilib.Wait(TELEOP_LOOP_LAG)
+    end
+    -- Stop everything
+    while wpilib.IsAutonomous() and wpilib.IsEnabled() do
+        drive.arcade(0, 0)
+        drive.update()
+        arm.update()
+    end
 end
 
 local function bool2yn(bool)
@@ -122,11 +134,15 @@ function teleop()
             controls.update(controls.defaultControls)
             local armPIDOut = -config.armPID.output
             local wristPIDOut = config.wristPID.output
+            lcd.print(2, format("L=%.2f %d", config.leftDriveEncoder:GetDistance(), config.leftDriveEncoder:Get()))
+            lcd.print(3, format("R=%.2f %d", config.rightDriveEncoder:GetDistance(), config.rightDriveEncoder:Get()))
+            --[[
             lcd.print(2, format("Arm=%.2f Out=%.2f", arm.getArmVoltage(), armPIDOut))
             lcd.print(3, format("Err=%.2f", config.armPID.target - arm.getArmVoltage()))
             lcd.print(4, format("Wrist=%.2f Out=%.2f", arm.getWristVoltage(), wristPIDOut))
             lcd.print(5, format("Err=%.2f", config.wristPID.target - arm.getWristVoltage()))
             lcd.print(6, format("Tube=%s Switch=%s", bool2yn(arm.getHasTube()), bool2yn(not config.wristIntakeSwitch:Get())))
+            --]]
             lcd.update()
         else
             controls.update(configmode.controlMap)
