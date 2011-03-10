@@ -6,6 +6,8 @@ local configmode = require "configmode"
 local controls = require "controls"
 local drive = require "drive"
 local lcd = require "lcd"
+local math = require "math"
+local pid = require "pid"
 local wpilib = require "wpilib"
 local format = string.format
 
@@ -85,19 +87,43 @@ function run()
     end
 end
 
-function autonomous()
-    disableWatchdog()
-    while config.leftDriveEncoder:GetDistance() < 3 and wpilib.IsAutonomous() and wpilib.IsEnabled() do
-        drive.arcade(0.5, 0)
-        drive.update()
+local function autoDriveStraight(distance, speed)
+    local straightPID = pid.PID:new(1 / 10, 0, 0)
+    straightPID.min, straightPID.max = -.5, .5
+    straightPID:reset()
+    straightPID:start()
+
+    -- Auto-flip speed
+    speed = math.abs(speed)
+    if distance < 0 then speed = -speed end
+
+    config.leftDriveEncoder:Reset()
+    config.rightDriveEncoder:Reset()
+    config.gyro:Reset()
+    straightPID.target = 0
+
+    while ((distance >= 0 and config.leftDriveEncoder:GetDistance() < distance) or config.leftDriveEncoder:GetDistance() > distance) and wpilib.IsAutonomous() and wpilib.IsEnabled() do
+        straightPID:update(config.gyro:GetAngle())
+        drive.getDrive():SetLeftRightMotorSpeeds(speed + straightPID.output, speed - straightPID.output)
         arm.update()
         wpilib.Wait(TELEOP_LOOP_LAG)
     end
-    -- Stop everything
+end
+
+function autonomous()
+    local speed = 0.5
+    disableWatchdog()
+
+    autoDriveStraight(-18, -0.5)
+
     while wpilib.IsAutonomous() and wpilib.IsEnabled() do
-        drive.arcade(0, 0)
-        drive.update()
+        drive.getDrive():SetLeftRightMotorSpeeds(straightPID.output, -straightPID.output)
         arm.update()
+
+        lcd.print(3, format("%.2f %.2f", straightPID.output, config.gyro:GetAngle()))
+        lcd.update()
+
+        wpilib.Wait(TELEOP_LOOP_LAG)
     end
 end
 
@@ -136,6 +162,7 @@ function teleop()
             local wristPIDOut = config.wristPID.output
             lcd.print(2, format("L=%.2f %d", config.leftDriveEncoder:GetDistance(), config.leftDriveEncoder:Get()))
             lcd.print(3, format("R=%.2f %d", config.rightDriveEncoder:GetDistance(), config.rightDriveEncoder:Get()))
+            lcd.print(4, format("%.2f", config.gyro:GetAngle()))
             --[[
             lcd.print(2, format("Arm=%.2f Out=%.2f", arm.getArmVoltage(), armPIDOut))
             lcd.print(3, format("Err=%.2f", config.armPID.target - arm.getArmVoltage()))
