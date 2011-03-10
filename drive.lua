@@ -8,6 +8,7 @@ module(...)
 function init()
     config.leftDriveEncoder:Start()
     config.rightDriveEncoder:Start()
+    config.gyro:Reset()
 end
 
 local d
@@ -30,6 +31,10 @@ end
 function arcade(newY, newX)
     if newY then y = newY end
     if newX then x = newX end
+end
+
+function getDrive()
+    return d
 end
 
 function update()
