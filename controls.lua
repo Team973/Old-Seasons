@@ -3,6 +3,7 @@
 local arm = require("arm")
 local drive = require("drive")
 local math = require("math")
+local minibot = require("minibot")
 local wpilib = require("wpilib")
 
 local ipairs = ipairs
@@ -42,6 +43,7 @@ defaultControls =
         end},
         [2] = {down=arm.closeClaw},
         [9] = {down=restartRobot},
+        [11] = {down=minibot.deploy},
 
         update = function(stick)
             -- Intake
@@ -84,6 +86,10 @@ defaultControls =
         [10] = {down=function() arm.setPreset("midHigh") end},
         update = function(stick)
             arm.setForward(not stick:GetRawButton(1))
+            -- Minibot Deployment
+            if stick:GetRawAxis(4) > 0 then
+                minibot.ready()
+            end
         end,
     },
     -- Cypress Module

@@ -57,7 +57,7 @@ armDriveBackAmplitude = 0
 armDriveBackDeadband = 0.1
 
 gripMotor = wpilib.Victor(3)
-wristMotor = wpilib.Victor(4)
+wristMotor = wpilib.Victor(6)
 wristPot = wpilib.AnalogChannel(4)
 wristIntakeSwitch = wpilib.DigitalInput(6)
 wristIntakeTime = 0.5
@@ -97,6 +97,11 @@ armPresets = {
         midHigh={arm=0, wrist=0},
     },
 }
+
+-- Minibot Deployment
+readyMinibotSolenoid1 = wpilib.Solenoid(4)
+readyMinibotSolenoid2 = wpilib.Solenoid(6)
+fireMinibotSolenoid = wpilib.Solenoid(5)
 
 -- Pneumatics
 compressor = wpilib.Relay(4, 1, wpilib.Relay_kForwardOnly)

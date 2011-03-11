@@ -7,6 +7,7 @@ local controls = require "controls"
 local drive = require "drive"
 local lcd = require "lcd"
 local math = require "math"
+local minibot = require "minibot"
 local pid = require "pid"
 local wpilib = require "wpilib"
 local format = string.format
@@ -160,16 +161,16 @@ function teleop()
             controls.update(controls.defaultControls)
             local armPIDOut = -config.armPID.output
             local wristPIDOut = config.wristPID.output
+            --[[
             lcd.print(2, format("L=%.2f %d", config.leftDriveEncoder:GetDistance(), config.leftDriveEncoder:Get()))
             lcd.print(3, format("R=%.2f %d", config.rightDriveEncoder:GetDistance(), config.rightDriveEncoder:Get()))
-            lcd.print(4, format("%.2f", config.gyro:GetAngle()))
-            --[[
+            lcd.print(4, format("%.2f %.2f", config.gyro:GetAngle(), controls.sticks[4]:GetRawAxis(4)))
+            --]]
             lcd.print(2, format("Arm=%.2f Out=%.2f", arm.getArmVoltage(), armPIDOut))
             lcd.print(3, format("Err=%.2f", config.armPID.target - arm.getArmVoltage()))
             lcd.print(4, format("Wrist=%.2f Out=%.2f", arm.getWristVoltage(), wristPIDOut))
             lcd.print(5, format("Err=%.2f", config.wristPID.target - arm.getWristVoltage()))
             lcd.print(6, format("Tube=%s Switch=%s", bool2yn(arm.getHasTube()), bool2yn(not config.wristIntakeSwitch:Get())))
-            --]]
             lcd.update()
         else
             controls.update(configmode.controlMap)
@@ -180,6 +181,7 @@ function teleop()
         -- Update subsystems
         drive.update()
         arm.update()
+        minibot.update()
         feedWatchdog()
         
         -- Pneumatics
