@@ -88,44 +88,10 @@ function run()
     end
 end
 
-local function autoDriveStraight(distance, speed)
-    local straightPID = pid.PID:new(1 / 10, 0, 0)
-    straightPID.min, straightPID.max = -.5, .5
-    straightPID:reset()
-    straightPID:start()
-
-    -- Auto-flip speed
-    speed = math.abs(speed)
-    if distance < 0 then speed = -speed end
-
-    config.leftDriveEncoder:Reset()
-    config.rightDriveEncoder:Reset()
-    config.gyro:Reset()
-    straightPID.target = 0
-
-    while ((distance >= 0 and config.leftDriveEncoder:GetDistance() < distance) or config.leftDriveEncoder:GetDistance() > distance) and wpilib.IsAutonomous() and wpilib.IsEnabled() do
-        straightPID:update(config.gyro:GetAngle())
-        drive.getDrive():SetLeftRightMotorSpeeds(speed + straightPID.output, speed - straightPID.output)
-        arm.update()
-        wpilib.Wait(TELEOP_LOOP_LAG)
-    end
-end
-
 function autonomous()
     local speed = 0.5
     disableWatchdog()
-
-    autoDriveStraight(-18, -0.5)
-
-    while wpilib.IsAutonomous() and wpilib.IsEnabled() do
-        drive.getDrive():SetLeftRightMotorSpeeds(straightPID.output, -straightPID.output)
-        arm.update()
-
-        lcd.print(3, format("%.2f %.2f", straightPID.output, config.gyro:GetAngle()))
-        lcd.update()
-
-        wpilib.Wait(TELEOP_LOOP_LAG)
-    end
+    -- TODO: Don't suck.
 end
 
 local function bool2yn(bool)

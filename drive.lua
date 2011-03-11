@@ -8,7 +8,6 @@ module(...)
 function init()
     config.leftDriveEncoder:Start()
     config.rightDriveEncoder:Start()
-    config.gyro:Reset()
 end
 
 local d
