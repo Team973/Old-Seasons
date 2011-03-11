@@ -16,6 +16,20 @@ function ready()
     readying = true
 end
 
+function unready()
+    readying = false
+    isReady = false
+    deploying = false
+end
+
+function toggleReady()
+    if isReady or readying then
+        unready()
+    else
+        ready()
+    end
+end
+
 function deploy()
     if not isReady then return end
     deploying = true
@@ -34,6 +48,9 @@ function update()
         elseif readyTimer:Get() > readyDelay then
             isReady = true
         end
+    else
+        config.readyMinibotSolenoid1:Set(false)
+        config.readyMinibotSolenoid2:Set(false)
     end
     config.fireMinibotSolenoid:Set(deploying)
 end

@@ -43,6 +43,7 @@ defaultControls =
         end},
         [2] = {down=arm.closeClaw},
         [9] = {down=restartRobot},
+        [10] = {down=minibot.toggleReady},
         [11] = {down=minibot.deploy},
 
         update = function(stick)
@@ -86,10 +87,6 @@ defaultControls =
         [10] = {down=function() arm.setPreset("midHigh") end},
         update = function(stick)
             arm.setForward(not stick:GetRawButton(1))
-            -- Minibot Deployment
-            if stick:GetRawAxis(4) > 0 then
-                minibot.ready()
-            end
         end,
     },
     -- Cypress Module
