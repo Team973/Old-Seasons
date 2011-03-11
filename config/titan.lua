@@ -20,7 +20,7 @@ features =
 leftMotor1 = wpilib.Victor(1)
 rightMotor1 = wpilib.Victor(2)
 
-gearSwitch = wpilib.Solenoid(1)
+gearSwitch = wpilib.Solenoid(7, 1)
 
 leftDriveEncoder = wpilib.Encoder(2, 3)
 leftDriveEncoder:SetDistancePerPulse(6 / 2050)
@@ -59,8 +59,8 @@ wristIntakeSwitch = wpilib.DigitalInput(6)
 wristIntakeTime = 0.5
 
 clawSolenoids = true
-clawOpenPiston = wpilib.Solenoid(2)
-clawClosePiston = wpilib.Solenoid(3)
+clawOpenPiston = wpilib.Solenoid(7, 2)
+clawClosePiston = wpilib.Solenoid(7, 3)
 
 armLength = 42.75 -- inches
 armRunDelta = 8 -- inches
@@ -95,9 +95,9 @@ armPresets = {
 }
 
 -- Minibot Deployment
-readyMinibotSolenoid1 = wpilib.Solenoid(4)
-readyMinibotSolenoid2 = wpilib.Solenoid(6)
-fireMinibotSolenoid = wpilib.Solenoid(5)
+readyMinibotSolenoid1 = wpilib.Solenoid(7, 4)
+readyMinibotSolenoid2 = wpilib.Solenoid(7, 6)
+fireMinibotSolenoid = wpilib.Solenoid(7, 5)
 
 -- Pneumatics
 compressor = wpilib.Relay(4, 1, wpilib.Relay_kForwardOnly)
