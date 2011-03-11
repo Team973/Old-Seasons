@@ -294,11 +294,11 @@ function update()
         elseif clawState == 0 then
             -- Closed
             config.clawOpenPiston:Set(false)
-            config.clawClosePiston:Set(true)
+            config.clawClosePiston:Set(false)
         else
             -- Neutral
             config.clawOpenPiston:Set(false)
-            config.clawClosePiston:Set(false)
+            config.clawClosePiston:Set(true)
         end
     else
         -- Black Knight crap setup
