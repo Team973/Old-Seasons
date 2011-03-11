@@ -160,10 +160,12 @@ function teleop()
         end
 
         -- Send dashboard data
+        --[[
         sendVisionData()
         feedWatchdog()
         sendIOPortData()
         feedWatchdog()
+        --]]
         
         -- Iteration cleanup
         feedWatchdog()
