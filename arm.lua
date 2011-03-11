@@ -290,7 +290,7 @@ function update()
         if clawState == 1 then
             -- Open
             config.clawOpenPiston:Set(true)
-            config.clawClosePiston:Set(false)
+            config.clawClosePiston:Set(true)
         elseif clawState == 0 then
             -- Closed
             config.clawOpenPiston:Set(false)
