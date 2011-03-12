@@ -24,6 +24,7 @@ gearSwitch = wpilib.Solenoid(7, 1)
 
 leftDriveEncoder = wpilib.Encoder(2, 3)
 leftDriveEncoder:SetDistancePerPulse(6 / 2050)
+leftDriveEncoder:SetReverseDirection(true)
 rightDriveEncoder = wpilib.Encoder(4, 5)
 rightDriveEncoder:SetDistancePerPulse(6 / 2050)
 driveEncoderTicksPerRev = 360

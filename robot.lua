@@ -75,7 +75,7 @@ function run()
             repeat wpilib.Wait(0.01) until not wpilib.IsDisabled()
             enableWatchdog()
         elseif wpilib.IsAutonomous() then
-            autonomous()
+            hellautonomous()
             disableWatchdog()
             repeat wpilib.Wait(0.01) until not wpilib.IsAutonomous() or not wpilib.IsEnabled()
             enableWatchdog()
@@ -88,10 +88,68 @@ function run()
     end
 end
 
-function autonomous()
-    local speed = 0.5
+function hellautonomous()
     disableWatchdog()
-    -- TODO: Don't suck.
+    config.leftDriveEncoder:Reset()
+    config.rightDriveEncoder:Reset()
+
+    local speed = 0.35
+    local driveP = 3
+    local distance = 13 -- in feet
+    local distanceBallpark = 0.5
+    local leftDrivePID, rightDrivePID, turnPID
+    local turnBias = -0.1
+
+    leftDrivePID = pid.PID:new(driveP, 0, 0)
+    leftDrivePID.min, leftDrivePID.max = -speed, speed
+    leftDrivePID:reset()
+    leftDrivePID:start()
+    leftDrivePID.target = -distance
+
+    rightDrivePID = pid.PID:new(driveP, 0, 0)
+    rightDrivePID.min, rightDrivePID.max = -speed, speed
+    rightDrivePID:reset()
+    rightDrivePID:start()
+    rightDrivePID.target = -distance
+
+    turnDrivePID = pid.PID:new(2, 0, 0)
+    turnDrivePID.min, turnDrivePID.max = -0.5, 0.5
+    turnDrivePID:reset()
+    turnDrivePID:start()
+    turnDrivePID.target = 0
+
+    local released = false
+
+    local voltageBallpark = 0.1
+    arm.closeClaw()
+    
+    while wpilib.IsAutonomous() and not wpilib.IsDisabled() do
+        if math.abs(config.leftDriveEncoder:GetDistance() - leftDrivePID.target) < distanceBallpark then
+            break
+        end
+        -- Update drive
+        leftDrivePID:update(config.leftDriveEncoder:GetDistance())
+        rightDrivePID:update(config.rightDriveEncoder:GetDistance())
+        turnDrivePID:update(config.leftDriveEncoder:GetDistance() - config.rightDriveEncoder:GetDistance())
+        drive.getDrive():SetLeftRightMotorOutputs(leftDrivePID.output + turnDrivePID.output + turnBias, rightDrivePID.output - turnDrivePID.output - turnBias)
+        -- Update arm
+        arm.update()
+    end
+
+    arm.setForward(false)
+    arm.setPreset("midHigh")
+
+    while wpilib.IsAutonomous() and not wpilib.IsDisabled() do
+        if not released then
+            if math.abs(arm.getArmVoltage() - config.armPID.target) < voltageBallpark and math.abs(arm.getWristVoltage() - config.wristPID.target) < voltageBallpark then
+                arm.openClaw()
+                arm.runWristHorizontal()
+                released = true
+            end
+        end
+        drive.getDrive():SetLeftRightMotorOutputs(0, 0)
+        arm.update()
+    end
 end
 
 local function bool2yn(bool)
@@ -127,13 +185,13 @@ function teleop()
             controls.update(controls.defaultControls)
             local armPIDOut = -config.armPID.output
             local wristPIDOut = config.wristPID.output
-            --[[
             lcd.print(2, format("L=%.2f %d", config.leftDriveEncoder:GetDistance(), config.leftDriveEncoder:Get()))
             lcd.print(3, format("R=%.2f %d", config.rightDriveEncoder:GetDistance(), config.rightDriveEncoder:Get()))
-            lcd.print(4, format("%.2f %.2f", config.gyro:GetAngle(), controls.sticks[4]:GetRawAxis(4)))
-            --]]
+            --lcd.print(4, format("%.2f", controls.sticks[4]:GetRawAxis(4)))
+            --[[
             lcd.print(2, format("Arm=%.2f Out=%.2f", arm.getArmVoltage(), armPIDOut))
             lcd.print(3, format("Err=%.2f", config.armPID.target - arm.getArmVoltage()))
+            --]]
             lcd.print(4, format("Wrist=%.2f Out=%.2f", arm.getWristVoltage(), wristPIDOut))
             lcd.print(5, format("Err=%.2f", config.wristPID.target - arm.getWristVoltage()))
             lcd.print(6, format("Tube=%s Switch=%s", bool2yn(arm.getHasTube()), bool2yn(not config.wristIntakeSwitch:Get())))
@@ -149,7 +207,7 @@ function teleop()
         arm.update()
         minibot.update()
         feedWatchdog()
-        
+
         -- Pneumatics
         if config.features.compressor then
             if pressureSwitch:Get() then
