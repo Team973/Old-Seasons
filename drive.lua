@@ -19,6 +19,7 @@ if config.leftMotor2 and config.rightMotor2 then
 else
     d = wpilib.RobotDrive(config.leftMotor1, config.rightMotor1)
 end
+d:SetSafetyEnabled(false)
 
 local hiGear = false
 local x, y = 0, 0
