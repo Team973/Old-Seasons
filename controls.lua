@@ -25,12 +25,12 @@ defaultControls =
     -- Joystick 1
     {
         ["y"] = function(axis) drive.arcade(-axis, nil) end,
-        [1] = {down=function() drive.setGear(false) end}
+        [1] = {down=function() drive.setGear(true) end}
     },
     -- Joystick 2
     {
         ["x"] = function(axis) drive.arcade(nil, -axis) end,
-        [1] = {down=function() drive.setGear(true) end}
+        [1] = {down=function() drive.setGear(false) end}
     },
     -- Joystick 3
     {

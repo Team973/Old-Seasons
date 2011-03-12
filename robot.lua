@@ -95,10 +95,10 @@ function hellautonomous()
 
     local speed = 0.35
     local driveP = 3
-    local distance = 13 -- in feet
+    local distance = 14.5 -- in feet
     local distanceBallpark = 0.5
     local leftDrivePID, rightDrivePID, turnPID
-    local turnBias = -0.1
+    local turnBias = 0
 
     leftDrivePID = pid.PID:new(driveP, 0, 0)
     leftDrivePID.min, leftDrivePID.max = -speed, speed
@@ -112,7 +112,7 @@ function hellautonomous()
     rightDrivePID:start()
     rightDrivePID.target = -distance
 
-    turnDrivePID = pid.PID:new(2, 0, 0)
+    turnDrivePID = pid.PID:new(1 / 5, 0, 0)
     turnDrivePID.min, turnDrivePID.max = -0.5, 0.5
     turnDrivePID:reset()
     turnDrivePID:start()
@@ -122,15 +122,17 @@ function hellautonomous()
 
     local voltageBallpark = 0.1
     arm.closeClaw()
+    drive.setGear(false)
     
     while wpilib.IsAutonomous() and not wpilib.IsDisabled() do
         if math.abs(config.leftDriveEncoder:GetDistance() - leftDrivePID.target) < distanceBallpark then
             break
         end
         -- Update drive
+        local angle = (config.leftDriveEncoder:GetDistance() - config.rightDriveEncoder:GetDistance()) / config.robotWidth * (180 / math.pi)
         leftDrivePID:update(config.leftDriveEncoder:GetDistance())
         rightDrivePID:update(config.rightDriveEncoder:GetDistance())
-        turnDrivePID:update(config.leftDriveEncoder:GetDistance() - config.rightDriveEncoder:GetDistance())
+        turnDrivePID:update(angle)
         drive.getDrive():SetLeftRightMotorOutputs(leftDrivePID.output + turnDrivePID.output + turnBias, rightDrivePID.output - turnDrivePID.output - turnBias)
         -- Update arm
         arm.update()
