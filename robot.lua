@@ -95,10 +95,12 @@ function hellautonomous()
 
     local speed = 0.35
     local driveP = 3
-    local distance = 14.5 -- in feet
+    local distance = 14 -- in feet
     local distanceBallpark = 0.5
     local leftDrivePID, rightDrivePID, turnPID
     local turnBias = 0
+    local intakeTimer = wpilib.Timer()
+    local intakeDuration = 1.0
 
     leftDrivePID = pid.PID:new(driveP, 0, 0)
     leftDrivePID.min, leftDrivePID.max = -speed, speed
@@ -112,7 +114,7 @@ function hellautonomous()
     rightDrivePID:start()
     rightDrivePID.target = -distance
 
-    turnDrivePID = pid.PID:new(1 / 5, 0, 0)
+    turnDrivePID = pid.PID:new(1 / 10, 0, 0)
     turnDrivePID.min, turnDrivePID.max = -0.5, 0.5
     turnDrivePID:reset()
     turnDrivePID:start()
@@ -123,10 +125,15 @@ function hellautonomous()
     local voltageBallpark = 0.1
     arm.closeClaw()
     drive.setGear(false)
+    arm.setGripMotor(1)
+    intakeTimer:Start()
     
     while wpilib.IsAutonomous() and not wpilib.IsDisabled() do
         if math.abs(config.leftDriveEncoder:GetDistance() - leftDrivePID.target) < distanceBallpark then
             break
+        end
+        if intakeTimer:Get() > intakeDuration then
+            arm.setGripMotor(0)
         end
         -- Update drive
         local angle = (config.leftDriveEncoder:GetDistance() - config.rightDriveEncoder:GetDistance()) / config.robotWidth * (180 / math.pi)
@@ -139,17 +146,35 @@ function hellautonomous()
     end
 
     arm.setForward(false)
-    arm.setPreset("midHigh")
+    arm.setPreset("high")
+    arm.setGripMotor(0)
 
-    while wpilib.IsAutonomous() and not wpilib.IsDisabled() do
-        if not released then
-            if math.abs(arm.getArmVoltage() - config.armPID.target) < voltageBallpark and math.abs(arm.getWristVoltage() - config.wristPID.target) < voltageBallpark then
-                arm.openClaw()
-                arm.runWristHorizontal()
-                released = true
-            end
+    while wpilib.IsAutonomous() and not wpilib.IsDisabled() and not released do
+        if math.abs(arm.getArmVoltage() - config.armPID.target) < voltageBallpark and math.abs(arm.getWristVoltage() - config.wristPID.target) < voltageBallpark then
+            arm.openClaw()
+            arm.runWristHorizontal()
+            released = true
         end
         drive.getDrive():SetLeftRightMotorOutputs(0, 0)
+        arm.update()
+    end
+
+    local driveBackTimer = wpilib.Timer()
+    local driveBackDelay = 2.0
+    local driveBackDuration = 1.0
+    driveBackTimer:Start()
+
+    while wpilib.IsAutonomous() and not wpilib.IsDisabled() do
+        if driveBackTimer:Get() > driveBackDelay + driveBackDuration then
+            drive.getDrive():SetLeftRightMotorOutputs(0, 0)
+            arm.setGripMotor(0)
+        elseif driveBackTimer:Get() > driveBackDelay then
+            drive.getDrive():SetLeftRightMotorOutputs(speed, 0)
+            arm.setGripMotor(-1)
+        else
+            drive.getDrive():SetLeftRightMotorOutputs(0, 0)
+            arm.setGripMotor(-1)
+        end
         arm.update()
     end
 end
