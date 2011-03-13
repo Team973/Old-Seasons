@@ -63,9 +63,6 @@ clawSolenoids = true
 clawOpenPiston = wpilib.Solenoid(2)
 clawClosePiston = wpilib.Solenoid(3)
 
-armLength = 42.75 -- inches
-armRunDelta = 8 -- inches
-
 armPresets = {
     forward={
         pickup={arm=-0.60, wrist=-0.27, claw=-1},
@@ -94,6 +91,16 @@ armPresets = {
         midHigh={arm=0, wrist=0},
     },
 }
+
+-- Minibot Deployment
+readyMinibotSolenoid1 = wpilib.Solenoid(4)
+readyMinibotSolenoid2 = wpilib.Solenoid(6)
+fireMinibotSolenoid = wpilib.Solenoid(5)
+
+-- Dimensions
+armLength = 42.75 -- inches
+armRunDelta = 8 -- inches
+robotWidth = 2 -- feet
 
 -- Pneumatics
 compressor = wpilib.Relay(4, 1, wpilib.Relay_kForwardOnly)
