@@ -92,6 +92,7 @@ function hellautonomous()
     disableWatchdog()
     config.leftDriveEncoder:Reset()
     config.rightDriveEncoder:Reset()
+    config.gyro:Reset()
 
     local speed = 0.35
     local driveP = 3
@@ -136,7 +137,7 @@ function hellautonomous()
             arm.setGripMotor(0)
         end
         -- Update drive
-        local angle = (config.leftDriveEncoder:GetDistance() - config.rightDriveEncoder:GetDistance()) / config.robotWidth * (180 / math.pi)
+        local angle = config.gyro:GetAngle()
         leftDrivePID:update(config.leftDriveEncoder:GetDistance())
         rightDrivePID:update(config.rightDriveEncoder:GetDistance())
         turnDrivePID:update(angle)
@@ -212,16 +213,16 @@ function teleop()
             controls.update(controls.defaultControls)
             local armPIDOut = -config.armPID.output
             local wristPIDOut = config.wristPID.output
+            --[[
             lcd.print(2, format("L=%.2f %d", config.leftDriveEncoder:GetDistance(), config.leftDriveEncoder:Get()))
             lcd.print(3, format("R=%.2f %d", config.rightDriveEncoder:GetDistance(), config.rightDriveEncoder:Get()))
-            --lcd.print(4, format("%.2f", controls.sticks[4]:GetRawAxis(4)))
-            --[[
+            --]]
             lcd.print(2, format("Arm=%.2f Out=%.2f", arm.getArmVoltage(), armPIDOut))
             lcd.print(3, format("Err=%.2f", config.armPID.target - arm.getArmVoltage()))
-            --]]
             lcd.print(4, format("Wrist=%.2f Out=%.2f", arm.getWristVoltage(), wristPIDOut))
             lcd.print(5, format("Err=%.2f", config.wristPID.target - arm.getWristVoltage()))
-            lcd.print(6, format("Tube=%s Switch=%s", bool2yn(arm.getHasTube()), bool2yn(not config.wristIntakeSwitch:Get())))
+            --lcd.print(6, format("Tube=%s Switch=%s", bool2yn(arm.getHasTube()), bool2yn(not config.wristIntakeSwitch:Get())))
+            lcd.print(6, format("Angle=%.2f", config.gyro:GetAngle()))
             lcd.update()
         else
             controls.update(configmode.controlMap)
