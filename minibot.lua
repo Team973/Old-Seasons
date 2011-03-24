@@ -30,6 +30,10 @@ function toggleReady()
     end
 end
 
+function getReady()
+    return isReady
+end
+    
 function deploy()
     if not isReady then return end
     deploying = true

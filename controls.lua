@@ -36,9 +36,13 @@ defaultControls =
     {
         [1] = {down=function()
             local presetName = arm.getPreset()
-            arm.openClaw()
-            if presetName == "high" or presetName == "middle" or presetName == "midHigh" or presetName == "midMiddle" then
-                arm.runWristHorizontal()
+            if minibot.getReady() then 
+                minibot.deploy()
+            else
+                arm.openClaw()
+                if presetName == "high" or presetName == "middle" or presetName == "midHigh" or presetName == "midMiddle" then
+                    arm.runWristHorizontal()
+                end
             end
         end},
         [2] = {down=arm.closeClaw},
@@ -53,13 +57,13 @@ defaultControls =
                     arm.releaseClaw()
                 end
                 arm.setGripMotor(1)
-            elseif stick:GetRawButton(4) or stick:GetRawButton(5) then
+            elseif stick:GetRawButton(4) then
                 arm.setGripMotor(-1)
             else
                 arm.setGripMotor(0)
             end
             -- Arm Control
-            if stick:GetRawButton(7) then
+            if stick:GetRawButton(5) or stick:GetRawButton(7) then
                 arm.setManual(true)
                 arm.setMovement(stick:GetY())
             else
