@@ -29,6 +29,8 @@ rightDriveEncoder = wpilib.Encoder(4, 5)
 rightDriveEncoder:SetDistancePerPulse(6 / 2050)
 driveEncoderTicksPerRev = 360
 --driveP = 0.0
+gyro = wpilib.Gyro(1)
+gyro:SetSensitivity(0.0005)
 
 flipDriveY = false
 
