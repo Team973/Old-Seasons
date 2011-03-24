@@ -93,6 +93,7 @@ function hellautonomous()
     config.leftDriveEncoder:Reset()
     config.rightDriveEncoder:Reset()
     config.gyro:Reset()
+    minibot.unready()
 
     local speed = 0.35
     local driveP = 3
