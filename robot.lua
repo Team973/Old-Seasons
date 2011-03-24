@@ -171,11 +171,11 @@ function hellautonomous()
             drive.getDrive():SetLeftRightMotorOutputs(0, 0)
             arm.setGripMotor(0)
         elseif driveBackTimer:Get() > driveBackDelay then
-            drive.getDrive():SetLeftRightMotorOutputs(speed, 0)
-            arm.setGripMotor(-1)
+            drive.getDrive():SetLeftRightMotorOutputs(speed, speed)
+            arm.setGripMotor(-0.4)
         else
             drive.getDrive():SetLeftRightMotorOutputs(0, 0)
-            arm.setGripMotor(-1)
+            arm.setGripMotor(-0.4)
         end
         arm.update()
     end

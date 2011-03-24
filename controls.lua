@@ -58,7 +58,7 @@ defaultControls =
                 end
                 arm.setGripMotor(1)
             elseif stick:GetRawButton(5) then
-                arm.setGripMotor(-1)
+                arm.setGripMotor(-0.4)
             else
                 arm.setGripMotor(0)
             end
