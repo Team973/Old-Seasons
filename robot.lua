@@ -154,7 +154,7 @@ function hellautonomous()
     while wpilib.IsAutonomous() and not wpilib.IsDisabled() and not released do
         if math.abs(arm.getArmVoltage() - config.armPID.target) < voltageBallpark and math.abs(arm.getWristVoltage() - config.wristPID.target) < voltageBallpark then
             arm.openClaw()
-            arm.runWristHorizontal()
+            arm.runWristDown()
             released = true
         end
         drive.getDrive():SetLeftRightMotorOutputs(0, 0)
