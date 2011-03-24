@@ -221,7 +221,7 @@ function update()
     updateArmP()
 
     -- If we don't have a tube, we're running the intake, and we're in one of the approved presets...
-    if not hasTube and gripSpeed > 0 and clawState == -1 and (presetName == "pickup" or presetName == "slot") then
+    if not hasTube and gripSpeed > 0 and clawState == -1 and (lastPresetName == "pickup" or lastPresetName == "slot") then
          if not config.wristIntakeSwitch:Get() then
              if not possessionTimer then
                  -- The limit switch just got activated
