@@ -15,8 +15,8 @@ local wristPID = config.wristPID
 local movement = 0
 local manual = false
 local clawState = -1 -- 0 for closed, 1 for open, -1 for neutral
-local isForward = true
-local presetName = nil
+local presetName, isForward = nil, true
+local lastPresetName, lastForward = nil, true
 local possessionTimer = nil
 local safety = true
 local hasTube = false
@@ -72,7 +72,11 @@ end
 
 function setManual(on)
     if manual and not on then
+        -- Exiting manual
         PID.target = getArmVoltage()
+    elseif not manual and on then
+        -- Entering manual
+        wristPID.target = getWristVoltage()
         setPreset(nil)
     end
     manual = on
@@ -120,8 +124,16 @@ function getPreset()
     return presetName
 end
 
+function getLastPreset()
+    return lastPresetName
+end
+
 function setPreset(preset)
     presetName = preset
+    if preset then
+        lastPresetName = presetName
+        lastForward = isForward
+    end
     updateTarget()
 end
 
@@ -146,13 +158,16 @@ function runArmBack()
     end
 end
 
-function runWristHorizontal()
+function runWristDown()
+    local fwd = lastForward
     setPreset(nil)
-    if isForward then
-        wristPID.target = config.wristPositionForward
+    local horizAngle = 20
+    if fwd then
+        horizAngle = 90 + horizAngle
     else
-        wristPID.target = config.wristPositionReverse
+        horizAngle = 270 - horizAngle
     end
+    wristPID.target = degreesToVoltage(horizAngle, config.wristPositionForward, config.wristPositionReverse)
 end
 
 function setGripMotor(speed)

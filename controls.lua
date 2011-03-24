@@ -35,13 +35,13 @@ defaultControls =
     -- Joystick 3
     {
         [1] = {down=function()
-            local presetName = arm.getPreset()
             if minibot.getReady() then 
                 minibot.deploy()
             else
+                local presetName = arm.getLastPreset()
                 arm.openClaw()
                 if presetName == "high" or presetName == "middle" or presetName == "midHigh" or presetName == "midMiddle" then
-                    arm.runWristHorizontal()
+                    arm.runWristDown()
                 end
             end
         end},
