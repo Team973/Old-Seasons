@@ -10,6 +10,17 @@ local isReady = false
 local deploying = false
 local readyTimer
 local readyDelay = 0.5
+local deploymentTimer
+local deploymentTimerTime = 10
+
+function startGameTimer()
+    deploymentTimer = wpilib.Timer()
+    deploymentTimer:Start()
+end
+
+function deploymentTimerFinished()
+    return deploymentTimer:Get() > deploymentTimerTime
+end
 
 function ready()
     if isReady then return end
