@@ -197,6 +197,7 @@ end
 
 function teleop()
     local inConfig = false
+    minibot.startGameTimer()
     while wpilib.IsOperatorControl() and wpilib.IsEnabled() do
         enableWatchdog()
         feedWatchdog()

@@ -35,7 +35,7 @@ defaultControls =
     -- Joystick 3
     {
         [1] = {down=function()
-            if minibot.getReady() then 
+            if minibot.getReady() and minibot.deploymentTimerFinished() then 
                 minibot.deploy()
             else
                 local presetName = arm.getLastPreset()
