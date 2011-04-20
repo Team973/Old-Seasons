@@ -36,7 +36,7 @@ defaultControls =
     {
         [1] = {down=function()
             if minibot.getReady() and minibot.deploymentTimerFinished() then 
-                minibot.deploy()
+                minibot.deploy() and lcd.print(1, format("TimerFinished=%.2f", minibot.deploymentTimerFinished()))
             else
                 local presetName = arm.getLastPreset()
                 arm.openClaw()
