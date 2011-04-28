@@ -35,9 +35,7 @@ defaultControls =
     -- Joystick 3
     {
         [1] = {down=function()
-            if minibot.getReady() and minibot.deploymentTimerFinished() then 
-                minibot.deploy()
-            else
+            if not minibot.getReady() then
                 local presetName = arm.getLastPreset()
                 arm.openClaw()
                 if presetName == "high" or presetName == "middle" or presetName == "midHigh" or presetName == "midMiddle" then
@@ -48,9 +46,12 @@ defaultControls =
         [2] = {down=arm.closeClaw},
         [9] = {down=restartRobot},
         [10] = {down=minibot.toggleReady},
-        [11] = {down=minibot.deploy},
 
         update = function(stick)
+            -- Minibot Trigger
+            if stick:GetRawButton(1) and minibot.getReady() and (minibot.deploymentTimerFinished() or stick:GetRawButton(11)) then
+                minibot.deploy()
+            end
             -- Intake
             if stick:GetRawButton(3) then
                 if not arm.getHasTube() then
