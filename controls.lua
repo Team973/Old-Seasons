@@ -38,7 +38,7 @@ defaultControls =
             if not minibot.getReady() then
                 local presetName = arm.getLastPreset()
                 arm.openClaw()
-                if presetName == "high" or presetName == "middle" or presetName == "midHigh" or presetName == "midMiddle" then
+                if presetName == "high" or presetName == "middle" or presetName == "low" or presetName == "midHigh" or presetName == "midMiddle" or presetName == "midLow" then
                     arm.runWristDown()
                 end
             end
