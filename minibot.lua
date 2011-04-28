@@ -11,7 +11,7 @@ local deploying = false
 local readyTimer
 local readyDelay = 0.5
 local deploymentTimer
-local deploymentTimerTime = 10
+local deploymentTimerTime = 110
 
 function startGameTimer()
     deploymentTimer = wpilib.Timer()
