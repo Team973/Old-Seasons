@@ -89,16 +89,6 @@ function run()
     end
 end
 
-local function getDistance()
-    return (config.leftDriveEncoder:GetDistance() + config.rightDriveEncoder:GetDistance()) / 2
-end
-
--- CW is positive
-local function getAngle()
-    local driveScale = 1
-    return (config.leftDriveEncoder:GetDistance() - config.rightDriveEncoder:GetDistance() * driveScale) / config.robotWidth * (180 / math.pi)
-end
-
 function hellautonomous()
     disableWatchdog()
     config.leftDriveEncoder:Reset()
@@ -150,7 +140,7 @@ function hellautonomous()
     
     calmTimer:Start()
     while wpilib.IsAutonomous() and not wpilib.IsDisabled() do
-        local distance = getDistance()
+        local distance = drive.getDistance()
         if math.abs(distance - drivePID.target) < distanceBallpark then
             break
         end
@@ -158,7 +148,7 @@ function hellautonomous()
             arm.setGripMotor(0)
         end
         -- Update drive
-        local angle = getAngle()
+        local angle = drive.getAngle()
         drivePID:update(distance)
         turnDrivePID:update(angle)
         local speedL = (turnDrivePID.output + turnBias)
@@ -195,8 +185,8 @@ function hellautonomous()
             arm.runWristDown()
             released = true
         end
-        drivePID:update(getDistance())
-        turnDrivePID:update(getAngle())
+        drivePID:update(drive.getDistance())
+        turnDrivePID:update(drive.getAngle())
         local speedL = drivePID.output + (turnDrivePID.output + turnBias)
         local speedR = drivePID.output - (turnDrivePID.output + turnBias)
         if math.abs(speedL) > 1 or math.abs(speedR) > 1 then

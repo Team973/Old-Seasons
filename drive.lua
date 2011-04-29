@@ -1,9 +1,13 @@
 -- drive.lua
 
 local config = require "config"
+local math = require "math"
+local pid = require "pid"
 local wpilib = require "wpilib"
 
 module(...)
+
+local holdPosition = false
 
 function init()
     config.leftDriveEncoder:Start()
@@ -37,11 +41,58 @@ function getDrive()
     return d
 end
 
+local drivePID, turnDrivePID
+
+function hold()
+    if not holdPosition then
+        -- TODO: Make this more DRY
+        drivePID = pid.PID:new(3, 0, 0)
+        drivePID.min, drivePID.max = -0.25, 0.25
+        drivePID:reset()
+        drivePID:start()
+        drivePID.target = 0
+
+        turnDrivePID = pid.PID:new(0.18, 0, 0.017)
+        turnDrivePID:reset()
+        turnDrivePID:start()
+        turnDrivePID.target = 0
+    end
+    holdPosition = true
+end
+
+function unhold()
+    holdPosition = false
+    drivePID, turnDrivePID = nil, nil
+end
+
+function getDistance()
+    return (config.leftDriveEncoder:GetDistance() + config.rightDriveEncoder:GetDistance()) / 2
+end
+
+-- CW is positive
+function getAngle()
+    local driveScale = 1
+    return (config.leftDriveEncoder:GetDistance() - config.rightDriveEncoder:GetDistance() * driveScale) / config.robotWidth * (180 / math.pi)
+end
+
 function update()
-    if config.flipDriveY then
-        d:ArcadeDrive(-y, x)
+    if not holdPosition then
+        if config.flipDriveY then
+            d:ArcadeDrive(-y, x)
+        else
+            d:ArcadeDrive(y, x)
+        end
     else
-        d:ArcadeDrive(y, x)
+        drivePID:update(getDistance())
+        turnDrivePID:update(getAngle())
+        local speedL = drivePID.output + turnDrivePID.output
+        local speedR = drivePID.output - turnDrivePID.output
+        if math.abs(speedL) > 1 or math.abs(speedR) > 1 then
+            local n = math.max(math.abs(speedL), math.abs(speedR))
+            speedL = speedL / n
+            speedR = speedR / n
+        end
+        d:SetLeftRightMotorOutputs(speedL, speedR)
     end
 
     if config.features.gearSwitch then
