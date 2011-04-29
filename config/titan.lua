@@ -99,6 +99,10 @@ readyMinibotSolenoid1 = wpilib.Solenoid(7, 4)
 readyMinibotSolenoid2 = wpilib.Solenoid(7, 6)
 fireMinibotSolenoid = wpilib.Solenoid(7, 5)
 
+-- Autonomous Switch
+modeSwitch1 = wpilib.DigitalInput(7)
+modeSwitch2 = wpilib.DigitalInput(8)
+
 -- Dimensions
 armLength = 42.75 -- inches
 armRunDelta = 8 -- inches
