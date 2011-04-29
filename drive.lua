@@ -46,6 +46,9 @@ local drivePID, turnDrivePID
 function hold()
     if not holdPosition then
         -- TODO: Make this more DRY
+        config.leftDriveEncoder:Reset()
+        config.rightDriveEncoder:Reset()
+
         drivePID = pid.PID:new(3, 0, 0)
         drivePID.min, drivePID.max = -0.25, 0.25
         drivePID:reset()
