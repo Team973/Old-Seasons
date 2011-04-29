@@ -1,6 +1,7 @@
 -- robot.lua
 
 local arm = require "arm"
+local bit = require "bit"
 local config = require "config"
 local configmode = require "configmode"
 local controls = require "controls"
@@ -88,6 +89,17 @@ function run()
     end
 end
 
+local function getDistance()
+    return (config.leftDriveEncoder:GetDistance() + config.rightDriveEncoder:GetDistance()) / 2
+end
+
+-- CW is positive
+local function getAngle()
+    --local driveScale = 15.65 / 16
+    local driveScale = 15 / 16
+    return (config.leftDriveEncoder:GetDistance() - config.rightDriveEncoder:GetDistance() * driveScale) / config.robotWidth * (180 / math.pi)
+end
+
 function hellautonomous()
     disableWatchdog()
     config.leftDriveEncoder:Reset()
@@ -95,29 +107,25 @@ function hellautonomous()
     config.gyro:Reset()
     minibot.unready()
 
+
     local speed = 0.35
     local driveP = 3
-    local distance = 13.5 -- in feet
+    local targetDistance = 14.8 -- in feet
     local distanceBallpark = 0.5
-    local leftDrivePID, rightDrivePID, turnPID
-    local turnBias = -0.05
+    local drivePID, turnDrivePID
+    local turnBias = 0
     local intakeTimer = wpilib.Timer()
     local intakeDuration = 1.0
 
-    leftDrivePID = pid.PID:new(driveP, 0, 0)
-    leftDrivePID.min, leftDrivePID.max = -speed, speed
-    leftDrivePID:reset()
-    leftDrivePID:start()
-    leftDrivePID.target = -distance
+    drivePID = pid.PID:new(driveP, 0, 0)
+    drivePID.min, drivePID.max = -speed, speed
+    drivePID:reset()
+    drivePID:start()
+    drivePID.target = -targetDistance
 
-    rightDrivePID = pid.PID:new(driveP, 0, 0)
-    rightDrivePID.min, rightDrivePID.max = -speed, speed
-    rightDrivePID:reset()
-    rightDrivePID:start()
-    rightDrivePID.target = -distance
-
-    turnDrivePID = pid.PID:new(1 / 20, 0, 0)
-    turnDrivePID.min, turnDrivePID.max = -0.25, 0.25
+    turnDrivePID = pid.PID:new(0.18, 0, 0.017)
+    -- Austin says no cap here.
+    --turnDrivePID.min, turnDrivePID.max = -1, 1
     turnDrivePID:reset()
     turnDrivePID:start()
     turnDrivePID.target = 0
@@ -129,34 +137,52 @@ function hellautonomous()
     drive.setGear(false)
     arm.setGripMotor(1)
     intakeTimer:Start()
+    drive.getDrive():SetLeftRightMotorOutputs(0, 0)
+
+    local autoMode = 0
+    if config.modeSwitch1:Get() then autoMode = bit.bor(autoMode, 0x1) end
+    if config.modeSwitch2:Get() then autoMode = bit.bor(autoMode, 0x2) end
+    lcd.print(6, "MODE=" .. autoMode)
+    lcd.update()
+    if autoMode == 0 then
+        return
+    end
     
     while wpilib.IsAutonomous() and not wpilib.IsDisabled() do
-        if math.abs(config.leftDriveEncoder:GetDistance() - leftDrivePID.target) < distanceBallpark then
+        local distance = getDistance()
+        if math.abs(distance - drivePID.target) < distanceBallpark then
             break
         end
         if intakeTimer:Get() > intakeDuration then
             arm.setGripMotor(0)
         end
         -- Update drive
-        local angle = (config.leftDriveEncoder:GetDistance() - config.rightDriveEncoder:GetDistance()) / config.robotWidth * (180 / math.pi) -- CW is positive
-        leftDrivePID:update(config.leftDriveEncoder:GetDistance())
-        rightDrivePID:update(config.rightDriveEncoder:GetDistance())
+        local angle = getAngle()
+        drivePID:update(distance)
         turnDrivePID:update(angle)
-        drive.getDrive():SetLeftRightMotorOutputs(
-            leftDrivePID.output + (turnDrivePID.output + turnBias),
-            rightDrivePID.output - (turnDrivePID.output + turnBias)
-        )
+        local speedL = drivePID.output + (turnDrivePID.output + turnBias)
+        local speedR = drivePID.output - (turnDrivePID.output + turnBias)
+        if math.abs(speedL) > 1 or math.abs(speedR) > 1 then
+            local n = math.max(math.abs(speedL), math.abs(speedR))
+            speedL = speedL / n
+            speedR = speedR / n
+        end
+        drive.getDrive():SetLeftRightMotorOutputs(speedL, speedR)
         lcd.print(3, format("%.2f %.2f", angle, turnDrivePID.output))
         lcd.print(4, format("%.2f %.2f", config.leftDriveEncoder:GetDistance(), config.rightDriveEncoder:GetDistance()))
         lcd.update()
-        --drive.getDrive():SetLeftRightMotorOutputs(0, 0)
         -- Update arm
         arm.update()
+        wpilib.Wait(TELEOP_LOOP_LAG)
     end
 
-    arm.setForward(false)
-    arm.setPreset("midHigh")
     arm.setGripMotor(0)
+    arm.setForward(false)
+    if autoMode == 1 then
+        arm.setPreset("high")
+    else
+        arm.setPreset("midHigh")
+    end
 
     while wpilib.IsAutonomous() and not wpilib.IsDisabled() and not released do
         if math.abs(arm.getArmVoltage() - config.armPID.target) < voltageBallpark and math.abs(arm.getWristVoltage() - config.wristPID.target) < voltageBallpark then
@@ -164,8 +190,18 @@ function hellautonomous()
             arm.runWristDown()
             released = true
         end
-        drive.getDrive():SetLeftRightMotorOutputs(0, 0)
+        drivePID:update(getDistance())
+        turnDrivePID:update(getAngle())
+        local speedL = drivePID.output + (turnDrivePID.output + turnBias)
+        local speedR = drivePID.output - (turnDrivePID.output + turnBias)
+        if math.abs(speedL) > 1 or math.abs(speedR) > 1 then
+            local n = math.max(math.abs(speedL), math.abs(speedR))
+            speedL = speedL / n
+            speedR = speedR / n
+        end
+        drive.getDrive():SetLeftRightMotorOutputs(speedL, speedR)
         arm.update()
+        wpilib.Wait(TELEOP_LOOP_LAG)
     end
 
     local driveBackTimer = wpilib.Timer()
@@ -185,6 +221,7 @@ function hellautonomous()
             arm.setGripMotor(-0.4)
         end
         arm.update()
+        wpilib.Wait(TELEOP_LOOP_LAG)
     end
 end
 
