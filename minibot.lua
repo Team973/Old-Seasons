@@ -1,6 +1,7 @@
 -- minibot.lua
 
 local config = require("config")
+local drive = require("drive")
 local wpilib = require("wpilib")
 
 module(...)
@@ -44,9 +45,20 @@ end
 function getReady()
     return isReady
 end
+
+function getFired()
+    return deploying
+end
     
+local holdTimer = nil
+
 function deploy()
     if not isReady then return end
+    if not deploying then
+        holdTimer = wpilib.Timer()
+        holdTimer:Start()
+        drive.hold()
+    end
     deploying = true
 end
 
@@ -68,4 +80,9 @@ function update()
         config.readyMinibotSolenoid2:Set(false)
     end
     config.fireMinibotSolenoid:Set(deploying)
+    if holdTimer and holdTimer:Get() > 0.75 then
+        holdTimer:Stop()
+        holdTimer = nil
+        drive.unhold()
+    end
 end

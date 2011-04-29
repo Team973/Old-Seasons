@@ -34,15 +34,24 @@ defaultControls =
     },
     -- Joystick 3
     {
-        [1] = {down=function()
-            if not minibot.getReady() then
-                local presetName = arm.getLastPreset()
-                arm.openClaw()
-                if presetName == "high" or presetName == "middle" or presetName == "low" or presetName == "midHigh" or presetName == "midMiddle" or presetName == "midLow" then
-                    arm.runWristDown()
+        [1] = {
+            down=function()
+                if not minibot.getReady() then
+                    local presetName = arm.getLastPreset()
+                    arm.openClaw()
+                    if presetName == "high" or presetName == "middle" or presetName == "low" or presetName == "midHigh" or presetName == "midMiddle" or presetName == "midLow" then
+                        arm.runWristDown()
+                    end
+                elseif not minibot.getFired() then
+                    drive.hold()
                 end
-            end
-        end},
+            end,
+            up=function()
+                if not minibot.getFired() then
+                    drive.unhold()
+                end
+            end,
+        },
         [2] = {down=arm.closeClaw},
         [9] = {down=restartRobot},
         [10] = {down=minibot.toggleReady},
