@@ -109,7 +109,7 @@ function hellautonomous()
 
     local speed = 0.35
     local driveP = 3
-    local targetDistance = 14.8 -- in feet
+    local targetDistance = 14.4 -- in feet
     local distanceBallpark = 0.5
     local drivePID, turnDrivePID
     local turnBias = 0.02
