@@ -100,7 +100,7 @@ function hellautonomous()
     local distance = 13.5 -- in feet
     local distanceBallpark = 0.5
     local leftDrivePID, rightDrivePID, turnPID
-    local turnBias = 0.05
+    local turnBias = -0.05
     local intakeTimer = wpilib.Timer()
     local intakeDuration = 1.0
 
@@ -147,6 +147,7 @@ function hellautonomous()
             rightDrivePID.output - (turnDrivePID.output + turnBias)
         )
         lcd.print(3, format("%.2f %.2f", angle, turnDrivePID.output))
+        lcd.print(4, format("%.2f %.2f", config.leftDriveEncoder:GetDistance(), config.rightDriveEncoder:GetDistance()))
         lcd.update()
         --drive.getDrive():SetLeftRightMotorOutputs(0, 0)
         -- Update arm
@@ -221,17 +222,15 @@ function teleop()
             controls.update(controls.defaultControls)
             local armPIDOut = -config.armPID.output
             local wristPIDOut = config.wristPID.output
-            --[[
             lcd.print(2, format("L=%.2f %d", config.leftDriveEncoder:GetDistance(), config.leftDriveEncoder:Get()))
             lcd.print(3, format("R=%.2f %d", config.rightDriveEncoder:GetDistance(), config.rightDriveEncoder:Get()))
-            --]]
+            --[[
             lcd.print(2, format("Arm=%.2f Out=%.2f", arm.getArmVoltage(), armPIDOut))
             lcd.print(3, format("Err=%.2f", config.armPID.target - arm.getArmVoltage()))
             lcd.print(4, format("Wrist=%.2f Out=%.2f", arm.getWristVoltage(), wristPIDOut))
             lcd.print(5, format("Err=%.2f", config.wristPID.target - arm.getWristVoltage()))
-            --lcd.print(6, format("Tube=%s Switch=%s", bool2yn(arm.getHasTube()), bool2yn(not config.wristIntakeSwitch:Get())))
-            --lcd.print(6, format("Angle=%.2f", config.gyro:GetAngle()))
-            lcd.print(6, format("DeploymentTimer=%s", bool2yn(minibot.deploymentTimerFinished())))
+            --]]
+            lcd.print(6, format("Tube=%s Switch=%s", bool2yn(arm.getHasTube()), bool2yn(not config.wristIntakeSwitch:Get())))
             lcd.update()
         else
             controls.update(configmode.controlMap)
