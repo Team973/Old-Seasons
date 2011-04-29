@@ -116,6 +116,7 @@ function hellautonomous()
     local turnBias = 0
     local intakeTimer = wpilib.Timer()
     local intakeDuration = 1.0
+    local calmTimer = wpilib.Timer()
 
     drivePID = pid.PID:new(driveP, 0, 0)
     drivePID.min, drivePID.max = -speed, speed
@@ -148,6 +149,7 @@ function hellautonomous()
         return
     end
     
+    calmTimer:Start()
     while wpilib.IsAutonomous() and not wpilib.IsDisabled() do
         local distance = getDistance()
         if math.abs(distance - drivePID.target) < distanceBallpark then
@@ -160,8 +162,12 @@ function hellautonomous()
         local angle = getAngle()
         drivePID:update(distance)
         turnDrivePID:update(angle)
-        local speedL = drivePID.output + (turnDrivePID.output + turnBias)
-        local speedR = drivePID.output - (turnDrivePID.output + turnBias)
+        local speedL = (turnDrivePID.output + turnBias)
+        local speedR = -(turnDrivePID.output + turnBias)
+        if calmTimer:Get() > 1.0 then
+            speedL = speedL + drivePID.output
+            speedR = speedR + drivePID.output
+        end
         if math.abs(speedL) > 1 or math.abs(speedR) > 1 then
             local n = math.max(math.abs(speedL), math.abs(speedR))
             speedL = speedL / n
