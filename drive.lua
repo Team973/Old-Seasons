@@ -74,8 +74,7 @@ end
 
 -- CW is positive
 function getAngle()
-    local driveScale = 1
-    return (config.leftDriveEncoder:GetDistance() - config.rightDriveEncoder:GetDistance() * driveScale) / config.robotWidth * (180 / math.pi)
+    return (config.leftDriveEncoder:GetDistance() * 1.105 - config.rightDriveEncoder:GetDistance()) / config.robotWidth * (180 / math.pi)
 end
 
 function update()
