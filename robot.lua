@@ -13,10 +13,6 @@ local pid = require "pid"
 local wpilib = require "wpilib"
 local format = string.format
 
-
-local presetTable = {pickup=0,stow=1,slot=2,vertical=3,carry=4,low=5,middle=6,high=7,midLow=8,midMiddle=9,midHigh=10}--Preset table for Dashboard use
-
-
 module(..., package.seeall)
 
 local TELEOP_LOOP_LAG = 0.005
@@ -305,7 +301,21 @@ function teleop()
 end
 
 -- Dashboard Data
+local presetTable = {
+    pickup=0,
+    stow=1,
+    slot=2,
+    vertical=3,
+    carry=4,
+    low=5,
+    middle=6,
+    high=7,
+    midLow=8,
+    midMiddle=9,
+    midHigh=10,
+}
 local visionTimer = wpilib.Timer()
+
 function sendVisionData()
     visionTimer:Start()
     if not visionTimer:HasPeriodPassed(0.1) then return end
