@@ -99,10 +99,10 @@ function hellautonomous()
 
     local speed = 0.35
     local driveP = 3
-    local targetDistance = 14.4 -- in feet
+    local targetDistance = 14.1 -- in feet
     local distanceBallpark = 0.5
     local drivePID, turnDrivePID
-    local turnBias = 0.02
+    local turnBias = 0
     local intakeTimer = wpilib.Timer()
     local intakeDuration = 1.0
     local calmTimer = wpilib.Timer()
