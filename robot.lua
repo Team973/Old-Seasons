@@ -155,8 +155,8 @@ function hellautonomous()
         local speedL = (turnDrivePID.output + turnBias)
         local speedR = -(turnDrivePID.output + turnBias)
         if calmTimer:Get() < rampUpTime then
-            speedL = speedL + calmTimer:Get() / rampUpTime
-            speedR = speedR + calmTimer:Get() / rampUpTime
+            speedL = speedL - (calmTimer:Get() / rampUpTime * speed)
+            speedR = speedR - (calmTimer:Get() / rampUpTime * speed)
         else
             speedL = speedL + drivePID.output
             speedR = speedR + drivePID.output
