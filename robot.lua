@@ -162,7 +162,7 @@ function hellautonomous()
             speedL = speedL / n
             speedR = speedR / n
         end
-        drive.getDrive():SetLeftRightMotorOutputs(speedL, speedR)
+        drive.getDrive():SetLeftRightMotorOutputs(drive.linearize(speedL), drive.linearize(speedR))
         lcd.print(3, format("%.2f %.2f", angle, turnDrivePID.output))
         lcd.print(4, format("%.2f %.2f", config.leftDriveEncoder:GetDistance(), config.rightDriveEncoder:GetDistance()))
         lcd.update()
@@ -194,7 +194,7 @@ function hellautonomous()
             speedL = speedL / n
             speedR = speedR / n
         end
-        drive.getDrive():SetLeftRightMotorOutputs(speedL, speedR)
+        drive.getDrive():SetLeftRightMotorOutputs(drive.linearize(speedL), drive.linearize(speedR))
         arm.update()
         wpilib.Wait(TELEOP_LOOP_LAG)
     end
