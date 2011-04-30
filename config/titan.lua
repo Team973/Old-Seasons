@@ -59,7 +59,7 @@ gripMotor = wpilib.Victor(3)
 wristMotor = wpilib.Victor(6)
 wristPot = wpilib.AnalogChannel(4)
 wristIntakeSwitch = wpilib.DigitalInput(6)
-wristIntakeTime = 0.25
+wristIntakeTime = 0.1
 
 clawSolenoids = true
 clawOpenPiston = wpilib.Solenoid(7, 2)
