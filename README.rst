@@ -11,7 +11,7 @@ Subdirectories
 ================
 
 ``2011-ek``
-   Latest off-season code
+   Latest off-season code for Emperor Krab
 ``2011-titan``
    The world-championship-winning code for Titan in the 2011 season
 ``2010-boss``
