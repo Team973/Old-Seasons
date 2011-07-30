@@ -111,7 +111,8 @@ end
 
     gyroDeg is the field-centric shift (in degrees).
 
-    wheelBase and trackWidth are in [INSERT UNITS HERE].
+    The units for wheelBase and trackWidth are irrelevant as long as they are
+    consistent.
 
     (Consult Adam for the math.)
 --]]
