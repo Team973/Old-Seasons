@@ -155,8 +155,8 @@ function angleError(current, target)
     local delta = target - current
     if delta > 180 then
         return delta - 360
-    elseif delta < 180 then
-        return 360 + delta
+    elseif delta < -180 then
+        return delta + 360
     else
         return delta
     end
