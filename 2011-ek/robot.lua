@@ -94,6 +94,7 @@ function teleop()
 
         -- Drive
         local wheels = calculateDrive(0, 0, 0, 0, 32, 22)
+        -- TODO
         
         -- Iteration cleanup
         feedWatchdog()
@@ -147,7 +148,7 @@ function calculateDrive(x, y, w, gyroDeg, wheelBase, trackWidth)
         end
     end
 
-    return w
+    return wheels
 end
 
 function angleError(current, target)
