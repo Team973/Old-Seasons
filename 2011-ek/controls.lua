@@ -1,10 +1,8 @@
 -- controls.lua
 
-local math = require("math")
 local wpilib = require("wpilib")
 
 local ipairs = ipairs
-local restartRobot = restartRobot
 
 module(...)
 
@@ -16,36 +14,6 @@ local numCypressButtons = 16
 for i = 1, 4 do
     sticks[i] = wpilib.Joystick(i)
 end
-
-defaultControls =
-{
-    -- Joystick 1
-    {
-        ["x"] = function(axis)
-            -- code here...
-        end,
-        ["y"] = function(axis) end,
-        [1] = {down=function() end}
-    },
-    -- Joystick 2
-    {
-        ["x"] = function(axis) end,
-        [1] = {down=function() end}
-    },
-    -- Joystick 3
-    {
-        [1] = {
-            down=function() end,
-            up=function() end,
-        },
-        update = function(stick) end,
-    },
-    -- Joystick 4 (eStop Module)
-    {
-    },
-    -- Cypress Module
-    cypress={},
-}
 
 -- Initialize previous state table
 local previousState = {}
