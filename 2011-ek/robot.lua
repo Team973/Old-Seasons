@@ -111,30 +111,34 @@ end
 compressor = wpilib.Relay(4, 1, wpilib.Relay_kForwardOnly)
 pressureSwitch = wpilib.DigitalInput(1)
 gearSwitch = wpilib.Solenoid(7, 1)
+
+-- TODO: Tune loop
+local turnPIDConstants = {p=1, i=0, d=0}
+
 wheels = {
     frontLeft={
         driveMotor=wpilib.Victor(1),
         turnMotor=wpilib.Victor(2),
-        -- TODO: Tune loop
-        turnPID=pid.new(1, 0, 0, drive.angleError),
+        turnPID=pid.new(turnPIDConstants.p, turnPIDConstants.i,
+                        turnPIDConstants.d, drive.angleError),
     },
     frontRight={
         driveMotor=wpilib.Victor(3),
         turnMotor=wpilib.Victor(4),
-        -- TODO: Tune loop
-        turnPID=pid.new(1, 0, 0, drive.angleError),
+        turnPID=pid.new(turnPIDConstants.p, turnPIDConstants.i,
+                        turnPIDConstants.d, drive.angleError),
     },
     rearLeft={
         driveMotor=wpilib.Victor(5),
         turnMotor=wpilib.Victor(6),
-        -- TODO: Tune loop
-        turnPID=pid.new(1, 0, 0, drive.angleError),
+        turnPID=pid.new(turnPIDConstants.p, turnPIDConstants.i,
+                        turnPIDConstants.d, drive.angleError),
     },
     rearRight={
         driveMotor=wpilib.Victor(7),
         turnMotor=wpilib.Victor(8),
-        -- TODO: Tune loop
-        turnPID=pid.new(1, 0, 0, drive.angleError),
+        turnPID=pid.new(turnPIDConstants.p, turnPIDConstants.i,
+                        turnPIDConstants.d, drive.angleError),
     },
 }
 -- End Inputs/Outputs
