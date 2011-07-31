@@ -5,6 +5,8 @@ Useful indexes of a PID table:
     p, i, and d: The constants of the loop
     min and max: Limit the output (nil represents no limit)
     target: The desired value of the dependent variable
+    errFunc: Function used to calculate the error. Takes two arguments: actual
+             and target. Defaults to the difference of target from actual.
     output (read-only): The calculated output of the manipulated variable
 
 There are other indexes, but you shouldn't touch them.
@@ -17,8 +19,13 @@ module(...)
 
 PID = {}
 
-function PID:new(p, i, d)
-    local pidObj = {p=p or 0, i=i or 0, d=d or 0}
+local function defaultError(actual, target)
+    return target - actual
+end
+
+function PID:new(p, i, d, errFunc)
+    local pidObj = {p=p or 0, i=i or 0, d=d or 0,
+                    errFunc=errFunc or defaultError}
     setmetatable(pidObj, {__index=self})
     return pidObj
 end
@@ -62,8 +69,8 @@ end
 --[[
 Update the PID controller.
 
-The computation involves finding the difference between the input and the
-target, the difference from last time, and the integral of the difference.
+The computation involves finding the error between the input and the target,
+the error from last time, and the integral of the error.
 
 If a minimum or maximum was set on the PID controller, then any output
 calculated will be clipped into the range given.
@@ -82,7 +89,7 @@ function PID:update(actual, time)
     if time <= 0 then time = 0.001 end
     
     -- Calculate error
-    local e = self.target - actual
+    local e = self.errFunc(actual, self.target)
     
     -- Calculate integral
     self.integral = self.integral + e * time
