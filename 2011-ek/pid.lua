@@ -30,6 +30,10 @@ function PID:new(p, i, d, errFunc)
     return pidObj
 end
 
+function new(...)
+    return PID:new(...)
+end
+
 --[[
 Reset the PID controller.
 
