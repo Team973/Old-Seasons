@@ -27,6 +27,7 @@ function PID:new(p, i, d, errFunc)
     local pidObj = {p=p or 0, i=i or 0, d=d or 0,
                     errFunc=errFunc or defaultError}
     setmetatable(pidObj, {__index=self})
+    pidObj:reset()
     return pidObj
 end
 
