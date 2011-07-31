@@ -69,6 +69,38 @@ compressor = wpilib.Relay(4, 1, wpilib.Relay_kForwardOnly)
 pressureSwitch = wpilib.DigitalInput(1)
 -- End Inputs/Outputs
 
+-- Controls
+controlMap =
+{
+    -- Joystick 1
+    {
+        ["x"] = function(axis)
+            -- code here...
+        end,
+        ["y"] = function(axis) end,
+        [1] = {down=function() end}
+    },
+    -- Joystick 2
+    {
+        ["x"] = function(axis) end,
+        [1] = {down=function() end}
+    },
+    -- Joystick 3
+    {
+        [1] = {
+            down=function() end,
+            up=function() end,
+        },
+        update = function(stick) end,
+    },
+    -- Joystick 4 (eStop Module)
+    {
+    },
+    -- Cypress Module
+    cypress={},
+}
+-- End Controls
+
 function hellautonomous()
     disableWatchdog()
     -- If you need it. :)
@@ -82,7 +114,7 @@ function teleop()
         lcd.print(1, "Running!")
 
         -- Read controls
-        controls.update(controls.defaultControls)
+        controls.update(controlMap)
         feedWatchdog()
 
         -- Pneumatics
