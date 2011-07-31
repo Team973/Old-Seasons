@@ -18,8 +18,8 @@ local watchdogEnabled = false
 local feedWatchdog, enableWatchdog, disableWatchdog
 
 local hellautonomous, teleop
-local controlMap, strafe, rotation
-local compressor, pressureSwitch, wheels
+local controlMap, strafe, rotation, gear
+local compressor, pressureSwitch, gearSwitch, wheels
 -- End Declarations
 
 function run()
@@ -76,6 +76,16 @@ function teleop()
         end
 
         -- Drive
+        if gear == "low" then
+            gearSwitch:Set(false)
+        elseif gear == "high" then
+            gearSwitch:Set(true)
+        else
+            -- Unrecognized state, default to low gear
+            -- TODO: log error
+            gearSwitch:Set(false)
+        end
+
         -- TODO: gyro
         local wheelValues = drive.calculate(
             strafe.x, strafe.y, rotation, 0,
@@ -100,6 +110,7 @@ end
 -- Don't forget to add to declarations at the top!
 compressor = wpilib.Relay(4, 1, wpilib.Relay_kForwardOnly)
 pressureSwitch = wpilib.DigitalInput(1)
+gearSwitch = wpilib.Solenoid(7, 1)
 wheels = {
     frontLeft={
         driveMotor=wpilib.Victor(1),
@@ -131,6 +142,7 @@ wheels = {
 -- Controls
 strafe = {x=0, y=0}
 rotation = 0
+gear = "low"
 
 controlMap =
 {
@@ -138,20 +150,15 @@ controlMap =
     {
         ["x"] = function(axis) strafe.x = axis end,
         ["y"] = function(axis) strafe.y = axis end,
-        [1] = {down=function() end}
+        [1] = {down=function() gear = "low" end}
     },
     -- Joystick 2
     {
         ["x"] = function(axis) rotation = axis end,
-        [1] = {down=function() end}
+        [1] = {down=function() gear = "high" end}
     },
     -- Joystick 3
     {
-        [1] = {
-            down=function() end,
-            up=function() end,
-        },
-        update = function(stick) end,
     },
     -- Joystick 4 (eStop Module)
     {
