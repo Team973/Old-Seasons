@@ -11,38 +11,15 @@ module(..., package.seeall)
 
 local TELEOP_LOOP_LAG = 0.005
 
--- Watchdog shortcuts
+-- Declarations
 local watchdogEnabled = false
 local feedWatchdog, enableWatchdog, disableWatchdog
-if watchdogEnabled then
-    wpilib.GetWatchdog():SetExpiration(0.25)
-    
-    function feedWatchdog()
-        local dog = wpilib.GetWatchdog()
-        dog:Feed()
-    end
-
-    function enableWatchdog()
-        local dog = wpilib.GetWatchdog()
-        dog:SetEnabled(true)
-    end
-
-    function disableWatchdog()
-        local dog = wpilib.GetWatchdog()
-        dog:SetEnabled(false)
-    end
-else
-    local dog = wpilib.GetWatchdog()
-    dog:SetEnabled(false)
-    
-    feedWatchdog = function() end
-    enableWatchdog = function() end
-    disableWatchdog = function() end
-end
 
 local hellautonomous, teleop
+local controlMap, strafe, rotation
+local compressor, pressureSwitch
+-- End Declarations
 
--- Robot running
 function run()
     lcd.print(1, "Ready")
     lcd.update()
@@ -66,44 +43,6 @@ function run()
         end
     end
 end
-
--- Inputs/Outputs
-compressor = wpilib.Relay(4, 1, wpilib.Relay_kForwardOnly)
-pressureSwitch = wpilib.DigitalInput(1)
--- End Inputs/Outputs
-
--- Controls
-local strafe = {x=0, y=0}
-local rotation = 0
-
-controlMap =
-{
-    -- Joystick 1
-    {
-        ["x"] = function(axis) strafe.x = axis end,
-        ["y"] = function(axis) strafe.y = axis end,
-        [1] = {down=function() end}
-    },
-    -- Joystick 2
-    {
-        ["x"] = function(axis) rotation = axis end,
-        [1] = {down=function() end}
-    },
-    -- Joystick 3
-    {
-        [1] = {
-            down=function() end,
-            up=function() end,
-        },
-        update = function(stick) end,
-    },
-    -- Joystick 4 (eStop Module)
-    {
-    },
-    -- Cypress Module
-    cypress={},
-}
--- End Controls
 
 function hellautonomous()
     disableWatchdog()
@@ -138,6 +77,72 @@ function teleop()
         wpilib.Wait(TELEOP_LOOP_LAG)
         feedWatchdog()
     end
+end
+
+-- Inputs/Outputs
+-- Don't forget to add to declarations at the top!
+compressor = wpilib.Relay(4, 1, wpilib.Relay_kForwardOnly)
+pressureSwitch = wpilib.DigitalInput(1)
+-- End Inputs/Outputs
+
+-- Controls
+strafe = {x=0, y=0}
+rotation = 0
+
+controlMap =
+{
+    -- Joystick 1
+    {
+        ["x"] = function(axis) strafe.x = axis end,
+        ["y"] = function(axis) strafe.y = axis end,
+        [1] = {down=function() end}
+    },
+    -- Joystick 2
+    {
+        ["x"] = function(axis) rotation = axis end,
+        [1] = {down=function() end}
+    },
+    -- Joystick 3
+    {
+        [1] = {
+            down=function() end,
+            up=function() end,
+        },
+        update = function(stick) end,
+    },
+    -- Joystick 4 (eStop Module)
+    {
+    },
+    -- Cypress Module
+    cypress={},
+}
+-- End Controls
+
+-- Watchdog shortcuts
+if watchdogEnabled then
+    wpilib.GetWatchdog():SetExpiration(0.25)
+
+    function feedWatchdog()
+        local dog = wpilib.GetWatchdog()
+        dog:Feed()
+    end
+
+    function enableWatchdog()
+        local dog = wpilib.GetWatchdog()
+        dog:SetEnabled(true)
+    end
+
+    function disableWatchdog()
+        local dog = wpilib.GetWatchdog()
+        dog:SetEnabled(false)
+    end
+else
+    local dog = wpilib.GetWatchdog()
+    dog:SetEnabled(false)
+
+    feedWatchdog = function() end
+    enableWatchdog = function() end
+    disableWatchdog = function() end
 end
 
 -- vim: ft=lua et ts=4 sts=4 sw=4
