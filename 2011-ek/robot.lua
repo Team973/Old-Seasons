@@ -7,6 +7,8 @@ local math = require("math")
 local pid = require("pid")
 local wpilib = require("wpilib")
 
+local pairs = pairs
+
 module(..., package.seeall)
 
 local TELEOP_LOOP_LAG = 0.005
@@ -17,7 +19,7 @@ local feedWatchdog, enableWatchdog, disableWatchdog
 
 local hellautonomous, teleop
 local controlMap, strafe, rotation
-local compressor, pressureSwitch
+local compressor, pressureSwitch, wheels
 -- End Declarations
 
 function run()
@@ -50,6 +52,12 @@ function hellautonomous()
 end
 
 function teleop()
+    -- TODO: Calibrate
+
+    for _, wheel in pairs(wheels) do
+        wheel.turnPID:start()
+    end
+
     while wpilib.IsOperatorControl() and wpilib.IsEnabled() do
         enableWatchdog()
         feedWatchdog()
@@ -69,8 +77,17 @@ function teleop()
 
         -- Drive
         -- TODO: gyro
-        local wheels = drive.calculate(strafe.x, strafe.y, rotation, 0, 32, 22)
-        -- TODO: Run motors
+        local wheelValues = drive.calculate(
+            strafe.x, strafe.y, rotation, 0,
+            32,     -- wheel base (in inches)
+            22      -- track width (in inches)
+        )
+        for wheelName, value in pairs(wheelValues) do
+            local wheel = wheels[wheelName]
+            wheel.driveMotor:Set(value.speed)
+            -- TODO: wheel.turnPID:update(current)
+            wheel.turnMotor:Set(wheel.turnPID.output)
+        end
         
         -- Iteration cleanup
         feedWatchdog()
@@ -83,6 +100,32 @@ end
 -- Don't forget to add to declarations at the top!
 compressor = wpilib.Relay(4, 1, wpilib.Relay_kForwardOnly)
 pressureSwitch = wpilib.DigitalInput(1)
+wheels = {
+    frontLeft={
+        driveMotor=wpilib.Victor(1),
+        turnMotor=wpilib.Victor(2),
+        -- TODO: Tune loop
+        turnPID=pid.new(1, 0, 0, drive.angleError),
+    },
+    frontRight={
+        driveMotor=wpilib.Victor(3),
+        turnMotor=wpilib.Victor(4),
+        -- TODO: Tune loop
+        turnPID=pid.new(1, 0, 0, drive.angleError),
+    },
+    rearLeft={
+        driveMotor=wpilib.Victor(5),
+        turnMotor=wpilib.Victor(6),
+        -- TODO: Tune loop
+        turnPID=pid.new(1, 0, 0, drive.angleError),
+    },
+    rearRight={
+        driveMotor=wpilib.Victor(7),
+        turnMotor=wpilib.Victor(8),
+        -- TODO: Tune loop
+        turnPID=pid.new(1, 0, 0, drive.angleError),
+    },
+}
 -- End Inputs/Outputs
 
 -- Controls
