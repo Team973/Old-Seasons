@@ -17,7 +17,7 @@ local TELEOP_LOOP_LAG = 0.005
 local watchdogEnabled = false
 local feedWatchdog, enableWatchdog, disableWatchdog
 
-local hellautonomous, teleop
+local hellautonomous, teleop, calibrate
 local controlMap, strafe, rotation, gear
 local compressor, pressureSwitch, gearSwitch, wheels
 -- End Declarations
@@ -52,7 +52,7 @@ function hellautonomous()
 end
 
 function teleop()
-    -- TODO: Calibrate
+    calibrate()
 
     for _, wheel in pairs(wheels) do
         wheel.turnPID:start()
@@ -95,7 +95,7 @@ function teleop()
         for wheelName, value in pairs(wheelValues) do
             local wheel = wheels[wheelName]
             wheel.driveMotor:Set(value.speed)
-            -- TODO: wheel.turnPID:update(current)
+            wheel.turnPID:update(wheel.turnEncoder:Get() / 4.0)
             wheel.turnMotor:Set(wheel.turnPID.output)
         end
         
@@ -106,10 +106,48 @@ function teleop()
     end
 end
 
+function calibrate()
+    local calibState = {}
+    local TURN_SPEED = 0.5
+    for name, _ in pairs(wheels) do
+        calibState[name] = false
+    end
+
+    local keepGoing = true
+    while keepGoing and wpilib.IsOperatorControl() and wpilib.IsEnabled() do
+        keepGoing = false
+        for name, calibrated in pairs(calibState) do
+            local wheel = wheels[name]
+            if calibrated then
+                wheel.turnMotor:Set(0)
+            elseif wheel.calibrateSwitch:Get() then
+                -- Stop running motor
+                wheel.turnMotor:Set(0)
+
+                -- Mark as calibrated
+                calibState[name] = true
+                wheel.turnEncoder:Reset()
+                wheel.turnEncoder:Start()
+            else
+                -- Have not reached point yet
+                keepGoing = true
+                wheel.turnMotor:Set(TURN_SPEED)
+            end
+            wheel.driveMotor:Set(0)
+        end
+
+        -- Iteration cleanup
+        feedWatchdog()
+        wpilib.Wait(TELEOP_LOOP_LAG)
+        feedWatchdog()
+    end
+end
+
 -- Inputs/Outputs
+-- TODO: Update these to actual wiring
 -- Don't forget to add to declarations at the top!
 compressor = wpilib.Relay(4, 1, wpilib.Relay_kForwardOnly)
-pressureSwitch = wpilib.DigitalInput(1)
+pressureSwitch = wpilib.DigitalInput(4, 1)
 gearSwitch = wpilib.Solenoid(7, 1)
 
 -- TODO: Tune loop
@@ -119,24 +157,36 @@ wheels = {
     frontLeft={
         driveMotor=wpilib.Victor(1),
         turnMotor=wpilib.Victor(2),
+
+        calibrateSwitch=wpilib.DigitalInput(4, 2),
+        turnEncoder=wpilib.Encoder(1, 2),
         turnPID=pid.new(turnPIDConstants.p, turnPIDConstants.i,
                         turnPIDConstants.d, drive.angleError),
     },
     frontRight={
         driveMotor=wpilib.Victor(3),
         turnMotor=wpilib.Victor(4),
+
+        calibrateSwitch=wpilib.DigitalInput(4, 3),
+        turnEncoder=wpilib.Encoder(3, 4),
         turnPID=pid.new(turnPIDConstants.p, turnPIDConstants.i,
                         turnPIDConstants.d, drive.angleError),
     },
     rearLeft={
         driveMotor=wpilib.Victor(5),
         turnMotor=wpilib.Victor(6),
+
+        calibrateSwitch=wpilib.DigitalInput(4, 4),
+        turnEncoder=wpilib.Encoder(5, 6),
         turnPID=pid.new(turnPIDConstants.p, turnPIDConstants.i,
                         turnPIDConstants.d, drive.angleError),
     },
     rearRight={
         driveMotor=wpilib.Victor(7),
         turnMotor=wpilib.Victor(8),
+
+        calibrateSwitch=wpilib.DigitalInput(4, 5),
+        turnEncoder=wpilib.Encoder(7, 8),
         turnPID=pid.new(turnPIDConstants.p, turnPIDConstants.i,
                         turnPIDConstants.d, drive.angleError),
     },
