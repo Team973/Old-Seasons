@@ -1,11 +1,12 @@
 -- lcd.lua
 
-local config = require "config"
 local wpilib = require "wpilib"
 
 module(...)
 
-if config.features.lcd then
+local enableLcd = true
+
+if enableLcd then
     local lcd = wpilib.DriverStationLCD_GetInstance()
     local lineConstants = {
         wpilib.DriverStationLCD_kUser_Line1,
