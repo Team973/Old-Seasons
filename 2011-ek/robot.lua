@@ -116,8 +116,16 @@ function teleop()
             )
             for wheelName, value in pairs(wheelValues) do
                 local wheel = wheels[wheelName]
-                wheel.driveMotor:Set(value.speed)
-                wheel.turnPID.target = value.angleDeg
+
+                local deadband = 0.1
+                if math.abs(strafe.x) > deadband or math.abs(strafe.y) > deadband or math.abs(rotation) > deadband then
+                    wheel.driveMotor:Set(-value.speed)
+                    wheel.turnPID.target = value.angleDeg
+                else
+                    -- In deadband
+                    wheel.driveMotor:Set(0)
+                end
+
                 wheel.turnPID:update(wheel.turnEncoder:GetRaw() / 4.0)
                 wheel.turnMotor:Set(wheel.turnPID.output)
             end
