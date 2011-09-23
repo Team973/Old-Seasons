@@ -20,6 +20,7 @@ local feedWatchdog, enableWatchdog, disableWatchdog
 
 local hellautonomous, teleop, calibrate
 local controlMap, strafe, rotation, gear
+local fudgeMode, fudgeWheel, fudgeMovement
 local compressor, pressureSwitch, gearSwitch, wheels
 -- End Declarations
 
@@ -58,8 +59,6 @@ function teleop()
 
     --calibrate()
 
-    local fudgeMode = false
-
     for _, wheel in pairs(wheels) do
         wheel.turnPID:start()
 
@@ -72,7 +71,11 @@ function teleop()
         enableWatchdog()
         feedWatchdog()
 
-        lcd.print(1, "Running!")
+        if not fudgeMode then
+            lcd.print(1, "Running!")
+        else
+            lcd.print(1, "Fudge Mode")
+        end
         local i = 2
         for _, wheel in pairs(wheels) do
             lcd.print(i, string.format("%s E%.1f O%.1f", wheel.shortName, wheel.turnPID.previousError, wheel.turnPID.output))
@@ -120,15 +123,6 @@ function teleop()
         end
         --]==]
 
-        -- FL: 6
-        -- RL: 7
-        -- FR: 11
-        -- RR: 10
-        local fudgeStick = controls.sticks[2]
-        if fudgeStick:GetRawButton(6) or fudgeStick:GetRawButton(7) or fudgeStick:GetRawButton(10) or fudgeStick:GetRawButton(11) then
-            fudgeMode = true
-        end
-
         if not fudgeMode then
             -- Target a direction
             local angle = math.deg(math.atan2(controls.sticks[1]:GetX(), -controls.sticks[1]:GetY()))
@@ -145,18 +139,8 @@ function teleop()
                 wheel.turnMotor:Set(0)
             end
 
-            local wheel = nil
-            if fudgeStick:GetRawButton(6) then
-                wheel = wheels.frontLeft
-            elseif fudgeStick:GetRawButton(7) then
-                wheel = wheels.rearLeft
-            elseif fudgeStick:GetRawButton(11) then
-                wheel = wheels.frontRight
-            elseif fudgeStick:GetRawButton(10) then
-                wheel = wheels.rearRight
-            end
-            if wheel then
-                wheel.turnMotor:Set(fudgeStick:GetX())
+            if fudgeWheel then
+                fudgeWheel.turnMotor:Set(fudgeMovement)
             end
         end
         
@@ -266,6 +250,24 @@ strafe = {x=0, y=0}
 rotation = 0
 gear = "low"
 
+fudgeMode = false
+fudgeWheel = nil
+fudgeMovement = 0.0
+
+local function fudgeButton(wheel)
+    return {
+        down=function()
+            fudgeMode = true
+            fudgeWheel = wheel
+        end,
+        up=function()
+            if fudgeWheel == wheel then
+                fudgeWheel = nil
+            end
+        end,
+    }
+end
+
 local function incConstant(constant, delta)
     for _, wheel in pairs(wheels) do
         wheel.turnPID:stop()
@@ -289,8 +291,18 @@ controlMap =
     },
     -- Joystick 2
     {
-        ["x"] = function(axis) rotation = axis end,
-        [1] = {down=function() gear = "high" end}
+        ["x"] = function(axis)
+            if not fudgeMode then
+                rotation = axis
+            else
+                fudgeMovement = axis
+            end
+        end,
+        [1] = {down=function() gear = "high" end},
+        [6] = fudgeButton(wheels.frontLeft),
+        [7] = fudgeButton(wheels.rearLeft),
+        [11] = fudgeButton(wheels.frontRight),
+        [10] = fudgeButton(wheels.rearRight),
     },
     -- Joystick 3
     {
