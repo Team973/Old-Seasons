@@ -78,7 +78,7 @@ function teleop()
         end
         local i = 2
         for _, wheel in pairs(wheels) do
-            lcd.print(i, string.format("%s E%.1f O%.1f", wheel.shortName, wheel.turnPID.previousError, wheel.turnPID.output))
+            lcd.print(i, string.format("%s T%.1f O%.1f", wheel.shortName, wheel.turnPID.target, wheel.turnPID.output))
             i = i + 1
         end
         local turnPID = wheels.frontLeft.turnPID
@@ -97,7 +97,6 @@ function teleop()
         end
 
         -- Drive
-        --[==[
         if gear == "low" then
             gearSwitch:Set(false)
         elseif gear == "high" then
@@ -108,26 +107,17 @@ function teleop()
             gearSwitch:Set(false)
         end
 
-        -- TODO: gyro
-        local wheelValues = drive.calculate(
-            strafe.x, strafe.y, rotation, 0,
-            32,     -- wheel base (in inches)
-            22      -- track width (in inches)
-        )
-        for wheelName, value in pairs(wheelValues) do
-            local wheel = wheels[wheelName]
-            wheel.driveMotor:Set(value.speed)
-            wheel.turnPID.target = value.angleDeg
-            wheel.turnPID:update(wheel.turnEncoder:GetRaw() / 4.0)
-            wheel.turnMotor:Set(wheel.turnPID.output)
-        end
-        --]==]
-
         if not fudgeMode then
-            -- Target a direction
-            local angle = math.deg(math.atan2(controls.sticks[1]:GetX(), -controls.sticks[1]:GetY()))
-            for _, wheel in pairs(wheels) do
-                wheel.turnPID.target = angle
+            -- TODO: gyro
+            local wheelValues = drive.calculate(
+                strafe.x, strafe.y, rotation, 0,
+                31.4,     -- wheel base (in inches)
+                21.4      -- track width (in inches)
+            )
+            for wheelName, value in pairs(wheelValues) do
+                local wheel = wheels[wheelName]
+                wheel.driveMotor:Set(value.speed)
+                wheel.turnPID.target = value.angleDeg
                 wheel.turnPID:update(wheel.turnEncoder:GetRaw() / 4.0)
                 wheel.turnMotor:Set(wheel.turnPID.output)
             end
@@ -282,7 +272,7 @@ controlMap =
     -- Joystick 1
     {
         ["x"] = function(axis) strafe.x = axis end,
-        ["y"] = function(axis) strafe.y = axis end,
+        ["y"] = function(axis) strafe.y = -axis end,
         [1] = {down=function() gear = "low" end},
         [6] = {down=function() incConstant("p", 0.001) end}, -- up
         [7] = {down=function() incConstant("p", -0.001) end}, -- down
