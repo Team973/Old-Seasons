@@ -57,13 +57,13 @@ end
 
 function angleError(current, target)
     local delta = target - current
-    if delta > 180 then
-        return delta - 360
-    elseif delta < -180 then
-        return delta + 360
-    else
-        return delta
+    while delta > 180 do
+        delta = delta - 360
     end
+    while delta < -180 do
+        return delta + 360
+    end
+    return delta
 end
 
 -- vim: ft=lua et ts=4 sts=4 sw=4
