@@ -5,6 +5,7 @@ local drive = require("drive")
 local lcd = require("lcd")
 local math = require("math")
 local pid = require("pid")
+local string = require("string")
 local wpilib = require("wpilib")
 
 local pairs = pairs
@@ -19,6 +20,7 @@ local feedWatchdog, enableWatchdog, disableWatchdog
 
 local hellautonomous, teleop, calibrate
 local controlMap, strafe, rotation, gear
+local fudgeMode, fudgeWheel, fudgeMovement
 local compressor, pressureSwitch, gearSwitch, wheels
 -- End Declarations
 
@@ -52,17 +54,36 @@ function hellautonomous()
 end
 
 function teleop()
-    calibrate()
+    lcd.print(1, "Calibrating...")
+    lcd.update()
+
+    --calibrate()
 
     for _, wheel in pairs(wheels) do
         wheel.turnPID:start()
+
+        -- TODO: Don't do this once we're calibrating right.
+        wheel.turnEncoder:Reset()
+        wheel.turnEncoder:Start()
     end
 
     while wpilib.IsOperatorControl() and wpilib.IsEnabled() do
         enableWatchdog()
         feedWatchdog()
 
-        lcd.print(1, "Running!")
+        if not fudgeMode then
+            lcd.print(1, "Running!")
+        else
+            lcd.print(1, "Fudge Mode")
+        end
+        local i = 2
+        for _, wheel in pairs(wheels) do
+            lcd.print(i, string.format("%s T%.1f O%.1f", wheel.shortName, wheel.turnPID.target, wheel.turnPID.output))
+            i = i + 1
+        end
+        local turnPID = wheels.frontLeft.turnPID
+        lcd.print(6, string.format("P%.4f D%.4f", turnPID.p, turnPID.d))
+        lcd.update()
 
         -- Read controls
         controls.update(controlMap)
@@ -86,17 +107,39 @@ function teleop()
             gearSwitch:Set(false)
         end
 
-        -- TODO: gyro
-        local wheelValues = drive.calculate(
-            strafe.x, strafe.y, rotation, 0,
-            32,     -- wheel base (in inches)
-            22      -- track width (in inches)
-        )
-        for wheelName, value in pairs(wheelValues) do
-            local wheel = wheels[wheelName]
-            wheel.driveMotor:Set(value.speed)
-            wheel.turnPID:update(wheel.turnEncoder:Get() / 4.0)
-            wheel.turnMotor:Set(wheel.turnPID.output)
+        if not fudgeMode then
+            -- TODO: gyro
+            local wheelValues = drive.calculate(
+                strafe.x, strafe.y, rotation, 0,
+                31.4,     -- wheel base (in inches)
+                21.4      -- track width (in inches)
+            )
+            for wheelName, value in pairs(wheelValues) do
+                local wheel = wheels[wheelName]
+
+                local deadband = 0.1
+                if math.abs(strafe.x) > deadband or math.abs(strafe.y) > deadband or math.abs(rotation) > deadband then
+                    wheel.driveMotor:Set(-value.speed)
+                    wheel.turnPID.target = value.angleDeg
+                else
+                    -- In deadband
+                    wheel.driveMotor:Set(0)
+                end
+
+                wheel.turnPID:update(wheel.turnEncoder:GetRaw() / 4.0)
+                wheel.turnMotor:Set(wheel.turnPID.output)
+            end
+        else
+            -- Fudge mode
+            -- TODO: Don't use this, just calibrate
+            for _, wheel in pairs(wheels) do
+                wheel.driveMotor:Set(0)
+                wheel.turnMotor:Set(0)
+            end
+
+            if fudgeWheel then
+                fudgeWheel.turnMotor:Set(fudgeMovement)
+            end
         end
         
         -- Iteration cleanup
@@ -108,7 +151,7 @@ end
 
 function calibrate()
     local calibState = {}
-    local TURN_SPEED = 0.5
+    local TURN_SPEED = 1.0
     for name, _ in pairs(wheels) do
         calibState[name] = false
     end
@@ -144,53 +187,60 @@ function calibrate()
 end
 
 -- Inputs/Outputs
--- TODO: Update these to actual wiring
 -- Don't forget to add to declarations at the top!
 compressor = wpilib.Relay(4, 1, wpilib.Relay_kForwardOnly)
-pressureSwitch = wpilib.DigitalInput(4, 1)
-gearSwitch = wpilib.Solenoid(7, 1)
+pressureSwitch = wpilib.DigitalInput(4, 13)
+gearSwitch = wpilib.Solenoid(8, 1)
 
--- TODO: Tune loop
-local turnPIDConstants = {p=1, i=0, d=0}
+local turnPIDConstants = {p=0.05, i=0, d=0}
 
 wheels = {
     frontLeft={
-        driveMotor=wpilib.Victor(1),
-        turnMotor=wpilib.Victor(2),
+        shortName="FL",
+        driveMotor=wpilib.Victor(4, 7),
+        turnMotor=wpilib.Jaguar(4, 8),
 
-        calibrateSwitch=wpilib.DigitalInput(4, 2),
-        turnEncoder=wpilib.Encoder(1, 2),
+        calibrateSwitch=wpilib.DigitalInput(4, 12),
+        turnEncoder=wpilib.Encoder(4, 10, 4, 11),
         turnPID=pid.new(turnPIDConstants.p, turnPIDConstants.i,
                         turnPIDConstants.d, drive.angleError),
     },
     frontRight={
-        driveMotor=wpilib.Victor(3),
-        turnMotor=wpilib.Victor(4),
+        shortName="FR",
+        driveMotor=wpilib.Victor(4, 1),
+        turnMotor=wpilib.Jaguar(4, 2),
 
-        calibrateSwitch=wpilib.DigitalInput(4, 3),
-        turnEncoder=wpilib.Encoder(3, 4),
+        calibrateSwitch=wpilib.DigitalInput(4, 9),
+        turnEncoder=wpilib.Encoder(4, 1, 4, 2),
         turnPID=pid.new(turnPIDConstants.p, turnPIDConstants.i,
                         turnPIDConstants.d, drive.angleError),
     },
     rearLeft={
-        driveMotor=wpilib.Victor(5),
-        turnMotor=wpilib.Victor(6),
+        shortName="RL",
+        driveMotor=wpilib.Victor(4, 6),
+        turnMotor=wpilib.Jaguar(4, 5),
 
-        calibrateSwitch=wpilib.DigitalInput(4, 4),
-        turnEncoder=wpilib.Encoder(5, 6),
+        calibrateSwitch=wpilib.DigitalInput(4, 3),
+        turnEncoder=wpilib.Encoder(4, 7, 4, 8),
         turnPID=pid.new(turnPIDConstants.p, turnPIDConstants.i,
                         turnPIDConstants.d, drive.angleError),
     },
     rearRight={
-        driveMotor=wpilib.Victor(7),
-        turnMotor=wpilib.Victor(8),
+        shortName="RR",
+        driveMotor=wpilib.Victor(4, 3),
+        turnMotor=wpilib.Jaguar(4, 4),
 
-        calibrateSwitch=wpilib.DigitalInput(4, 5),
-        turnEncoder=wpilib.Encoder(7, 8),
+        calibrateSwitch=wpilib.DigitalInput(4, 6),
+        turnEncoder=wpilib.Encoder(4, 4, 4, 5),
         turnPID=pid.new(turnPIDConstants.p, turnPIDConstants.i,
                         turnPIDConstants.d, drive.angleError),
     },
 }
+
+for _, wheel in pairs(wheels) do
+    wheel.turnEncoder:SetDistancePerPulse(1.0)
+    wheel.turnEncoder:SetReverseDirection(true)
+end
 -- End Inputs/Outputs
 
 -- Controls
@@ -198,18 +248,59 @@ strafe = {x=0, y=0}
 rotation = 0
 gear = "low"
 
+fudgeMode = false
+fudgeWheel = nil
+fudgeMovement = 0.0
+
+local function fudgeButton(wheel)
+    return {
+        down=function()
+            fudgeMode = true
+            fudgeWheel = wheel
+        end,
+        up=function()
+            if fudgeWheel == wheel then
+                fudgeWheel = nil
+            end
+        end,
+    }
+end
+
+local function incConstant(constant, delta)
+    for _, wheel in pairs(wheels) do
+        wheel.turnPID:stop()
+        wheel.turnPID[constant] = wheel.turnPID[constant] + delta
+        wheel.turnPID:reset()
+        wheel.turnPID:start()
+    end
+end
+
 controlMap =
 {
     -- Joystick 1
     {
         ["x"] = function(axis) strafe.x = axis end,
-        ["y"] = function(axis) strafe.y = axis end,
-        [1] = {down=function() gear = "low" end}
+        ["y"] = function(axis) strafe.y = -axis end,
+        [1] = {down=function() gear = "low" end},
+        [6] = {down=function() incConstant("p", 0.001) end}, -- up
+        [7] = {down=function() incConstant("p", -0.001) end}, -- down
+        [11] = {down=function() incConstant("d", 0.001) end}, -- up
+        [10] = {down=function() incConstant("d", -0.001) end}, -- down
     },
     -- Joystick 2
     {
-        ["x"] = function(axis) rotation = axis end,
-        [1] = {down=function() gear = "high" end}
+        ["x"] = function(axis)
+            if not fudgeMode then
+                rotation = axis
+            else
+                fudgeMovement = axis
+            end
+        end,
+        [1] = {down=function() gear = "high" end},
+        [6] = fudgeButton(wheels.frontLeft),
+        [7] = fudgeButton(wheels.rearLeft),
+        [11] = fudgeButton(wheels.frontRight),
+        [10] = fudgeButton(wheels.rearRight),
     },
     -- Joystick 3
     {
