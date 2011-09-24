@@ -8,16 +8,16 @@ Useful indexes of a PID table:
     errFunc: Function used to calculate the error. Takes two arguments: actual
              and target. Defaults to the difference of target from actual.
     output (read-only): The calculated output of the manipulated variable
+    timerNew: A function to create a timer.
 
 There are other indexes, but you shouldn't touch them.
 --]]
 
-local wpilib = require "wpilib"
 local setmetatable = setmetatable
 
 module(...)
 
-PID = {}
+PID = {timerNew=function() return nil end}
 
 local function defaultError(actual, target)
     return target - actual
@@ -57,7 +57,7 @@ function PID:reset()
     self.integral = 0
     self.target = 0
     self.output = 0
-    self.timer = wpilib.Timer()
+    self.timer = self.timerNew()
 end
 
 -- Start the PID loop's internal timer
@@ -87,8 +87,12 @@ The function returns the output value.
 --]]
 function PID:update(actual, time)
     if not time then
-        time = self.timer:Get()
-        self.timer:Reset()
+        if self.timer then
+            time = self.timer:Get()
+            self.timer:Reset()
+        else
+            error("no timer provided")
+        end
     end
     
     if time <= 0 then time = 0.001 end
