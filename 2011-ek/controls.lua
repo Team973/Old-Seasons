@@ -40,13 +40,19 @@ end
 storeState()
 
 -- handleButton calls the appropriate event handlers for a single button.
-local function handleButton(buttonTable, prev, curr)
-    if curr and not prev then
-        if buttonTable.down then buttonTable.down() end
-    elseif not curr and prev then
-        if buttonTable.up then buttonTable.up() end
+local function handleButton(buttonHandler, prev, curr)
+    if type(buttonHandler) == "function" then
+        -- If the handler is a function, then it's the button down event.
+        if curr and not prev then buttonHandler() end
+        return
     end
-    if buttonTable.tick then buttonTable.tick(curr) end
+
+    if curr and not prev then
+        if buttonHandler.down then buttonHandler.down() end
+    elseif not curr and prev then
+        if buttonHandler.up then buttonHandler.up() end
+    end
+    if buttonHandler.tick then buttonHandler.tick(curr) end
 end
 
 -- update calls the event handlers.
@@ -59,9 +65,9 @@ function update(map)
         -- Update button events
         for button = 1, numButtons do
             local currValue = stick:GetRawButton(button)
-            local buttonTable = stickMap[button]
-            if buttonTable then
-                handleButton(buttonTable, previousState[i][button], currValue)
+            local buttonHandler = stickMap[button]
+            if buttonHandler then
+                handleButton(buttonHandler, previousState[i][button], currValue)
             end
         end
         -- Call update
