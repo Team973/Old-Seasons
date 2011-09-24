@@ -3,6 +3,7 @@
 local wpilib = require("wpilib")
 
 local ipairs = ipairs
+local type = type
 
 module(...)
 
