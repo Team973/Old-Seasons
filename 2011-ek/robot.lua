@@ -27,6 +27,10 @@ local compressor, pressureSwitch, gearSwitch, wheels
 function run()
     lcd.print(1, "Ready")
     lcd.update()
+
+    -- Init
+    pid.PID.timerNew = wpilib.Timer
+
     -- Main loop
     while true do
         if wpilib.IsDisabled() then
