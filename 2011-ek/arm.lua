@@ -42,12 +42,12 @@ function clawPistons(state)
     -- Remember that close piston commands opposite for safety reasons.
     if state == 1 then
         -- Open
-        return true, true
+        return true, false
     elseif state == 0 then
         -- Closed
-        return false, false
+        return false, true
     else
         -- Neutral
-        return false, true
+        return false, false
     end
 end
