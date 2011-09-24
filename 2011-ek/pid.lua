@@ -62,13 +62,17 @@ end
 
 -- Start the PID loop's internal timer
 function PID:start()
-    self.timer:Start()
-    self.timer:Reset()
+    if self.timer then
+        self.timer:Start()
+        self.timer:Reset()
+    end
 end
 
 -- Stop the PID loop's internal timer
 function PID:stop()
-    self.timer:Stop()
+    if self.timer then
+        self.timer:Stop()
+    end
 end
 
 --[[
