@@ -135,7 +135,19 @@ function teleop()
 
                 local deadband = 0.1
                 if math.abs(strafe.x) > deadband or math.abs(strafe.y) > deadband or math.abs(rotation) > deadband then
-                    wheel.driveMotor:Set(-value.speed)
+                    local targetAngle = value.angleDeg
+                    while targetAngle > 180 do
+                        targetAngle = targetAngle - 360
+                    end
+                    while targetAngle < -180 do
+                        targetAngle = targetAngle + 360
+                    end
+
+                    if math.abs(targetAngle) < 90 or wheelName == "frontLeft" or wheelName == "frontRight" then
+                        wheel.driveMotor:Set(-value.speed)
+                    else
+                        wheel.driveMotor:Set(value.speed)
+                    end
                     wheel.turnPID.target = value.angleDeg
                 else
                     -- In deadband
@@ -358,7 +370,6 @@ controlMap =
 {
     -- Joystick 1
     {
-        ["x"] = function(axis) strafe.x = axis end,
         ["y"] = function(axis) strafe.y = -axis end,
         [1] = {down=function() gear = "low" end},
         [6] = {down=function() incConstant("p", 0.001) end}, -- up
