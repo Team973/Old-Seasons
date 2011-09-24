@@ -22,13 +22,13 @@ local watchdogEnabled = false
 local feedWatchdog, enableWatchdog, disableWatchdog
 
 local hellautonomous, teleop, calibrate
-local controlMap, strafe, rotation, gear
-local armPreset, elevatorMovement, clawState, intakeOn, wristUp
+local controlMap, strafe, rotation
+local armPreset, elevatorMovement, clawState, intakeControl, wristUp
 local fudgeMode, fudgeWheel, fudgeMovement
 
-local compressor, pressureSwitch, gearSwitch
+local compressor, pressureSwitch
 local elevatorEncoder, elevatorMotorA, elevatorMotorB
-local wristUpPiston, wristDownPiston
+local wristPiston
 local clawOpenPiston, clawClosePiston, clawSwitch, clawIntakeMotor
 local elevatorPID
 local wheels
@@ -113,16 +113,6 @@ function teleop()
         end
 
         -- Drive
-        if gear == "low" then
-            gearSwitch:Set(false)
-        elseif gear == "high" then
-            gearSwitch:Set(true)
-        else
-            -- Unrecognized state, default to low gear
-            -- TODO: log error
-            gearSwitch:Set(false)
-        end
-
         if not fudgeMode then
             -- TODO: gyro
             local wheelValues = drive.calculate(
@@ -190,18 +180,12 @@ function teleop()
         clawOpenPiston:Set(openPistonValue)
         clawClosePiston:Set(closePistonValue)
 
-        if intakeOn then
-            clawIntakeMotor:Set(1)
-        else
-            clawIntakeMotor:Set(0)
-        end
+        clawIntakeMotor:Set(intakeControl)
 
         if wristUp then
-            wristUpPiston:Set(true)
-            wristDownPiston:Set(false)
+            wristPiston:Set(true)
         else
-            wristUpPiston:Set(false)
-            wristDownPiston:Set(true)
+            wristPiston:Set(false)
         end
         
         -- Iteration cleanup
@@ -252,14 +236,12 @@ end
 -- Don't forget to add to declarations at the top!
 compressor = wpilib.Relay(4, 1, wpilib.Relay_kForwardOnly)
 pressureSwitch = wpilib.DigitalInput(4, 13)
-gearSwitch = wpilib.Solenoid(7, 1)
 
 elevatorEncoder = wpilib.Encoder(6, 1, 6, 2)
 elevatorMotorA = wpilib.Victor(6, 1)
 elevatorMotorB = wpilib.Victor(6, 2)
 
-wristUpPiston = wpilib.Solenoid(7, 4)
-wristDownPiston = wpilib.Solenoid(7, 5)
+wristPiston = wpilib.Solenoid(7, 1)
 
 clawOpenPiston = wpilib.Solenoid(7, 2)
 clawClosePiston = wpilib.Solenoid(7, 3)
@@ -322,12 +304,11 @@ end
 -- Controls
 strafe = {x=0, y=0}
 rotation = 0
-gear = "low"
 
 armPreset = "bottom"
 elevatorMovement = 0.0
 clawState = 0
-intakeOn = false
+intakeControl = 0
 
 fudgeMode = false
 fudgeWheel = nil
@@ -371,7 +352,6 @@ controlMap =
     -- Joystick 1
     {
         ["y"] = function(axis) strafe.y = -axis end,
-        [1] = {down=function() gear = "low" end},
         [6] = {down=function() incConstant("p", 0.001) end}, -- up
         [7] = {down=function() incConstant("p", -0.001) end}, -- down
         [11] = {down=function() incConstant("d", 0.001) end}, -- up
@@ -386,7 +366,6 @@ controlMap =
                 fudgeMovement = axis
             end
         end,
-        [1] = {down=function() gear = "high" end},
         [6] = fudgeButton(wheels.frontLeft),
         [7] = fudgeButton(wheels.rearLeft),
         [11] = fudgeButton(wheels.frontRight),
@@ -400,14 +379,18 @@ controlMap =
         [3] = {
             down=function()
                 clawState = -1
-                intakeOn = true
+                intakeControl = 1
             end,
             up=function()
-                intakeOn = false
+                intakeControl = 0
             end,
         },
         [4] = function() wristUp = true end,
         [5] = function() wristUp = false end,
+        [6] = {
+            down=function() intakeControl = -1 end,
+            up=function() intakeControl = 0 end,
+        },
         -- TODO: presets
         update = function(stick)
             if math.abs(stick:GetX()) > 0.5 then
