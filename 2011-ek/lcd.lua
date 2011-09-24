@@ -1,5 +1,6 @@
 -- lcd.lua
 
+local string = require "string"
 local wpilib = require "wpilib"
 
 module(...)
@@ -17,8 +18,8 @@ if enableLcd then
         wpilib.DriverStationLCD_kUser_Line6,
     }
 
-    function print(line, msg)
-        lcd:PrintLine(lineConstants[line], msg)
+    function print(line, format, ...)
+        lcd:PrintLine(lineConstants[line], string.format(format, ...))
     end
     
     function update()

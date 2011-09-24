@@ -5,7 +5,6 @@ local drive = require("drive")
 local lcd = require("lcd")
 local math = require("math")
 local pid = require("pid")
-local string = require("string")
 local wpilib = require("wpilib")
 
 local pairs = pairs
@@ -82,11 +81,11 @@ function teleop()
         end
         local i = 2
         for _, wheel in pairs(wheels) do
-            lcd.print(i, string.format("%s T%.1f O%.1f", wheel.shortName, wheel.turnPID.target, wheel.turnPID.output))
+            lcd.print(i, "%s T%.1f O%.1f", wheel.shortName, wheel.turnPID.target, wheel.turnPID.output)
             i = i + 1
         end
         local turnPID = wheels.frontLeft.turnPID
-        lcd.print(6, string.format("P%.4f D%.4f", turnPID.p, turnPID.d))
+        lcd.print(6, "P%.4f D%.4f", turnPID.p, turnPID.d)
         lcd.update()
 
         -- Read controls
