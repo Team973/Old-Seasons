@@ -98,7 +98,7 @@ controlMap =
         ["y"] = function(axis) wristControl = axis end,
         update=function(stick)
             if stick:GetRawButton(1) then
-                intakeControl = 1
+                intakeControl = 0.6
             elseif stick:GetRawButton(2) or stick:GetRawButton(3) or stick:GetRawButton(4) or stick:GetRawButton(5) then
                 intakeControl = -1
             else
