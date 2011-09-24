@@ -11,6 +11,9 @@ local pairs = pairs
 
 module(..., package.seeall)
 
+-- Inject WPILib timer object into PID
+pid.PID.timerNew = wpilib.Timer
+
 local TELEOP_LOOP_LAG = 0.005
 
 -- Declarations
@@ -26,9 +29,6 @@ local compressor, pressureSwitch, gearSwitch, wheels
 function run()
     lcd.print(1, "Ready")
     lcd.update()
-
-    -- Init
-    pid.PID.timerNew = wpilib.Timer
 
     -- Main loop
     while true do
