@@ -28,20 +28,43 @@ local function newRobotEnv()
             end
             return env.package.loaded[name]
         end,
+        module=function(modname, ...)
+            local M
+            -- TODO: Support nested modules
+            if type(env.package.loaded[modname]) == type({}) then
+                M = env.package.loaded[modname]
+            else
+                M = {}
+            end
+
+            M._NAME = modname
+            M._M = M
+            -- TODO: Support nested modules
+            M._PACKAGE = ""
+
+            env[modname] = M
+            env.package.loaded[modname] = M
+            setfenv(2, M)
+
+            for _, f in ipairs{...} do
+                f(M)
+            end
+        end,
     }
     env._G = env
     env.package.loaded._G = env
     setmetatable(env, {__index=_G})
+    setmetatable(env.package, {__index=package})
     return env
 end
 
 local robotEnv, task
 
 function love.load()
-    local bootloader = loadfile(sourceRoot.."boot.lua")
     robotEnv = newRobotEnv()
-    setfenv(bootloader, robotEnv)
     task = coroutine.create(function()
+        local bootloader = loadfile(sourceRoot .. "boot.lua")
+        setfenv(bootloader, robotEnv)
         bootloader("boot")
     end)
     success, message = coroutine.resume(task)
@@ -56,5 +79,9 @@ function love.update()
 end
 
 function love.draw()
-    love.graphics.print("Hello World", 400, 300)
+    for i = 1, 6 do
+        local line = wpilib.DriverStationLCD_kUser_Line1 + (i - 1)
+        love.graphics.print(wpilib.DATA.lcd.current[line], 400, 300 + (i - 1) * 25)
+    end
+    love.graphics.setCaption("Robot Simulator")
 end
