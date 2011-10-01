@@ -9,7 +9,7 @@ local input = {
 }
 
 -- Constants
-local screenW, screenH = 800, 600
+local screenW, screenH
 local lcdX, lcdY = 550, 450
 local lcdFontSize = 12
 local lcdFont
@@ -18,9 +18,8 @@ function love.load()
     simThread = love.thread.newThread("simulator", "simulator.lua")
     simThread:start()
 
-    love.graphics.setMode(screenW, screenH)
-    love.graphics.setCaption("Robot Simulator")
-
+    screenW = love.graphics.getWidth()
+    screenH = love.graphics.getHeight()
     lcdFont = love.graphics.newFont(lcdFontSize)
 end
 
