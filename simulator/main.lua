@@ -2,12 +2,26 @@ require "TSerial"
 require "wpilib"
 
 local simThread
-local input = {}, lastData
+local lastData
+local input = {
+    enabled = false,
+    teleoperated = true,
+}
+
+-- Constants
+local screenW, screenH = 800, 600
+local lcdX, lcdY = 550, 450
+local lcdFontSize = 12
+local lcdFont
 
 function love.load()
     simThread = love.thread.newThread("simulator", "simulator.lua")
     simThread:start()
+
+    love.graphics.setMode(screenW, screenH)
     love.graphics.setCaption("Robot Simulator")
+
+    lcdFont = love.graphics.newFont(lcdFontSize)
 end
 
 function love.update()
@@ -37,8 +51,30 @@ function love.keypressed(key)
 end
 
 function love.draw()
-    for i = 1, 6 do
-        local line = wpilib.DriverStationLCD_kUser_Line1 + (i - 1)
-        love.graphics.print(lastData.lcd.current[line], 400, 300 + (i - 1) * 25)
+    -- Field state
+    if input.enabled then
+        love.graphics.setColor(0, 255, 0, 255)
+    else
+        love.graphics.setColor(255, 0, 0, 255)
     end
+    if input.teleoperated then
+        love.graphics.print("Teleoperated", 0, 0)
+    else
+        love.graphics.print("Autonomous", 0, 0)
+    end
+
+    -- LCD
+    love.graphics.setColor(255, 255, 255, 255)
+    love.graphics.rectangle("fill", lcdX, lcdY, screenW - lcdX, screenH - lcdY)
+
+    local lcdMessage = ""
+    for line = wpilib.DriverStationLCD_kUser_Line1, wpilib.DriverStationLCD_kUser_Line6 do
+        if line > wpilib.DriverStationLCD_kUser_Line1 then
+            lcdMessage = lcdMessage .. "\n"
+        end
+        lcdMessage = lcdMessage .. lastData.lcd.current[line]
+    end
+    love.graphics.setColor(0, 0, 0, 255)
+    love.graphics.setFont(lcdFont)
+    love.graphics.printf(lcdMessage, lcdX, lcdY, screenW - lcdX)
 end
