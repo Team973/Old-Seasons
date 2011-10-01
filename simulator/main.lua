@@ -76,4 +76,11 @@ function love.draw()
     love.graphics.setColor(0, 0, 0, 255)
     love.graphics.setFont(lcdFont)
     love.graphics.printf(lcdMessage, lcdX, lcdY, screenW - lcdX)
+
+    -- Motors
+    love.graphics.setColor(255, 255, 255, 255)
+    love.graphics.print(string.format("%.1f %.1f", lastData.pwms[4][7], lastData.pwms[4][8]), 25, 100)
+    love.graphics.print(string.format("%.1f %.1f", lastData.pwms[4][1], lastData.pwms[4][2]), 125, 100)
+    love.graphics.print(string.format("%.1f %.1f", lastData.pwms[4][6], lastData.pwms[4][5]), 25, 200)
+    love.graphics.print(string.format("%.1f %.1f", lastData.pwms[4][3], lastData.pwms[4][4]), 125, 200)
 end
