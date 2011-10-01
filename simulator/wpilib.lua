@@ -1,6 +1,9 @@
 -- mock WPILib
 
-require("love.joystick")
+require "love.joystick"
+require "love.thread"
+require "love.timer"
+require "TSerial"
 
 local coroutine = coroutine
 local love = love
@@ -8,14 +11,26 @@ local os = os
 local pairs = pairs
 local print = print
 local string = string
+local TSerial = TSerial
 
 module(...)
 
-DATA = {}
+local IN = {}
+local OUT = {}
 
-function Wait(time)
-    print("WAITING")
-    coroutine.yield()
+function Wait(seconds)
+    -- Send heartbeat
+    local t = love.thread.getThread()
+    t:send("heartbeat", TSerial.pack({data=OUT}))
+
+    -- Receive input (if available)
+    local input = t:receive("input")
+    if input then
+        IN = TSerial.unpack(input)
+    end
+
+    -- Do sleep
+    love.timer.sleep(seconds * 1000)
 end
 
 local function realJoystick(port)
@@ -88,34 +103,34 @@ local function blankLCD()
     }
 end
 
-DATA.lcd = {current = blankLCD(), new = blankLCD()}
+OUT.lcd = {current = blankLCD(), new = blankLCD()}
 
 function DriverStationLCD_GetInstance()
     return {
         UpdateLCD = function(self)
             -- TODO: Swap tables instead of using more memory
-            DATA.lcd.current, DATA.lcd.new = DATA.lcd.new, {}
-            for line, data in pairs(DATA.lcd.current) do
-                DATA.lcd.new[line] = data
+            OUT.lcd.current, OUT.lcd.new = OUT.lcd.new, {}
+            for line, data in pairs(OUT.lcd.current) do
+                OUT.lcd.new[line] = data
             end
         end,
         Clear = function(self)
             DriverStationLCD_NewData = blankLCD()
         end,
         Print = function(self, line, col, s)
-            local curr = DATA.lcd.new[line]
-            DATA.lcd.new[line] = string.sub(curr, 1, col - 1) ..
+            local curr = OUT.lcd.new[line]
+            OUT.lcd.new[line] = string.sub(curr, 1, col - 1) ..
                     string.sub(s, 1, DriverStationLCD_kLineLength - (col - 1)) ..
                     string.sub(curr, col + #s)
         end,
         PrintLine = function(self, line, s)
-            DATA.lcd.new[line] = string.sub(s, 1, DriverStationLCD_kLineLength) ..
+            OUT.lcd.new[line] = string.sub(s, 1, DriverStationLCD_kLineLength) ..
                     string.rep(" ", DriverStationLCD_kLineLength - #s)
         end,
     }
 end
 
-DATA.relays = {}
+OUT.relays = {}
 
 Relay_kOff = 0
 Relay_kOn = 1
@@ -127,30 +142,30 @@ Relay_kForwardOnly = 1
 Relay_kReverseOnly = 2
 
 function Relay(slot, channel, direction)
-    if not DATA.relays[slot] then DATA.relays[slot] = {} end
-    DATA.relays[slot][channel] = Relay_kOff
+    if not OUT.relays[slot] then OUT.relays[slot] = {} end
+    OUT.relays[slot][channel] = Relay_kOff
     return {
         Set=function(self, value)
-            DATA.relays[slot][channel] = value
+            OUT.relays[slot][channel] = value
         end,
         SetDirection=function(self, direction)
         end,
     }
 end
 
-DATA.pwms = {}
+OUT.pwms = {}
 function SpeedController(slot, channel)
     if not channel then
         slot, channel = 4, channel
     end
-    if not DATA.pwms[slot] then DATA.pwms[slot] = {} end
-    DATA.pwms[slot][channel] = 0.0
+    if not OUT.pwms[slot] then OUT.pwms[slot] = {} end
+    OUT.pwms[slot][channel] = 0.0
     return {
         Get=function(self)
-            return DATA.pwms[slot][channel]
+            return OUT.pwms[slot][channel]
         end,
         Set=function(self, value)
-            DATA.pwms[slot][channel] = value
+            OUT.pwms[slot][channel] = value
         end,
     }
 end
@@ -158,19 +173,19 @@ end
 Jaguar = SpeedController
 Victor = SpeedController
 
-DATA.din = {}
+OUT.din = {}
 function DigitalInput(slot, channel)
     if not channel then
         slot, channel = 4, channel
     end
-    if not DATA.din[slot] then DATA.din[slot] = {} end
-    DATA.din[slot][channel] = false
+    if not OUT.din[slot] then OUT.din[slot] = {} end
+    OUT.din[slot][channel] = false
     return {
         Get=function(self)
-            return DATA.din[slot][channel]
+            return OUT.din[slot][channel]
         end,
         GetInt=function(self)
-            if DATA.din[slot][channel] then
+            if OUT.din[slot][channel] then
                 return 1
             else
                 return 0
@@ -179,7 +194,7 @@ function DigitalInput(slot, channel)
     }
 end
 
-DATA.encoders = {}
+OUT.encoders = {}
 function Encoder(...)
     -- TODO
     return {
@@ -200,19 +215,19 @@ function Encoder(...)
     }
 end
 
-DATA.solenoids = {}
+OUT.solenoids = {}
 function Solenoid(slot, channel)
     if not channel then
         slot, channel = 8, channel
     end
-    if not DATA.solenoids[slot] then DATA.solenoids[slot] = {} end
-    DATA.solenoids[slot][channel] = false
+    if not OUT.solenoids[slot] then OUT.solenoids[slot] = {} end
+    OUT.solenoids[slot][channel] = false
     return {
         Get=function(self)
-            return DATA.solenoids[slot][channel]
+            return OUT.solenoids[slot][channel]
         end,
         Set=function(self, on)
-            DATA.solenoids[slot][channel] = on
+            OUT.solenoids[slot][channel] = on
         end,
     }
 end
@@ -252,21 +267,21 @@ function GetWatchdog()
     }
 end
 
-DATA.enabled = false
-DATA.teleoperated = true
+IN.enabled = false
+IN.teleoperated = true
 
 function IsEnabled()
-    return DATA.enabled
+    return IN.enabled
 end
 
 function IsDisabled()
-    return not DATA.enabled
+    return not IN.enabled
 end
 
 function IsAutonomous()
-    return not DATA.teleoperated
+    return not IN.teleoperated
 end
 
 function IsOperatorControl()
-    return DATA.teleoperated
+    return IN.teleoperated
 end
