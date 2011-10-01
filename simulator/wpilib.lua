@@ -164,6 +164,11 @@ function SpeedController(slot, channel)
             return OUT.pwms[slot][channel]
         end,
         Set=function(self, value)
+            if value > 1.0 then
+                value = 1.0
+            elseif value < -1.0 then
+                value = -1.0
+            end
             OUT.pwms[slot][channel] = value
         end,
     }
