@@ -15,8 +15,7 @@ local TSerial = TSerial
 
 module(...)
 
-local IN = {}
-local OUT = {}
+local IN, OUT = {}, {}
 
 function Wait(seconds)
     -- Send heartbeat
