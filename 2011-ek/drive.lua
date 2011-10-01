@@ -55,15 +55,37 @@ function calculate(x, y, w, gyroDeg, wheelBase, trackWidth)
     return wheels
 end
 
-function angleError(current, target)
-    local delta = target - current
-    while delta > 180 do
-        delta = delta - 360
+-- Wraps an angle (in degrees) to (-180, 180].
+local function normalizeAngle(theta)
+    while theta > 180 do
+        theta = theta - 360
     end
-    while delta < -180 do
-        return delta + 360
+    while theta < -180 do
+        theta = theta + 360
     end
-    return delta
+    return theta
+end
+
+-- Calculate the error and the flip of the motor.
+function calculateTurn(current, target)
+    local err, flip = normalizeAngle(target - current), false
+    if math.abs(err) > 90 then
+        err, flip = normalizeAngle(err + 180), true
+    end
+    return err, flip
+end
+
+function driveScale(err, flip)
+    local scale
+    if math.abs(err) < 45 then
+        scale = math.cos(math.rad(err))
+    else
+        scale = 0
+    end
+    if flip then
+        scale = -scale
+    end
+    return scale
 end
 
 -- vim: ft=lua et ts=4 sts=4 sw=4
