@@ -23,14 +23,12 @@ local feedWatchdog, enableWatchdog, disableWatchdog
 
 local hellautonomous, teleop, calibrate
 local controlMap, strafe, rotation
-local armPreset, elevatorMovement, clawState, intakeControl, wristUp
+local armPreset, clawState, intakeControl, wristUp
 local fudgeMode, fudgeWheel, fudgeMovement
 
 local compressor, pressureSwitch
-local elevatorEncoder, elevatorMotorA, elevatorMotorB
 local wristPiston
 local clawOpenPiston, clawClosePiston, clawSwitch, clawIntakeMotor
-local elevatorPID
 local wheels
 -- End Declarations
 
@@ -78,10 +76,6 @@ function teleop()
         wheel.turnEncoder:Start()
     end
 
-    elevatorEncoder:Reset()
-    elevatorEncoder:Start()
-    elevatorPID:start()
-
     while wpilib.IsOperatorControl() and wpilib.IsEnabled() do
         enableWatchdog()
         feedWatchdog()
@@ -93,7 +87,6 @@ function teleop()
         end
         local i = 2
         for _, wheel in pairs(wheels) do
-            --lcd.print(i, "%s T%.1f O%.1f", wheel.shortName, wheel.turnPID.target, wheel.turnPID.output)
             lcd.print(i, "%s A%.1f", wheel.shortName, wheel.turnEncoder:GetRaw() / 4.0)
             i = i + 1
         end
@@ -161,21 +154,6 @@ function teleop()
         end
 
         -- Arm
-        if elevatorMovement then
-            elevatorMotorA:Set(elevatorMovement)
-            elevatorMotorB:Set(elevatorMovement)
-        else
-            if armPreset then
-                elevatorPID.p = arm.presetElevatorTarget(armPreset)
-            end
-
-            local currentElevatorPosition = elevatorEncoder:GetRaw() / 4.0
-            elevatorPID.p = arm.elevatorP(currentElevatorPosition, elevatorPID.target)
-            elevatorPID:update(currentElevatorPosition)
-            elevatorMotorA:Set(elevatorPID.output)
-            elevatorMotorB:Set(elevatorPID.output)
-        end
-
         openPistonValue, closePistonValue = arm.clawPistons(clawState)
         clawOpenPiston:Set(openPistonValue)
         clawClosePiston:Set(closePistonValue)
@@ -237,18 +215,12 @@ end
 compressor = wpilib.Relay(4, 1, wpilib.Relay_kForwardOnly)
 pressureSwitch = wpilib.DigitalInput(4, 13)
 
-elevatorEncoder = wpilib.Encoder(6, 1, 6, 2)
-elevatorMotorA = wpilib.Victor(6, 1)
-elevatorMotorB = wpilib.Victor(6, 2)
-
 wristPiston = wpilib.Solenoid(7, 1)
 
 clawOpenPiston = wpilib.Solenoid(7, 2)
 clawClosePiston = wpilib.Solenoid(7, 3)
 clawSwitch = wpilib.DigitalInput(6, 3)
 clawIntakeMotor = wpilib.Victor(6, 3)
-
-elevatorPID = pid.new(arm.elevatorP(0, 0), 0, 0)
 
 local turnPIDConstants = {p=0.05, i=0, d=0}
 
@@ -289,7 +261,7 @@ wheels = {
         turnMotor=wpilib.Jaguar(4, 4),
 
         calibrateSwitch=wpilib.DigitalInput(4, 6),
-        turnEncoder=wpilib.Encoder(6, 10, 6, 11),
+        turnEncoder=wpilib.Encoder(6, 13, 6, 14),
         turnPID=pid.new(turnPIDConstants.p, turnPIDConstants.i,
                         turnPIDConstants.d, drive.angleError),
     },
@@ -306,7 +278,6 @@ strafe = {x=0, y=0}
 rotation = 0
 
 armPreset = "bottom"
-elevatorMovement = 0.0
 clawState = 0
 intakeControl = 0
 
@@ -373,7 +344,6 @@ controlMap =
     },
     -- Joystick 3
     {
-        ["y"] = function(axis) elevatorControl = axis end,
         [1] = function() clawState = 1 end,
         [2] = function() clawState = 0 end,
         [3] = {
@@ -391,15 +361,6 @@ controlMap =
             down=function() intakeControl = -1 end,
             up=function() intakeControl = 0 end,
         },
-        -- TODO: presets
-        update = function(stick)
-            if math.abs(stick:GetX()) > 0.5 then
-                armPreset = nil
-                elevatorMovement = stick:GetY()
-            else
-                elevatorMovement = nil
-            end
-        end,
     },
     -- Joystick 4 (eStop Module)
     {
