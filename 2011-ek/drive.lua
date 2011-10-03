@@ -56,7 +56,7 @@ function calculate(x, y, w, gyroDeg, wheelBase, trackWidth)
 end
 
 -- Wraps an angle (in degrees) to (-180, 180].
-local function normalizeAngle(theta)
+function normalizeAngle(theta)
     while theta > 180 do
         theta = theta - 360
     end
@@ -73,6 +73,11 @@ function calculateTurn(current, target)
         err, flip = normalizeAngle(err + 180), true
     end
     return err, flip
+end
+
+function angleError(current, target)
+    local err, flip = calculateTurn(current, target)
+    return err
 end
 
 function driveScale(err, flip)

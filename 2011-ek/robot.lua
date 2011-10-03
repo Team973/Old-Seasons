@@ -117,27 +117,23 @@ function teleop()
                 local wheel = wheels[wheelName]
 
                 local deadband = 0.1
-                if math.abs(strafe.x) > deadband or math.abs(strafe.y) > deadband or math.abs(rotation) > deadband then
-                    local targetAngle = value.angleDeg
-                    while targetAngle > 180 do
-                        targetAngle = targetAngle - 360
-                    end
-                    while targetAngle < -180 do
-                        targetAngle = targetAngle + 360
-                    end
+                local currentTurn = wheel.turnEncoder:GetRaw() / 4.0
 
-                    if math.abs(targetAngle) < 90 or wheelName == "frontLeft" or wheelName == "frontRight" then
-                        wheel.driveMotor:Set(-value.speed)
-                    else
-                        wheel.driveMotor:Set(value.speed)
-                    end
-                    wheel.turnPID.target = value.angleDeg
+                if math.abs(strafe.x) > deadband or math.abs(strafe.y) > deadband or math.abs(rotation) > deadband then
+                    wheel.turnPID.target = drive.normalizeAngle(value.angleDeg)
+                    local driveScale = drive.driveScale(drive.calculateTurn(currentTurn, wheel.turnPID.target))
+                    wheel.driveMotor:Set(value.speed * driveScale)
                 else
                     -- In deadband
+                    if wheelName == "frontLeft" or wheelName == "rearRight" then
+                        wheel.turnPID.target = 45
+                    else
+                        wheel.turnPID.target = -45
+                    end
                     wheel.driveMotor:Set(0)
                 end
 
-                wheel.turnPID:update(wheel.turnEncoder:GetRaw() / 4.0)
+                wheel.turnPID:update(currentTurn)
                 wheel.turnMotor:Set(wheel.turnPID.output)
             end
         else
@@ -322,6 +318,7 @@ controlMap =
 {
     -- Joystick 1
     {
+        ["x"] = function(axis) strafe.x = axis end,
         ["y"] = function(axis) strafe.y = -axis end,
         [6] = {down=function() incConstant("p", 0.001) end}, -- up
         [7] = {down=function() incConstant("p", -0.001) end}, -- down
