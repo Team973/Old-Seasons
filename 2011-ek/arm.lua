@@ -23,31 +23,40 @@ function presetWrist(presetName)
     return presets[presetName].wrist
 end
 
--- Return the P constant for the elevator.
--- It depends on the current position and the target position.
-function elevatorP(current, target)
-    if target >= current then
-        -- Going up
-        return 1.0
+function elevatorOutput(control)
+    local steady = 0.0
+    local upScale = 1.0
+    local downScale = 1.0
+
+    local scale
+    if control >= 0 then
+        scale = upScale
     else
-        -- Going down
-        return 1.0
+        scale = downScale
     end
+
+    local output = control * scale + steady
+    if output > 1.0 then
+        output = 1.0
+    elseif output < -1.0 then
+        output = -1.0
+    end
+    return output
 end
 
 -- Get piston outputs from a chosen claw state.
 -- state is 1 for open, 0 for closed, -1 for neutral.
--- Returns openPiston, closePiston.
+-- Returns openPiston1, openPiston2, closePiston1, closePiston2.
 function clawPistons(state)
     -- Remember that close piston commands opposite for safety reasons.
     if state == 1 then
         -- Open
-        return true, false
+        return true, false, false, true
     elseif state == 0 then
         -- Closed
-        return false, true
+        return false, true, true, false
     else
         -- Neutral
-        return false, false
+        return false, true, false, true
     end
 end
