@@ -22,13 +22,16 @@ local watchdogEnabled = false
 local feedWatchdog, enableWatchdog, disableWatchdog
 
 local hellautonomous, teleop, calibrate
-local controlMap, strafe, rotation
-local armPreset, clawState, intakeControl, wristUp
+local controlMap, strafe, rotation, gear
+local armPreset, clawState, intakeControl, elevatorControl, wristUp
 local fudgeMode, fudgeWheel, fudgeMovement
 
-local compressor, pressureSwitch
+local compressor, pressureSwitch, gearSwitch
 local wristPiston
-local clawOpenPiston, clawClosePiston, clawSwitch, clawIntakeMotor
+local readyMinibotSolenoid, fireMinibotSolenoid
+local clawOpenPiston1, clawOpenPiston2, clawClosePiston1, clawClosePiston2
+local clawSwitch, clawIntakeMotor
+local elevatorMotor1, elevatorMotor2
 local wheels
 -- End Declarations
 
@@ -106,6 +109,16 @@ function teleop()
         end
 
         -- Drive
+        if gear == "low" then
+            gearSwitch:Set(false)
+        elseif gear == "high" then
+            gearSwitch:Set(true)
+        else
+            -- Unrecognized state, default to low gear
+            -- TODO: log error
+            gearSwitch:Set(false)
+        end
+
         if not fudgeMode then
             -- TODO: gyro
             local wheelValues = drive.calculate(
@@ -150,9 +163,11 @@ function teleop()
         end
 
         -- Arm
-        openPistonValue, closePistonValue = arm.clawPistons(clawState)
-        clawOpenPiston:Set(openPistonValue)
-        clawClosePiston:Set(closePistonValue)
+        open1, open2, close1, close2 = arm.clawPistons(clawState)
+        clawOpenPiston1:Set(open1)
+        clawOpenPiston2:Set(open2)
+        clawClosePiston1:Set(close1)
+        clawClosePiston2:Set(close2)
 
         clawIntakeMotor:Set(intakeControl)
 
@@ -161,6 +176,10 @@ function teleop()
         else
             wristPiston:Set(false)
         end
+
+        local elevatorSpeed = arm.elevatorOutput(elevatorControl)
+        elevatorMotor1:Set(elevatorSpeed)
+        elevatorMotor2:Set(elevatorSpeed)
         
         -- Iteration cleanup
         feedWatchdog()
@@ -210,13 +229,20 @@ end
 -- Don't forget to add to declarations at the top!
 compressor = wpilib.Relay(4, 1, wpilib.Relay_kForwardOnly)
 pressureSwitch = wpilib.DigitalInput(4, 13)
+gearSwitch = wpilib.Solenoid(7, 3)
 
-wristPiston = wpilib.Solenoid(7, 1)
+wristPiston = wpilib.Solenoid(7, 8)
+readyMinibotSolenoid = wpilib.Solenoid(7, 4)
+fireMinibotSolenoid = wpilib.Solenoid(7, 5)
 
-clawOpenPiston = wpilib.Solenoid(7, 2)
-clawClosePiston = wpilib.Solenoid(7, 3)
+clawOpenPiston1 = wpilib.Solenoid(7, 6)
+clawOpenPiston2 = wpilib.Solenoid(7, 7)
+clawClosePiston1 = wpilib.Solenoid(7, 1)
+clawClosePiston2 = wpilib.Solenoid(7, 2)
 clawSwitch = wpilib.DigitalInput(6, 3)
 clawIntakeMotor = wpilib.Victor(6, 3)
+elevatorMotor1 = wpilib.Victor(6, 4)
+elevatorMotor2 = wpilib.Victor(6, 5)
 
 local turnPIDConstants = {p=0.05, i=0, d=0}
 
@@ -272,9 +298,11 @@ end
 -- Controls
 strafe = {x=0, y=0}
 rotation = 0
+gear = false
 
 armPreset = "bottom"
 clawState = 0
+elevatorControl = 0
 intakeControl = 0
 
 fudgeMode = false
@@ -320,6 +348,7 @@ controlMap =
     {
         ["x"] = function(axis) strafe.x = axis end,
         ["y"] = function(axis) strafe.y = -axis end,
+        [1] = function() gear = "low" end,
         [6] = {down=function() incConstant("p", 0.001) end}, -- up
         [7] = {down=function() incConstant("p", -0.001) end}, -- down
         [11] = {down=function() incConstant("d", 0.001) end}, -- up
@@ -334,6 +363,7 @@ controlMap =
                 fudgeMovement = axis
             end
         end,
+        [1] = function() gear = "high" end,
         [6] = fudgeButton(wheels.frontLeft),
         [7] = fudgeButton(wheels.rearLeft),
         [11] = fudgeButton(wheels.frontRight),
@@ -358,6 +388,13 @@ controlMap =
             down=function() intakeControl = -1 end,
             up=function() intakeControl = 0 end,
         },
+        update = function(stick)
+            if stick:GetRawButton(10) then
+                elevatorControl = stick:GetY()
+            else
+                elevatorControl = 0.0
+            end
+        end,
     },
     -- Joystick 4 (eStop Module)
     {
