@@ -24,9 +24,9 @@ function presetWrist(presetName)
 end
 
 function elevatorOutput(control)
-    local steady = 0.0
-    local upScale = 1.0
-    local downScale = 1.0
+    local steady = 0.102
+    local upScale = 0.5
+    local downScale = 0.1
 
     local scale
     if control >= 0 then
