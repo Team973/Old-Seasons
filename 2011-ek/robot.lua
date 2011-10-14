@@ -177,9 +177,12 @@ function teleop()
             wristPiston:Set(false)
         end
 
-        local elevatorSpeed = arm.elevatorOutput(elevatorControl)
-        elevatorMotor1:Set(elevatorSpeed)
-        elevatorMotor2:Set(elevatorSpeed)
+        local elevatorSpeed = 0.0
+        if elevatorControl then
+            elevatorSpeed = arm.elevatorOutput(elevatorControl)
+        end
+        elevatorMotor1:Set(-elevatorSpeed)
+        elevatorMotor2:Set(-elevatorSpeed)
         
         -- Iteration cleanup
         feedWatchdog()
@@ -390,9 +393,9 @@ controlMap =
         },
         update = function(stick)
             if stick:GetRawButton(10) then
-                elevatorControl = stick:GetY()
+                elevatorControl = -stick:GetY()
             else
-                elevatorControl = 0.0
+                elevatorControl = nil
             end
         end,
     },
