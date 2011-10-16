@@ -238,7 +238,7 @@ wristPiston = wpilib.Solenoid(7, 8)
 readyMinibotSolenoid = wpilib.Solenoid(7, 4)
 fireMinibotSolenoid = wpilib.Solenoid(7, 5)
 
-elevatorEncoder = wpilib.Encoder(6, 1, 6, 2, false, wpilib.CounterBase_k4X)
+elevatorEncoder = wpilib.Encoder(6, 1, 6, 2, false, wpilib.CounterBase_k2X)
 
 clawOpenPiston1 = wpilib.Solenoid(7, 6)
 clawOpenPiston2 = wpilib.Solenoid(7, 7)
