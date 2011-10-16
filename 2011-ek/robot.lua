@@ -71,6 +71,9 @@ function teleop()
     lcd.update()
 
     --calibrate()
+    elevatorPID:start()
+    elevatorEncoder:Reset()
+    elevatorEncoder:Start()
 
     for _, wheel in pairs(wheels) do
         wheel.turnPID:start()
@@ -94,9 +97,6 @@ function teleop()
             lcd.print(i, "%s A%.1f", wheel.shortName, wheel.turnEncoder:GetRaw() / 4.0)
             i = i + 1
         end
-        local turnPID = wheels.frontLeft.turnPID
-        lcd.print(6, "P%.4f D%.4f", turnPID.p, turnPID.d)
-        lcd.update()
 
         -- Read controls
         controls.update(controlMap)
@@ -178,10 +178,17 @@ function teleop()
             wristPiston:Set(false)
         end
 
-        local elevatorSpeed = elevatorPID:update(elevatorEncoder:Get())
+        local currentElevatorPosition = elevatorEncoder:Get()
+        elevatorPID.p = arm.elevatorP(currentElevatorPosition, elevatorPID.target)
+        local elevatorSpeed = elevatorPID:update(currentElevatorPosition)
+        local STEADY = 0.102
+        elevatorSpeed = elevatorSpeed + STEADY
 
         elevatorMotor1:Set(-elevatorSpeed)
         elevatorMotor2:Set(-elevatorSpeed)
+
+        lcd.print(6, "E%.1f T%.1f", elevatorPID.previousError, elevatorPID.target)
+        lcd.update()
         
         -- Iteration cleanup
         feedWatchdog()
@@ -249,6 +256,7 @@ elevatorMotor1 = wpilib.Victor(6, 4)
 elevatorMotor2 = wpilib.Victor(6, 5)
 
 elevatorPID = pid.new(1)
+elevatorPID.min, elevatorPID.max = -0.5, 0.5
 
 local turnPIDConstants = {p=0.05, i=0, d=0}
 
@@ -395,6 +403,8 @@ controlMap =
             down=function() intakeControl = -1 end,
             up=function() intakeControl = 0 end,
         },
+        [8] = presetButton("bottom"),
+        [9] = presetButton("top"),
         update = function(stick)
             if stick:GetRawButton(10) then
                 elevatorControl = -stick:GetY()
@@ -402,8 +412,6 @@ controlMap =
                 elevatorControl = nil
             end
         end,
-        [7] = presetButton("top"),
-        [8] = presetButton("bottom"),
     },
     -- Joystick 4 (eStop Module)
     {
