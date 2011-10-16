@@ -23,7 +23,7 @@ local feedWatchdog, enableWatchdog, disableWatchdog
 
 local hellautonomous, teleop, calibrate
 local controlMap, strafe, rotation, gear
-local armPreset, clawState, intakeControl, elevatorControl, wristUp
+local clawState, intakeControl, elevatorControl, wristUp
 local fudgeMode, fudgeWheel, fudgeMovement
 
 local compressor, pressureSwitch, gearSwitch
@@ -177,10 +177,8 @@ function teleop()
             wristPiston:Set(false)
         end
 
-        local elevatorSpeed = 0.0
-        if elevatorControl then
-            elevatorSpeed = arm.elevatorOutput(elevatorControl)
-        end
+        local elevatorSpeed = elevatorPID:update(elevatorEncoder:Get())
+
         elevatorMotor1:Set(-elevatorSpeed)
         elevatorMotor2:Set(-elevatorSpeed)
         
@@ -249,6 +247,8 @@ clawIntakeMotor = wpilib.Victor(6, 3)
 elevatorMotor1 = wpilib.Victor(6, 4)
 elevatorMotor2 = wpilib.Victor(6, 5)
 
+elevatorPID = pid.new(1)
+
 local turnPIDConstants = {p=0.05, i=0, d=0}
 
 wheels = {
@@ -305,7 +305,6 @@ strafe = {x=0, y=0}
 rotation = 0
 gear = false
 
-armPreset = "bottom"
 clawState = 0
 elevatorControl = 0
 intakeControl = 0
@@ -339,8 +338,10 @@ end
 
 local function presetButton(name)
     return function()
-        armPreset = name
         local wristPreset = arm.presetWrist(name)
+        
+        elevatorPID.target = arm.presetElevatorTarget(name)
+
         if wristPreset ~= nil then
             wristUp = wristPreset
         end
@@ -400,6 +401,8 @@ controlMap =
                 elevatorControl = nil
             end
         end,
+        [7] = presetButton("top"),
+        [8] = presetButton("bottom"),
     },
     -- Joystick 4 (eStop Module)
     {
