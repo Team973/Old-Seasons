@@ -32,6 +32,7 @@ local readyMinibotSolenoid, fireMinibotSolenoid
 local clawOpenPiston1, clawOpenPiston2, clawClosePiston1, clawClosePiston2
 local clawSwitch, clawIntakeMotor
 local elevatorMotor1, elevatorMotor2
+local elevatorEncoder, elevatorPID
 local wheels
 -- End Declarations
 
