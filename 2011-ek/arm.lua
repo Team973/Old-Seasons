@@ -4,7 +4,11 @@ module(...)
 
 local presets = {
     bottom = {
-        elevator = 0.0,
+        elevator = 300.0,
+        wrist = nil,
+    },
+    top = {
+        elevator = 700.0,
         wrist = nil,
     },
 }
@@ -21,6 +25,16 @@ function presetWrist(presetName)
         return nil
     end
     return presets[presetName].wrist
+end
+
+function elevatorP(current, target)
+    if current <= target then
+        -- Elevator going up
+        return 0.0015
+    else
+        -- Elevator going down
+        return 0.0007
+    end
 end
 
 function elevatorOutput(control)
