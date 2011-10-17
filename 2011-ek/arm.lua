@@ -74,3 +74,17 @@ function clawPistons(state)
         return false, true, false, true
     end
 end
+
+local maxMotorRate = 1.0 -- in motor units/second
+function limitRate(curr, target, t)
+    local rate = (target - curr)/t
+    if (curr > 0 and target < 0) or (curr < 0 and target > 0) then
+        return 0.0
+    elseif rate > maxMotorRate then 
+        return curr + maxMotorRate/t
+    elseif rate < -maxMotorRate then 
+        return curr - maxMotorRate/t
+    else 
+        return target
+    end
+end
