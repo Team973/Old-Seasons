@@ -32,7 +32,7 @@ local readyMinibotSolenoid, fireMinibotSolenoid
 local clawOpenPiston1, clawOpenPiston2, clawClosePiston1, clawClosePiston2
 local clawSwitch, clawIntakeMotor
 local elevatorMotor1, elevatorMotor2
-local elevatorEncoder, elevatorPID
+local elevatorEncoder, elevatorPID, elevatorRateTimer
 local wheels
 -- End Declarations
 
@@ -74,6 +74,8 @@ function teleop()
     elevatorPID:start()
     elevatorEncoder:Reset()
     elevatorEncoder:Start()
+    elevatorRateTimer = wpilib.Timer()
+    elevatorRateTimer:Start()
 
     for _, wheel in pairs(wheels) do
         wheel.turnPID:start()
@@ -184,8 +186,9 @@ function teleop()
         local STEADY = 0.102
         elevatorSpeed = elevatorSpeed + STEADY
 
-        elevatorMotor1:Set(-elevatorSpeed)
-        elevatorMotor2:Set(-elevatorSpeed)
+        local rateT = elevatorRateTimer:Get()
+        elevatorMotor1:Set(arm.limitRate(elevatorMotor1:Get(), -elevatorSpeed, rateT))
+        elevatorMotor2:Set(arm.limitRate(elevatorMotor2:Get(), -elevatorSpeed, rateT))
 
         lcd.print(6, "E%.1f T%.1f", elevatorPID.previousError, elevatorPID.target)
         lcd.update()
