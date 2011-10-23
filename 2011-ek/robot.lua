@@ -400,6 +400,8 @@ controlMap =
         },
         [10] = function() zeroMode = true end,
     },
+    -- Joystick 2
+    {},
     -- Joystick 3
     {
         [1] = function() clawState = 1 end,
