@@ -24,6 +24,7 @@ local feedWatchdog, enableWatchdog, disableWatchdog
 local hellautonomous, teleop, calibrate
 local controlMap, strafe, rotation, gear
 local clawState, intakeControl, elevatorControl, wristUp
+local zeroMode
 local fudgeMode, fudgeWheel, fudgeMovement
 
 local compressor, pressureSwitch, gearSwitch
@@ -122,7 +123,17 @@ function teleop()
             gearSwitch:Set(false)
         end
 
-        if not fudgeMode then
+        if zeroMode then
+            -- TODO
+            for _, wheel in pairs(wheels) do
+                local currentTurn = wheel.turnEncoder:GetRaw() / 4.0
+                wheel.turnPID.errFunc = drive.normalizeAngle
+                wheel.turnPID.target = 0
+                wheel.turnPID:update(currentTurn)
+                wheel.turnMotor:Set(wheel.turnPID.output)
+                wheel.driveMotor:Set(0)
+            end
+        elseif not fudgeMode then
             -- TODO: gyro
             local wheelValues = drive.calculate(
                 strafe.x, strafe.y, rotation, 0,
@@ -324,6 +335,7 @@ clawState = 0
 elevatorControl = nil
 intakeControl = 0
 
+zeroMode = false
 fudgeMode = false
 fudgeWheel = nil
 fudgeMovement = 0.0
@@ -385,7 +397,8 @@ controlMap =
         [5] = {
            down=function() gear = "low" end,
            up=function() gear = "high" end,  
-    },
+        },
+        [10] = function() zeroMode = true end,
     },
     -- Joystick 3
     {
