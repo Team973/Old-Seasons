@@ -61,11 +61,10 @@ function update(map)
     for i, stick in ipairs(sticks) do
         local stickMap = map[i]
         -- Update axes
-        -- [
         if stickMap.x then stickMap.x(stick:GetX()) end
         if stickMap.y then stickMap.y(stick:GetY()) end
         if stickMap.rx then stickMap.rx(stick:GetRawAxis(3))end
-        if stickMap.ry then stickMap.ry(sitck:GetRawAxis(4))end
+        if stickMap.ry then stickMap.ry(stick:GetRawAxis(4))end
     
         -- Update button events
         for button = 1, numButtons do
