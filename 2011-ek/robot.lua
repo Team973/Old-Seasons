@@ -333,6 +333,7 @@ gear = false
 
 clawState = 0
 elevatorControl = nil
+wristUp = true
 intakeControl = 0
 
 zeroMode = false
