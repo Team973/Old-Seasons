@@ -176,9 +176,16 @@ function teleop()
 
         wristPiston:Set(not wristUp)
 
+        local elevatorSpeed
         local currentElevatorPosition = arm.elevatorEncoderToFeet(elevatorEncoder:Get())
-        elevatorPID.p = arm.elevatorP(currentElevatorPosition, elevatorPID.target)
-        local elevatorSpeed = elevatorPID:update(currentElevatorPosition)
+        if elevatorControl then
+            elevatorPID:stop()
+            elevatorSpeed = elevatorControl
+        else
+            elevatorPID:start()
+            elevatorPID.p = arm.elevatorP(currentElevatorPosition, elevatorPID.target)
+            elevatorSpeed = elevatorPID:update(currentElevatorPosition)
+        end
 
         elevatorMotor1:Set(-elevatorSpeed)
         elevatorMotor2:Set(-elevatorSpeed)
@@ -314,7 +321,7 @@ rotation = 0
 gear = false
 
 clawState = 0
-elevatorControl = 0
+elevatorControl = nil
 intakeControl = 0
 
 fudgeMode = false
@@ -403,8 +410,8 @@ controlMap =
         update = function(stick)
             if stick:GetRawButton(10) then
                 elevatorControl = -stick:GetY()
-            else
-                elevatorControl = nil
+            elseif elevatorControl ~= nil then
+                elevatorControl = 0
             end
         end,
     },
