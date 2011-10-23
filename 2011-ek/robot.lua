@@ -371,22 +371,21 @@ controlMap =
     {
         ["x"] = function(axis) strafe.x = axis end,
         ["y"] = function(axis) strafe.y = -axis end,
-        [1] = function() gear = "low" end,
-    },
-    -- Joystick 2
-    {
-        ["x"] = function(axis)
+        ["rx"] = function(axis)
             if not fudgeMode then
                 rotation = axis
             else
                 fudgeMovement = axis
             end
         end,
-        [1] = function() gear = "high" end,
-        [6] = fudgeButton(wheels.frontLeft),
-        [7] = fudgeButton(wheels.rearLeft),
-        [11] = fudgeButton(wheels.frontRight),
-        [10] = fudgeButton(wheels.rearRight),
+        [1] = fudgeButton(wheels.frontLeft),
+        [2] = fudgeButton(wheels.rearLeft),
+        [3] = fudgeButton(wheels.frontRight),
+        [4] = fudgeButton(wheels.rearRight),
+        [5] = {
+           down=function() gear = "low" end,
+           up=function() gear = "high" end,  
+    },
     },
     -- Joystick 3
     {
