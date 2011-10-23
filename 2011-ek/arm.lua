@@ -37,27 +37,6 @@ function elevatorP(current, target)
     end
 end
 
-function elevatorOutput(control)
-    local steady = 0.102
-    local upScale = 0.5
-    local downScale = 0.1
-
-    local scale
-    if control >= 0 then
-        scale = upScale
-    else
-        scale = downScale
-    end
-
-    local output = control * scale + steady
-    if output > 1.0 then
-        output = 1.0
-    elseif output < -1.0 then
-        output = -1.0
-    end
-    return output
-end
-
 -- Get piston outputs from a chosen claw state.
 -- state is 1 for open, 0 for closed, -1 for neutral.
 -- Returns openPiston1, openPiston2, closePiston1, closePiston2.
