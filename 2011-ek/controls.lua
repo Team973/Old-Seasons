@@ -63,8 +63,8 @@ function update(map)
         -- Update axes
         if stickMap.x then stickMap.x(stick:GetX()) end
         if stickMap.y then stickMap.y(stick:GetY()) end
-        if stickMap.rx then stickMap.rx(stick:GetRawAxis(3))end
-        if stickMap.ry then stickMap.ry(stick:GetRawAxis(4))end
+        if stickMap.rx then stickMap.rx(stick:GetRawAxis(4))end
+        if stickMap.ry then stickMap.ry(stick:GetRawAxis(5))end
     
         -- Update button events
         for button = 1, numButtons do
