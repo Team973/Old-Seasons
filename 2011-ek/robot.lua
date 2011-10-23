@@ -180,17 +180,16 @@ function teleop()
             wristPiston:Set(false)
         end
 
-        local currentElevatorPosition = elevatorEncoder:Get()
+        local currentElevatorPosition = arm.elevatorEncoderToFeet(elevatorEncoder:Get())
         elevatorPID.p = arm.elevatorP(currentElevatorPosition, elevatorPID.target)
         local elevatorSpeed = elevatorPID:update(currentElevatorPosition)
-        local STEADY = 0.102
-        elevatorSpeed = elevatorSpeed + STEADY
 
-        local rateT = elevatorRateTimer:Get()
-        elevatorMotor1:Set(arm.limitRate(elevatorMotor1:Get(), -elevatorSpeed, rateT))
-        elevatorMotor2:Set(arm.limitRate(elevatorMotor2:Get(), -elevatorSpeed, rateT))
+        elevatorMotor1:Set(-elevatorSpeed)
+        elevatorMotor2:Set(-elevatorSpeed)
 
-        lcd.print(6, "E%.1f T%.1f", elevatorPID.previousError, elevatorPID.target)
+        lcd.print(4, "P%.2f D%.2f", arm.UP_P, elevatorPID.d)
+        lcd.print(5, "P%.2f D%.2f", arm.DOWN_P, elevatorPID.d)
+        lcd.print(6, "E%.1f' T%.1f'", elevatorPID.previousError, elevatorPID.target)
         lcd.update()
         
         -- Iteration cleanup
@@ -247,7 +246,7 @@ wristPiston = wpilib.Solenoid(7, 8)
 readyMinibotSolenoid = wpilib.Solenoid(7, 4)
 fireMinibotSolenoid = wpilib.Solenoid(7, 5)
 
-elevatorEncoder = wpilib.Encoder(6, 1, 6, 2, false, wpilib.CounterBase_k2X)
+elevatorEncoder = wpilib.Encoder(6, 1, 6, 2, false, wpilib.CounterBase_k1X)
 
 clawOpenPiston1 = wpilib.Solenoid(7, 6)
 clawOpenPiston2 = wpilib.Solenoid(7, 7)
@@ -258,8 +257,8 @@ clawIntakeMotor = wpilib.Victor(6, 3)
 elevatorMotor1 = wpilib.Victor(6, 4)
 elevatorMotor2 = wpilib.Victor(6, 5)
 
-elevatorPID = pid.new(1)
-elevatorPID.min, elevatorPID.max = -0.5, 0.5
+elevatorPID = pid.new(1, 0, 0.01)
+elevatorPID.min, elevatorPID.max = -0.75, 0.75
 
 local turnPIDConstants = {p=0.05, i=0, d=0}
 
@@ -339,12 +338,14 @@ local function fudgeButton(wheel)
     }
 end
 
-local function incConstant(constant, delta)
-    for _, wheel in pairs(wheels) do
-        wheel.turnPID:stop()
-        wheel.turnPID[constant] = wheel.turnPID[constant] + delta
-        wheel.turnPID:reset()
-        wheel.turnPID:start()
+local function incConstant(tbl, name, pid, delta)
+    return function()
+        local target = pid.target
+        pid:start()
+        tbl[name] = tbl[name] + delta
+        pid:stop()
+        pid:reset()
+        pid.target = target
     end
 end
 
@@ -367,10 +368,12 @@ controlMap =
         ["x"] = function(axis) strafe.x = axis end,
         ["y"] = function(axis) strafe.y = -axis end,
         [1] = function() gear = "low" end,
-        [6] = {down=function() incConstant("p", 0.001) end}, -- up
-        [7] = {down=function() incConstant("p", -0.001) end}, -- down
-        [11] = {down=function() incConstant("d", 0.001) end}, -- up
-        [10] = {down=function() incConstant("d", -0.001) end}, -- down
+        [3] = incConstant(elevatorPID, "d", elevatorPID, 0.01), -- up
+        [2] = incConstant(elevatorPID, "d", elevatorPID, -0.01), -- down
+        [6] = incConstant(arm, "UP_P", elevatorPID, 0.01), -- up
+        [7] = incConstant(arm, "UP_P", elevatorPID, -0.01), -- down
+        [11] = incConstant(arm, "DOWN_P", elevatorPID, 0.01), -- up
+        [10] = incConstant(arm, "DOWN_P", elevatorPID, -0.01), -- down
     },
     -- Joystick 2
     {

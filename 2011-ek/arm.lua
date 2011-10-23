@@ -1,14 +1,16 @@
 -- arm.lua
 
+local math = require("math")
+
 module(...)
 
 local presets = {
     bottom = {
-        elevator = 300.0,
+        elevator = 2.0,
         wrist = nil,
     },
     top = {
-        elevator = 700.0,
+        elevator = 5.0,
         wrist = nil,
     },
 }
@@ -27,13 +29,26 @@ function presetWrist(presetName)
     return presets[presetName].wrist
 end
 
+local elevatorEncoderScale = (2 * math.pi / 100) / 12 -- feet / tick
+
+function elevatorEncoderToFeet(ticks)
+    return ticks * elevatorEncoderScale
+end
+
+function elevatorFeetToEncoder(feet)
+    return feet / elevatorEncoderScale
+end
+
+UP_P = 0.55
+DOWN_P = 0.55
+
 function elevatorP(current, target)
     if current <= target then
         -- Elevator going up
-        return 0.0015
+        return UP_P
     else
         -- Elevator going down
-        return 0.0007
+        return DOWN_P
     end
 end
 
