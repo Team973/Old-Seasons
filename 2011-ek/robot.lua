@@ -391,10 +391,10 @@ controlMap =
                 fudgeMovement = axis
             end
         end,
-        [1] = fudgeButton(wheels.frontLeft),
-        [2] = fudgeButton(wheels.rearLeft),
-        [3] = fudgeButton(wheels.frontRight),
-        [4] = fudgeButton(wheels.rearRight),
+        [1] = fudgeButton(wheels.rearRight),
+        [2] = fudgeButton(wheels.frontRight),
+        [3] = fudgeButton(wheels.rearLeft),
+        [4] = fudgeButton(wheels.frontLeft),
         [5] = {
            down=function() gear = "low" end,
            up=function() gear = "high" end,  
