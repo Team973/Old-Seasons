@@ -174,11 +174,7 @@ function teleop()
 
         clawIntakeMotor:Set(intakeControl)
 
-        if wristUp then
-            wristPiston:Set(true)
-        else
-            wristPiston:Set(false)
-        end
+        wristPiston:Set(not wristUp)
 
         local currentElevatorPosition = arm.elevatorEncoderToFeet(elevatorEncoder:Get())
         elevatorPID.p = arm.elevatorP(currentElevatorPosition, elevatorPID.target)
@@ -189,7 +185,8 @@ function teleop()
 
         lcd.print(4, "P%.2f D%.2f", arm.UP_P, elevatorPID.d)
         lcd.print(5, "P%.2f D%.2f", arm.DOWN_P, elevatorPID.d)
-        lcd.print(6, "E%.1f' T%.1f'", elevatorPID.previousError, elevatorPID.target)
+        --lcd.print(6, "E%.1f' T%.1f'", elevatorPID.previousError, elevatorPID.target)
+        lcd.print(6, "%.2f'", currentElevatorPosition)
         lcd.update()
         
         -- Iteration cleanup
@@ -258,7 +255,7 @@ elevatorMotor1 = wpilib.Victor(6, 4)
 elevatorMotor2 = wpilib.Victor(6, 5)
 
 elevatorPID = pid.new(1, 0, 0.01)
-elevatorPID.min, elevatorPID.max = -0.75, 0.75
+elevatorPID.min, elevatorPID.max = -0.5, 0.5
 
 local turnPIDConstants = {p=0.05, i=0, d=0}
 
@@ -368,12 +365,6 @@ controlMap =
         ["x"] = function(axis) strafe.x = axis end,
         ["y"] = function(axis) strafe.y = -axis end,
         [1] = function() gear = "low" end,
-        [3] = incConstant(elevatorPID, "d", elevatorPID, 0.01), -- up
-        [2] = incConstant(elevatorPID, "d", elevatorPID, -0.01), -- down
-        [6] = incConstant(arm, "UP_P", elevatorPID, 0.01), -- up
-        [7] = incConstant(arm, "UP_P", elevatorPID, -0.01), -- down
-        [11] = incConstant(arm, "DOWN_P", elevatorPID, 0.01), -- up
-        [10] = incConstant(arm, "DOWN_P", elevatorPID, -0.01), -- down
     },
     -- Joystick 2
     {
@@ -403,14 +394,12 @@ controlMap =
                 intakeControl = 0
             end,
         },
-        [4] = function() wristUp = true end,
-        [5] = function() wristUp = false end,
+        [4] = function() wristUp = false end,
+        [5] = function() wristUp = true end,
         [6] = {
             down=function() intakeControl = -1 end,
             up=function() intakeControl = 0 end,
         },
-        [8] = presetButton("bottom"),
-        [9] = presetButton("top"),
         update = function(stick)
             if stick:GetRawButton(10) then
                 elevatorControl = -stick:GetY()
@@ -421,6 +410,15 @@ controlMap =
     },
     -- Joystick 4 (eStop Module)
     {
+        [2] = presetButton("slot"),
+        [3] = presetButton("carry"),
+        [4] = presetButton("pickup"),
+        [5] = presetButton("low"),
+        [6] = presetButton("middle"),
+        [7] = presetButton("high"),
+        [8] = presetButton("midLow"),
+        [9] = presetButton("midMiddle"),
+        [10] = presetButton("midHigh"),
     },
     -- Cypress Module
     cypress={},

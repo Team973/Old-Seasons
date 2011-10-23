@@ -5,14 +5,15 @@ local math = require("math")
 module(...)
 
 local presets = {
-    bottom = {
-        elevator = 2.0,
-        wrist = nil,
-    },
-    top = {
-        elevator = 5.0,
-        wrist = nil,
-    },
+    pickup = {elevator=0.08, wrist=false},
+    carry = {elevator=0.08, wrist=true},
+    slot = {elevator=0.08, wrist=true},
+    low = {elevator=0.08, wrist=true},
+    middle = {elevator=2.24, wrist=true},
+    high = {elevator=5.10, wrist=true},
+    midLow = {elevator=0.08, wrist=true},
+    midMiddle = {elevator=2.72, wrist=true},
+    midHigh = {elevator=5.66, wrist=true},
 }
 
 function presetElevatorTarget(presetName)
