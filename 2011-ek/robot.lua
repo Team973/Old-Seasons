@@ -400,6 +400,15 @@ controlMap =
            up=function() gear = "high" end,  
         },
         [10] = function() zeroMode = true end,
+        update = function(stick)
+            if stick:GetRawButton(6) then
+                if gear == "low" then
+                    rotation = rotation * 0.3
+                elseif gear == "high" then
+                    rotation = rotation * 0.3
+                end
+            end
+        end,
     },
     -- Joystick 2
     {},
