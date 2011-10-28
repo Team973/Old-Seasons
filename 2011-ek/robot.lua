@@ -28,6 +28,7 @@ local zeroMode
 local fudgeMode, fudgeWheel, fudgeMovement
 
 local compressor, pressureSwitch, gearSwitch
+local gyro, gyroChannel
 local wristPiston
 local readyMinibotSolenoid, fireMinibotSolenoid
 local clawOpenPiston1, clawOpenPiston2, clawClosePiston1, clawClosePiston2
@@ -36,6 +37,9 @@ local elevatorMotor1, elevatorMotor2
 local elevatorEncoder, elevatorPID, elevatorRateTimer
 local wheels
 -- End Declarations
+
+lcd.print(1, "RESETTING GYRO")
+lcd.update()
 
 function run()
     lcd.print(1, "Ready")
@@ -204,7 +208,7 @@ function teleop()
         lcd.print(4, "P%.2f D%.2f", arm.UP_P, elevatorPID.d)
         lcd.print(5, "P%.2f D%.2f", arm.DOWN_P, elevatorPID.d)
         --lcd.print(6, "E%.1f' T%.1f'", elevatorPID.previousError, elevatorPID.target)
-        lcd.print(6, "%.2f'", currentElevatorPosition)
+        lcd.print(6, "%.2fV %.2fdeg", gyroChannel:GetVoltage(), gyro:GetAngle())
         lcd.update()
         
         -- Iteration cleanup
@@ -256,6 +260,11 @@ end
 compressor = wpilib.Relay(4, 1, wpilib.Relay_kForwardOnly)
 pressureSwitch = wpilib.DigitalInput(4, 13)
 gearSwitch = wpilib.Solenoid(7, 3)
+
+gyroChannel = wpilib.AnalogChannel(1, 2)
+gyro = wpilib.Gyro(gyroChannel)
+gyro:SetSensitivity(0.006)
+gyro:Reset()
 
 wristPiston = wpilib.Solenoid(7, 8)
 readyMinibotSolenoid = wpilib.Solenoid(7, 4)
