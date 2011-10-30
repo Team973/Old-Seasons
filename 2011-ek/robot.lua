@@ -403,13 +403,13 @@ controlMap =
 {
     -- Joystick 1
     {
-        ["x"] = function(axis) strafe.x = deadband(-axis, 0.1) end,
-        ["y"] = function(axis) strafe.y = deadband(axis, 0.1) end,
+        ["x"] = function(axis) strafe.x = deadband(-axis, 0.15) end,
+        ["y"] = function(axis) strafe.y = deadband(axis, 0.15) end,
         ["rx"] = function(axis)
             if not fudgeMode then
-                rotation = deadband(axis, 0.1)
+                rotation = deadband(axis, 0.15)
             else
-                fudgeMovement = deadband(axis, 0.1)
+                fudgeMovement = deadband(axis, 0.15)
             end
         end,
         [1] = fudgeButton(wheels.rearRight),
