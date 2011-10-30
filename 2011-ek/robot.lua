@@ -207,8 +207,6 @@ function teleop()
 
         lcd.print(4, "P%.2f D%.2f", arm.UP_P, elevatorPID.d)
         lcd.print(5, "P%.2f D%.2f", arm.DOWN_P, elevatorPID.d)
-        --lcd.print(6, "E%.1f' T%.1f'", elevatorPID.previousError, elevatorPID.target)
-        lcd.print(6, "%.2fV %.2fdeg", gyroChannel:GetVoltage(), gyro:GetAngle())
         lcd.update()
         
         -- Iteration cleanup
@@ -259,7 +257,8 @@ end
 -- Don't forget to add to declarations at the top!
 
 local function LinearVictor(...)
-    return linearize.wrap(wpilib.Victor(...))
+    -- XXX: Linearization isn't working right now.
+    return wpilib.Victor(...)
 end
 
 compressor = wpilib.Relay(4, 1, wpilib.Relay_kForwardOnly)
