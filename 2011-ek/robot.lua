@@ -446,6 +446,9 @@ controlMap =
         },
         update = function(stick)
             elevatorControl = -stick:GetY()
+            if stick:GetRawButton(7) and stick:GetRawButton(8) then
+                restartRobot() 
+            end
         end,
     },
     -- Joystick 4 (eStop Module)
