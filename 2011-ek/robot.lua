@@ -424,9 +424,9 @@ controlMap =
         update = function(stick)
             if stick:GetRawButton(6) then
                 if gear == "low" then
-                    rotation = rotation * 0.3
+                    rotation = rotation * 0.5
                 elseif gear == "high" then
-                    rotation = rotation * 0.3
+                    rotation = rotation * 0.5
                 end
             end
         end,
