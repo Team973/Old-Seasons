@@ -128,7 +128,6 @@ function teleop()
         end
 
         if zeroMode then
-            -- TODO
             for _, wheel in pairs(wheels) do
                 local currentTurn = wheel.turnEncoder:GetRaw() / 4.0
                 wheel.turnPID.errFunc = drive.normalizeAngle
