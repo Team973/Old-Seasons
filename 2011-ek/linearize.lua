@@ -1,5 +1,7 @@
 -- linearize.lua
 
+local setmetatable = setmetatable 
+
 module(...)
 
 -- Convert a logical motor speed to a Victor input.
