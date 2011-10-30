@@ -139,8 +139,12 @@ function teleop()
             end
         elseif not fudgeMode then
             -- TODO: gyro
+            if triggerpressed then
+                gyrovalue = gyro:GetAngle()
+            else gyrovalue = 0
+            end
             local wheelValues = drive.calculate(
-                strafe.x, strafe.y, rotation, 0,
+                strafe.x, strafe.y, rotation, gyrovalue,
                 31.4,     -- wheel base (in inches)
                 21.4      -- track width (in inches)
             )
@@ -402,6 +406,12 @@ controlMap =
                 rotation = axis
             else
                 fudgeMovement = axis
+            end
+        end,
+        ["trigger"] = function(axis) 
+            if (axis) < -0.5 then
+                triggerpressed = true
+            else triggerpressed = false
             end
         end,
         [1] = fudgeButton(wheels.rearRight),
