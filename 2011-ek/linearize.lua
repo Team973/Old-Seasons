@@ -47,3 +47,24 @@ function linearize(goalSpeed)
     
     return answer
 end
+
+SpeedController = {}
+
+function SpeedController:New(controller)
+    local newController = {controller=controller, value=0.0}
+    setmetatable(newController, {__index=self})
+    return newController
+end
+
+function SpeedController:Get()
+    return self.value
+end
+
+function SpeedController:Set(x)
+    self.value = x
+    self.controller:Set(linearize(x))
+end
+
+function wrap(victor)
+    return SpeedController:New(victor)
+end
