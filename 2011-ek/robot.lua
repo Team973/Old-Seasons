@@ -4,6 +4,7 @@ local arm = require("arm")
 local controls = require("controls")
 local drive = require("drive")
 local lcd = require("lcd")
+local linearize = require("linearize")
 local math = require("math")
 local pid = require("pid")
 local wpilib = require("wpilib")
@@ -256,6 +257,11 @@ end
 
 -- Inputs/Outputs
 -- Don't forget to add to declarations at the top!
+
+local function LinearVictor(...)
+    return linearize.wrap(wpilib.Victor(...))
+end
+
 compressor = wpilib.Relay(4, 1, wpilib.Relay_kForwardOnly)
 pressureSwitch = wpilib.DigitalInput(4, 13)
 gearSwitch = wpilib.Solenoid(7, 3)
@@ -276,9 +282,9 @@ clawOpenPiston2 = wpilib.Solenoid(7, 7)
 clawClosePiston1 = wpilib.Solenoid(7, 1)
 clawClosePiston2 = wpilib.Solenoid(7, 2)
 clawSwitch = wpilib.DigitalInput(6, 3)
-clawIntakeMotor = wpilib.Victor(6, 3)
-elevatorMotor1 = wpilib.Victor(6, 4)
-elevatorMotor2 = wpilib.Victor(6, 5)
+clawIntakeMotor = LinearVictor(6, 3)
+elevatorMotor1 = LinearVictor(6, 4)
+elevatorMotor2 = LinearVictor(6, 5)
 
 elevatorPID = pid.new(1, 0, 0.01)
 elevatorPID.min, elevatorPID.max = -0.5, 0.5
@@ -288,7 +294,7 @@ local turnPIDConstants = {p=0.05, i=0, d=0}
 wheels = {
     frontLeft={
         shortName="FL",
-        driveMotor=wpilib.Victor(4, 7),
+        driveMotor=LinearVictor(4, 7),
         turnMotor=wpilib.Jaguar(4, 8),
 
         calibrateSwitch=wpilib.DigitalInput(4, 12),
@@ -298,7 +304,7 @@ wheels = {
     },
     frontRight={
         shortName="FR",
-        driveMotor=wpilib.Victor(4, 1),
+        driveMotor=LinearVictor(4, 1),
         turnMotor=wpilib.Jaguar(4, 2),
 
         calibrateSwitch=wpilib.DigitalInput(4, 9),
@@ -308,7 +314,7 @@ wheels = {
     },
     rearLeft={
         shortName="RL",
-        driveMotor=wpilib.Victor(4, 6),
+        driveMotor=LinearVictor(4, 6),
         turnMotor=wpilib.Jaguar(4, 5),
 
         calibrateSwitch=wpilib.DigitalInput(4, 3),
@@ -318,7 +324,7 @@ wheels = {
     },
     rearRight={
         shortName="RR",
-        driveMotor=wpilib.Victor(4, 3),
+        driveMotor=LinearVictor(4, 3),
         turnMotor=wpilib.Jaguar(4, 4),
 
         calibrateSwitch=wpilib.DigitalInput(4, 6),
