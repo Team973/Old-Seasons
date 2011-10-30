@@ -286,7 +286,7 @@ elevatorMotor1 = LinearVictor(6, 4)
 elevatorMotor2 = LinearVictor(6, 5)
 
 elevatorPID = pid.new(1, 0, 0.01)
-elevatorPID.min, elevatorPID.max = -0.5, 0.5
+elevatorPID.min, elevatorPID.max = 0, 0
 
 local turnPIDConstants = {p=0.05, i=0, d=0}
 
@@ -445,11 +445,7 @@ controlMap =
             up=function() intakeControl = 0 end,
         },
         update = function(stick)
-            if stick:GetRawButton(10) then
-                elevatorControl = -stick:GetY()
-            elseif elevatorControl ~= nil then
-                elevatorControl = 0
-            end
+            elevatorControl = -stick:GetY()
         end,
     },
     -- Joystick 4 (eStop Module)
