@@ -391,17 +391,25 @@ local function presetButton(name)
     end
 end
 
+local function deadband(axis, threshold)
+    if axis < threshold and axis > -threshold then
+        return 0
+    else
+        return axis
+    end
+end
+
 controlMap =
 {
     -- Joystick 1
     {
-        ["x"] = function(axis) strafe.x = axis end,
-        ["y"] = function(axis) strafe.y = -axis end,
+        ["x"] = function(axis) strafe.x = deadband(-axis, 0.15) end,
+        ["y"] = function(axis) strafe.y = deadband(axis, 0.15) end,
         ["rx"] = function(axis)
             if not fudgeMode then
-                rotation = axis
+                rotation = deadband(axis, 0.15)
             else
-                fudgeMovement = axis
+                fudgeMovement = deadband(axis, 0.15)
             end
         end,
         [1] = fudgeButton(wheels.rearRight),
@@ -416,9 +424,9 @@ controlMap =
         update = function(stick)
             if stick:GetRawButton(6) then
                 if gear == "low" then
-                    rotation = rotation * 0.3
+                    rotation = rotation * 0.5
                 elseif gear == "high" then
-                    rotation = rotation * 0.3
+                    rotation = rotation * 0.5
                 end
             end
         end,
