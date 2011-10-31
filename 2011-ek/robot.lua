@@ -23,12 +23,12 @@ local watchdogEnabled = false
 local feedWatchdog, enableWatchdog, disableWatchdog
 
 local hellautonomous, teleop, calibrate
-local controlMap, strafe, rotation, gear
+local controlMap, strafe, rotation, gear, fieldCentric
 local clawState, intakeControl, elevatorControl, wristUp
 local zeroMode
 local fudgeMode, fudgeWheel, fudgeMovement
 
-local compressor, pressureSwitch, gearSwitch
+local compressor, pressureSwitch, grabberSwitch, gearSwitch
 local gyro, gyroChannel
 local wristPiston
 local readyMinibotSolenoid, fireMinibotSolenoid
@@ -37,6 +37,8 @@ local clawSwitch, clawIntakeMotor
 local elevatorMotor1, elevatorMotor2
 local elevatorEncoder, elevatorPID, elevatorRateTimer
 local wheels
+
+local hasTube = false
 -- End Declarations
 
 lcd.print(1, "RESETTING GYRO")
@@ -138,16 +140,18 @@ function teleop()
                 wheel.driveMotor:Set(0)
             end
         elseif not fudgeMode then
-            -- TODO: gyro
-            if triggerpressed then
-                gyrovalue = gyro:GetAngle()
-            else gyrovalue = 0
+            local gyroValue
+            if fieldCentric then
+                gyroValue = gyro:GetAngle()
+            else
+                gyroValue = 0
             end
             local wheelValues = drive.calculate(
-                strafe.x, strafe.y, rotation, gyrovalue,
+                strafe.x, strafe.y, rotation, gyroValue,
                 31.4,     -- wheel base (in inches)
                 21.4      -- track width (in inches)
             )
+
             for wheelName, value in pairs(wheelValues) do
                 local wheel = wheels[wheelName]
 
@@ -185,12 +189,29 @@ function teleop()
         end
 
         -- Arm
+        if hasTube == true then
+            if grabberSwitch:Get() then
+                intakeControl = 1
+            else
+                intakeControl = 0
+            end
+            if clawState == 1 then
+                hasTube = false
+            end
+        end
+        if hasTube == false then
+            if grabberSwitch:Get() and intakeControl == 1 then
+                hasTube = true
+                clawState = 0
+            end
+        end
+
         open1, open2, close1, close2 = arm.clawPistons(clawState)
         clawOpenPiston1:Set(open1)
         clawOpenPiston2:Set(open2)
         clawClosePiston1:Set(close1)
         clawClosePiston2:Set(close2)
-
+        
         clawIntakeMotor:Set(intakeControl)
 
         wristPiston:Set(not wristUp)
@@ -268,6 +289,7 @@ end
 compressor = wpilib.Relay(4, 1, wpilib.Relay_kForwardOnly)
 pressureSwitch = wpilib.DigitalInput(4, 13)
 gearSwitch = wpilib.Solenoid(7, 3)
+grabberSwitch = wpilib.DigitalInput(6, 3)
 
 gyroChannel = wpilib.AnalogChannel(1, 2)
 gyro = wpilib.Gyro(gyroChannel)
@@ -395,23 +417,32 @@ local function presetButton(name)
     end
 end
 
+local function deadband(axis, threshold)
+    if axis < threshold and axis > -threshold then
+        return 0
+    else
+        return axis
+    end
+end
+
 controlMap =
 {
     -- Joystick 1
     {
-        ["x"] = function(axis) strafe.x = axis end,
-        ["y"] = function(axis) strafe.y = -axis end,
+        ["x"] = function(axis) strafe.x = deadband(-axis, 0.15) end,
+        ["y"] = function(axis) strafe.y = deadband(axis, 0.15) end,
         ["rx"] = function(axis)
             if not fudgeMode then
-                rotation = axis
+                rotation = deadband(axis, 0.15)
             else
-                fudgeMovement = axis
+                fudgeMovement = deadband(axis, 0.15)
             end
         end,
-        ["trigger"] = function(axis) 
-            if (axis) < -0.5 then
-                triggerpressed = true
-            else triggerpressed = false
+        ["trigger"] = function(axis)
+            if axis < -0.5 then
+                fieldCentric = true
+            else
+                fieldCentric = false
             end
         end,
         [1] = fudgeButton(wheels.rearRight),
@@ -426,9 +457,9 @@ controlMap =
         update = function(stick)
             if stick:GetRawButton(6) then
                 if gear == "low" then
-                    rotation = rotation * 0.3
+                    rotation = rotation * 0.5
                 elseif gear == "high" then
-                    rotation = rotation * 0.3
+                    rotation = rotation * 0.5
                 end
             end
         end,
@@ -456,6 +487,9 @@ controlMap =
         },
         update = function(stick)
             elevatorControl = -stick:GetY()
+            if stick:GetRawButton(7) and stick:GetRawButton(8) then
+                restartRobot() 
+            end
         end,
     },
     -- Joystick 4 (eStop Module)
