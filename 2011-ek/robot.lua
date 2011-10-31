@@ -28,7 +28,7 @@ local clawState, intakeControl, elevatorControl, wristUp
 local zeroMode
 local fudgeMode, fudgeWheel, fudgeMovement
 
-local compressor, pressureSwitch, gearSwitch
+local compressor, pressureSwitch, grabberSwitch, gearSwitch
 local gyro, gyroChannel
 local wristPiston
 local readyMinibotSolenoid, fireMinibotSolenoid
@@ -37,6 +37,8 @@ local clawSwitch, clawIntakeMotor
 local elevatorMotor1, elevatorMotor2
 local elevatorEncoder, elevatorPID, elevatorRateTimer
 local wheels
+
+local hasTube = false
 -- End Declarations
 
 lcd.print(1, "RESETTING GYRO")
@@ -181,12 +183,29 @@ function teleop()
         end
 
         -- Arm
+        if hasTube == true then
+            if grabberSwitch:Get() then
+                intakeControl = 1
+            else
+                intakeControl = 0
+            end
+            if clawState == 1 then
+                hasTube = false
+            end
+        end
+        if hasTube == false then
+            if grabberSwitch:Get() and intakeControl == 1 then
+                hasTube = true
+                clawState = 0
+            end
+        end
+
         open1, open2, close1, close2 = arm.clawPistons(clawState)
         clawOpenPiston1:Set(open1)
         clawOpenPiston2:Set(open2)
         clawClosePiston1:Set(close1)
         clawClosePiston2:Set(close2)
-
+        
         clawIntakeMotor:Set(intakeControl)
 
         wristPiston:Set(not wristUp)
@@ -264,6 +283,7 @@ end
 compressor = wpilib.Relay(4, 1, wpilib.Relay_kForwardOnly)
 pressureSwitch = wpilib.DigitalInput(4, 13)
 gearSwitch = wpilib.Solenoid(7, 3)
+grabberSwitch = wpilib.DigitalInput(6, 3)
 
 gyroChannel = wpilib.AnalogChannel(1, 2)
 gyro = wpilib.Gyro(gyroChannel)
