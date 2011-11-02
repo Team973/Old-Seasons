@@ -342,7 +342,7 @@ end
 -- Controls
 strafe = {x=0, y=0}
 rotation = 0
-gear = false
+gear = "high"
 
 clawState = 0
 elevatorControl = nil
