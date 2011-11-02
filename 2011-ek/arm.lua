@@ -40,8 +40,8 @@ function elevatorFeetToEncoder(feet)
     return feet / elevatorEncoderScale
 end
 
-UP_P = 0.55
-DOWN_P = 0.55
+UP_P = 0
+DOWN_P = 0
 
 function elevatorP(current, target)
     if current <= target then
