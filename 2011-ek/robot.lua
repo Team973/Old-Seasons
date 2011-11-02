@@ -205,8 +205,9 @@ function teleop()
         elevatorMotor1:Set(-elevatorSpeed)
         elevatorMotor2:Set(-elevatorSpeed)
 
-        lcd.print(4, "P%.2f D%.2f", arm.UP_P, elevatorPID.d)
-        lcd.print(5, "P%.2f D%.2f", arm.DOWN_P, elevatorPID.d)
+        lcd.print(4, "P%.2f D%.5f", arm.UP_P, elevatorPID.d)
+        lcd.print(5, "P%.2f D%.5f", arm.DOWN_P, elevatorPID.d)
+        lcd.print(6, "%.2f", elevatorPID.previousError)
         lcd.update()
         
         -- Iteration cleanup
@@ -285,8 +286,8 @@ clawIntakeMotor = LinearVictor(6, 3)
 elevatorMotor1 = LinearVictor(6, 4)
 elevatorMotor2 = LinearVictor(6, 5)
 
-elevatorPID = pid.new(1, 0, 0.01)
-elevatorPID.min, elevatorPID.max = 0, 0
+elevatorPID = pid.new()
+elevatorPID.min, elevatorPID.max = -0.5, 0.5
 
 local turnPIDConstants = {p=0.05, i=0, d=0}
 
@@ -432,7 +433,14 @@ controlMap =
         end,
     },
     -- Joystick 2
-    {},
+    {
+        [2] = incConstant(elevatorPID, "d", elevatorPID, -0.00001),
+        [3] = incConstant(elevatorPID, "d", elevatorPID, 0.00001),
+        [6] = incConstant(arm, "UP_P", elevatorPID, 0.01),
+        [7] = incConstant(arm, "UP_P", elevatorPID, -0.01),
+        [10] = incConstant(arm, "DOWN_P", elevatorPID, -0.01),
+        [11] = incConstant(arm, "DOWN_P", elevatorPID, 0.01),
+    },
     -- Joystick 3
     {
         [1] = function() clawState = 1 end,
@@ -453,7 +461,12 @@ controlMap =
             up=function() intakeControl = 0 end,
         },
         update = function(stick)
-            elevatorControl = -stick:GetY()
+            if stick:GetRawButton(10) then
+                elevatorControl = -stick:GetY()
+            else
+                elevatorControl = nil
+            end
+
             if stick:GetRawButton(7) and stick:GetRawButton(8) then
                 restartRobot() 
             end
