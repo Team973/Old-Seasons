@@ -258,8 +258,7 @@ end
 -- Don't forget to add to declarations at the top!
 
 local function LinearVictor(...)
-    -- XXX: Linearization isn't working right now.
-    return wpilib.Victor(...)
+    return linearize.wrap(wpilib.Victor(...))
 end
 
 compressor = wpilib.Relay(4, 1, wpilib.Relay_kForwardOnly)
@@ -287,7 +286,7 @@ elevatorMotor1 = LinearVictor(6, 4)
 elevatorMotor2 = LinearVictor(6, 5)
 
 elevatorPID = pid.new()
-elevatorPID.min, elevatorPID.max = -0.5, 0.5
+elevatorPID.min, elevatorPID.max = -1.0, 1.0
 
 local turnPIDConstants = {p=0.05, i=0, d=0}
 
