@@ -399,6 +399,10 @@ local function deadband(axis, threshold)
     end
 end
 
+local function grabElevatorTarget()
+    elevatorPID.target = arm.elevatorEncoderToFeet(elevatorEncoder:Get())
+end
+
 controlMap =
 {
     -- Joystick 1
@@ -460,9 +464,11 @@ controlMap =
             up=function() intakeControl = 0 end,
         },
         update = function(stick)
-            if stick:GetRawButton(10) then
-                elevatorControl = -stick:GetY()
-            else
+            if stick:GetRawButton(7) then
+                elevatorControl = -stick:GetY() * 0.1
+            elseif elevatorControl then
+                -- Now switching to manual
+                grabElevatorTarget()
                 elevatorControl = nil
             end
 
