@@ -23,9 +23,10 @@ local watchdogEnabled = false
 local feedWatchdog, enableWatchdog, disableWatchdog
 
 local hellautonomous, teleop, calibrate
-local controlMap, strafe, rotation, gear
+local controlMap, strafe, rotation, gear, fieldCentric
 local clawState, intakeControl, elevatorControl, wristUp
-local zeroMode
+local zeroMode, possessionTimer
+local wristIntakeTime = 0.1
 local fudgeMode, fudgeWheel, fudgeMovement
 
 local compressor, pressureSwitch, gearSwitch
@@ -37,6 +38,8 @@ local clawSwitch, clawIntakeMotor
 local elevatorMotor1, elevatorMotor2
 local elevatorEncoder, elevatorPID, elevatorRateTimer
 local wheels
+
+local hasTube = false
 -- End Declarations
 
 lcd.print(1, "RESETTING GYRO")
@@ -138,12 +141,18 @@ function teleop()
                 wheel.driveMotor:Set(0)
             end
         elseif not fudgeMode then
-            -- TODO: gyro
+            local gyroValue
+            if fieldCentric then
+                gyroValue = gyro:GetAngle()
+            else
+                gyroValue = 0
+            end
             local wheelValues = drive.calculate(
-                strafe.x, strafe.y, rotation, 0,
+                strafe.x, strafe.y, rotation, gyroValue,
                 31.4,     -- wheel base (in inches)
                 21.4      -- track width (in inches)
             )
+
             for wheelName, value in pairs(wheelValues) do
                 local wheel = wheels[wheelName]
 
@@ -181,13 +190,36 @@ function teleop()
         end
 
         -- Arm
-        open1, open2, close1, close2 = arm.clawPistons(clawState)
+        if not hasTube and intakeControl > 0 and clawState == -1 then
+            if not clawSwitch:Get() then
+                if not possessionTimer then
+                    -- The limit switch just got activated
+                    possessionTimer = wpilib.Timer()
+                    possessionTimer:Start()
+                elseif possessionTimer:Get() > wristIntakeTime then
+                    -- We've waited for the set time. We now have a tube.
+                    possessionTimer:Stop()
+                    possessionTimer = nil
+                    hasTube = true
+                    clawState = 0
+                    wristUp = true
+               end
+            end
+        elseif hasTube and clawState == 1 then
+            -- The operator pulled the trigger. Let it go. JUST LET IT GO.
+            hasTube = false
+        end
+
+        local open1, open2, close1, close2 = arm.clawPistons(clawState)
         clawOpenPiston1:Set(open1)
         clawOpenPiston2:Set(open2)
         clawClosePiston1:Set(close1)
         clawClosePiston2:Set(close2)
 
         clawIntakeMotor:Set(intakeControl)
+        if hasTube and clawSwitch:Get() then
+            clawIntakeMotor:Set(1)
+        end
 
         wristPiston:Set(not wristUp)
 
@@ -414,6 +446,13 @@ controlMap =
                 rotation = deadband(axis, 0.15)
             else
                 fudgeMovement = deadband(axis, 0.15)
+            end
+        end,
+        ["trigger"] = function(axis)
+            if axis > 0.5 then
+                fieldCentric = true
+            else
+                fieldCentric = false
             end
         end,
         [1] = fudgeButton(wheels.rearRight),
