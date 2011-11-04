@@ -285,7 +285,7 @@ clawIntakeMotor = LinearVictor(6, 3)
 elevatorMotor1 = LinearVictor(6, 4)
 elevatorMotor2 = LinearVictor(6, 5)
 
-elevatorPID = pid.new()
+elevatorPID = pid.new(0, 0, 0.0005)
 elevatorPID.min, elevatorPID.max = -1.0, 1.0
 
 local turnPIDConstants = {p=0.05, i=0, d=0}
