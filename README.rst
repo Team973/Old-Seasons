@@ -12,6 +12,9 @@ Subdirectories
 
 ``2011-ek``
    Latest off-season code for Emperor Krab
+``2011-crapoffseason``
+   The name says it all: off-season crap bot code.  A good starting point for
+   understanding the more complicated robots.
 ``2011-titan``
    The world-championship-winning code for Titan in the 2011 season
 ``2010-boss``
