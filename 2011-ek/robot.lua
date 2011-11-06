@@ -8,6 +8,7 @@ local linearize = require("linearize")
 local math = require("math")
 local pid = require("pid")
 local wpilib = require("wpilib")
+local minibot = require("minibot")
 
 local pairs = pairs
 
@@ -242,6 +243,8 @@ function teleop()
         lcd.print(6, "%.2f", elevatorPID.previousError)
         lcd.update()
         
+        minibot.update(readyMinibotSolenoid, fireMinibotSolenoid)    
+
         -- Iteration cleanup
         feedWatchdog()
         wpilib.Wait(TELEOP_LOOP_LAG)
@@ -494,6 +497,8 @@ controlMap =
         },
         [4] = function() wristUp = false end,
         [5] = function() wristUp = true end,
+        [10] = minibot.toggleReady,
+        [11] = minibot.deploy,
         update = function(stick)
             if stick:GetRawButton(7) then
                 elevatorControl = -stick:GetY() * 0.1
