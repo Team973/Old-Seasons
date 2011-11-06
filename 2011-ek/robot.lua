@@ -490,18 +490,10 @@ controlMap =
         [3] = {
             down=function()
                 clawState = -1
-                intakeControl = 1
-            end,
-            up=function()
-                intakeControl = 0
             end,
         },
         [4] = function() wristUp = false end,
         [5] = function() wristUp = true end,
-        [6] = {
-            down=function() intakeControl = -1 end,
-            up=function() intakeControl = 0 end,
-        },
         update = function(stick)
             if stick:GetRawButton(7) then
                 elevatorControl = -stick:GetY() * 0.1
@@ -509,6 +501,14 @@ controlMap =
                 -- Now switching to manual
                 grabElevatorTarget()
                 elevatorControl = nil
+            end
+
+            if stick:GetRawButton(3) then 
+                intakeControl = 1
+            elseif stick:GetRawButton(6) then
+                intakeControl = -1
+            else
+                intakeControl = 0
             end
 
             if stick:GetRawButton(7) and stick:GetRawButton(8) then
