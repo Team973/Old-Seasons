@@ -504,6 +504,8 @@ controlMap =
             down=function() intakeControl = -1 end,
             up=function() intakeControl = 0 end,
         },
+            [10] = minibot.toggleReady,
+            [11] = minibot.deploy,
         update = function(stick)
             if stick:GetRawButton(7) then
                 elevatorControl = -stick:GetY() * 0.1
