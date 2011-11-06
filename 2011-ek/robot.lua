@@ -31,7 +31,7 @@ local wristIntakeTime = 0.1
 local fudgeMode, fudgeWheel, fudgeMovement
 
 local compressor, pressureSwitch, gearSwitch
-local gyro, gyroChannel
+local gyro, gyroChannel, gyroPID
 local wristPiston
 local readyMinibotSolenoid, fireMinibotSolenoid
 local clawOpenPiston1, clawOpenPiston2, clawClosePiston1, clawClosePiston2
@@ -86,6 +86,7 @@ function teleop()
     elevatorEncoder:Start()
     elevatorRateTimer = wpilib.Timer()
     elevatorRateTimer:Start()
+    gyroPID:Start()
 
     for _, wheel in pairs(wheels) do
         wheel.turnPID:start()
@@ -142,14 +143,27 @@ function teleop()
                 wheel.driveMotor:Set(0)
             end
         elseif not fudgeMode then
-            local gyroValue
-            if fieldCentric then
-                gyroValue = gyro:GetAngle()
-            else
-                gyroValue = 0
+            local gyroAngle = gyro:GetAngle()
+            local appliedGyro, appliedRotation = gyroAngle, rotation
+            local deadband = 0.1
+            
+            if not fieldCentric then
+                appliedGyro = 0
             end
+            
+            if math.abs(rotation) < deadband then
+                if gyroPID.target == nil then
+                    gyroPID.target = gyroAngle
+                    gyroPID:start()
+                end
+                appliedRotation = gyroPID:update(gyroAngle)
+            else
+                gyroPID.target = nil
+                gyroPID:stop()
+            end
+            
             local wheelValues = drive.calculate(
-                strafe.x, strafe.y, rotation, gyroValue,
+                strafe.x, strafe.y, appliedRotation, appliedGyro,
                 31.4,     -- wheel base (in inches)
                 21.4      -- track width (in inches)
             )
@@ -304,6 +318,7 @@ gyroChannel = wpilib.AnalogChannel(1, 2)
 gyro = wpilib.Gyro(gyroChannel)
 gyro:SetSensitivity(0.006)
 gyro:Reset()
+gyroPID = pid.new(0, 0, 0)
 
 wristPiston = wpilib.Solenoid(7, 8)
 readyMinibotSolenoid = wpilib.Solenoid(7, 4)
@@ -446,7 +461,7 @@ controlMap =
         ["y"] = function(axis) strafe.y = deadband(axis, 0.15) end,
         ["rx"] = function(axis)
             if not fudgeMode then
-                rotation = deadband(axis, 0.15)
+                rotation = axis
             else
                 fudgeMovement = deadband(axis, 0.15)
             end
