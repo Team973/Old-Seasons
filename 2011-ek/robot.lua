@@ -11,6 +11,7 @@ local wpilib = require("wpilib")
 local minibot = require("minibot")
 
 local pairs = pairs
+local tostring = tostring
 
 module(..., package.seeall)
 
@@ -24,7 +25,7 @@ local watchdogEnabled = false
 local feedWatchdog, enableWatchdog, disableWatchdog
 
 local hellautonomous, teleop, calibrate
-local controlMap, strafe, rotation, gear, fieldCentric
+local controlMap, strafe, rotation, gear, presetShift, fieldCentric
 local clawState, intakeControl, elevatorControl, wristUp
 local zeroMode, possessionTimer
 local wristIntakeTime = 0.1
@@ -238,9 +239,11 @@ function teleop()
         elevatorMotor1:Set(-elevatorSpeed)
         elevatorMotor2:Set(-elevatorSpeed)
 
+        --[[
         lcd.print(4, "P%.2f D%.5f", arm.UP_P, elevatorPID.d)
         lcd.print(5, "P%.2f D%.5f", arm.DOWN_P, elevatorPID.d)
-        lcd.print(6, "%.2f", elevatorPID.previousError)
+        --]]
+        lcd.print(4, "%s %.1f", tostring(presetShift), controls.sticks[2]:GetRawAxis(6))
         lcd.update()
         
         minibot.update(readyMinibotSolenoid, fireMinibotSolenoid)    
@@ -381,6 +384,7 @@ gear = "high"
 
 clawState = 0
 elevatorControl = nil
+presetShift = false
 wristUp = true
 intakeControl = 0
 
@@ -388,6 +392,8 @@ zeroMode = false
 fudgeMode = false
 fudgeWheel = nil
 fudgeMovement = 0.0
+
+local lastHatX = 0
 
 local function fudgeButton(wheel)
     return {
@@ -414,14 +420,22 @@ local function incConstant(tbl, name, pid, delta)
     end
 end
 
-local function presetButton(name)
-    return function()
-        local wristPreset = arm.presetWrist(name)
-        
-        elevatorPID.target = arm.presetElevatorTarget(name)
+local function doPreset(name)
+    local wristPreset = arm.presetWrist(name)
 
-        if wristPreset ~= nil then
-            wristUp = wristPreset
+    elevatorPID.target = arm.presetElevatorTarget(name)
+
+    if wristPreset ~= nil then
+        wristUp = wristPreset
+    end
+end
+
+local function presetButton(nonShiftName, shiftName)
+    return function()
+        if presetShift then
+            doPreset(shiftName)
+        else
+            doPreset(nonShiftName)
         end
     end
 end
@@ -479,59 +493,59 @@ controlMap =
     },
     -- Joystick 2
     {
-        [2] = incConstant(elevatorPID, "d", elevatorPID, -0.00001),
-        [3] = incConstant(elevatorPID, "d", elevatorPID, 0.00001),
-        [6] = incConstant(arm, "UP_P", elevatorPID, 0.01),
-        [7] = incConstant(arm, "UP_P", elevatorPID, -0.01),
-        [10] = incConstant(arm, "DOWN_P", elevatorPID, -0.01),
-        [11] = incConstant(arm, "DOWN_P", elevatorPID, 0.01),
-    },
-    -- Joystick 3
-    {
-        [1] = function() clawState = 1 end,
-        [2] = function() clawState = 0 end,
-        [3] = {
-            down=function()
-                clawState = -1
-            end,
-        },
-        [4] = function() wristUp = false end,
-        [5] = function() wristUp = true end,
-        [10] = minibot.toggleReady,
-        [11] = minibot.deploy,
-        update = function(stick)
-            if stick:GetRawButton(7) then
-                elevatorControl = -stick:GetY() * 0.1
+        ["y"] = function(axis)
+            if axis < -0.5 then
+                wristUp = true
+            elseif axis > 0.5 then
+                wristUp = false
+            end
+        end,
+        ["ry"] = function(axis)
+            if math.abs(axis) > 0.2 then
+                elevatorControl = -axis * 0.1
             elseif elevatorControl then
                 -- Now switching to manual
                 grabElevatorTarget()
                 elevatorControl = nil
             end
+        end,
+        ["hatx"] = function(axis)
+            presetShift = (axis > 0.5)
 
-            if stick:GetRawButton(3) then 
+            if lastHatX > -0.5 and axis < -0.5 then
+                doPreset("carry")
+            end
+
+            lastHatX = axis
+        end,
+        ["trigger"] = function(axis)
+            if math.abs(axis) > 0.5 then
+                clawState = 1
+            end
+        end,
+        [1] = presetButton("low", "midLow"),
+        [2] = presetButton("middle", "midMiddle"),
+        [4] = presetButton("high", "midHigh"),
+        [5] = function()
+            clawState = -1
+            -- This also runs intake, see update.
+        end,
+        [6] = function() clawState = 0 end,
+        [7] = minibot.toggleReady,
+        [8] = minibot.deploy,
+        update = function(stick)
+            if stick:GetRawButton(5) then 
                 intakeControl = 1
-            elseif stick:GetRawButton(6) then
-                intakeControl = -1
             else
                 intakeControl = 0
             end
-
-            if stick:GetRawButton(7) and stick:GetRawButton(8) then
-                restartRobot() 
-            end
         end,
+    },
+    -- Joystick 3
+    {
     },
     -- Joystick 4 (eStop Module)
     {
-        [2] = presetButton("slot"),
-        [3] = presetButton("carry"),
-        [4] = presetButton("pickup"),
-        [5] = presetButton("low"),
-        [6] = presetButton("middle"),
-        [7] = presetButton("high"),
-        [8] = presetButton("midLow"),
-        [9] = presetButton("midMiddle"),
-        [10] = presetButton("midHigh"),
     },
     -- Cypress Module
     cypress={},
