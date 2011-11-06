@@ -8,7 +8,7 @@ local linearize = require("linearize")
 local math = require("math")
 local pid = require("pid")
 local wpilib = require("wpilib")
-
+local minibot = require("minibot")
 local pairs = pairs
 
 module(..., package.seeall)
@@ -242,7 +242,9 @@ function teleop()
         lcd.print(6, "%.2f", elevatorPID.previousError)
         lcd.update()
         
-        -- Iteration cleanup
+        minibot.update(readyMinibotSolenoid, fireMinibotSolenoid)    
+       
+      -- Iteration cleanup
         feedWatchdog()
         wpilib.Wait(TELEOP_LOOP_LAG)
         feedWatchdog()
