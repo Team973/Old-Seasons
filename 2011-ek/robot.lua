@@ -87,7 +87,7 @@ function teleop()
     elevatorEncoder:Start()
     elevatorRateTimer = wpilib.Timer()
     elevatorRateTimer:Start()
-    gyroPID:Start()
+    gyroPID:start()
 
     for _, wheel in pairs(wheels) do
         wheel.turnPID:start()
@@ -134,6 +134,8 @@ function teleop()
             gearSwitch:Set(false)
         end
 
+        local gyroAngle = gyro:GetAngle()
+
         if zeroMode then
             for _, wheel in pairs(wheels) do
                 local currentTurn = wheel.turnEncoder:GetRaw() / 4.0
@@ -144,7 +146,6 @@ function teleop()
                 wheel.driveMotor:Set(0)
             end
         elseif not fudgeMode then
-            local gyroAngle = gyro:GetAngle()
             local appliedGyro, appliedRotation = gyroAngle, rotation
             local deadband = 0.1
             
@@ -175,7 +176,7 @@ function teleop()
                 local deadband = 0.1
                 local currentTurn = wheel.turnEncoder:GetRaw() / 4.0
 
-                if math.abs(strafe.x) > deadband or math.abs(strafe.y) > deadband or math.abs(rotation) > deadband then
+                if math.abs(strafe.x) > deadband or math.abs(strafe.y) > deadband or math.abs(appliedRotation) > deadband then
                     wheel.turnPID.target = drive.normalizeAngle(value.angleDeg)
                     local driveScale = drive.driveScale(drive.calculateTurn(currentTurn, wheel.turnPID.target))
                     wheel.driveMotor:Set(value.speed * -driveScale)
@@ -253,11 +254,16 @@ function teleop()
         elevatorMotor1:Set(-elevatorSpeed)
         elevatorMotor2:Set(-elevatorSpeed)
 
+        lcd.print(4, "P%.2f %.2f", gyroPID.p, gyroPID.previousError)
+        if gyroPID.target then
+            lcd.print(5, "%.2f %.2f", gyroAngle, gyroPID.target)
+        else
+            lcd.print(5, "%.2f none", gyroAngle)
+        end
         --[[
-        lcd.print(4, "P%.2f D%.5f", arm.UP_P, elevatorPID.d)
         lcd.print(5, "P%.2f D%.5f", arm.DOWN_P, elevatorPID.d)
-        --]]
         lcd.print(4, "%s %.1f", tostring(presetShift), controls.sticks[2]:GetRawAxis(6))
+        --]]
         lcd.update()
         
         minibot.update(readyMinibotSolenoid, fireMinibotSolenoid)    
@@ -321,7 +327,7 @@ gyroChannel = wpilib.AnalogChannel(1, 2)
 gyro = wpilib.Gyro(gyroChannel)
 gyro:SetSensitivity(0.006)
 gyro:Reset()
-gyroPID = pid.new(0, 0, 0)
+gyroPID = pid.new(0.05, 0, 0)
 
 wristPiston = wpilib.Solenoid(7, 8)
 readyMinibotSolenoid = wpilib.Solenoid(7, 4)
@@ -558,6 +564,8 @@ controlMap =
     },
     -- Joystick 3
     {
+        [2] = incConstant(gyroPID, "p", gyroPID, -0.01),
+        [3] = incConstant(gyroPID, "p", gyroPID, 0.01),
     },
     -- Joystick 4 (eStop Module)
     {
