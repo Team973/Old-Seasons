@@ -27,7 +27,7 @@ local feedWatchdog, enableWatchdog, disableWatchdog
 local hellautonomous, teleop, calibrate
 local controlMap, strafe, rotation, gear, presetShift, fieldCentric
 local clawState, intakeControl, elevatorControl, wristUp
-local zeroMode, possessionTimer
+local zeroMode, possessionTimer, rotationHoldTimer
 local wristIntakeTime = 0.1
 local fudgeMode, fudgeWheel, fudgeMovement
 
@@ -153,12 +153,22 @@ function teleop()
                 appliedGyro = 0
             end
             
+            -- Keep rotation steady in deadband
             if math.abs(rotation) < deadband then
                 if gyroPID.target == nil then
-                    gyroPID.target = gyroAngle
-                    gyroPID:start()
+                    if rotationHoldTimer == nil then
+                        rotationHoldTimer = wpilib.Timer()
+                        rotationHoldTimer:Start()
+                    elseif rotationHoldTimer:Get() > 0.5 then
+                        rotationHoldTimer:Stop()
+                        rotationHoldTimer = nil
+                        gyroPID.target = gyroAngle
+                        gyroPID:start()
+                    end
+                    appliedRotation = 0
+                else
+                    appliedRotation = gyroPID:update(gyroAngle)
                 end
-                appliedRotation = gyroPID:update(gyroAngle)
             else
                 gyroPID.target = nil
                 gyroPID:stop()
