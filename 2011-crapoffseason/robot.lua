@@ -62,7 +62,11 @@ function teleop()
 
         -- Arm
         wristMotor:Set(wristControl)
-        intakeMotor:Set(intakeControl)
+        if clawSwitch:Get() then
+            intakeMotor:Set(intakeControl)
+        else
+            intakeMotor:Set(0.0)
+        end
 
         wpilib.Wait(TELEOP_LOOP_LAG)
     end
@@ -74,6 +78,7 @@ leftDriveMotor = wpilib.Victor(4, 10)
 rightDriveMotor = wpilib.Victor(4, 9)
 wristMotor = wpilib.Victor(4, 7)
 intakeMotor = wpilib.Victor(4, 8)
+clawSwitch = wpilib.DigitalInput(4, 1)
 -- End Inputs/Outputs
 
 -- Controls
