@@ -559,6 +559,9 @@ controlMap =
         [4] = presetButton("high", "midHigh"),
         [5] = function()
             clawState = -1
+            if hasTube then
+                elevatorPID.target = elevatorPID.target - 0.5 
+            end
             -- This also runs intake, see update.
         end,
         [6] = function() clawState = 0 end,
