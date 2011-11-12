@@ -560,7 +560,11 @@ controlMap =
         [5] = function()
             clawState = -1
             if hasTube then
-                elevatorPID.target = elevatorPID.target - 0.5 
+                local newTarget = elevatorPID.target - 0.5
+                if newTarget < 0 then
+                    newTarget = 0
+                end
+                elevatorPID.target = newTarget
             end
             -- This also runs intake, see update.
         end,
