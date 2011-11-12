@@ -540,7 +540,7 @@ controlMap =
         end,
         ["ry"] = function(axis)
             if math.abs(axis) > 0.2 then
-                elevatorControl = -axis * 0.2
+                elevatorControl = -axis * 0.3
             elseif elevatorControl then
                 -- Now switching to manual
                 grabElevatorTarget()
