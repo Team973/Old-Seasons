@@ -7,7 +7,7 @@ local lcd = require("lcd")
 local linearize = require("linearize")
 local math = require("math")
 local pid = require("pid")
-local wpilib = r or ignoreGyroequire("wpilib")
+local wpilib = require("wpilib")
 local minibot = require("minibot")
 
 local pairs = pairs
