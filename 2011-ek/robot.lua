@@ -234,9 +234,6 @@ function teleop()
                     wristUp = true
                end
             end
-        elseif hasTube and clawState == 1 then
-            -- The operator pulled the trigger. Let it go. JUST LET IT GO.
-            hasTube = false
         end
 
         local open1, open2, close1, close2 = arm.clawPistons(clawState)
@@ -501,13 +498,7 @@ controlMap =
                 fudgeMovement = deadband(axis, 0.15)
             end
         end,
-        ["trigger"] = function(axis)
-            if axis > 0.5 then
-                fieldCentric = true
-            else
-                fieldCentric = false
-            end
-        end,
+        ["ltrigger"] = {tick=function(held) fieldCentric = held end},
         [1] = fudgeButton(wheels.rearRight),
         [2] = fudgeButton(wheels.frontRight),
         [3] = fudgeButton(wheels.rearLeft),
@@ -556,16 +547,19 @@ controlMap =
 
             lastHatX = axis
         end,
-        ["trigger"] = function(axis)
-            if math.abs(axis) > 0.5 then
-                clawState = 1
-                if hasTube then
-                    local newTarget = elevatorPID.target - 0.5
-                    if newTarget < 0 then
-                        newTarget = 0
-                    end
-                    elevatorPID.target = newTarget
+        ["rtrigger"] = function()
+            if hasTube then
+                clawState = -1
+                local newTarget = arm.elevatorEncoderToFeet(elevatorEncoder:Get()) - 1.0
+                if newTarget < 0 then
+                    newTarget = 0
                 end
+                elevatorPID.target = newTarget
+
+                -- The operator pulled the trigger. Let it go. JUST LET IT GO.
+                hasTube = false
+            else
+                clawState = 1
             end
         end,
         [1] = presetButton("low", "midLow"),
