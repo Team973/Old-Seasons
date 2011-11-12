@@ -32,7 +32,7 @@ local wristIntakeTime = 0.1
 local fudgeMode, fudgeWheel, fudgeMovement
 
 local compressor, pressureSwitch, gearSwitch
-local gyro, gyroChannel, gyroPID, ignoreGyro
+local gyroChannel, gyroPID, ignoreGyro
 ignoreGyro = false
 local wristPiston
 local readyMinibotSolenoid, fireMinibotRelay
@@ -137,12 +137,7 @@ function teleop()
             gearSwitch:Set(false)
         end
 
-        local gyroAngle
-        if ignoreGyro then 
-            gyroAngle = 0 
-        else 
-            gyroAngle = gyro:GetAngle()
-        end
+        local gyroAngle = 0
 
         if zeroMode then
             for _, wheel in pairs(wheels) do
@@ -347,9 +342,6 @@ pressureSwitch = wpilib.DigitalInput(4, 13)
 gearSwitch = wpilib.Solenoid(7, 3)
 
 gyroChannel = wpilib.AnalogChannel(1, 2)
-gyro = wpilib.Gyro(gyroChannel)
-gyro:SetSensitivity(0.006)
-gyro:Reset()
 gyroPID = pid.new(0.05, 0, 0)
 
 wristPiston = wpilib.Solenoid(7, 8)
