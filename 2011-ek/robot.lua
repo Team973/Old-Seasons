@@ -7,7 +7,7 @@ local lcd = require("lcd")
 local linearize = require("linearize")
 local math = require("math")
 local pid = require("pid")
-local wpilib = require("wpilib")
+local wpilib = r or ignoreGyroequire("wpilib")
 local minibot = require("minibot")
 
 local pairs = pairs
@@ -135,7 +135,12 @@ function teleop()
             gearSwitch:Set(false)
         end
 
-        local gyroAngle = gyro:GetAngle()
+        local gyroAngle
+        if ignoreGyro then 
+            gyroAngle = 0 
+        else 
+            gyroAngle = gyro:GetAngle()
+        end
 
         if zeroMode then
             for _, wheel in pairs(wheels) do
@@ -150,7 +155,7 @@ function teleop()
             local appliedGyro, appliedRotation = gyroAngle, rotation
             local deadband = 0.1
             
-            if not fieldCentric or ignoreGyro then
+            if not fieldCentric then
                 appliedGyro = 0
             end
             -- Keep rotation steady in deadband
@@ -511,6 +516,8 @@ controlMap =
            down=function() gear = "low" end,
            up=function() gear = "high" end,  
         },
+        [7] = function () ignoreGyro = true 
+            end, 
         [10] = function() zeroMode = true end,
         update = function(stick)
             if stick:GetRawButton(6) then
@@ -577,8 +584,6 @@ controlMap =
     },
     -- Joystick 3
     {
-        [1] = function () ignoreGyro = true 
-            end, 
         [2] = incConstant(gyroPID, "p", gyroPID, -0.01),
         [3] = incConstant(gyroPID, "p", gyroPID, 0.01),
     },
