@@ -577,8 +577,10 @@ controlMap =
             end
         end},
         update = function(stick)
-            if stick:GetRawButton(5) then 
+            if stick:GetRawButton(5) then
                 intakeControl = 1
+            elseif stick:GetRawButton(3) then
+                intakeControl = -1
             else
                 intakeControl = 0
             end
