@@ -82,6 +82,8 @@ function teleop()
     lcd.print(1, "Calibrating...")
     lcd.update()
 
+    minibot.startGameTimer()
+
     --calibrate()
     elevatorPID:start()
     elevatorEncoder:Reset()
@@ -583,7 +585,11 @@ controlMap =
         end,
         [6] = function() clawState = 0 end,
         [7] = minibot.toggleReady,
-        [8] = minibot.deploy,
+        [8] = function()
+            if minibot.deploymentTimerFinished() then
+                minibot.deploy()
+            end
+        end,
         update = function(stick)
             if stick:GetRawButton(5) then 
                 intakeControl = 1
