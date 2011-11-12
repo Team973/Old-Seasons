@@ -35,7 +35,7 @@ local compressor, pressureSwitch, gearSwitch
 local gyro, gyroChannel, gyroPID, ignoreGyro
 ignoreGyro = false
 local wristPiston
-local readyMinibotSolenoid, fireMinibotSolenoid
+local readyMinibotSolenoid, fireMinibotRelay
 local clawOpenPiston1, clawOpenPiston2, clawClosePiston1, clawClosePiston2
 local clawSwitch, clawIntakeMotor
 local elevatorMotor1, elevatorMotor2
@@ -281,7 +281,13 @@ function teleop()
         --]]
         lcd.update()
         
-        minibot.update(readyMinibotSolenoid, fireMinibotSolenoid)    
+        readyMinibotOutput, fireMinibotOutput = minibot.update()    
+        readyMinibotSolenoid:Set(readyMinibotOutput)
+        if fireMinibotOutput then
+            fireMinibotRelay:Set(wpilib.Relay_kOff)
+        else
+            fireMinibotRelay:Set(wpilib.Relay_kOn)
+        end
 
         -- Iteration cleanup
         feedWatchdog()
@@ -346,7 +352,7 @@ gyroPID = pid.new(0.05, 0, 0)
 
 wristPiston = wpilib.Solenoid(7, 8)
 readyMinibotSolenoid = wpilib.Solenoid(7, 4)
-fireMinibotSolenoid = wpilib.Solenoid(7, 5)
+fireMinibotRelay = wpilib.Relay(4, 1, wpilib.Relay_kReverseOnly)
 
 elevatorEncoder = wpilib.Encoder(6, 1, 6, 2, false, wpilib.CounterBase_k1X)
 
