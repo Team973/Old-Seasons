@@ -577,11 +577,11 @@ controlMap =
         end,
         [6] = function() clawState = 0 end,
         [7] = minibot.toggleReady,
-        [8] = function()
-            if minibot.deploymentTimerFinished() then
+        [8] = {tick=function(held)
+            if held and minibot.deploymentTimerFinished() then
                 minibot.deploy()
             end
-        end,
+        end},
         update = function(stick)
             if stick:GetRawButton(5) then 
                 intakeControl = 1
