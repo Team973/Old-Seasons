@@ -54,7 +54,7 @@ function deploy()
     deploying = true
 end
 
-function update(readyMinibotSolenoid, fireMinibotSolenoid)
+function update()
     local readyOutput, fireOutput
     readyOutput = isReady
     fireOutput = deploying
