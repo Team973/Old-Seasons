@@ -280,7 +280,7 @@ function teleop()
         
         readyMinibotOutput, fireMinibotOutput = minibot.update()    
         readyMinibotSolenoid:Set(readyMinibotOutput)
-        if fireMinibotOutput then
+        if not fireMinibotOutput then
             fireMinibotRelay:Set(wpilib.Relay_kOff)
         else
             fireMinibotRelay:Set(wpilib.Relay_kOn)
