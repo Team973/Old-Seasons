@@ -75,7 +75,14 @@ end
 
 function hellautonomous()
     disableWatchdog()
-    -- If you need it. :)
+    while wpilib.IsAutonomous() and wpilib.IsEnabled() do
+        if pressureSwitch:Get() then
+            compressor:Set(wpilib.Relay_kOff)
+        else
+            compressor:Set(wpilib.Relay_kOn)
+        end
+        wpilib.Wait(TELEOP_LOOP_LAG)
+    end
 end
 
 function teleop()
