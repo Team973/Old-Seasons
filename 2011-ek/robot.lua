@@ -32,7 +32,8 @@ local wristIntakeTime = 0.1
 local fudgeMode, fudgeWheel, fudgeMovement
 
 local compressor, pressureSwitch, gearSwitch
-local gyro, gyroChannel, gyroPID
+local gyro, gyroChannel, gyroPID, ignoreGyro
+ignoreGyro = false
 local wristPiston
 local readyMinibotSolenoid, fireMinibotSolenoid
 local clawOpenPiston1, clawOpenPiston2, clawClosePiston1, clawClosePiston2
@@ -149,10 +150,9 @@ function teleop()
             local appliedGyro, appliedRotation = gyroAngle, rotation
             local deadband = 0.1
             
-            if not fieldCentric then
+            if not fieldCentric or ignoreGyro then
                 appliedGyro = 0
             end
-            
             -- Keep rotation steady in deadband
             if math.abs(rotation) < deadband then
                 if gyroPID.target == nil then
@@ -577,6 +577,8 @@ controlMap =
     },
     -- Joystick 3
     {
+        [1] = function () ignoreGyro = true 
+            end, 
         [2] = incConstant(gyroPID, "p", gyroPID, -0.01),
         [3] = incConstant(gyroPID, "p", gyroPID, 0.01),
     },
