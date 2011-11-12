@@ -73,9 +73,64 @@ function run()
     end
 end
 
+local function startTimers() 
+    elevatorPID:start()
+    elevatorEncoder:Start()
+    elevatorRateTimer = wpilib.Timer()
+    elevatorRateTimer:Start()
+    gyroPID:start()
+end 
+
+local function stopTimers()
+    elevatorPID:stop()
+    elevatorEncoder:Stop()
+    elevatorRateTimer:Stop()
+    gyroPID:stop()
+end
+
 function hellautonomous()
     disableWatchdog()
-    -- If you need it. :)
+    startTimers()
+    while wpilib.IsAutonomous() and wpilib.IsEnabled() do 
+
+
+        -- Pneumatics
+        if pressureSwitch:Get() then
+            compressor:Set(wpilib.Relay_kOff)
+        else
+            compressor:Set(wpilib.Relay_kOn)
+        end
+
+        local gyroAngle = 0
+
+        local appliedGyro, appliedRotation = gyroAngle, 0
+        local deadband = 0.1
+        
+        -- Keep rotation steady in deadband
+        gyroPID.target = 0
+        appliedRotation = gyroPID:update(gyroAngle)
+        
+        local wheelValues = drive.calculate(
+            0, 1, appliedRotation, appliedGyro,
+            31.4,     -- wheel base (in inches)
+            21.4      -- track width (in inches)
+        )
+
+        for wheelName, value in pairs(wheelValues) do
+            local wheel = wheels[wheelName]
+
+            local deadband = 0.1
+            local currentTurn = wheel.turnEncoder:GetRaw() / 4.0
+
+            wheel.turnPID.target = drive.normalizeAngle(value.angleDeg)
+            local driveScale = drive.driveScale(drive.calculateTurn(currentTurn, wheel.turnPID.target))
+            wheel.driveMotor:Set(value.speed * -driveScale)
+
+            wheel.turnPID:update(currentTurn)
+            wheel.turnMotor:Set(wheel.turnPID.output)
+        end
+    end
+    stopTimers()
 end
 
 function teleop()
@@ -85,12 +140,7 @@ function teleop()
     minibot.startGameTimer()
 
     --calibrate()
-    elevatorPID:start()
-    elevatorEncoder:Reset()
-    elevatorEncoder:Start()
-    elevatorRateTimer = wpilib.Timer()
-    elevatorRateTimer:Start()
-    gyroPID:start()
+    startTimers()
 
     for _, wheel in pairs(wheels) do
         wheel.turnPID:start()
@@ -291,6 +341,8 @@ function teleop()
         wpilib.Wait(TELEOP_LOOP_LAG)
         feedWatchdog()
     end
+
+    stopTimers()
 end
 
 function calibrate()
@@ -499,6 +551,13 @@ controlMap =
                 rotation = axis
             else
                 fudgeMovement = deadband(axis, 0.15)
+                rotation = axisaxisaxis
+            else
+                fudgeMovement = deadband(axis, 0.15)
+            end
+        end,
+        ["trigger"] = function(axis)
+            if axis > 0.5 then
             end
         end,
         ["trigger"] = function(axis)
