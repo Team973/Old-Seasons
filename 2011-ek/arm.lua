@@ -11,7 +11,7 @@ local presets = {
     low = {elevator=0.08, wrist=true},
     middle = {elevator=2.74, wrist=true},
     high = {elevator=5.60, wrist=true},
-    midLow = {elevator=0.58, wrist=true},
+    midLow = {elevator=0.08, wrist=true},
     midMiddle = {elevator=3.22, wrist=true},
     midHigh = {elevator=6.16, wrist=true},
 }
