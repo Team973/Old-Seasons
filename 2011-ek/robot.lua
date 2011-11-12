@@ -510,22 +510,24 @@ controlMap =
         [2] = fudgeButton(wheels.frontRight),
         [3] = fudgeButton(wheels.rearLeft),
         [4] = fudgeButton(wheels.frontLeft),
-        [5] = {
-           down=function() gear = "low" end,
-           up=function() gear = "high" end,  
-        },
-        [7] = function () ignoreGyro = true 
-            end, 
-        [10] = function() zeroMode = true end,
-        update = function(stick)
-            if stick:GetRawButton(6) then
+        [5] = {tick=function(held)
+            if held then
+                gear = "low"
+            else
+                gear = "high"
+            end
+        end},
+        [6] = {tick=function(held)
+            if held then
                 if gear == "low" then
                     rotation = rotation * 0.5
                 elseif gear == "high" then
                     rotation = rotation * 0.5
                 end
             end
-        end,
+        end},
+        [7] = function () ignoreGyro = true end, 
+        [10] = function() zeroMode = true end,
     },
     -- Joystick 2
     {
