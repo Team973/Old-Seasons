@@ -552,6 +552,13 @@ controlMap =
         ["trigger"] = function(axis)
             if math.abs(axis) > 0.5 then
                 clawState = 1
+                if hasTube then
+                    local newTarget = elevatorPID.target - 0.5
+                    if newTarget < 0 then
+                        newTarget = 0
+                    end
+                    elevatorPID.target = newTarget
+                end
             end
         end,
         [1] = presetButton("low", "midLow"),
@@ -559,13 +566,6 @@ controlMap =
         [4] = presetButton("high", "midHigh"),
         [5] = function()
             clawState = -1
-            if hasTube then
-                local newTarget = elevatorPID.target - 0.5
-                if newTarget < 0 then
-                    newTarget = 0
-                end
-                elevatorPID.target = newTarget
-            end
             -- This also runs intake, see update.
         end,
         [6] = function() clawState = 0 end,
