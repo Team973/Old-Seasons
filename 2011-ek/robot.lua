@@ -32,9 +32,10 @@ local wristIntakeTime = 0.1
 local fudgeMode, fudgeWheel, fudgeMovement
 
 local compressor, pressureSwitch, gearSwitch
-local gyro, gyroChannel, gyroPID
+local gyro, gyroChannel, gyroPID, ignoreGyro
+ignoreGyro = false
 local wristPiston
-local readyMinibotSolenoid, fireMinibotSolenoid
+local readyMinibotSolenoid, fireMinibotRelay
 local clawOpenPiston1, clawOpenPiston2, clawClosePiston1, clawClosePiston2
 local clawSwitch, clawIntakeMotor
 local elevatorMotor1, elevatorMotor2
@@ -134,7 +135,12 @@ function teleop()
             gearSwitch:Set(false)
         end
 
-        local gyroAngle = gyro:GetAngle()
+        local gyroAngle
+        if ignoreGyro then 
+            gyroAngle = 0 
+        else 
+            gyroAngle = gyro:GetAngle()
+        end
 
         if zeroMode then
             for _, wheel in pairs(wheels) do
@@ -152,7 +158,6 @@ function teleop()
             if not fieldCentric then
                 appliedGyro = 0
             end
-            
             -- Keep rotation steady in deadband
             if math.abs(rotation) < deadband then
                 if gyroPID.target == nil then
@@ -276,7 +281,13 @@ function teleop()
         --]]
         lcd.update()
         
-        minibot.update(readyMinibotSolenoid, fireMinibotSolenoid)    
+        readyMinibotOutput, fireMinibotOutput = minibot.update()    
+        readyMinibotSolenoid:Set(readyMinibotOutput)
+        if fireMinibotOutput then
+            fireMinibotRelay:Set(wpilib.Relay_kOff)
+        else
+            fireMinibotRelay:Set(wpilib.Relay_kOn)
+        end
 
         -- Iteration cleanup
         feedWatchdog()
@@ -341,7 +352,7 @@ gyroPID = pid.new(0.05, 0, 0)
 
 wristPiston = wpilib.Solenoid(7, 8)
 readyMinibotSolenoid = wpilib.Solenoid(7, 4)
-fireMinibotSolenoid = wpilib.Solenoid(7, 5)
+fireMinibotRelay = wpilib.Relay(4, 1, wpilib.Relay_kReverseOnly)
 
 elevatorEncoder = wpilib.Encoder(6, 1, 6, 2, false, wpilib.CounterBase_k1X)
 
@@ -511,6 +522,8 @@ controlMap =
            down=function() gear = "low" end,
            up=function() gear = "high" end,  
         },
+        [7] = function () ignoreGyro = true 
+            end, 
         [10] = function() zeroMode = true end,
         update = function(stick)
             if stick:GetRawButton(6) then

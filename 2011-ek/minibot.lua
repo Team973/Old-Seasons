@@ -55,12 +55,10 @@ function deploy()
 end
 
 function update(readyMinibotSolenoid, fireMinibotSolenoid)
-    if isReady then
-        readyMinibotSolenoid:Set(true)
-    else
-        readyMinibotSolenoid:Set(false)
-    end
-    fireMinibotSolenoid:Set(deploying)
+    local readyOutput, fireOutput
+    readyOutput = isReady
+    fireOutput = deploying
+    return readyOutput, fireOutput
 end
 
 -- vim: ft=lua et ts=4 sts=4 sw=4
