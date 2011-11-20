@@ -3,9 +3,9 @@
 local controls = require("controls")
 local lcd = require("lcd")
 local wpilib = require("wpilib")
-
+local leftMotor1, rightMotor1
 local pairs = pairs
-
+local driveX, driveY
 module(..., package.seeall)
 
 local TELEOP_LOOP_LAG = 0.005
@@ -50,6 +50,11 @@ function teleop()
         lcd.print(1, "Running!")
         lcd.update()
 
+        --Drive
+
+        leftMotor1:Set(driveY)
+        rightMotor1:Set(driveY)
+
         -- Read controls
         controls.update(controlMap)
 
@@ -71,6 +76,8 @@ controlMap =
 {
     -- Joystick 1
     {
+    ["x"] = function(axis) driveX = axis end,
+    ["y"] = function(axis) driveY = axis end,
     },
     -- Joystick 2
     {
@@ -112,5 +119,9 @@ else
     enableWatchdog = function() end
     disableWatchdog = function() end
 end
+
+--Drive
+    leftMotor1 = wpilib.Victor(1)
+    rightMotor1 = wpilib.Victor(2)
 
 -- vim: ft=lua et ts=4 sts=4 sw=4
