@@ -6,7 +6,7 @@ local linearize = require("linearize")
 local wpilib = require("wpilib")
 local pairs = pairs
 
-local x, flyMotor
+local x, flyMotor, encoder
 
 module(..., package.seeall)
 
