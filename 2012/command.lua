@@ -1,3 +1,5 @@
+-- command.lua - An implementation of WPILib commands in pure Lua
+
 local table = table
 local setmetatable = setmetatable
 
@@ -183,3 +185,5 @@ function CommandGroup:IsInterruptable()
 
     return true
 end
+
+-- vim: ft=lua et ts=4 sts=4 sw=4
