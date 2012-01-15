@@ -10,6 +10,8 @@ Lua`_, with the exception of ``2010-boss``.
 Subdirectories
 ================
 
+``2012``
+   The unnamed 2012 season code
 ``2011-ek``
    Latest off-season code for Emperor Krab
 ``2011-crapoffseason``
