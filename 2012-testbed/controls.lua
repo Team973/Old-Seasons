@@ -30,6 +30,7 @@ local function storeState()
         for button = 1, numButtons do
             previousState[i][button] = stick:GetRawButton(button)
         end
+        previousState[i].trigger = stick:GetRawAxis(3)
     end
     if cypress then
         for button = 1, numCypressButtons do
@@ -56,6 +57,8 @@ local function handleButton(buttonHandler, prev, curr)
     if buttonHandler.tick then buttonHandler.tick(curr) end
 end
 
+local TRIGGER_THRESHOLD = 0.5
+
 -- update calls the event handlers.
 function update(map)
     for i, stick in ipairs(sticks) do
@@ -63,6 +66,10 @@ function update(map)
         -- Update axes
         if stickMap.x then stickMap.x(stick:GetX()) end
         if stickMap.y then stickMap.y(stick:GetY()) end
+        if stickMap.rx then stickMap.rx(stick:GetRawAxis(4)) end
+        if stickMap.ry then stickMap.ry(stick:GetRawAxis(5)) end
+        if stickMap.hatx then stickMap.hatx(stick:GetRawAxis(6)) end
+    
         -- Update button events
         for button = 1, numButtons do
             local currValue = stick:GetRawButton(button)
@@ -71,6 +78,16 @@ function update(map)
                 handleButton(buttonHandler, previousState[i][button], currValue)
             end
         end
+
+        -- Update trigger
+        local triggerAxis = stick:GetRawAxis(3)
+        if stickMap.ltrigger then
+            handleButton(stickMap.ltrigger, previousState[i].trigger > TRIGGER_THRESHOLD, triggerAxis > TRIGGER_THRESHOLD)
+        end
+        if stickMap.rtrigger then
+            handleButton(stickMap.rtrigger, previousState[i].trigger < -TRIGGER_THRESHOLD, triggerAxis < -TRIGGER_THRESHOLD)
+        end
+
         -- Call update
         if stickMap.update then stickMap.update(stick) end
     end
