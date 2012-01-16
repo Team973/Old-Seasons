@@ -7,9 +7,11 @@ local pid = require ("pid")
 local wpilib = require("wpilib")
 local pairs = pairs
 
-local x, flyMotor, encoder, flypid, feedforward
+local x, flyMotor, encoder, flypid, feedforward, pDelta
 
 module(..., package.seeall)
+
+pid.PID.timerNew = wpilib.Timer
 
 local TELEOP_LOOP_LAG = 0.005
 
@@ -68,9 +70,10 @@ function teleop()
         dashboard:PutDouble("x", x)
         dashboard:PutDouble("encoder", encoder:Get())
         dashboard:PutDouble("speed", encoder:GetRate())
-        flypid.p=dashboard:GetDouble("p")
-		flypid.target=dashboard: GetDouble("target")
-		feedforward=dashboard:GetDouble("feedforward")
+        dashboard:PutDouble("p", flypid.p)
+        dashboard:PutDouble("pDelta", pDelta)
+		dashboard:PutDouble("target", flypid.target)
+		dashboard:PutDouble("feedforward", feedforward)
 		flypid:update(encoder:GetRate())
 		flyMotor:Set(flypid.target/feedforward+flypid.output)
 
@@ -95,11 +98,20 @@ dashboard:PutDouble("p",flypid.p)
 
 -- Controls
 
+pDelta = 0.1
 controlMap =
 {
     -- Joystick 1
     {
         ["y"] = function(axis) x = -axis end,
+        [1] = function() pDelta = pDelta / 10 end,
+        [2] = function() pDelta = pDelta * 10 end,
+        [3] = function() flypid.p = flypid.p - pDelta end,
+        [4] = function() flypid.p = flypid.p + pDelta end,
+        [5] = function() feedforward = feedforward + 100 end,
+        ["ltrigger"] = function() feedforward = feedforward - 100 end,
+        [6] = function() flypid.target = flypid.target + 100 end,
+        ["rtrigger"] = function() flypid.target = flypid.target - 100 end,
     },
     -- Joystick 2
     {
