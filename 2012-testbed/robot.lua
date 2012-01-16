@@ -3,10 +3,11 @@
 local controls = require("controls")
 local lcd = require("lcd")
 local linearize = require("linearize")
+local pid = require ("pid")
 local wpilib = require("wpilib")
 local pairs = pairs
 
-local x, flyMotor, encoder
+local x, flyMotor, encoder, flypid, feedforward
 
 module(..., package.seeall)
 
@@ -48,10 +49,14 @@ function run()
     end
 end
 
+local dashboard = wpilib.SmartDashboard_GetInstance()
+feedforward=100
+dashboard:PutDouble("feedforward", feedforward)
+
 function teleop()
     disableWatchdog()
 
-    local dashboard = wpilib.SmartDashboard_GetInstance()
+    
 
     while wpilib.IsOperatorControl() and wpilib.IsEnabled() do
         lcd.print(1, "Running!")
@@ -63,7 +68,11 @@ function teleop()
         dashboard:PutDouble("x", x)
         dashboard:PutDouble("encoder", encoder:Get())
         dashboard:PutDouble("speed", encoder:GetRate())
-        flyMotor:Set(x)
+        flypid.p=dashboard:GetDouble("p")
+		flypid.target=dashboard: GetDouble("target")
+		feedforward=dashboard:GetDouble("feedforward")
+		flypid:update(encoder:GetRate())
+		flyMotor:Set(flypid.target/feedforward+flypid.output)
 
         wpilib.Wait(TELEOP_LOOP_LAG)
     end
@@ -79,6 +88,9 @@ end
 flyMotor = wpilib.Victor(1, 6)
 encoder = wpilib.Encoder(2, 1, 2, 2, true, wpilib.CounterBase_k1X)
 encoder:SetDistancePerPulse(1.0 / 100.0)
+flypid= pid.new(0)
+dashboard:PutDouble("target",flypid.target)
+dashboard:PutDouble("p",flypid.p)
 -- End Inputs/Outputs
 
 -- Controls
