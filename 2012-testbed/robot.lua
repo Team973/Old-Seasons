@@ -61,8 +61,11 @@ dashboard:PutDouble("feedforward", feedforward)
 function teleop()
     disableWatchdog()
 
+    encoder:Reset()
     timer:Start()
+    timer:Reset()
 	currentSpeed = 0
+    prevPos = 0
 
     while wpilib.IsOperatorControl() and wpilib.IsEnabled() do
         lcd.print(1, "Running!")
@@ -72,18 +75,19 @@ function teleop()
         controls.update(controlMap)
 		
 		if timer:Get() >  .25 then
-			local currentPos= encoder:Get()
-			currentSpeed= (currentPos - prevPos)/timer:Get()
+			local currentPos= encoder:Get()/100
+			currentSpeed= (currentPos - prevPos)/timer:Get()*60
 			prevPos= currentPos
+            timer:Reset() 
 		end
 		
         dashboard:PutDouble("x", x)
         dashboard:PutDouble("encoder", encoder:Get())
         dashboard:PutDouble("speed", currentSpeed)
         dashboard:PutDouble("pDelta", pDelta)
-        flypid.p=dashboard:GetDouble("p")
-		flypid.target=dashboard: GetDouble("target")
-		feedforward=dashboard:GetDouble("feedforward")
+        dashboard:PutDouble("p", flypid.p)
+		dashboard:PutDouble("target", flypid.target)
+		dashboard:PutDouble("feedforward", feedforward)
 		flypid:update(currentSpeed)
 		flyMotor:Set(flypid.target/feedforward+flypid.output)
 
@@ -98,7 +102,7 @@ local function LinearVictor(...)
     return linearize.wrap(wpilib.Victor(...))
 end
 
-flyMotor = wpilib.Victor(1, 6)
+flyMotor = LinearVictor(1, 6)
 encoder = wpilib.Encoder(2, 1, 2, 2, true, wpilib.CounterBase_k1X)
 encoder:SetDistancePerPulse(1.0 / 100.0)
 flypid= pid.new(0)
