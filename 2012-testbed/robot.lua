@@ -8,7 +8,9 @@ local wpilib = require("wpilib")
 local pairs = pairs
 
 local x, flyMotor, flypid, feedforward
-
+local currentSpeed, prevPos
+local timer= wpilib.Timer()
+	
 module(..., package.seeall)
 
 local TELEOP_LOOP_LAG = 0.005
@@ -56,23 +58,31 @@ dashboard:PutDouble("feedforward", feedforward)
 function teleop()
     disableWatchdog()
 
-    
+    timer: Start()
+	currentSpeed= 0
 
     while wpilib.IsOperatorControl() and wpilib.IsEnabled() do
         lcd.print(1, "Running!")
         lcd.update()
-
+		
         -- Read controls
         controls.update(controlMap)
-
+		
+		if timer:Get() >  .25 then
+			local currentPos= encoder:Get()
+			currentSpeed= (currentPos - prevPos)/timer:Get()
+			prevPos= currentPos
+		end
+		
         dashboard:PutDouble("x", x)
         dashboard:PutDouble("encoder", encoder:Get())
-        dashboard:PutDouble("speed", encoder:GetRate())
+        dashboard:PutDouble("speed", currentSpeed)
         flypid.p=dashboard:GetDouble("p")
 		flypid.target=dashboard: GetDouble("target")
 		feedforward=dashboard:GetDouble("feedforward")
-		flypid:update(encoder:GetRate())
+		flypid:update(currentSpeed)
 		flyMotor:Set(flypid.target/feedforward+flypid.output)
+		
 
         wpilib.Wait(TELEOP_LOOP_LAG)
     end
