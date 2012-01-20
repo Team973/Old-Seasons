@@ -300,8 +300,10 @@ end
 function calibrate()
     local calibState = {}
     local TURN_SPEED = 1.0
+    local LEFT_SENSOR = -30.0
+    local RIGHT_SENSOR = 30.0
     for name, _ in pairs(wheels) do
-        calibState[name] = false
+        calibState[name] = { found = 0, point = {} } 
     end
 
     local keepGoing = true
@@ -309,11 +311,18 @@ function calibrate()
         keepGoing = false
         for name, calibrated in pairs(calibState) do
             local wheel = wheels[name]
-            if calibrated then
-                wheel.turnMotor:Set(0)
-            elseif wheel.calibrateSwitch:Get() then
-                -- Stop running motor
-                wheel.turnMotor:Set(0)
+            if calibrated.found == 2 then
+                -- Turn wheel to our new 0 value
+            elseif wheel.calibrateSwitch1:Get() then
+                calibrated.found = calibrated.found + 1
+                calibrated.point 
+
+
+
+
+
+
+                wheel.turnMotor:Set(-TURN_SPEED)
 
                 -- Mark as calibrated
                 calibState[name] = true
