@@ -11,6 +11,9 @@ local x, flyMotor, encoder
 local flypid, feedforward, pDelta
 local currentSpeed, prevPos
 local timer= wpilib.Timer()
+local turretpid= pid.new(0)
+local turretEncoder
+local turretMotor
 
 module(..., package.seeall)
 
@@ -80,6 +83,10 @@ function teleop()
 			prevPos= currentPos
             timer:Reset() 
 		end
+
+turretpid.target= turret.calculateTarget(turretEncoder:Get(), turretUserTarget)
+turretpid:update(turretEncoder:Get())
+turretMotor:Set(turretpid.output)
 		
         dashboard:PutDouble("x", x)
         dashboard:PutDouble("encoder", encoder:Get())
@@ -101,6 +108,9 @@ end
 local function LinearVictor(...)
     return linearize.wrap(wpilib.Victor(...))
 end
+turretEncoder = wpilib.Encoder(2, 1, 2, 2, true, wpilib.CounterBase_k1X)
+turretMotor = LinearVictor(1,6)
+turretpid = pid.new(0)
 
 flyMotor = LinearVictor(1, 6)
 encoder = wpilib.Encoder(2, 1, 2, 2, true, wpilib.CounterBase_k1X)
@@ -124,8 +134,8 @@ controlMap =
         [4] = function() flypid.p = flypid.p + pDelta end,
         [5] = function() feedforward = feedforward + 100 end,
         ["ltrigger"] = function() feedforward = feedforward - 100 end,
-        [6] = function() flypid.target = flypid.target + 100 end,
-        ["rtrigger"] = function() flypid.target = flypid.target - 100 end,
+        [6] = function() turretUserTarget = turretUserTarget + 100 end,
+        ["rtrigger"] = function() turretUserTarget = turretUserTarget - 100 end,
     },
     -- Joystick 2
     {
