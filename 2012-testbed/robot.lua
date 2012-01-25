@@ -4,6 +4,7 @@ local controls = require("controls")
 local lcd = require("lcd")
 local linearize = require("linearize")
 local pid = require ("pid")
+local turret = require ("turret")
 local wpilib = require("wpilib")
 local pairs = pairs
 
@@ -14,6 +15,7 @@ local timer= wpilib.Timer()
 local turretpid= pid.new(0)
 local turretEncoder
 local turretMotor
+local turretUserTarget = 0
 
 module(..., package.seeall)
 
@@ -34,7 +36,7 @@ function run()
     lcd.print(1, "Ready")
     lcd.update()
 
-    encoder:Start()
+    turretEncoder:Start()
 
     -- Main loop
     while true do
@@ -64,7 +66,7 @@ dashboard:PutDouble("feedforward", feedforward)
 function teleop()
     disableWatchdog()
 
-    encoder:Reset()
+    turretEncoder:Reset()
     timer:Start()
     timer:Reset()
 	currentSpeed = 0
@@ -77,26 +79,26 @@ function teleop()
         -- Read controls
         controls.update(controlMap)
 		
-		if timer:Get() >  .25 then
-			local currentPos= encoder:Get()/100
-			currentSpeed= (currentPos - prevPos)/timer:Get()*60
-			prevPos= currentPos
-            timer:Reset() 
-		end
+		--if timer:Get() >  .25 then
+		--	local currentPos= encoder:Get()/100
+		--	currentSpeed= (currentPos - prevPos)/timer:Get()*60
+		--	prevPos= currentPos
+          --  timer:Reset() 
+		--end
 
 turretpid.target= turret.calculateTarget(turretEncoder:Get(), turretUserTarget)
 turretpid:update(turretEncoder:Get())
 turretMotor:Set(turretpid.output)
 		
         dashboard:PutDouble("x", x)
-        dashboard:PutDouble("encoder", encoder:Get())
+       -- dashboard:PutDouble("encoder", encoder:Get())
         dashboard:PutDouble("speed", currentSpeed)
         dashboard:PutDouble("pDelta", pDelta)
-        dashboard:PutDouble("p", flypid.p)
-		dashboard:PutDouble("target", flypid.target)
+        --dashboard:PutDouble("p", flypid.p)
+		--dashboard:PutDouble("target", flypid.target)
 		dashboard:PutDouble("feedforward", feedforward)
-		flypid:update(currentSpeed)
-		flyMotor:Set(flypid.target/feedforward+flypid.output)
+		--flypid:update(currentSpeed)
+		--flyMotor:Set(flypid.target/feedforward+flypid.output)
 
         wpilib.Wait(TELEOP_LOOP_LAG)
     end
@@ -108,13 +110,16 @@ end
 local function LinearVictor(...)
     return linearize.wrap(wpilib.Victor(...))
 end
-turretEncoder = wpilib.Encoder(2, 1, 2, 2, true, wpilib.CounterBase_k1X)
-turretMotor = LinearVictor(1,6)
+turretEncoder = wpilib.Encoder(2, 7, 2, 8, true, wpilib.CounterBase_k1X)
+turretMotor = LinearVictor(1,5)
 turretpid = pid.new(0)
 
-flyMotor = LinearVictor(1, 6)
-encoder = wpilib.Encoder(2, 1, 2, 2, true, wpilib.CounterBase_k1X)
-encoder:SetDistancePerPulse(1.0 / 100.0)
+
+
+
+--flyMotor = LinearVictor(1, 6)
+--encoder = wpilib.Encoder(2, 1, 2, 2, true, wpilib.CounterBase_k1X)
+--encoder:SetDistancePerPulse(1.0 / 100.0)
 flypid= pid.new(0)
 dashboard:PutDouble("target",flypid.target)
 dashboard:PutDouble("p",flypid.p)
