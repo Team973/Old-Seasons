@@ -86,19 +86,21 @@ function teleop()
           --  timer:Reset() 
 		--end
 
-turretpid.target= turret.calculateTarget(turretEncoder:Get(), turretUserTarget)
-turretpid:update(turretEncoder:Get())
-turretMotor:Set(turretpid.output)
+        turretpid:update(turretEncoder:Get())
+        turretMotor:Set(turretpid.output)
+        --turretMotor:Set(x)
 		
-        dashboard:PutDouble("x", x)
-       -- dashboard:PutDouble("encoder", encoder:Get())
-        dashboard:PutDouble("speed", currentSpeed)
-        dashboard:PutDouble("pDelta", pDelta)
-        --dashboard:PutDouble("p", flypid.p)
-		--dashboard:PutDouble("target", flypid.target)
-		dashboard:PutDouble("feedforward", feedforward)
 		--flypid:update(currentSpeed)
 		--flyMotor:Set(flypid.target/feedforward+flypid.output)
+
+        dashboard:PutDouble("x", x)
+        dashboard:PutDouble("encoder", turretEncoder:Get())
+        --dashboard:PutDouble("speed", currentSpeed)
+        dashboard:PutDouble("pDelta", pDelta)
+        dashboard:PutDouble("p", turretpid.p)
+		dashboard:PutDouble("target", turretpid.target)
+		dashboard:PutDouble("userTarget", turretUserTarget)
+		dashboard:PutDouble("feedforward", feedforward)
 
         wpilib.Wait(TELEOP_LOOP_LAG)
     end
@@ -110,7 +112,7 @@ end
 local function LinearVictor(...)
     return linearize.wrap(wpilib.Victor(...))
 end
-turretEncoder = wpilib.Encoder(2, 7, 2, 8, true, wpilib.CounterBase_k1X)
+turretEncoder = wpilib.Encoder(1, 7, 1, 8, true, wpilib.CounterBase_k1X)
 turretMotor = LinearVictor(1,5)
 turretpid = pid.new(0)
 
@@ -121,8 +123,8 @@ turretpid = pid.new(0)
 --encoder = wpilib.Encoder(2, 1, 2, 2, true, wpilib.CounterBase_k1X)
 --encoder:SetDistancePerPulse(1.0 / 100.0)
 flypid= pid.new(0)
-dashboard:PutDouble("target",flypid.target)
-dashboard:PutDouble("p",flypid.p)
+dashboard:PutDouble("target",turretpid.target)
+dashboard:PutDouble("p",turretpid.p)
 -- End Inputs/Outputs
 
 -- Controls
@@ -135,12 +137,12 @@ controlMap =
         ["y"] = function(axis) x = -axis end,
         [1] = function() pDelta = pDelta / 10 end,
         [2] = function() pDelta = pDelta * 10 end,
-        [3] = function() flypid.p = flypid.p - pDelta end,
-        [4] = function() flypid.p = flypid.p + pDelta end,
+        [3] = function() turretpid.p = turretpid.p - pDelta end,
+        [4] = function() turretpid.p = turretpid.p + pDelta end,
         [5] = function() feedforward = feedforward + 100 end,
         ["ltrigger"] = function() feedforward = feedforward - 100 end,
-        [6] = function() turretUserTarget = turretUserTarget + 100 end,
-        ["rtrigger"] = function() turretUserTarget = turretUserTarget - 100 end,
+        [6] = function() turretpid.target= turret.calculateTarget(turretEncoder:Get(), turretpid.target + 100)end,
+        ["rtrigger"] = function() turretpid.target= turret.calculateTarget(turretEncoder:Get(), turretpid.target - 100)end,
     },
     -- Joystick 2
     {
