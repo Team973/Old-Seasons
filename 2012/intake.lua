@@ -1,14 +1,15 @@
 -- intake.lua
 
 local wpilib = require("wpilib")
+
+module(...)
+
 local lowered = false
 local intakeSpeed = 0
 local sideIntakeSpeed = 0
 
-
-module(...)
-
-function isballBlockingturret()
+function isBallBlockingTurret()
+    -- TODO
     return false
 end
 
@@ -21,10 +22,11 @@ function toggleRaise()
 end
 
 function update(turretReady)
+    -- TODO
 end
 
 function setIntakeSpeed(speed)
-    if not isLowered then
+    if not isLowered() then
         intakeSpeed = 0
     else
         intakeSpeed = speed
@@ -32,7 +34,7 @@ function setIntakeSpeed(speed)
 end
 
 function setSideIntakeSpeed(speed)
-    if not isLowered then
+    if not isLowered() then
         sideIntakeSpeed = 0
     else
         sideIntakeSpeed = speed
