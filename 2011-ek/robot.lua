@@ -341,27 +341,27 @@ local function LinearVictor(...)
     return linearize.wrap(wpilib.Victor(...))
 end
 
-compressor = wpilib.Relay(4, 1, wpilib.Relay_kForwardOnly)
-pressureSwitch = wpilib.DigitalInput(4, 13)
-gearSwitch = wpilib.Solenoid(7, 3)
+compressor = wpilib.Relay(1, 1, wpilib.Relay_kForwardOnly)
+pressureSwitch = wpilib.DigitalInput(1, 13)
+gearSwitch = wpilib.Solenoid(2, 3)
 
 gyroChannel = wpilib.AnalogChannel(1, 2)
 gyroPID = pid.new(0.05, 0, 0)
 
-wristPiston = wpilib.Solenoid(7, 8)
-readyMinibotSolenoid = wpilib.Solenoid(7, 4)
-fireMinibotRelay = wpilib.Relay(4, 1, wpilib.Relay_kReverseOnly)
+wristPiston = wpilib.Solenoid(2, 8)
+readyMinibotSolenoid = wpilib.Solenoid(2, 4)
+fireMinibotRelay = wpilib.Relay(1, 1, wpilib.Relay_kReverseOnly)
 
-elevatorEncoder = wpilib.Encoder(6, 1, 6, 2, false, wpilib.CounterBase_k1X)
+elevatorEncoder = wpilib.Encoder(2, 1, 2, 2, false, wpilib.CounterBase_k1X)
 
-clawOpenPiston1 = wpilib.Solenoid(7, 6)
-clawOpenPiston2 = wpilib.Solenoid(7, 7)
-clawClosePiston1 = wpilib.Solenoid(7, 1)
-clawClosePiston2 = wpilib.Solenoid(7, 2)
-clawSwitch = wpilib.DigitalInput(6, 3)
-clawIntakeMotor = LinearVictor(6, 3)
-elevatorMotor1 = LinearVictor(6, 4)
-elevatorMotor2 = LinearVictor(6, 5)
+clawOpenPiston1 = wpilib.Solenoid(2, 6)
+clawOpenPiston2 = wpilib.Solenoid(2, 7)
+clawClosePiston1 = wpilib.Solenoid(2, 1)
+clawClosePiston2 = wpilib.Solenoid(2, 2)
+clawSwitch = wpilib.DigitalInput(2, 3)
+clawIntakeMotor = LinearVictor(2, 3)
+elevatorMotor1 = LinearVictor(2, 4)
+elevatorMotor2 = LinearVictor(2, 5)
 
 elevatorPID = pid.new(0, 0, 0.0005)
 elevatorPID.min, elevatorPID.max = -1.0, 1.0
@@ -371,41 +371,41 @@ local turnPIDConstants = {p=0.05, i=0, d=0}
 wheels = {
     frontLeft={
         shortName="FL",
-        driveMotor=LinearVictor(4, 7),
-        turnMotor=wpilib.Jaguar(4, 8),
+        driveMotor=LinearVictor(1, 7),
+        turnMotor=wpilib.Jaguar(1, 8),
 
-        calibrateSwitch=wpilib.DigitalInput(4, 12),
-        turnEncoder=wpilib.Encoder(4, 10, 4, 11),
+        calibrateSwitch=wpilib.DigitalInput(1, 12),
+        turnEncoder=wpilib.Encoder(1, 10, 1, 11),
         turnPID=pid.new(turnPIDConstants.p, turnPIDConstants.i,
                         turnPIDConstants.d, drive.angleError),
     },
     frontRight={
         shortName="FR",
-        driveMotor=LinearVictor(4, 1),
-        turnMotor=wpilib.Jaguar(4, 2),
+        driveMotor=LinearVictor(1, 1),
+        turnMotor=wpilib.Jaguar(1, 2),
 
-        calibrateSwitch=wpilib.DigitalInput(4, 9),
-        turnEncoder=wpilib.Encoder(4, 1, 4, 2),
+        calibrateSwitch=wpilib.DigitalInput(1, 9),
+        turnEncoder=wpilib.Encoder(1, 1, 1, 2),
         turnPID=pid.new(turnPIDConstants.p, turnPIDConstants.i,
                         turnPIDConstants.d, drive.angleError),
     },
     rearLeft={
         shortName="RL",
-        driveMotor=LinearVictor(4, 6),
-        turnMotor=wpilib.Jaguar(4, 5),
+        driveMotor=LinearVictor(1, 6),
+        turnMotor=wpilib.Jaguar(1, 5),
 
-        calibrateSwitch=wpilib.DigitalInput(4, 3),
-        turnEncoder=wpilib.Encoder(4, 7, 4, 8),
+        calibrateSwitch=wpilib.DigitalInput(1, 3),
+        turnEncoder=wpilib.Encoder(1, 7, 1, 8),
         turnPID=pid.new(turnPIDConstants.p, turnPIDConstants.i,
                         turnPIDConstants.d, drive.angleError),
     },
     rearRight={
         shortName="RR",
-        driveMotor=LinearVictor(4, 3),
-        turnMotor=wpilib.Jaguar(4, 4),
+        driveMotor=LinearVictor(1, 3),
+        turnMotor=wpilib.Jaguar(1, 4),
 
-        calibrateSwitch=wpilib.DigitalInput(4, 6),
-        turnEncoder=wpilib.Encoder(6, 13, 6, 14),
+        calibrateSwitch=wpilib.DigitalInput(1, 6),
+        turnEncoder=wpilib.Encoder(1, 13, 1, 14),
         turnPID=pid.new(turnPIDConstants.p, turnPIDConstants.i,
                         turnPIDConstants.d, drive.angleError),
     },
