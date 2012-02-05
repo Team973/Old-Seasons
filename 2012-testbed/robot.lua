@@ -63,6 +63,10 @@ local dashboard = wpilib.SmartDashboard_GetInstance()
 feedforward=100
 dashboard:PutDouble("feedforward", feedforward)
 
+local function getTurretAngle()
+    return turretEncoder:GetRaw() / 4 * 360/100
+end
+
 function teleop()
     disableWatchdog()
 
@@ -86,7 +90,8 @@ function teleop()
           --  timer:Reset() 
 		--end
 
-        turretpid:update(turretEncoder:Get())
+        local turretAngle = getTurretAngle()
+        turretpid:update(turretAngle)
         turretMotor:Set(turretpid.output)
         --turretMotor:Set(x)
 		
@@ -95,6 +100,7 @@ function teleop()
 
         dashboard:PutDouble("x", x)
         dashboard:PutDouble("encoder", turretEncoder:Get())
+        dashboard:PutDouble("angle", turretAngle)
         --dashboard:PutDouble("speed", currentSpeed)
         dashboard:PutDouble("pDelta", pDelta)
         dashboard:PutDouble("p", turretpid.p)
@@ -112,8 +118,8 @@ end
 local function LinearVictor(...)
     return linearize.wrap(wpilib.Victor(...))
 end
-turretEncoder = wpilib.Encoder(1, 7, 1, 8, true, wpilib.CounterBase_k1X)
-turretMotor = LinearVictor(1,5)
+turretEncoder = wpilib.Encoder(2, 1, 2, 2, false, wpilib.CounterBase_k4X)
+turretMotor = LinearVictor(2, 5)
 turretpid = pid.new(0)
 
 
@@ -141,8 +147,8 @@ controlMap =
         [4] = function() turretpid.p = turretpid.p + pDelta end,
         [5] = function() feedforward = feedforward + 100 end,
         ["ltrigger"] = function() feedforward = feedforward - 100 end,
-        [6] = function() turretpid.target= turret.calculateTarget(turretEncoder:Get(), turretpid.target + 100)end,
-        ["rtrigger"] = function() turretpid.target= turret.calculateTarget(turretEncoder:Get(), turretpid.target - 100)end,
+        [6] = function() turretpid.target= turret.calculateTarget(getTurretAngle(), turretpid.target + 10)end,
+        ["rtrigger"] = function() turretpid.target= turret.calculateTarget(getTurretAngle(), turretpid.target - 10)end,
     },
     -- Joystick 2
     {
