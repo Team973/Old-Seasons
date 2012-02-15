@@ -405,7 +405,7 @@ wheels = {
         turnMotor=wpilib.Jaguar(1, 4),
 
         calibrateSwitch=wpilib.DigitalInput(1, 6),
-        turnEncoder=wpilib.Encoder(1, 13, 1, 14),
+        turnEncoder=wpilib.Encoder(2, 13, 2, 14),
         turnPID=pid.new(turnPIDConstants.p, turnPIDConstants.i,
                         turnPIDConstants.d, drive.angleError),
     },
