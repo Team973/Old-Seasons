@@ -25,6 +25,7 @@ local feedWatchdog, enableWatchdog, disableWatchdog
 local hellautonomous, teleop, calibrate
 local controlMap, strafe, rotation, gear, presetShift, fieldCentric
 local zeroMode, possessionTimer, rotationHoldTimer
+local fudgeMode, fudgeWheel, fudgeMovement
 
 local compressor, pressureSwitch, gearSwitch
 local gyroChannel, gyroPID, ignoreGyro
@@ -267,6 +268,15 @@ local function LinearVictor(...)
     return linearize.wrap(wpilib.Victor(...))
 end
 
+compressor = wpilib.Relay(4, 1, wpilib.Relay_kForwardOnly)
+pressureSwitch = wpilib.DigitalInput(4, 13)
+gearSwitch = wpilib.Solenoid(7, 3)
+
+gyroChannel = wpilib.AnalogChannel(1, 2)
+gyroPID = pid.new(0.05, 0, 0)
+
+local turnPIDConstants = {p=0.05, i=0, d=0}
+
 wheels = {
     frontLeft={
         shortName="FL",
@@ -359,36 +369,12 @@ local function incConstant(tbl, name, pid, delta)
     end
 end
 
-local function doPreset(name)
-    local wristPreset = arm.presetWrist(name)
-
-    elevatorPID.target = arm.presetElevatorTarget(name)
-
-    if wristPreset ~= nil then
-        wristUp = wristPreset
-    end
-end
-
-local function presetButton(nonShiftName, shiftName)
-    return function()
-        if presetShift then
-            doPreset(shiftName)
-        else
-            doPreset(nonShiftName)
-        end
-    end
-end
-
 local function deadband(axis, threshold)
     if axis < threshold and axis > -threshold then
         return 0
     else
         return axis
     end
-end
-
-local function grabElevatorTarget()
-    elevatorPID.target = arm.elevatorEncoderToFeet(elevatorEncoder:Get())
 end
 
 controlMap =
@@ -430,74 +416,9 @@ controlMap =
     },
     -- Joystick 2
     {
-        ["y"] = function(axis)
-            if axis < -0.5 then
-                wristUp = true
-            elseif axis > 0.5 then
-                wristUp = false
-            end
-        end,
-        ["ry"] = function(axis)
-            if math.abs(axis) > 0.2 then
-                elevatorControl = -axis * 0.3
-            elseif elevatorControl then
-                -- Now switching to manual
-                grabElevatorTarget()
-                elevatorControl = nil
-            end
-        end,
-        ["hatx"] = function(axis)
-            presetShift = (axis > 0.5)
-
-            if lastHatX > -0.5 and axis < -0.5 then
-                doPreset("carry")
-            end
-
-            lastHatX = axis
-        end,
-        ["rtrigger"] = function()
-            if hasTube then
-                clawState = -1
-                local newTarget = arm.elevatorEncoderToFeet(elevatorEncoder:Get()) - 1.0
-                if newTarget < 0 then
-                    newTarget = 0
-                end
-                elevatorPID.target = newTarget
-
-                -- The operator pulled the trigger. Let it go. JUST LET IT GO.
-                hasTube = false
-            else
-                clawState = 1
-            end
-        end,
-        [1] = presetButton("low", "midLow"),
-        [2] = presetButton("middle", "midMiddle"),
-        [4] = presetButton("high", "midHigh"),
-        [5] = function()
-            clawState = -1
-            -- This also runs intake, see update.
-        end,
-        [6] = function() clawState = 0 end,
-        [7] = minibot.toggleReady,
-        [8] = {tick=function(held)
-            if held and minibot.deploymentTimerFinished() then
-                minibot.deploy()
-            end
-        end},
-        update = function(stick)
-            if stick:GetRawButton(5) then
-                intakeControl = 1
-            elseif stick:GetRawButton(3) then
-                intakeControl = -1
-            else
-                intakeControl = 0
-            end
-        end,
     },
     -- Joystick 3
     {
-        [2] = incConstant(gyroPID, "p", gyroPID, -0.01),
-        [3] = incConstant(gyroPID, "p", gyroPID, 0.01),
     },
     -- Joystick 4 (eStop Module)
     {
