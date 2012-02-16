@@ -1,6 +1,5 @@
 -- robot.lua
 
-local arm = require("arm")
 local controls = require("controls")
 local drive = require("drive")
 local lcd = require("lcd")
@@ -8,7 +7,6 @@ local linearize = require("linearize")
 local math = require("math")
 local pid = require("pid")
 local wpilib = require("wpilib")
-local minibot = require("minibot")
 
 local pairs = pairs
 local tostring = tostring
@@ -26,23 +24,13 @@ local feedWatchdog, enableWatchdog, disableWatchdog
 
 local hellautonomous, teleop, calibrate
 local controlMap, strafe, rotation, gear, presetShift, fieldCentric
-local clawState, intakeControl, elevatorControl, wristUp
 local zeroMode, possessionTimer, rotationHoldTimer
-local wristIntakeTime = 0.1
-local fudgeMode, fudgeWheel, fudgeMovement
 
 local compressor, pressureSwitch, gearSwitch
 local gyroChannel, gyroPID, ignoreGyro
 ignoreGyro = false
-local wristPiston
-local readyMinibotSolenoid, fireMinibotRelay
-local clawOpenPiston1, clawOpenPiston2, clawClosePiston1, clawClosePiston2
-local clawSwitch, clawIntakeMotor
-local elevatorMotor1, elevatorMotor2
-local elevatorEncoder, elevatorPID, elevatorRateTimer
 local wheels
 
-local hasTube = false
 -- End Declarations
 
 lcd.print(1, "RESETTING GYRO")
@@ -88,15 +76,6 @@ end
 function teleop()
     lcd.print(1, "Calibrating...")
     lcd.update()
-
-    minibot.startGameTimer()
-
-    --calibrate()
-    elevatorPID:start()
-    elevatorEncoder:Reset()
-    elevatorEncoder:Start()
-    elevatorRateTimer = wpilib.Timer()
-    elevatorRateTimer:Start()
     gyroPID:start()
 
     for _, wheel in pairs(wheels) do
@@ -225,51 +204,6 @@ function teleop()
             end
         end
 
-        -- Arm
-        if not hasTube and intakeControl > 0 and clawState == -1 then
-            if not clawSwitch:Get() then
-                if not possessionTimer then
-                    -- The limit switch just got activated
-                    possessionTimer = wpilib.Timer()
-                    possessionTimer:Start()
-                elseif possessionTimer:Get() > wristIntakeTime then
-                    -- We've waited for the set time. We now have a tube.
-                    possessionTimer:Stop()
-                    possessionTimer = nil
-                    hasTube = true
-                    clawState = 0
-                    wristUp = true
-               end
-            end
-        end
-
-        local open1, open2, close1, close2 = arm.clawPistons(clawState)
-        clawOpenPiston1:Set(open1)
-        clawOpenPiston2:Set(open2)
-        clawClosePiston1:Set(close1)
-        clawClosePiston2:Set(close2)
-
-        clawIntakeMotor:Set(intakeControl)
-        if hasTube and clawSwitch:Get() then
-            clawIntakeMotor:Set(1)
-        end
-
-        wristPiston:Set(not wristUp)
-
-        local elevatorSpeed
-        local currentElevatorPosition = arm.elevatorEncoderToFeet(elevatorEncoder:Get())
-        if elevatorControl then
-            elevatorPID:stop()
-            elevatorSpeed = elevatorControl
-        else
-            elevatorPID:start()
-            elevatorPID.p = arm.elevatorP(currentElevatorPosition, elevatorPID.target)
-            elevatorSpeed = elevatorPID:update(currentElevatorPosition)
-        end
-
-        elevatorMotor1:Set(-elevatorSpeed)
-        elevatorMotor2:Set(-elevatorSpeed)
-
         lcd.print(4, "P%.2f %.2f", gyroPID.p, gyroPID.previousError)
         if gyroPID.target then
             lcd.print(5, "%.2f %.2f", gyroAngle, gyroPID.target)
@@ -282,14 +216,6 @@ function teleop()
         --]]
         lcd.update()
         
-        readyMinibotOutput, fireMinibotOutput = minibot.update()    
-        readyMinibotSolenoid:Set(readyMinibotOutput)
-        if not fireMinibotOutput then
-            fireMinibotRelay:Set(wpilib.Relay_kOff)
-        else
-            fireMinibotRelay:Set(wpilib.Relay_kOn)
-        end
-
         -- Iteration cleanup
         feedWatchdog()
         wpilib.Wait(TELEOP_LOOP_LAG)
@@ -340,33 +266,6 @@ end
 local function LinearVictor(...)
     return linearize.wrap(wpilib.Victor(...))
 end
-
-compressor = wpilib.Relay(4, 1, wpilib.Relay_kForwardOnly)
-pressureSwitch = wpilib.DigitalInput(4, 13)
-gearSwitch = wpilib.Solenoid(7, 3)
-
-gyroChannel = wpilib.AnalogChannel(1, 2)
-gyroPID = pid.new(0.05, 0, 0)
-
-wristPiston = wpilib.Solenoid(7, 8)
-readyMinibotSolenoid = wpilib.Solenoid(7, 4)
-fireMinibotRelay = wpilib.Relay(4, 1, wpilib.Relay_kReverseOnly)
-
-elevatorEncoder = wpilib.Encoder(6, 1, 6, 2, false, wpilib.CounterBase_k1X)
-
-clawOpenPiston1 = wpilib.Solenoid(7, 6)
-clawOpenPiston2 = wpilib.Solenoid(7, 7)
-clawClosePiston1 = wpilib.Solenoid(7, 1)
-clawClosePiston2 = wpilib.Solenoid(7, 2)
-clawSwitch = wpilib.DigitalInput(6, 3)
-clawIntakeMotor = LinearVictor(6, 3)
-elevatorMotor1 = LinearVictor(6, 4)
-elevatorMotor2 = LinearVictor(6, 5)
-
-elevatorPID = pid.new(0, 0, 0.0005)
-elevatorPID.min, elevatorPID.max = -1.0, 1.0
-
-local turnPIDConstants = {p=0.05, i=0, d=0}
 
 wheels = {
     frontLeft={
