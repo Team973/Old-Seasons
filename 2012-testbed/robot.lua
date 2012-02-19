@@ -89,31 +89,31 @@ local function LinearVictor(...)
 end
 
 motors = {
-    LinearVictor(1, 1),
-    LinearVictor(1, 2),
-    LinearVictor(1, 3),
-    LinearVictor(1, 4),
-    LinearVictor(1, 5),
-    LinearVictor(1, 6),
     LinearVictor(1, 7),
     LinearVictor(1, 8),
+    LinearVictor(1, 5),
+    LinearVictor(1, 6),
+    LinearVictor(1, 3),
+    LinearVictor(1, 4),
+    LinearVictor(1, 1),
+    LinearVictor(1, 2),
 }
 
 encoders = {
-    wpilib.Encoder(1, 1, 1, 2, false, wpilib.CounterBase_k1X),
-    wpilib.Encoder(1, 4, 1, 5, false, wpilib.CounterBase_k1X),
-    wpilib.Encoder(1, 7, 1, 8, false, wpilib.CounterBase_k1X),
     wpilib.Encoder(1, 10, 1, 11, false, wpilib.CounterBase_k1X),
+    wpilib.Encoder(1, 7, 1, 8, false, wpilib.CounterBase_k1X),
+    wpilib.Encoder(1, 4, 1, 5, false, wpilib.CounterBase_k1X),
+    wpilib.Encoder(1, 1, 1, 2, false, wpilib.CounterBase_k1X),
 }
 for _, e in ipairs(encoders) do
     e:Start()
 end
 
 switches = {
-    wpilib.DigitalInput(1, 3),
-    wpilib.DigitalInput(1, 6),
-    wpilib.DigitalInput(1, 9),
     wpilib.DigitalInput(1, 12),
+    wpilib.DigitalInput(1, 9),
+    wpilib.DigitalInput(1, 6),
+    wpilib.DigitalInput(1, 3),
 }
 -- End Inputs/Outputs
 
