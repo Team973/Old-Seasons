@@ -4,18 +4,11 @@ local controls = require("controls")
 local lcd = require("lcd")
 local linearize = require("linearize")
 local pid = require ("pid")
-local turret = require ("turret")
 local wpilib = require("wpilib")
 local pairs = pairs
 
-local x, flyMotor, encoder
-local flypid, feedforward, pDelta
-local currentSpeed, prevPos
-local timer= wpilib.Timer()
-local turretpid= pid.new(0)
-local turretEncoder
-local turretMotor
-local turretUserTarget = 0
+local x, motors, encoders
+local motorNum, encoderNum = 1, 1
 
 module(..., package.seeall)
 
@@ -35,8 +28,6 @@ local controlMap
 function run()
     lcd.print(1, "Ready")
     lcd.update()
-
-    turretEncoder:Start()
 
     -- Main loop
     while true do
@@ -60,21 +51,11 @@ function run()
 end
 
 local dashboard = wpilib.SmartDashboard_GetInstance()
-feedforward=100
-dashboard:PutDouble("feedforward", feedforward)
 
-local function getTurretAngle()
-    return turretEncoder:GetRaw() / 4 * 360/100
-end
+dashboard:PutDouble("x", 0.0)
 
 function teleop()
     disableWatchdog()
-
-    turretEncoder:Reset()
-    timer:Start()
-    timer:Reset()
-	currentSpeed = 0
-    prevPos = 0
 
     while wpilib.IsOperatorControl() and wpilib.IsEnabled() do
         lcd.print(1, "Running!")
@@ -82,31 +63,20 @@ function teleop()
 
         -- Read controls
         controls.update(controlMap)
-		
-		--if timer:Get() >  .25 then
-		--	local currentPos= encoder:Get()/100
-		--	currentSpeed= (currentPos - prevPos)/timer:Get()*60
-		--	prevPos= currentPos
-          --  timer:Reset() 
-		--end
 
-        local turretAngle = getTurretAngle()
-        turretpid:update(turretAngle)
-        turretMotor:Set(turretpid.output)
-        --turretMotor:Set(x)
-		
-		--flypid:update(currentSpeed)
-		--flyMotor:Set(flypid.target/feedforward+flypid.output)
+        for _, motor in ipairs(motors) do
+            motor:Set(0.0)
+        end
+        motors[motorNum]:Set(x)
 
         dashboard:PutDouble("x", x)
-        dashboard:PutDouble("encoder", turretEncoder:Get())
-        dashboard:PutDouble("angle", turretAngle)
-        --dashboard:PutDouble("speed", currentSpeed)
-        dashboard:PutDouble("pDelta", pDelta)
-        dashboard:PutDouble("p", turretpid.p)
-		dashboard:PutDouble("target", turretpid.target)
-		dashboard:PutDouble("userTarget", turretUserTarget)
-		dashboard:PutDouble("feedforward", feedforward)
+        dashboard:PutDouble("encoder", encoders[encoderNum]:Get())
+        dashboard:PutInt("motorNum", motorNum)
+        dashboard:PutInt("encoderNum", encoderNum)
+        dashboard:PutBoolean("switch (LF)", switches[1]:Get())
+        dashboard:PutBoolean("switch (LB)", switches[2]:Get())
+        dashboard:PutBoolean("switch (RF)", switches[3]:Get())
+        dashboard:PutBoolean("switch (RB)", switches[4]:Get())
 
         wpilib.Wait(TELEOP_LOOP_LAG)
     end
@@ -114,41 +84,70 @@ end
 
 -- Inputs/Outputs
 -- Don't forget to add to declarations at the top!
-
 local function LinearVictor(...)
     return linearize.wrap(wpilib.Victor(...))
 end
-turretEncoder = wpilib.Encoder(2, 1, 2, 2, false, wpilib.CounterBase_k4X)
-turretMotor = LinearVictor(2, 5)
-turretpid = pid.new(0)
 
+motors = {
+    LinearVictor(1, 1),
+    LinearVictor(1, 2),
+    LinearVictor(1, 3),
+    LinearVictor(1, 4),
+    LinearVictor(1, 5),
+    LinearVictor(1, 6),
+    LinearVictor(1, 7),
+    LinearVictor(1, 8),
+}
 
+encoders = {
+    wpilib.Encoder(1, 1, 1, 2, false, wpilib.CounterBase_k1X),
+    wpilib.Encoder(1, 4, 1, 5, false, wpilib.CounterBase_k1X),
+    wpilib.Encoder(1, 7, 1, 8, false, wpilib.CounterBase_k1X),
+    wpilib.Encoder(1, 10, 1, 11, false, wpilib.CounterBase_k1X),
+}
+for _, e in ipairs(encoders) do
+    e:Start()
+end
 
-
---flyMotor = LinearVictor(1, 6)
---encoder = wpilib.Encoder(2, 1, 2, 2, true, wpilib.CounterBase_k1X)
---encoder:SetDistancePerPulse(1.0 / 100.0)
-flypid= pid.new(0)
-dashboard:PutDouble("target",turretpid.target)
-dashboard:PutDouble("p",turretpid.p)
+switches = {
+    wpilib.DigitalInput(1, 3),
+    wpilib.DigitalInput(1, 6),
+    wpilib.DigitalInput(1, 9),
+    wpilib.DigitalInput(1, 12),
+}
 -- End Inputs/Outputs
 
 -- Controls
 
-pDelta = 0.1
 controlMap =
 {
     -- Joystick 1
     {
-        ["y"] = function(axis) x = -axis end,
-        [1] = function() pDelta = pDelta / 10 end,
-        [2] = function() pDelta = pDelta * 10 end,
-        [3] = function() turretpid.p = turretpid.p - pDelta end,
-        [4] = function() turretpid.p = turretpid.p + pDelta end,
-        [5] = function() feedforward = feedforward + 100 end,
-        ["ltrigger"] = function() feedforward = feedforward - 100 end,
-        [6] = function() turretpid.target= turret.calculateTarget(getTurretAngle(), turretpid.target + 10)end,
-        ["rtrigger"] = function() turretpid.target= turret.calculateTarget(getTurretAngle(), turretpid.target - 10)end,
+        ["x"] = function(axis) x = axis end,
+        [1] = function()
+            motorNum = motorNum - 1
+            if motorNum < 1 then
+                motorNum = #motors
+            end
+        end,
+        [2] = function()
+            motorNum = motorNum + 1
+            if motorNum > #motors then
+                motorNum = 1
+            end
+        end,
+        [3] = function()
+            encoderNum = encoderNum - 1
+            if encoderNum < 1 then
+                encoderNum = #encoders
+            end
+        end,
+        [4] = function()
+            encoderNum = encoderNum + 1
+            if encoderNum > #encoders then
+                encoderNum = 1
+            end
+        end,
     },
     -- Joystick 2
     {
