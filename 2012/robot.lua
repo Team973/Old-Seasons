@@ -1,6 +1,5 @@
 -- robot.lua
 
-local arm = require("arm")
 local controls = require("controls")
 local drive = require("drive")
 local lcd = require("lcd")
@@ -26,23 +25,14 @@ local feedWatchdog, enableWatchdog, disableWatchdog
 
 local hellautonomous, teleop, calibrate
 local controlMap, strafe, rotation, gear, presetShift, fieldCentric
-local clawState, intakeControl, elevatorControl, wristUp
 local zeroMode, possessionTimer, rotationHoldTimer
-local wristIntakeTime = 0.1
 local fudgeMode, fudgeWheel, fudgeMovement
 
 local compressor, pressureSwitch, gearSwitch
 local gyroChannel, gyroPID, ignoreGyro
 ignoreGyro = false
-local wristPiston
-local readyMinibotSolenoid, fireMinibotRelay
-local clawOpenPiston1, clawOpenPiston2, clawClosePiston1, clawClosePiston2
-local clawSwitch, clawIntakeMotor
-local elevatorMotor1, elevatorMotor2
-local elevatorEncoder, elevatorPID, elevatorRateTimer
 local wheels
 
-local hasTube = false
 -- End Declarations
 
 lcd.print(1, "RESETTING GYRO")
@@ -92,11 +82,6 @@ function teleop()
     minibot.startGameTimer()
 
     --calibrate()
-    elevatorPID:start()
-    elevatorEncoder:Reset()
-    elevatorEncoder:Start()
-    elevatorRateTimer = wpilib.Timer()
-    elevatorRateTimer:Start()
     gyroPID:start()
 
     for _, wheel in pairs(wheels) do
@@ -225,71 +210,6 @@ function teleop()
             end
         end
 
-        -- Arm
-        if not hasTube and intakeControl > 0 and clawState == -1 then
-            if not clawSwitch:Get() then
-                if not possessionTimer then
-                    -- The limit switch just got activated
-                    possessionTimer = wpilib.Timer()
-                    possessionTimer:Start()
-                elseif possessionTimer:Get() > wristIntakeTime then
-                    -- We've waited for the set time. We now have a tube.
-                    possessionTimer:Stop()
-                    possessionTimer = nil
-                    hasTube = true
-                    clawState = 0
-                    wristUp = true
-               end
-            end
-        end
-
-        local open1, open2, close1, close2 = arm.clawPistons(clawState)
-        clawOpenPiston1:Set(open1)
-        clawOpenPiston2:Set(open2)
-        clawClosePiston1:Set(close1)
-        clawClosePiston2:Set(close2)
-
-        clawIntakeMotor:Set(intakeControl)
-        if hasTube and clawSwitch:Get() then
-            clawIntakeMotor:Set(1)
-        end
-
-        wristPiston:Set(not wristUp)
-
-        local elevatorSpeed
-        local currentElevatorPosition = arm.elevatorEncoderToFeet(elevatorEncoder:Get())
-        if elevatorControl then
-            elevatorPID:stop()
-            elevatorSpeed = elevatorControl
-        else
-            elevatorPID:start()
-            elevatorPID.p = arm.elevatorP(currentElevatorPosition, elevatorPID.target)
-            elevatorSpeed = elevatorPID:update(currentElevatorPosition)
-        end
-
-        elevatorMotor1:Set(-elevatorSpeed)
-        elevatorMotor2:Set(-elevatorSpeed)
-
-        lcd.print(4, "P%.2f %.2f", gyroPID.p, gyroPID.previousError)
-        if gyroPID.target then
-            lcd.print(5, "%.2f %.2f", gyroAngle, gyroPID.target)
-        else
-            lcd.print(5, "%.2f none", gyroAngle)
-        end
-        --[[
-        lcd.print(5, "P%.2f D%.5f", arm.DOWN_P, elevatorPID.d)
-        lcd.print(4, "%s %.1f", tostring(presetShift), controls.sticks[2]:GetRawAxis(6))
-        --]]
-        lcd.update()
-        
-        readyMinibotOutput, fireMinibotOutput = minibot.update()    
-        readyMinibotSolenoid:Set(readyMinibotOutput)
-        if not fireMinibotOutput then
-            fireMinibotRelay:Set(wpilib.Relay_kOff)
-        else
-            fireMinibotRelay:Set(wpilib.Relay_kOn)
-        end
-
         -- Iteration cleanup
         feedWatchdog()
         wpilib.Wait(TELEOP_LOOP_LAG)
@@ -297,52 +217,67 @@ function teleop()
     end
 end
 
-function calibrate()
-    local calibState = {}
-    local TURN_SPEED = 1.0
-    local LEFT_SENSOR = -30.0
-    local RIGHT_SENSOR = 30.0
-    for name, _ in pairs(wheels) do
-        calibState[name] = { found = 0, point = {} } 
+function calibrateAll(wheels)
+    local numWheels = 0
+    local numCalibratedWheels = 0
+    local allCalibrated = false
+    for _,wheel in pairs(wheels) do
+        wheel.turnMotor:set(1)
+        wheel.calibrateState = 1
+        numWheels = numWheels + 1
     end
-
-    local keepGoing = true
-    while keepGoing and wpilib.IsOperatorControl() and wpilib.IsEnabled() do
-        keepGoing = false
-        for name, calibrated in pairs(calibState) do
-            local wheel = wheels[name]
-            if calibrated.found == 2 then
-                -- Turn wheel to our new 0 value
-            elseif wheel.calibrateSwitch1:Get() then
-                calibrated.found = calibrated.found + 1
-                calibrated.point 
-
-
-
-
-
-
-                wheel.turnMotor:Set(-TURN_SPEED)
-
-                -- Mark as calibrated
-                calibState[name] = true
-                wheel.turnEncoder:Reset()
-                wheel.turnEncoder:Start()
-            else
-                -- Have not reached point yet
-                keepGoing = true
-                wheel.turnMotor:Set(TURN_SPEED)
-            end
-            wheel.driveMotor:Set(0)
+    while allCalibrated == false do
+        for _,wheel in pairs(wheels) do
+            if wheel.calibrateState == 1 then
+                if wheel.calibrateSwitch1:Get() then
+                    wheel.switch1Angle = wheel.turnEncoder:Get()
+                    wheel.calibrateState = wheel.calibrateState + 1
+                    wheel.turnMotor:Set(-1)
+                end
+            elseif wheel.calibrateState == 2 then
+                if wheel.calibrateSwitch2:Get() then
+                    wheel.turnMotor:Set(1)
+                    wheel.switch2Angle = wheel.turnEncoder:Get()
+                    wheel.calibrateState = 3
+                    wheel.targetAngle = (wheel.switch1Angle + wheel.switch2Angle)/2
+                end
+            elseif wheel.calibrateState == 3 then
+                if wheel.turnEncoder:Get() == wheel.targetAngle then
+                    wheel.calibrateState = 4
+                    numCalibratedWheels = numCalibratedWheels + 1
+                    if numWheels == numCalibratedWheels then
+                        allCalibrated = true
+                    end
+                end
+            end    
         end
-
-        -- Iteration cleanup
-        feedWatchdog()
-        wpilib.Wait(TELEOP_LOOP_LAG)
-        feedWatchdog()
     end
-end
+end 
 
+
+function calibrate(wheel)
+    local middleAngle
+	while not wheel.calibrateSwitch1:Get() do
+		wheel.turnMotor:Set(1)
+	end 
+
+	local angle1 = wheel.turnEncoder:Get()
+
+	while not wheel.calibrateSwitch2:Get() do
+		wheel.turnMotor:Set(-1)
+	end
+
+	local angle2 = wheel.turnEncoder:Get() 
+	
+	while not -- zeroed do
+        angle1 - angle2 = middleAngle 
+	   wheel.turnMotor:Set = middleAngle 5--find middle (/2) stored angles
+		-- move motor clockwise
+        -- motor moves tell encoder hits middle angle and tells it to stop
+	end 
+
+	wheel.turnEncoder:Reset()
+end
 -- Inputs/Outputs
 -- Don't forget to add to declarations at the top!
 
@@ -357,85 +292,8 @@ gearSwitch = wpilib.Solenoid(7, 3)
 gyroChannel = wpilib.AnalogChannel(1, 2)
 gyroPID = pid.new(0.05, 0, 0)
 
-wristPiston = wpilib.Solenoid(7, 8)
-readyMinibotSolenoid = wpilib.Solenoid(7, 4)
-fireMinibotRelay = wpilib.Relay(4, 1, wpilib.Relay_kReverseOnly)
-
-elevatorEncoder = wpilib.Encoder(6, 1, 6, 2, false, wpilib.CounterBase_k1X)
-
-clawOpenPiston1 = wpilib.Solenoid(7, 6)
-clawOpenPiston2 = wpilib.Solenoid(7, 7)
-clawClosePiston1 = wpilib.Solenoid(7, 1)
-clawClosePiston2 = wpilib.Solenoid(7, 2)
-clawSwitch = wpilib.DigitalInput(6, 3)
-clawIntakeMotor = LinearVictor(6, 3)
-elevatorMotor1 = LinearVictor(6, 4)
-elevatorMotor2 = LinearVictor(6, 5)
-
-elevatorPID = pid.new(0, 0, 0.0005)
-elevatorPID.min, elevatorPID.max = -1.0, 1.0
-
-local turnPIDConstants = {p=0.05, i=0, d=0}
-
-wheels = {
-    frontLeft={
-        shortName="FL",
-        driveMotor=LinearVictor(4, 7),
-        turnMotor=wpilib.Jaguar(4, 8),
-
-        calibrateSwitch=wpilib.DigitalInput(4, 12),
-        turnEncoder=wpilib.Encoder(4, 10, 4, 11),
-        turnPID=pid.new(turnPIDConstants.p, turnPIDConstants.i,
-                        turnPIDConstants.d, drive.angleError),
-    },
-    frontRight={
-        shortName="FR",
-        driveMotor=LinearVictor(4, 1),
-        turnMotor=wpilib.Jaguar(4, 2),
-
-        calibrateSwitch=wpilib.DigitalInput(4, 9),
-        turnEncoder=wpilib.Encoder(4, 1, 4, 2),
-        turnPID=pid.new(turnPIDConstants.p, turnPIDConstants.i,
-                        turnPIDConstants.d, drive.angleError),
-    },
-    rearLeft={
-        shortName="RL",
-        driveMotor=LinearVictor(4, 6),
-        turnMotor=wpilib.Jaguar(4, 5),
-
-        calibrateSwitch=wpilib.DigitalInput(4, 3),
-        turnEncoder=wpilib.Encoder(4, 7, 4, 8),
-        turnPID=pid.new(turnPIDConstants.p, turnPIDConstants.i,
-                        turnPIDConstants.d, drive.angleError),
-    },
-    rearRight={
-        shortName="RR",
-        driveMotor=LinearVictor(4, 3),
-        turnMotor=wpilib.Jaguar(4, 4),
-
-        calibrateSwitch=wpilib.DigitalInput(4, 6),
-        turnEncoder=wpilib.Encoder(6, 13, 6, 14),
-        turnPID=pid.new(turnPIDConstants.p, turnPIDConstants.i,
-                        turnPIDConstants.d, drive.angleError),
-    },
-}
-
-for _, wheel in pairs(wheels) do
-    wheel.turnEncoder:SetDistancePerPulse(1.0)
-    wheel.turnEncoder:SetReverseDirection(true)
-end
--- End Inputs/Outputs
-
--- Controls
-strafe = {x=0, y=0}
-rotation = 0
-gear = "high"
-
-clawState = 0
-elevatorControl = nil
+ate = 0
 presetShift = false
-wristUp = true
-intakeControl = 0
 
 zeroMode = false
 fudgeMode = false
@@ -469,16 +327,6 @@ local function incConstant(tbl, name, pid, delta)
     end
 end
 
-local function doPreset(name)
-    local wristPreset = arm.presetWrist(name)
-
-    elevatorPID.target = arm.presetElevatorTarget(name)
-
-    if wristPreset ~= nil then
-        wristUp = wristPreset
-    end
-end
-
 local function presetButton(nonShiftName, shiftName)
     return function()
         if presetShift then
@@ -497,9 +345,6 @@ local function deadband(axis, threshold)
     end
 end
 
-local function grabElevatorTarget()
-    elevatorPID.target = arm.elevatorEncoderToFeet(elevatorEncoder:Get())
-end
 
 controlMap =
 {
