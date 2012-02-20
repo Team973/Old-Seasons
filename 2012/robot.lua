@@ -168,7 +168,7 @@ function teleop()
                 if math.abs(strafe.x) > deadband or math.abs(strafe.y) > deadband or math.abs(appliedRotation) > deadband then
                     wheel.turnPID.target = drive.normalizeAngle(value.angleDeg)
                     local driveScale = drive.driveScale(drive.calculateTurn(currentTurn, wheel.turnPID.target))
-                    wheel.driveMotor:Set(value.speed * -driveScale)
+                    wheel.driveMotor:Set(value.speed * driveScale)
                 else
                     -- In deadband
                     if wheelName == "leftFront" or wheelName == "rightBack" then
