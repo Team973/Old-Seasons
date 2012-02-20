@@ -111,6 +111,10 @@ func findRectangles(img *cv.IplImage) [][4]cv.Point {
 			if result.Len() != 4 || cv.ContourArea(result, cv.WHOLE_SEQ, false) < 1000 || !cv.CheckContourConvexity(result) {
 				continue
 			}
+			var r [4]cv.Point
+			for i := 0; i < 4; i++ {
+				r[i] = result.PointAt(i)
+			}
 
 			s := 0.0
 			// TODO: Check this boundary
@@ -120,12 +124,14 @@ func findRectangles(img *cv.IplImage) [][4]cv.Point {
 					s = t
 				}
 			}
+		
+			// originally 0.3 for strict 90 degrees, may need to increase slightly
+			if s < 0.4 {
+				points := r
+				sort.Sort(ByY(points[:]))
+				distance := (points[2].Y+points[3].Y)/2 - (points[0].Y+points[1].Y)/2
+				fmt.Println("average height: ", distance)
 
-			if s < 0.5 {
-				var r [4]cv.Point
-				for i := 0; i < 4; i++ {
-					r[i] = result.PointAt(i)
-				}
 				rects = append(rects, r)
 			}
 		}
@@ -155,9 +161,6 @@ func drawRectangles(img *cv.IplImage, rects [][4]cv.Point) {
 	for _, r := range rects {
 		points := r[:]
 		cv.PolyLine(cpy, [][]cv.Point{points}, true, cv.Scalar{0.0, 255.0, 0.0, 0.0}, 3, cv.AA, 0)
-		sort.Sort(ByY(points))
-		distance := (points[2].Y+points[3].Y)/2 - (points[0].Y+points[1].Y)/2
-		fmt.Println("average height", distance)
 	}
 
 	highgui.ShowImage(windowName, cpy)
