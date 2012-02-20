@@ -68,6 +68,7 @@ function hellautonomous()
 end
 
 function teleop()
+    calibrate()
     for _, wheel in pairs(wheels) do
         wheel.turnPID:start()
 
@@ -191,42 +192,43 @@ function teleop()
     end
 end
 
-function calibrate()
-    local calibState = {}
-    local TURN_SPEED = 1.0
-    for name, _ in pairs(wheels) do
-        calibState[name] = false
+function calibrateAll(wheels)
+    local numWheels = 0
+    local numCalibratedWheels = 0
+    local allCalibrated = false
+    for _,wheel in pairs(wheels) do
+        wheel.turnMotor:set(1)
+        wheel.calibrateState = 1
+        numWheels = numWheels + 1
     end
-
-    local keepGoing = true
-    while keepGoing and wpilib.IsOperatorControl() and wpilib.IsEnabled() do
-        keepGoing = false
-        for name, calibrated in pairs(calibState) do
-            local wheel = wheels[name]
-            if calibrated then
-                wheel.turnMotor:Set(0)
-            elseif wheel.calibrateSwitch:Get() then
-                -- Stop running motor
-                wheel.turnMotor:Set(0)
-
-                -- Mark as calibrated
-                calibState[name] = true
-                wheel.turnEncoder:Reset()
-                wheel.turnEncoder:Start()
-            else
-                -- Have not reached point yet
-                keepGoing = true
-                wheel.turnMotor:Set(TURN_SPEED)
-            end
-            wheel.driveMotor:Set(0)
+    while allCalibrated == false do
+        for _,wheel in pairs(wheels) do
+            if wheel.calibrateState == 1 then
+                if wheel.calibrateSwitch1:Get() then
+                    wheel.switch1Angle = wheel.turnEncoder:Get()
+                    wheel.calibrateState = wheel.calibrateState + 1
+                    wheel.turnMotor:Set(-1)
+                end
+            elseif wheel.calibrateState == 2 then
+                if wheel.calibrateSwitch2:Get() then
+                    wheel.turnMotor:Set(1)
+                    wheel.switch2Angle = wheel.turnEncoder:Get()
+                    wheel.calibrateState = 3
+                    wheel.targetAngle = (wheel.switch1Angle + wheel.switch2Angle)/2
+                end
+            elseif wheel.calibrateState == 3 then
+                if wheel.turnEncoder:Get() == wheel.targetAngle then
+                    wheel.calibrateState = 4
+                    numCalibratedWheels = numCalibratedWheels + 1
+                    if numWheels == numCalibratedWheels then
+                        allCalibrated = true
+                    end
+                end
+            end    
         end
-
-        -- Iteration cleanup
-        feedWatchdog()
-        wpilib.Wait(TELEOP_LOOP_LAG)
-        feedWatchdog()
     end
-end
+end 
+
 
 -- Inputs/Outputs
 -- Don't forget to add to declarations at the top!
