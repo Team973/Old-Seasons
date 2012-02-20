@@ -1,13 +1,14 @@
 -- command.lua - An implementation of WPILib commands in pure Lua
 
 local table = table
+local ipairs = ipairs
 local setmetatable = setmetatable
 
 module(...)
 
 -- SCHEDULER
 
-local commands = {}, additions = {}, subsystems = {}
+local commands, additions, subsystems = {}, {}, {}
 
 local processCommandAddition
 

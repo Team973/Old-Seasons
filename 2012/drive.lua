@@ -29,22 +29,22 @@ function calculate(x, y, w, gyroDeg, wheelBase, trackWidth)
     local c = x - w * (trackWidth / r)
     local d = x + w * (trackWidth / r)
 
-    local wheels = {frontRight={}, frontLeft={}, rearRight={}, rearLeft={}}
-    wheels.frontRight.speed = math.sqrt(b * b + c * c)
-    wheels.frontLeft.speed = math.sqrt(b * b + d * d)
-    wheels.rearLeft.speed = math.sqrt(a * a + d * d)
-    wheels.rearRight.speed = math.sqrt(a * a + c * c)
-    wheels.frontRight.angleDeg = math.deg(math.atan2(b, c))
-    wheels.frontLeft.angleDeg = math.deg(math.atan2(b, d))
-    wheels.rearLeft.angleDeg = math.deg(math.atan2(a, d))
-    wheels.rearRight.angleDeg = math.deg(math.atan2(a, c))
+    local wheels = {rightFront={}, leftFront={}, rightBack={}, leftBack={}}
+    wheels.rightFront.speed = math.sqrt(b * b + c * c)
+    wheels.leftFront.speed = math.sqrt(b * b + d * d)
+    wheels.leftBack.speed = math.sqrt(a * a + d * d)
+    wheels.rightBack.speed = math.sqrt(a * a + c * c)
+    wheels.rightFront.angleDeg = math.deg(math.atan2(b, c))
+    wheels.leftFront.angleDeg = math.deg(math.atan2(b, d))
+    wheels.leftBack.angleDeg = math.deg(math.atan2(a, d))
+    wheels.rightBack.angleDeg = math.deg(math.atan2(a, c))
 
     -- Normalize wheel speeds
     local maxSpeed = math.max(
-        wheels.frontRight.speed,
-        wheels.frontLeft.speed,
-        wheels.rearRight.speed,
-        wheels.rearLeft.speed
+        wheels.rightFront.speed,
+        wheels.leftFront.speed,
+        wheels.rightBack.speed,
+        wheels.leftBack.speed
     )
     if maxSpeed > 1 then
         for _, wheel in pairs(wheels) do

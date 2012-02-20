@@ -5,6 +5,8 @@ local wpilib = require("wpilib")
 
 module(...)
 
+local HARD_LIMIT = 90
+
 function calculateTarget(turretAngle, desiredAngle)
     --calculates shortest desired angle
     while desiredAngle - turretAngle > 180 do
@@ -15,11 +17,13 @@ function calculateTarget(turretAngle, desiredAngle)
     end
 
     --make sure the turret doesn't crash
-    if desiredAngle > 400 then
-        desiredAngle = desiredAngle - 360
+    if desiredAngle > HARD_LIMIT then
+        --desiredAngle = desiredAngle - 360
+        desiredAngle = turretAngle
     end
-    if desiredAngle < -400 then
-        desiredAngle = desiredAngle + 360
+    if desiredAngle < -HARD_LIMIT then
+        --desiredAngle = desiredAngle + 360
+        desiredAngle = turretAngle
     end
 
     return desiredAngle
