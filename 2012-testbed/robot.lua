@@ -97,6 +97,15 @@ motors = {
     LinearVictor(1, 4),
     LinearVictor(1, 1),
     LinearVictor(1, 2),
+
+    LinearVictor(2, 1),
+    LinearVictor(2, 2),
+    wpilib.Jaguar(2, 3),
+    LinearVictor(2, 4),
+    LinearVictor(2, 5),
+    LinearVictor(2, 6),
+    LinearVictor(2, 7),
+    LinearVictor(2, 8),
 }
 
 encoders = {
