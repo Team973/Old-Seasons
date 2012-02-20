@@ -155,7 +155,7 @@ function teleop()
             
             local wheelValues = drive.calculate(
                 strafe.x, strafe.y, appliedRotation, appliedGyro,
-                31.4,     -- wheel base (in inches)
+                31.5,     -- wheel base (in inches)
                 21.4      -- track width (in inches)
             )
 
