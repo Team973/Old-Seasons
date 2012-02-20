@@ -28,18 +28,16 @@ local zeroMode, possessionTimer, rotationHoldTimer
 local fudgeMode, fudgeWheel, fudgeMovement
 
 local compressor, pressureSwitch, gearSwitch
-local gyroChannel, gyroPID, ignoreGyro
-ignoreGyro = false
 local wheels
 
 -- End Declarations
 
-lcd.print(1, "RESETTING GYRO")
-lcd.update()
+local dashboard = wpilib.SmartDashboard_GetInstance()
+
+dashboard:PutString("mode", "Waiting for Gyro...")
 
 function run()
-    lcd.print(1, "Ready")
-    lcd.update()
+    dashboard:PutString("mode", "Ready")
 
     -- Main loop
     while true do
@@ -65,20 +63,11 @@ end
 function hellautonomous()
     disableWatchdog()
     while wpilib.IsAutonomous() and wpilib.IsEnabled() do
-        if pressureSwitch:Get() then
-            compressor:Set(wpilib.Relay_kOff)
-        else
-            compressor:Set(wpilib.Relay_kOn)
-        end
         wpilib.Wait(TELEOP_LOOP_LAG)
     end
 end
 
 function teleop()
-    lcd.print(1, "Calibrating...")
-    lcd.update()
-    gyroPID:start()
-
     for _, wheel in pairs(wheels) do
         wheel.turnPID:start()
 
@@ -92,14 +81,12 @@ function teleop()
         feedWatchdog()
 
         if not fudgeMode then
-            lcd.print(1, "Running!")
+            dashboard:PutString("mode", "Running")
         else
-            lcd.print(1, "Fudge Mode")
+            dashboard:PutString("mode", "Fudge Mode")
         end
-        local i = 2
         for _, wheel in pairs(wheels) do
-            lcd.print(i, "%s A%.1f", wheel.shortName, wheel.turnEncoder:GetRaw() / 4.0)
-            i = i + 1
+            dashboard:PutString(wheel.shortName .. ".turnEncoder", wheel.turnEncoder:GetRaw() / 4.0)
         end
 
         -- Read controls
@@ -107,13 +94,17 @@ function teleop()
         feedWatchdog()
 
         -- Pneumatics
+        --[[
+        dashboard:PutBoolean("pressure", pressureSwitch:Get())
         if pressureSwitch:Get() then
             compressor:Set(wpilib.Relay_kOff)
         else
             compressor:Set(wpilib.Relay_kOn)
         end
+        --]]
 
         -- Drive
+        --[[
         if gear == "low" then
             gearSwitch:Set(false)
         elseif gear == "high" then
@@ -123,8 +114,7 @@ function teleop()
             -- TODO: log error
             gearSwitch:Set(false)
         end
-
-        local gyroAngle = 0
+        --]]
 
         if zeroMode then
             for _, wheel in pairs(wheels) do
@@ -135,32 +125,32 @@ function teleop()
                 wheel.turnMotor:Set(wheel.turnPID.output)
                 wheel.driveMotor:Set(0)
             end
-        elseif not fudgeMode then
-            local appliedGyro, appliedRotation = gyroAngle, rotation
+        elseif fudgeMode then
+            -- Fudge mode
+            -- TODO: Don't use this, just calibrate
+            for _, wheel in pairs(wheels) do
+                wheel.driveMotor:Set(0)
+                wheel.turnMotor:Set(0)
+            end
+
+            if fudgeWheel then
+                fudgeWheel.turnMotor:Set(fudgeMovement)
+            end
+        else
+            local appliedGyro = 0.0
+            local appliedRotation = rotation
             local deadband = 0.1
             
-            if not fieldCentric then
-                appliedGyro = 0
-            end
             -- Keep rotation steady in deadband
             if math.abs(rotation) < deadband then
-                if gyroPID.target == nil then
-                    if rotationHoldTimer == nil then
-                        rotationHoldTimer = wpilib.Timer()
-                        rotationHoldTimer:Start()
-                    elseif rotationHoldTimer:Get() > 0.5 then
-                        rotationHoldTimer:Stop()
-                        rotationHoldTimer = nil
-                        gyroPID.target = gyroAngle
-                        gyroPID:start()
-                    end
-                    appliedRotation = 0
-                else
-                    appliedRotation = gyroPID:update(gyroAngle)
+                if rotationHoldTimer == nil then
+                    rotationHoldTimer = wpilib.Timer()
+                    rotationHoldTimer:Start()
+                elseif rotationHoldTimer:Get() > 0.5 then
+                    rotationHoldTimer:Stop()
+                    rotationHoldTimer = nil
                 end
-            else
-                gyroPID.target = nil
-                gyroPID:stop()
+                appliedRotation = 0
             end
             
             local wheelValues = drive.calculate(
@@ -181,7 +171,7 @@ function teleop()
                     wheel.driveMotor:Set(value.speed * -driveScale)
                 else
                     -- In deadband
-                    if wheelName == "frontLeft" or wheelName == "rearRight" then
+                    if wheelName == "leftFront" or wheelName == "rightBack" then
                         wheel.turnPID.target = 45
                     else
                         wheel.turnPID.target = -45
@@ -192,31 +182,8 @@ function teleop()
                 wheel.turnPID:update(currentTurn)
                 wheel.turnMotor:Set(wheel.turnPID.output)
             end
-        else
-            -- Fudge mode
-            -- TODO: Don't use this, just calibrate
-            for _, wheel in pairs(wheels) do
-                wheel.driveMotor:Set(0)
-                wheel.turnMotor:Set(0)
-            end
-
-            if fudgeWheel then
-                fudgeWheel.turnMotor:Set(fudgeMovement)
-            end
         end
 
-        lcd.print(4, "P%.2f %.2f", gyroPID.p, gyroPID.previousError)
-        if gyroPID.target then
-            lcd.print(5, "%.2f %.2f", gyroAngle, gyroPID.target)
-        else
-            lcd.print(5, "%.2f none", gyroAngle)
-        end
-        --[[
-        lcd.print(5, "P%.2f D%.5f", arm.DOWN_P, elevatorPID.d)
-        lcd.print(4, "%s %.1f", tostring(presetShift), controls.sticks[2]:GetRawAxis(6))
-        --]]
-        lcd.update()
-        
         -- Iteration cleanup
         feedWatchdog()
         wpilib.Wait(TELEOP_LOOP_LAG)
@@ -268,60 +235,59 @@ local function LinearVictor(...)
     return linearize.wrap(wpilib.Victor(...))
 end
 
+--[[
 compressor = wpilib.Relay(4, 1, wpilib.Relay_kForwardOnly)
 pressureSwitch = wpilib.DigitalInput(4, 13)
 gearSwitch = wpilib.Solenoid(7, 3)
-
-gyroChannel = wpilib.AnalogChannel(1, 2)
-gyroPID = pid.new(0.05, 0, 0)
+--]]
 
 local turnPIDConstants = {p=0.05, i=0, d=0}
 
 wheels = {
-    frontLeft={
-        shortName="FL",
-        driveMotor=LinearVictor(4, 7),
-        turnMotor=wpilib.Jaguar(4, 8),
+    leftFront={
+        shortName="LF",
+        driveMotor=LinearVictor(1, 7),
+        turnMotor=LinearVictor(1, 8),
 
-        calibrateSwitch=wpilib.DigitalInput(4, 12),
-        turnEncoder=wpilib.Encoder(4, 10, 4, 11),
+        calibrateSwitch=wpilib.DigitalInput(1, 12),
+        turnEncoder=wpilib.Encoder(1, 10, 1, 11),
         turnPID=pid.new(turnPIDConstants.p, turnPIDConstants.i,
                         turnPIDConstants.d, drive.angleError),
     },
-    frontRight={
-        shortName="FR",
-        driveMotor=LinearVictor(4, 1),
-        turnMotor=wpilib.Jaguar(4, 2),
+    leftBack={
+        shortName="LB",
+        driveMotor=LinearVictor(1, 5),
+        turnMotor=LinearVictor(1, 6),
 
-        calibrateSwitch=wpilib.DigitalInput(4, 9),
-        turnEncoder=wpilib.Encoder(4, 1, 4, 2),
+        calibrateSwitch=wpilib.DigitalInput(1, 9),
+        turnEncoder=wpilib.Encoder(1, 7, 1, 8),
         turnPID=pid.new(turnPIDConstants.p, turnPIDConstants.i,
                         turnPIDConstants.d, drive.angleError),
     },
-    rearLeft={
-        shortName="RL",
-        driveMotor=LinearVictor(4, 6),
-        turnMotor=wpilib.Jaguar(4, 5),
+    rightFront={
+        shortName="RF",
+        driveMotor=LinearVictor(1, 3),
+        turnMotor=LinearVictor(1, 4),
 
-        calibrateSwitch=wpilib.DigitalInput(4, 3),
-        turnEncoder=wpilib.Encoder(4, 7, 4, 8),
+        calibrateSwitch=wpilib.DigitalInput(1, 6),
+        turnEncoder=wpilib.Encoder(1, 4, 1, 5),
         turnPID=pid.new(turnPIDConstants.p, turnPIDConstants.i,
                         turnPIDConstants.d, drive.angleError),
     },
-    rearRight={
-        shortName="RR",
-        driveMotor=LinearVictor(4, 3),
-        turnMotor=wpilib.Jaguar(4, 4),
+    rightBack={
+        shortName="RB",
+        driveMotor=LinearVictor(1, 1),
+        turnMotor=wpilib.Jaguar(1, 2),
 
-        calibrateSwitch=wpilib.DigitalInput(4, 6),
-        turnEncoder=wpilib.Encoder(6, 13, 6, 14),
+        calibrateSwitch=wpilib.DigitalInput(1, 3),
+        turnEncoder=wpilib.Encoder(1, 1, 1, 2),
         turnPID=pid.new(turnPIDConstants.p, turnPIDConstants.i,
                         turnPIDConstants.d, drive.angleError),
     },
 }
 
 for _, wheel in pairs(wheels) do
-    wheel.turnEncoder:SetDistancePerPulse(1.0)
+    wheel.turnEncoder:SetDistancePerPulse(50.0 / 38.0)
     wheel.turnEncoder:SetReverseDirection(true)
 end
 -- End Inputs/Outputs
@@ -331,18 +297,10 @@ strafe = {x=0, y=0}
 rotation = 0
 gear = "high"
 
-clawState = 0
-elevatorControl = nil
-presetShift = false
-wristUp = true
-intakeControl = 0
-
 zeroMode = false
 fudgeMode = false
 fudgeWheel = nil
 fudgeMovement = 0.0
-
-local lastHatX = 0
 
 local function fudgeButton(wheel)
     return {
@@ -381,8 +339,8 @@ controlMap =
 {
     -- Joystick 1
     {
-        ["x"] = function(axis) strafe.x = deadband(-axis, 0.15) end,
-        ["y"] = function(axis) strafe.y = deadband(axis, 0.15) end,
+        ["x"] = function(axis) strafe.x = deadband(axis, 0.15) end,
+        ["y"] = function(axis) strafe.y = deadband(-axis, 0.15) end,
         ["rx"] = function(axis)
             if not fudgeMode then
                 rotation = axis
@@ -391,10 +349,10 @@ controlMap =
             end
         end,
         ["ltrigger"] = {tick=function(held) fieldCentric = held end},
-        [1] = fudgeButton(wheels.rearRight),
-        [2] = fudgeButton(wheels.frontRight),
-        [3] = fudgeButton(wheels.rearLeft),
-        [4] = fudgeButton(wheels.frontLeft),
+        [1] = fudgeButton(wheels.rightBack),
+        [2] = fudgeButton(wheels.rightFront),
+        [3] = fudgeButton(wheels.leftBack),
+        [4] = fudgeButton(wheels.leftFront),
         [5] = {tick=function(held)
             if held then
                 gear = "low"
@@ -411,7 +369,6 @@ controlMap =
                 end
             end
         end},
-        [7] = function () ignoreGyro = true end, 
         [10] = function() zeroMode = true end,
     },
     -- Joystick 2
