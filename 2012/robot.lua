@@ -22,7 +22,7 @@ local TELEOP_LOOP_LAG = 0.005
 local watchdogEnabled = false
 local feedWatchdog, enableWatchdog, disableWatchdog
 
-local hellautonomous, teleop, calibrate
+local hellautonomous, teleop, calibrateAll
 local controlMap, strafe, rotation, gear, presetShift, fieldCentric
 local zeroMode, possessionTimer, rotationHoldTimer
 local fudgeMode, fudgeWheel, fudgeMovement
@@ -68,7 +68,7 @@ function hellautonomous()
 end
 
 function teleop()
-    calibrate()
+    calibrateAll()
     for _, wheel in pairs(wheels) do
         wheel.turnPID:start()
 
@@ -192,7 +192,7 @@ function teleop()
     end
 end
 
-function calibrateAll(wheels)
+function calibrateAll()
     local numWheels = 0
     local numCalibratedWheels = 0
     local allCalibrated = false
