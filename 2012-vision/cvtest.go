@@ -2,7 +2,6 @@ package main
 
 import (
 	"bitbucket.org/zombiezen/gocv/cv"
-	"bitbucket.org/zombiezen/gocv/highgui"
 	"flag"
 	"fmt"
 	"math"
@@ -17,10 +16,10 @@ func main() {
 	flag.Parse()
 
 	runtime.LockOSThread()
-	highgui.NamedWindow(windowName, highgui.WINDOW_AUTOSIZE)
+	cv.NamedWindow(windowName, cv.WINDOW_AUTOSIZE)
 
 	if *imageName != "" {
-		img, err := highgui.LoadImage(*imageName, 1)
+		img, err := cv.LoadImage(*imageName, 1)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
@@ -29,9 +28,9 @@ func main() {
 
 		rects := findRectangles(img)
 		drawRectangles(img, rects)
-		highgui.WaitKey(time.Duration(0))
+		cv.WaitKey(time.Duration(0))
 	} else {
-		capture, err := highgui.CaptureFromCAM(0)
+		capture, err := cv.CaptureFromCAM(0)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
@@ -47,7 +46,7 @@ func main() {
 
 			rects := findRectangles(img0)
 			drawRectangles(img0, rects)
-			if key := highgui.WaitKey(time.Duration(10 * time.Millisecond)) & 0x7f; key == 'q' {
+			if key := cv.WaitKey(time.Duration(10*time.Millisecond)) & 0x7f; key == 'q' {
 				break
 			}
 
@@ -124,7 +123,7 @@ func findRectangles(img *cv.IplImage) [][4]cv.Point {
 					s = t
 				}
 			}
-		
+
 			// originally 0.3 for strict 90 degrees, may need to increase slightly
 			if s < 0.4 {
 				points := r
@@ -163,5 +162,5 @@ func drawRectangles(img *cv.IplImage, rects [][4]cv.Point) {
 		cv.PolyLine(cpy, [][]cv.Point{points}, true, cv.Scalar{0.0, 255.0, 0.0, 0.0}, 3, cv.AA, 0)
 	}
 
-	highgui.ShowImage(windowName, cpy)
+	cv.ShowImage(windowName, cpy)
 }
