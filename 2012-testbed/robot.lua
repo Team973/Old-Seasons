@@ -78,7 +78,7 @@ function teleop()
         dashboard:PutBoolean("switch (RF)", switches[3]:Get())
         dashboard:PutBoolean("switch (RB)", switches[4]:Get())
 
-        for i in 1, #inputs do
+        for i = 1, #inputs do
             dashboard:PutBoolean("Input " .. tostring(i), inputs[i]:Get())
         end
 
