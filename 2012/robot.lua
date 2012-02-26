@@ -193,56 +193,53 @@ function teleop()
 end
 
 function calibrateAll()
-    local Var = 2
-    local targetAngle
-    local numWheels = 0
+    local tolerance = 2
     local numCalibratedWheels = 0
+    local numWheels = #wheels
     local allCalibrated = false
+    local speed = 0.25
     for _,wheel in pairs(wheels) do
         wheel.turnMotor:set(.25)
         wheel.calibrateState = 1
-        numWheels = numWheels + 1
     end
-    while allCalibrated == false do
-            --State when wheel is anywhere in circumfrence
+    while numCalibratedWheels < numWheels do
         for _,wheel in pairs(wheels) do
             if wheel.calibrateState == 1 then
-                if wheel.calibrateSwitch:Get() == false then
-                    wheel.turnMotor:set(.25)
-                elseif wheel.calibrateSwitch:Get() == true then
+                -- Initial state: turn clockwise, wait until tripped
+                wheel.turnMotor:Set(speed)
+                if wheel.calibrateSwitch:Get() then
                     wheel.calibrateState = 2
                 end
-            --State to get angles for zero
-
             elseif wheel.calibrateState == 2 then
-                if wheel.calibrateSwitch:Get() == false then
+                -- Keep turning clockwise until falling edge
+                wheel.turnMotor:Set(speed)
+                if not wheel.calibrateSwitch:Get() then
                     wheel.Angle1 = wheel.turnEncoder:Get()
                     wheel.calibrateState = 3
-                    wheel.turnMotor:set(-.25)
                 end
             elseif wheel.calibrateState == 3 then
-                if wheel.calibrateSwitch:Get() == true then
+                -- Turn counter-clockwise, wait until tripped
+                wheel.turnMotor:Set(-speed)
+                if wheel.calibrateSwitch:Get() then
                     wheel.calibrateState = 4
                 end
-
             elseif wheel.calibrateState == 4 then
-                    wheel.turnMotor:set(-.25)
-                if wheel.calibrateSwitch:Get() == false then
+                -- Keep turning counter-clockwise until falling edge
+                wheel.turnMotor:Set(-speed)
+                if not wheel.calibrateSwitch:Get() then
                     wheel.Angle2 = wheel.turnEncoder:Get()
                     wheel.calibrateState = 5
                 end
-                --State to get zero
-
             elseif wheel.calibrateState == 5 then
-                targetAngle = (wheel.Angle1 + wheel.Angle2)/2
-                wheel.turnMotor:set(.25)
-                Dist = math.abs (wheel.turnEncoder:Get() - targetAngle)
-                if Dist < Var then
-                    wheel.turnMotor:set(0)
+                -- Move clockwise back to zero
+                wheel.turnMotor:Set(speed)
+                local targetAngle = (wheel.Angle1 + wheel.Angle2)/2
+                local dist = math.abs(wheel.turnEncoder:Get() - targetAngle)
+                if dist < tolerance then
+                    wheel.turnMotor:Set(0)
+                    wheel.turnEncoder:Reset()
                     numCalibratedWheels = numCalibratedWheels + 1
-                    if numWheels == numCalibratedWheels then
-                        allCalibrated = true
-                    end
+                    wheel.calibrateState = 6
                 end
             end
         end
