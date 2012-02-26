@@ -22,7 +22,7 @@ local TELEOP_LOOP_LAG = 0.005
 local watchdogEnabled = false
 local feedWatchdog, enableWatchdog, disableWatchdog
 
-local hellautonomous, teleop, calibrate
+local hellautonomous, teleop, calibrateAll
 local controlMap, strafe, rotation, gear, presetShift, fieldCentric
 local zeroMode, possessionTimer, rotationHoldTimer
 local fudgeMode, fudgeWheel, fudgeMovement
@@ -68,6 +68,7 @@ function hellautonomous()
 end
 
 function teleop()
+    calibrateAll()
     for _, wheel in pairs(wheels) do
         wheel.turnPID:start()
 
@@ -191,42 +192,60 @@ function teleop()
     end
 end
 
-function calibrate()
-    local calibState = {}
-    local TURN_SPEED = 1.0
-    for name, _ in pairs(wheels) do
-        calibState[name] = false
+function calibrateAll()
+    local tolerance = 2
+    local numCalibratedWheels = 0
+    local numWheels = #wheels
+    local allCalibrated = false
+    local speed = 0.25
+    for _,wheel in pairs(wheels) do
+        wheel.turnMotor:set(.25)
+        wheel.calibrateState = 1
     end
-
-    local keepGoing = true
-    while keepGoing and wpilib.IsOperatorControl() and wpilib.IsEnabled() do
-        keepGoing = false
-        for name, calibrated in pairs(calibState) do
-            local wheel = wheels[name]
-            if calibrated then
-                wheel.turnMotor:Set(0)
-            elseif wheel.calibrateSwitch:Get() then
-                -- Stop running motor
-                wheel.turnMotor:Set(0)
-
-                -- Mark as calibrated
-                calibState[name] = true
-                wheel.turnEncoder:Reset()
-                wheel.turnEncoder:Start()
-            else
-                -- Have not reached point yet
-                keepGoing = true
-                wheel.turnMotor:Set(TURN_SPEED)
+    while numCalibratedWheels < numWheels do
+        for _,wheel in pairs(wheels) do
+            if wheel.calibrateState == 1 then
+                -- Initial state: turn clockwise, wait until tripped
+                wheel.turnMotor:Set(speed)
+                if wheel.calibrateSwitch:Get() then
+                    wheel.calibrateState = 2
+                end
+            elseif wheel.calibrateState == 2 then
+                -- Keep turning clockwise until falling edge
+                wheel.turnMotor:Set(speed)
+                if not wheel.calibrateSwitch:Get() then
+                    wheel.Angle1 = wheel.turnEncoder:Get()
+                    wheel.calibrateState = 3
+                end
+            elseif wheel.calibrateState == 3 then
+                -- Turn counter-clockwise, wait until tripped
+                wheel.turnMotor:Set(-speed)
+                if wheel.calibrateSwitch:Get() then
+                    wheel.calibrateState = 4
+                end
+            elseif wheel.calibrateState == 4 then
+                -- Keep turning counter-clockwise until falling edge
+                wheel.turnMotor:Set(-speed)
+                if not wheel.calibrateSwitch:Get() then
+                    wheel.Angle2 = wheel.turnEncoder:Get()
+                    wheel.calibrateState = 5
+                end
+            elseif wheel.calibrateState == 5 then
+                -- Move clockwise back to zero
+                wheel.turnMotor:Set(speed)
+                local targetAngle = (wheel.Angle1 + wheel.Angle2)/2
+                local dist = math.abs(wheel.turnEncoder:Get() - targetAngle)
+                if dist < tolerance then
+                    wheel.turnMotor:Set(0)
+                    wheel.turnEncoder:Reset()
+                    numCalibratedWheels = numCalibratedWheels + 1
+                    wheel.calibrateState = 6
+                end
             end
-            wheel.driveMotor:Set(0)
         end
-
-        -- Iteration cleanup
-        feedWatchdog()
-        wpilib.Wait(TELEOP_LOOP_LAG)
-        feedWatchdog()
     end
 end
+
 
 -- Inputs/Outputs
 -- Don't forget to add to declarations at the top!
