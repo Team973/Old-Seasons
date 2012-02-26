@@ -193,41 +193,61 @@ function teleop()
 end
 
 function calibrateAll()
+    local Var = 2
+    local targetAngle
     local numWheels = 0
     local numCalibratedWheels = 0
     local allCalibrated = false
     for _,wheel in pairs(wheels) do
-        wheel.turnMotor:set(1)
+        wheel.turnMotor:set(.25)
         wheel.calibrateState = 1
         numWheels = numWheels + 1
     end
     while allCalibrated == false do
+            --State when wheel is anywhere in circumfrence
         for _,wheel in pairs(wheels) do
             if wheel.calibrateState == 1 then
-                if wheel.calibrateSwitch1:Get() then
-                    wheel.switch1Angle = wheel.turnEncoder:Get()
-                    wheel.calibrateState = wheel.calibrateState + 1
-                    wheel.turnMotor:Set(-1)
+                if wheel.calibrateSwitch:Get() == false then
+                    wheel.turnMotor:set(.25)
+                elseif wheel.calibrateSwitch:Get() == true then
+                    wheel.calibrateState = 2
                 end
+            --State to get angles for zero
+
             elseif wheel.calibrateState == 2 then
-                if wheel.calibrateSwitch2:Get() then
-                    wheel.turnMotor:Set(1)
-                    wheel.switch2Angle = wheel.turnEncoder:Get()
+                if wheel.calibrateSwitch:Get() == false then
+                    wheel.Angle1 = wheel.turnEncoder:Get()
                     wheel.calibrateState = 3
-                    wheel.targetAngle = (wheel.switch1Angle + wheel.switch2Angle)/2
+                    wheel.turnMotor:set(-.25)
                 end
             elseif wheel.calibrateState == 3 then
-                if wheel.turnEncoder:Get() == wheel.targetAngle then
+                if wheel.calibrateSwitch:Get() == true then
                     wheel.calibrateState = 4
+                end
+
+            elseif wheel.calibrateState == 4 then
+                    wheel.turnMotor:set(-.25)
+                if wheel.calibrateSwitch:Get() == false then
+                    wheel.Angle2 = wheel.turnEncoder:Get()
+                    wheel.calibrateState = 5
+                end
+                --State to get zero
+
+            elseif wheel.calibrateState == 5 then
+                targetAngle = (wheel.Angle1 + wheel.Angle2)/2
+                wheel.turnMotor:set(.25)
+                Dist = math.abs (wheel.turnEncoder:Get() - targetAngle)
+                if Dist < Var then
+                    wheel.turnMotor:set(0)
                     numCalibratedWheels = numCalibratedWheels + 1
                     if numWheels == numCalibratedWheels then
                         allCalibrated = true
                     end
                 end
-            end    
+            end
         end
     end
-end 
+end
 
 
 -- Inputs/Outputs
