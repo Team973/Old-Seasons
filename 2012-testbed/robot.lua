@@ -78,6 +78,10 @@ function teleop()
         dashboard:PutBoolean("switch (RF)", switches[3]:Get())
         dashboard:PutBoolean("switch (RB)", switches[4]:Get())
 
+        for i = 1, #inputs do
+            dashboard:PutBoolean("Input " .. tostring(i), inputs[i]:Get())
+        end
+
         wpilib.Wait(TELEOP_LOOP_LAG)
     end
 end
@@ -123,6 +127,17 @@ switches = {
     wpilib.DigitalInput(1, 9),
     wpilib.DigitalInput(1, 6),
     wpilib.DigitalInput(1, 3),
+}
+
+inputs = {
+    wpilib.DigitalInput(2, 1),
+    wpilib.DigitalInput(2, 2),
+    wpilib.DigitalInput(2, 3),
+    wpilib.DigitalInput(2, 4),
+    wpilib.DigitalInput(2, 5),
+    wpilib.DigitalInput(2, 6),
+    wpilib.DigitalInput(2, 7),
+    wpilib.DigitalInput(2, 8),
 }
 -- End Inputs/Outputs
 
