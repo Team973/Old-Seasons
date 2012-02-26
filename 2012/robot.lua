@@ -68,13 +68,10 @@ function hellautonomous()
 end
 
 function teleop()
+    disableWatchdog()
     calibrateAll()
     for _, wheel in pairs(wheels) do
         wheel.turnPID:start()
-
-        -- TODO: Don't do this once we're calibrating right.
-        wheel.turnEncoder:Reset()
-        wheel.turnEncoder:Start()
     end
 
     while wpilib.IsOperatorControl() and wpilib.IsEnabled() do
@@ -198,12 +195,14 @@ function calibrateAll()
     local numWheels = #wheels
     local allCalibrated = false
     local speed = 0.25
-    for _,wheel in pairs(wheels) do
+    for _, wheel in pairs(wheels) do
         wheel.turnMotor:set(.25)
+        wheel.turnEncoder:Reset()
+        wheel.turnEncoder:Start()
         wheel.calibrateState = 1
     end
     while numCalibratedWheels < numWheels do
-        for _,wheel in pairs(wheels) do
+        for _, wheel in pairs(wheels) do
             if wheel.calibrateState == 1 then
                 -- Initial state: turn clockwise, wait until tripped
                 wheel.turnMotor:Set(speed)
@@ -243,6 +242,10 @@ function calibrateAll()
                 end
             end
         end
+
+        feedWatchdog()
+        wpilib.Wait(TELEOP_LOOP_LAG)
+        feedWatchdog()
     end
 end
 
