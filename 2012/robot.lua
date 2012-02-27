@@ -390,11 +390,24 @@ controlMap =
                 intake.setIntake(0.0)
             end
         end},
+        ["rtrigger"] = {tick=function(held)
+            if held then
+                turret.setFlywheelTargetSpeed(5000.0)
+            else
+                turret.setFlywheelTargetSpeed(0.0)
+            end
+        end},
         ["update"] = function(stick)
             if stick:GetRawButton(2) then
                 intake.setIntake(-1.0)
             end
             -- No else clause because it is handled by ltrigger
+
+            if stick:GetRawButton(1) then
+                turret.setFlywheelTargetSpeed(2500.0)
+            elseif stick:GetRawButton(6) then
+                turret.setFlywheelTargetSpeed(3500.0)
+            end
 
             if stick:GetRawButton(3) then
                 intake.towerRepack()
