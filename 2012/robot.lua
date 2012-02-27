@@ -1,20 +1,21 @@
 -- robot.lua
 
+local pid = require("pid")
+local wpilib = require("wpilib")
+-- Inject WPILib timer object into PID
+pid.PID.timerNew = wpilib.Timer
+
 local controls = require("controls")
 local drive = require("drive")
 local lcd = require("lcd")
 local linearize = require("linearize")
 local math = require("math")
-local pid = require("pid")
-local wpilib = require("wpilib")
+local turret = require("turret")
 
 local pairs = pairs
 local tostring = tostring
 
 module(..., package.seeall)
-
--- Inject WPILib timer object into PID
-pid.PID.timerNew = wpilib.Timer
 
 local TELEOP_LOOP_LAG = 0.005
 
@@ -102,6 +103,12 @@ function teleop()
             compressor:Set(wpilib.Relay_kOn)
         end
         --]]
+
+        dashboard:PutDouble("Flywheel P", turret.flywheelPID.p)
+        dashboard:PutDouble("Flywheel D", turret.flywheelPID.d)
+        dashboard:PutDouble("Flywheel Speed", turret.getFlywheelSpeed())
+        dashboard:PutDouble("Flywheel Target Speed", turret.getFlywheelTargetSpeed())
+        turret.update()
 
         -- Drive
         --[[
