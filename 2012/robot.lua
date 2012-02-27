@@ -2,6 +2,7 @@
 
 local controls = require("controls")
 local drive = require("drive")
+local intake = require("intake")
 local lcd = require("lcd")
 local linearize = require("linearize")
 local math = require("math")
@@ -102,6 +103,8 @@ function teleop()
             compressor:Set(wpilib.Relay_kOn)
         end
         --]]
+
+        intake.update(true)
 
         -- Drive
         --[[
@@ -373,6 +376,28 @@ controlMap =
     },
     -- Joystick 2
     {
+        [5] = intake.toggleRaise,
+        ["ltrigger"] = {tick=function(held)
+            if held then
+                intake.setIntake(1.0)
+            else
+                intake.setIntake(0.0)
+            end
+        end},
+        ["update"] = function(stick)
+            if stick:GetRawButton(2) then
+                intake.setIntake(-1.0)
+            end
+            -- No else clause because it is handled by ltrigger
+
+            if stick:GetRawButton(3) then
+                intake.towerRepack()
+            elseif stick:GetRawButton(4) then
+                intake.towerUp()
+            else
+                intake.towerStop()
+            end
+        end,
     },
     -- Joystick 3
     {

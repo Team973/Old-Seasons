@@ -9,28 +9,23 @@ local wpilib = require("wpilib")
 
 module(...)
 
-local towerState = "stopped"
+local towerState = "stop"
 local lowered = false
-local vertSpeed = 0 -- this is vertical converer
-local cheatSpeed = 0 -- this is the cheater roller wheels
-local frontSpeed = 0 -- this is front intake roller
-local sideSpeed = 0 -- this is side intake roller
-local isBallBlockingTurret = false
-local bigButton = false
-local fireButton = false
-local intakeButton = false
-local motor.verticalConveyer = wpilib.victor(2,4)
-local motor.cheaterRoller = wpilib.victor(2,5)
-local motor.sideIntake = wpilib.victor(2,1)
-local motor.frontIntake = wpilib.victor(2,2)
-local pn.Intake = wpilib.solenoid(2)
+local frontSpeed = 0 -- front intake roller
+local sideSpeed = 0 -- side intake roller
+
+local verticalConveyer = wpilib.Victor(2,4)
+local cheaterRoller = wpilib.Victor(2,5)
+local sideIntake = wpilib.Victor(2,1)
+local frontIntake = wpilib.Victor(2,2)
+local intakeSolenoid = wpilib.Solenoid(2)
 
 function towerFire()
-	towerState = "fired"
+	towerState = "fire"
 end
 
 function towerRepack()
-	towerState = "repacked"
+	towerState = "repack"
 end
 
 function towerUp()
@@ -39,55 +34,52 @@ end
 
 function towerDown()
 	towerState = "down"
+end
 
 function towerStop()
-	towerState = "stopped"
+	towerState = "stop"
+end
 
 function toggleRaise()
-	if bigButton == false then
-		pn.Intake:set(false)
-	end
     lowered = not lowered
 end
 
 function update(turretReady)
-    motor.sideIntake:set(sideSpeed)
-    motor.frontIntake:set(frontSpeed)
-    
-    if towerState = "fire" then
-	motor.verticalConveyer:set(.3)
-	motor.cheaterRoller:set(.3)
-    else if towerState = "repack" then
-	motor.verticalConveyer:set(-.5)
-	motor.cheaterRoller:set(.5)
-    else if towerState = "up" then
-	motor.verticalConveyer:set(1)
-	motor.cheaterRoller:set(1)
-    else if towerState = "down" then
-	motor.verticalConveyer:set(-1)
-	motor.cheaterRoller:set(-1)
-    else if towerState = "stop" then
-	motor.verticalConveyer:set(0)
-	motor.cheaterRoller:set(0)
-    else then 
-	motor.verticalConveyer:set(0)
-	motor.cheaterRoller:set(0)
-    end
-end
+    sideIntake:Set(sideSpeed)
+    frontIntake:Set(frontSpeed)
 
-	
+    intakeSolenoid:Set(lowered)
+    
+    if towerState == "fire" then
+        verticalConveyer:Set(.3)
+        cheaterRoller:Set(.3)
+    elseif towerState == "repack" then
+        verticalConveyer:Set(-.5)
+        cheaterRoller:Set(.5)
+    elseif towerState == "up" then
+        verticalConveyer:Set(1)
+        cheaterRoller:Set(1)
+    elseif towerState == "down" then
+        verticalConveyer:Set(-1)
+        cheaterRoller:Set(-1)
+    elseif towerState == "stop" then
+        verticalConveyer:Set(0)
+        cheaterRoller:Set(0)
+    else
+        verticalConveyer:Set(0)
+        cheaterRoller:Set(0)
+    end
 end
 
 function setIntake(speed)
 	frontSpeed = speed
 	sideSpeed = speed
-	end
 end
 
-fuction intakeStop()
+function intakeStop()
 	frontSpeed = 0
 	sideSpeed = 0
-	towerState = "stopped"
+	towerState = "stop"
 end
 
 -- vim: ft=lua et ts=4 sts=4 sw=4
