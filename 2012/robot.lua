@@ -88,7 +88,7 @@ function teleop()
             dashboard:PutString("mode", "Fudge Mode")
         end
         for _, wheel in pairs(wheels) do
-            dashboard:PutString(wheel.shortName .. ".turnEncoder", wheel.turnEncoder:GetRaw() / 4.0)
+            dashboard:PutString(wheel.shortName .. ".turnEncoder", wheel.turnEncoder:GetDistance())
         end
 
         -- Read controls
@@ -127,7 +127,7 @@ function teleop()
 
         if zeroMode then
             for _, wheel in pairs(wheels) do
-                local currentTurn = wheel.turnEncoder:GetRaw() / 4.0
+                local currentTurn = wheel.turnEncoder:GetDistance()
                 wheel.turnPID.errFunc = drive.normalizeAngle
                 wheel.turnPID.target = 0
                 wheel.turnPID:update(currentTurn)
@@ -172,7 +172,7 @@ function teleop()
                 local wheel = wheels[wheelName]
 
                 local deadband = 0.1
-                local currentTurn = wheel.turnEncoder:GetRaw() / 4.0
+                local currentTurn = wheel.turnEncoder:GetDistance()
 
                 if math.abs(strafe.x) > deadband or math.abs(strafe.y) > deadband or math.abs(appliedRotation) > deadband then
                     wheel.turnPID.target = drive.normalizeAngle(value.angleDeg)
@@ -250,7 +250,7 @@ pressureSwitch = wpilib.DigitalInput(4, 13)
 gearSwitch = wpilib.Solenoid(7, 3)
 --]]
 
-local turnPIDConstants = {p=0.05, i=0, d=0}
+local turnPIDConstants = {p=0.06, i=0, d=0}
 
 wheels = {
     leftFront={
