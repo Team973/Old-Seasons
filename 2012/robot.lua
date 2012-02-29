@@ -1,20 +1,22 @@
 -- robot.lua
 
+local pid = require("pid")
+local wpilib = require("wpilib")
+-- Inject WPILib timer object into PID
+pid.PID.timerNew = wpilib.Timer
+
 local controls = require("controls")
 local drive = require("drive")
+local intake = require("intake")
 local lcd = require("lcd")
 local linearize = require("linearize")
 local math = require("math")
-local pid = require("pid")
-local wpilib = require("wpilib")
+local turret = require("turret")
 
 local pairs = pairs
 local tostring = tostring
 
 module(..., package.seeall)
-
--- Inject WPILib timer object into PID
-pid.PID.timerNew = wpilib.Timer
 
 local TELEOP_LOOP_LAG = 0.005
 
@@ -84,7 +86,7 @@ function teleop()
             dashboard:PutString("mode", "Fudge Mode")
         end
         for _, wheel in pairs(wheels) do
-            dashboard:PutString(wheel.shortName .. ".turnEncoder", wheel.turnEncoder:GetRaw() / 4.0)
+            dashboard:PutString(wheel.shortName .. ".turnEncoder", wheel.turnEncoder:GetDistance())
         end
 
         -- Read controls
@@ -101,6 +103,13 @@ function teleop()
         end
         --]]
 
+        dashboard:PutDouble("Flywheel P", turret.flywheelPID.p)
+        dashboard:PutDouble("Flywheel D", turret.flywheelPID.d)
+        dashboard:PutDouble("Flywheel Speed", turret.getFlywheelSpeed())
+        dashboard:PutDouble("Flywheel Target Speed", turret.getFlywheelTargetSpeed())
+        intake.update(true)
+        turret.update()
+
         -- Drive
         --[[
         if gear == "low" then
@@ -116,7 +125,7 @@ function teleop()
 
         if zeroMode then
             for _, wheel in pairs(wheels) do
-                local currentTurn = wheel.turnEncoder:GetRaw() / 4.0
+                local currentTurn = wheel.turnEncoder:GetDistance()
                 wheel.turnPID.errFunc = drive.normalizeAngle
                 wheel.turnPID.target = 0
                 wheel.turnPID:update(currentTurn)
@@ -161,7 +170,7 @@ function teleop()
                 local wheel = wheels[wheelName]
 
                 local deadband = 0.1
-                local currentTurn = wheel.turnEncoder:GetRaw() / 4.0
+                local currentTurn = wheel.turnEncoder:GetDistance()
 
                 if math.abs(strafe.x) > deadband or math.abs(strafe.y) > deadband or math.abs(appliedRotation) > deadband then
                     wheel.turnPID.target = drive.normalizeAngle(value.angleDeg)
@@ -190,13 +199,13 @@ function teleop()
 end
 
 function calibrateAll()
-    local tolerance = 2
+    dashboard:PutString("mode", "Calibrating")
+
+    local tolerance = 3.0 -- in degrees
     local numCalibratedWheels = 0
-    local numWheels = #wheels
-    local allCalibrated = false
-    local speed = 0.25
+    local numWheels = 4
+    local speed = 1.0
     for _, wheel in pairs(wheels) do
-        wheel.turnMotor:set(.25)
         wheel.turnEncoder:Reset()
         wheel.turnEncoder:Start()
         wheel.calibrateState = 1
@@ -213,7 +222,7 @@ function calibrateAll()
                 -- Keep turning clockwise until falling edge
                 wheel.turnMotor:Set(speed)
                 if not wheel.calibrateSwitch:Get() then
-                    wheel.Angle1 = wheel.turnEncoder:Get()
+                    wheel.Angle1 = wheel.turnEncoder:GetDistance()
                     wheel.calibrateState = 3
                 end
             elseif wheel.calibrateState == 3 then
@@ -226,14 +235,14 @@ function calibrateAll()
                 -- Keep turning counter-clockwise until falling edge
                 wheel.turnMotor:Set(-speed)
                 if not wheel.calibrateSwitch:Get() then
-                    wheel.Angle2 = wheel.turnEncoder:Get()
+                    wheel.Angle2 = wheel.turnEncoder:GetDistance()
                     wheel.calibrateState = 5
                 end
             elseif wheel.calibrateState == 5 then
                 -- Move clockwise back to zero
                 wheel.turnMotor:Set(speed)
                 local targetAngle = (wheel.Angle1 + wheel.Angle2)/2
-                local dist = math.abs(wheel.turnEncoder:Get() - targetAngle)
+                local dist = math.abs(wheel.turnEncoder:GetDistance() - targetAngle)
                 if dist < tolerance then
                     wheel.turnMotor:Set(0)
                     wheel.turnEncoder:Reset()
@@ -249,7 +258,6 @@ function calibrateAll()
     end
 end
 
-
 -- Inputs/Outputs
 -- Don't forget to add to declarations at the top!
 
@@ -263,7 +271,7 @@ pressureSwitch = wpilib.DigitalInput(4, 13)
 gearSwitch = wpilib.Solenoid(7, 3)
 --]]
 
-local turnPIDConstants = {p=0.05, i=0, d=0}
+local turnPIDConstants = {p=0.06, i=0, d=0}
 
 wheels = {
     leftFront={
@@ -395,6 +403,41 @@ controlMap =
     },
     -- Joystick 2
     {
+        [5] = intake.toggleRaise,
+        ["ltrigger"] = {tick=function(held)
+            if held then
+                intake.setIntake(1.0)
+            else
+                intake.setIntake(0.0)
+            end
+        end},
+        ["rtrigger"] = {tick=function(held)
+            if held then
+                turret.setFlywheelTargetSpeed(5000.0)
+            else
+                turret.setFlywheelTargetSpeed(0.0)
+            end
+        end},
+        ["update"] = function(stick)
+            if stick:GetRawButton(2) then
+                intake.setIntake(-1.0)
+            end
+            -- No else clause because it is handled by ltrigger
+
+            if stick:GetRawButton(1) then
+                turret.setFlywheelTargetSpeed(2500.0)
+            elseif stick:GetRawButton(6) then
+                turret.setFlywheelTargetSpeed(3500.0)
+            end
+
+            if stick:GetRawButton(3) then
+                intake.towerRepack()
+            elseif stick:GetRawButton(4) then
+                intake.towerUp()
+            else
+                intake.towerStop()
+            end
+        end,
     },
     -- Joystick 3
     {
