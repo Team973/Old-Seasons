@@ -307,7 +307,7 @@ wheels = {
     rightBack={
         shortName="RB",
         driveMotor=LinearVictor(1, 1),
-        turnMotor=wpilib.Jaguar(1, 2),
+        turnMotor=LinearVictor(1, 2),
 
         calibrateSwitch=wpilib.DigitalInput(1, 3),
         turnEncoder=wpilib.Encoder(1, 1, 1, 2),
