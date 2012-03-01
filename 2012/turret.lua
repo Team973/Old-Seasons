@@ -1,6 +1,7 @@
 -- turret.lua
 
 local pid = require("pid")
+local math = require("math")
 local wpilib = require("wpilib")
 
 module(...)
@@ -18,18 +19,19 @@ local flywheelTicksPerRevolution = 2.0
 
 flywheelCounter:Start()
 
-encoder = wpilib.Encoder(2, 2, 2, 3, false, wpilib.Encoder_k1X)
+encoder = wpilib.Encoder(2, 2, 2, 3, true, wpilib.CounterBase_k1X)
+encoder:Start()
 motor = wpilib.Jaguar(2, 3) 
-turnPID = PID.new(0.05, 0, 0) 
+turnPID = pid.new(0.05, 0, 0) 
 
 allowRotate = false
 
-local HARD_LIMIT = 90
+local HARD_LIMIT = 210
 
 function setFromJoy(x,y)
-    if allowRotate and math.sqrt(x*x + y*y) > .5 then
+    if allowRotate then
         local angle = math.atan2(x, y)
-	angle = angle*180/math.pi
+        angle = angle*180/math.pi
         turnPID.target = calculateTarget(encoder:Get()/25, angle)
     end
 end
@@ -88,11 +90,9 @@ function calculateTarget(turretAngle, desiredAngle)
     --make sure the turret doesn't crash
     if desiredAngle > HARD_LIMIT then
         desiredAngle = desiredAngle - 360
-        desiredAngle = turretAngle
     end
     if desiredAngle < -HARD_LIMIT then
         desiredAngle = desiredAngle + 360
-        desiredAngle = turretAngle
     end
 
     return desiredAngle

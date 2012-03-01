@@ -385,7 +385,6 @@ controlMap =
             rotation = axis
         end,
         ["ltrigger"] = {tick=function(held) fieldCentric = held end},
-        [1] = {tick=function(held) turret.allowRotate = held end},   
         [5] = {tick=function(held)
             if held then
                 gear = "low"
@@ -410,13 +409,14 @@ controlMap =
     {
         ["x"] = function(axis)
             turretDirection.x = deadband(axis, 0.2)
-            setFromJoy(turretDirection.x, turretDirection.y) 
+            turret.setFromJoy(turretDirection.x, turretDirection.y) 
         end,
         
         ["y"] = function(axis) 
             turretDirection.y = deadband(-axis, 0.2) 
-            setFromJoy(turretDirection.x, turretDirection.y)
+            turret.setFromJoy(turretDirection.x, turretDirection.y)
         end,
+        [4] = {tick=function(held) turret.allowRotate = held end},   
         [5] = intake.toggleRaise,
         ["ltrigger"] = {tick=function(held)
             if held then
