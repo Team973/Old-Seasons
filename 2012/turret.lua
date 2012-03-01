@@ -18,7 +18,21 @@ local flywheelTicksPerRevolution = 2.0
 
 flywheelCounter:Start()
 
+encoder = wpilib.Encoder(2, 2, 2, 3, false, wpilib.Encoder_k1X)
+motor = wpilib.Jaguar(2, 3) 
+turnPID = PID.new(0.05, 0, 0) 
+
+allowRotate = false
+
 local HARD_LIMIT = 90
+
+function setFromJoy(x,y)
+    if allowRotate and math.sqrt(x*x + y*y) > .5 then
+        local angle = math.atan2(x, y)
+	angle = angle*180/math.pi
+        turnPID.target = calculateTarget(encoder:Get()/25, angle)
+    end
+end
 
 -- Calculate the current flywheel speed (in RPM).
 function getFlywheelSpeed()
@@ -37,6 +51,9 @@ end
 
 function update()
     local dashboard = wpilib.SmartDashboard_GetInstance()
+
+    turnPID:update(encoder:Get()/25)
+    motor:Set(turnPID.output)
 
     flywheelPID.timer:Start()
 
@@ -70,11 +87,11 @@ function calculateTarget(turretAngle, desiredAngle)
 
     --make sure the turret doesn't crash
     if desiredAngle > HARD_LIMIT then
-        --desiredAngle = desiredAngle - 360
+        desiredAngle = desiredAngle - 360
         desiredAngle = turretAngle
     end
     if desiredAngle < -HARD_LIMIT then
-        --desiredAngle = desiredAngle + 360
+        desiredAngle = desiredAngle + 360
         desiredAngle = turretAngle
     end
 

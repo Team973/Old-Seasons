@@ -70,6 +70,7 @@ function hellautonomous()
 end
 
 function teleop()
+    turret.turnPID:start()
     disableWatchdog()
     calibrateAll()
     for _, wheel in pairs(wheels) do
@@ -273,6 +274,7 @@ gearSwitch = wpilib.Solenoid(7, 3)
 
 local turnPIDConstants = {p=0.06, i=0, d=0}
 
+
 wheels = {
     leftFront={
         shortName="LF",
@@ -326,6 +328,7 @@ end
 strafe = {x=0, y=0}
 rotation = 0
 gear = "high"
+turretDirection = {x=0, y=0} 
 
 zeroMode = false
 fudgeMode = false
@@ -369,8 +372,16 @@ controlMap =
 {
     -- Joystick 1
     {
-        ["x"] = function(axis) strafe.x = deadband(axis, 0.15) end,
-        ["y"] = function(axis) strafe.y = deadband(-axis, 0.15) end,
+        ["x"] = function(axis)
+            turretDirection.x = deadband(axis, 0.2)
+            setFromJoy(turretDirection.x, turretDirection.y) 
+        end,
+        
+        ["y"] = function(axis) 
+            turretDirection.y = deadband(-axis, 0.2) 
+            setFromJoy(turretDirection.x, turretDirection.y)
+        end,
+        
         ["rx"] = function(axis)
             if not fudgeMode then
                 rotation = axis
@@ -379,7 +390,7 @@ controlMap =
             end
         end,
         ["ltrigger"] = {tick=function(held) fieldCentric = held end},
-        [1] = fudgeButton(wheels.rightBack),
+        [1] = {tick=function(held) turret.allowRotate = held end},   
         [2] = fudgeButton(wheels.rightFront),
         [3] = fudgeButton(wheels.leftBack),
         [4] = fudgeButton(wheels.leftFront),
