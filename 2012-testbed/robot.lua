@@ -117,6 +117,7 @@ encoders = {
     wpilib.Encoder(1, 7, 1, 8, false, wpilib.CounterBase_k1X),
     wpilib.Encoder(1, 4, 1, 5, false, wpilib.CounterBase_k1X),
     wpilib.Encoder(1, 1, 1, 2, false, wpilib.CounterBase_k1X),
+    wpilib.Encoder(2, 2, 2, 3, false, wpilib.CounterBase_k1X),
 }
 for _, e in ipairs(encoders) do
     e:Start()
