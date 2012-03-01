@@ -208,7 +208,13 @@ function calibrateAll()
     for _, wheel in pairs(wheels) do
         wheel.turnEncoder:Reset()
         wheel.turnEncoder:Start()
-        wheel.calibrateState = 1
+        if wheel.calibrateSwitch:Get() then
+            -- Already calibrated
+            wheel.calibrateState = 6
+            numCalibratedWheels = numCalibratedWheels + 1
+        else
+            wheel.calibrateState = 1
+        end
     end
     while numCalibratedWheels < numWheels do
         for _, wheel in pairs(wheels) do
