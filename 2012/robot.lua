@@ -91,7 +91,11 @@ function teleop()
         end
 
         -- Read controls
-        controls.update(controlMap)
+        if fudgeMode then
+            controls.update(fudgeControlMap)
+        else
+            controls.update(controlMap)
+        end
         feedWatchdog()
 
         -- Pneumatics
@@ -135,7 +139,6 @@ function teleop()
             end
         elseif fudgeMode then
             -- Fudge mode
-            -- TODO: Don't use this, just calibrate
             for _, wheel in pairs(wheels) do
                 wheel.driveMotor:Set(0)
                 wheel.turnMotor:Set(0)
@@ -209,7 +212,13 @@ function calibrateAll()
     for _, wheel in pairs(wheels) do
         wheel.turnEncoder:Reset()
         wheel.turnEncoder:Start()
-        wheel.calibrateState = 1
+        if wheel.calibrateSwitch:Get() then
+            -- Already calibrated
+            wheel.calibrateState = 6
+            numCalibratedWheels = numCalibratedWheels + 1
+        else
+            wheel.calibrateState = 1
+        end
     end
     while numCalibratedWheels < numWheels do
         for _, wheel in pairs(wheels) do
@@ -274,7 +283,6 @@ gearSwitch = wpilib.Solenoid(7, 3)
 
 local turnPIDConstants = {p=0.06, i=0, d=0}
 
-
 wheels = {
     leftFront={
         shortName="LF",
@@ -338,7 +346,6 @@ fudgeMovement = 0.0
 local function fudgeButton(wheel)
     return {
         down=function()
-            fudgeMode = true
             fudgeWheel = wheel
         end,
         up=function()
@@ -372,28 +379,13 @@ controlMap =
 {
     -- Joystick 1
     {
-        ["x"] = function(axis)
-            turretDirection.x = deadband(axis, 0.2)
-            setFromJoy(turretDirection.x, turretDirection.y) 
-        end,
-        
-        ["y"] = function(axis) 
-            turretDirection.y = deadband(-axis, 0.2) 
-            setFromJoy(turretDirection.x, turretDirection.y)
-        end,
-        
+        ["x"] = function(axis) strafe.x = deadband(axis, 0.15) end,
+        ["y"] = function(axis) strafe.y = deadband(-axis, 0.15) end,
         ["rx"] = function(axis)
-            if not fudgeMode then
-                rotation = axis
-            else
-                fudgeMovement = deadband(axis, 0.15)
-            end
+            rotation = axis
         end,
         ["ltrigger"] = {tick=function(held) fieldCentric = held end},
         [1] = {tick=function(held) turret.allowRotate = held end},   
-        [2] = fudgeButton(wheels.rightFront),
-        [3] = fudgeButton(wheels.leftBack),
-        [4] = fudgeButton(wheels.leftFront),
         [5] = {tick=function(held)
             if held then
                 gear = "low"
@@ -410,10 +402,21 @@ controlMap =
                 end
             end
         end},
-        [10] = function() zeroMode = true end,
+        [7] = function() fudgeMode = true end,
+        [8] = function() calibrateAll() end,
+        [9] = function() zeroMode = true end,
     },
     -- Joystick 2
     {
+        ["x"] = function(axis)
+            turretDirection.x = deadband(axis, 0.2)
+            setFromJoy(turretDirection.x, turretDirection.y) 
+        end,
+        
+        ["y"] = function(axis) 
+            turretDirection.y = deadband(-axis, 0.2) 
+            setFromJoy(turretDirection.x, turretDirection.y)
+        end,
         [5] = intake.toggleRaise,
         ["ltrigger"] = {tick=function(held)
             if held then
@@ -449,6 +452,36 @@ controlMap =
                 intake.towerStop()
             end
         end,
+    },
+    -- Joystick 3
+    {
+    },
+    -- Joystick 4 (eStop Module)
+    {
+    },
+    -- Cypress Module
+    cypress={},
+}
+
+fudgeControlMap = {
+    -- Joystick 1
+    {
+        ["x"] = function(axis)
+            fudgeMovement = deadband(axis, 0.15)
+        end,
+        [1] = fudgeButton(wheels.rightBack),
+        [2] = fudgeButton(wheels.rightFront),
+        [3] = fudgeButton(wheels.leftBack),
+        [4] = fudgeButton(wheels.leftFront),
+        [7] = function()
+            fudgeMode = false
+            for _, wheel in pairs(wheels) do
+                wheel.turnEncoder:Reset()
+            end
+        end,
+    },
+    -- Joystick 2
+    {
     },
     -- Joystick 3
     {
