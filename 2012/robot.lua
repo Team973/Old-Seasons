@@ -374,6 +374,7 @@ local operatorIntake = 0
 local driverFire = false
 
 local rpmPreset = 1000.0
+local prevOperatorDpad = 0.0
 
 controlMap =
 {
@@ -421,6 +422,18 @@ controlMap =
         ["y"] = function(axis) 
             turretDirection.y = deadband(-axis, 0.2) 
             turret.setFromJoy(turretDirection.x, turretDirection.y)
+        end,
+        ["hatx"] = function(axis)
+            local increment = 1
+            if axis > 0.5 and prevOperatorDpad <= 0.5 then
+                -- Dpad right
+                turret.setTargetAngle(turret.getTargetAngle() + increment)
+            end
+            if axis < -0.5 and prevOperatorDpad >= -0.5 then
+                -- Dpad left
+                turret.setTargetAngle(turret.getTargetAngle() - increment)
+            end
+            prevOperatorDpad = axis
         end,
         [1] = function() turret.setTargetAngle(0.0) end,
         [4] = {tick=function(held) turret.allowRotate = held end},   
