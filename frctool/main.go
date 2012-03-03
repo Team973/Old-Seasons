@@ -2,6 +2,7 @@ package main
 
 import (
 	"bitbucket.org/zombiezen/ftp"
+	"errors"
 	"flag"
 	"fmt"
 	"io"
@@ -22,9 +23,12 @@ func (f IPFlag) String() string {
 	return f.IP.String()
 }
 
-func (f IPFlag) Set(value string) bool {
+func (f IPFlag) Set(value string) error {
 	*f.IP = net.ParseIP(value)
-	return *f.IP != nil
+	if *f.IP == nil {
+		return errors.New("Can't parse IP: " + value)
+	}
+	return nil
 }
 
 type RobotAddressFlag struct {
@@ -39,13 +43,16 @@ func (f RobotAddressFlag) String() string {
 	return strconv.Itoa(team)
 }
 
-func (f RobotAddressFlag) Set(value string) bool {
+func (f RobotAddressFlag) Set(value string) error {
 	team, err := strconv.Atoi(value)
-	if err != nil || team < 1 || team > 9999 {
-		return false
+	if err != nil {
+		return err
+	}
+	if team < 1 || team > 9999 {
+		return errors.New("Bad team number: " + value)
 	}
 	*f.IP = robotAddress(team)
-	return true
+	return nil
 }
 
 func main() {
@@ -71,7 +78,7 @@ func main() {
 		log.Fatal("usage: frctool [options] command [options] ...")
 	}
 
-	var err os.Error
+	var err error
 	switch args[0] {
 	case "lua":
 		err = uploadLua(args[1:], address)
@@ -88,7 +95,7 @@ func main() {
 
 const frcPath = "/ni-rt/system/FRC_UserProgram.out"
 
-func uploadC(args []string, address *net.TCPAddr) os.Error {
+func uploadC(args []string, address *net.TCPAddr) error {
 	if len(args) != 1 {
 		log.Fatal("usage: frctool c FILE")
 	}
@@ -104,7 +111,7 @@ func uploadC(args []string, address *net.TCPAddr) os.Error {
 
 const luaRoot = "/lua"
 
-func uploadLua(args []string, address *net.TCPAddr) os.Error {
+func uploadLua(args []string, address *net.TCPAddr) error {
 	if len(args) != 1 {
 		log.Fatal("usage: frctool lua DIR")
 	}
@@ -130,8 +137,8 @@ func uploadLua(args []string, address *net.TCPAddr) os.Error {
 		root += string(filepath.Separator)
 	}
 
-	err := filepath.Walk(root, func(path string, info *os.FileInfo, err os.Error) os.Error {
-		if info.IsDirectory() {
+	err = filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
+		if info.IsDir() {
 			return nil
 		}
 
@@ -144,7 +151,7 @@ func uploadLua(args []string, address *net.TCPAddr) os.Error {
 
 		// Upload
 		log.Printf("Uploading %q to %q", path, slashpath.Join(luaRoot, destPath))
-		err := upload(client, destPath, path)
+		err = upload(client, destPath, path)
 		if err != nil {
 			// Log error, but try to continue uploading
 			log.Printf("ERROR for %q: %v", path, err)
@@ -156,7 +163,7 @@ func uploadLua(args []string, address *net.TCPAddr) os.Error {
 }
 
 // connect dials to a FTP server.
-func connect(addr *net.TCPAddr) (*ftp.Client, os.Error) {
+func connect(addr *net.TCPAddr) (*ftp.Client, error) {
 	log.Printf("Connecting to %v", addr)
 	conn, err := net.DialTCP("tcp", nil, addr)
 	if err != nil {
@@ -174,7 +181,7 @@ func connect(addr *net.TCPAddr) (*ftp.Client, os.Error) {
 }
 
 // upload copies a file via FTP
-func upload(client *ftp.Client, dest, source string) os.Error {
+func upload(client *ftp.Client, dest, source string) error {
 	f, err := os.Open(source)
 	if err != nil {
 		return err
@@ -192,7 +199,7 @@ func upload(client *ftp.Client, dest, source string) os.Error {
 }
 
 // extractTeamNumber extracts a team number from a FIRST IP address.
-func extractTeamNumber(ip net.IP) (team int, err os.Error) {
+func extractTeamNumber(ip net.IP) (team int, err error) {
 	ip4 := ip.To4()
 	if ip4 == nil {
 		return 0, fmt.Errorf("%v is not an IPv4 address", ip)
