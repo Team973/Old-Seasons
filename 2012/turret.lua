@@ -28,6 +28,10 @@ allowRotate = false
 
 local HARD_LIMIT = 210
 
+function getTargetAngle()
+    return turnPID.target
+end
+
 function setTargetAngle(angle)
     turnPID.target = calculateTarget(encoder:Get()/25, angle)
 end
@@ -63,11 +67,12 @@ end
 function update()
     local dashboard = wpilib.SmartDashboard_GetInstance()
 
+    dashboard:PutInt("TURN.TARGET", turnPID.target)
+    dashboard:PutInt("TURN.ANGLE", encoder:Get()/25)
     turnPID:update(encoder:Get()/25)
     motor:Set(turnPID.output)
 
     flywheelPID.timer:Start()
-
     local pos = flywheelCounter:Get() / flywheelTicksPerRevolution -- in revolutions
     local dt = flywheelPID.timer:Get() / 60.0 -- in minutes
     flywheelPID.timer:Reset()
