@@ -84,6 +84,8 @@ func main() {
 		err = uploadLua(args[1:], address)
 	case "c":
 		err = uploadC(args[1:], address)
+	case "error":
+		err = downloadLuaError(args[1:], address)
 	default:
 		log.Fatalf("usage: unrecognized command %q", args[0])
 	}
@@ -159,6 +161,27 @@ func uploadLua(args []string, address *net.TCPAddr) error {
 		return nil
 	})
 
+	return err
+}
+
+func downloadLuaError(args []string, address *net.TCPAddr) error {
+	if len(args) != 0 {
+		log.Fatal("usage: frctool error")
+	}
+
+	client, err := connect(address)
+	if err != nil {
+		return err
+	}
+	defer client.Quit()
+
+	conn, err := client.Text("RETR /lua-error.txt")
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	_, err = io.Copy(os.Stdout, conn)
 	return err
 }
 
