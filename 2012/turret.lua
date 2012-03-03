@@ -26,7 +26,7 @@ turnPID = pid.new(0.05, 0, 0)
 
 allowRotate = false
 
-local HARD_LIMIT = 210
+local HARD_LIMIT = 90
 
 function getTargetAngle()
     return turnPID.target
@@ -103,10 +103,10 @@ function calculateTarget(turretAngle, desiredAngle)
 
     --make sure the turret doesn't crash
     if desiredAngle > HARD_LIMIT then
-        desiredAngle = desiredAngle - 360
+        desiredAngle = HARD_LIMIT
     end
     if desiredAngle < -HARD_LIMIT then
-        desiredAngle = desiredAngle + 360
+        desiredAngle = -HARD_LIMIT
     end
 
     return desiredAngle
