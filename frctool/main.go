@@ -128,6 +128,25 @@ func uploadLua(args []string, address *net.TCPAddr) error {
 	if reply, err := client.Do("CWD " + luaRoot); err != nil || !reply.Positive() {
 		if err != nil {
 			return err
+		}
+
+		if reply.Code == ftp.CodeFileUnavailable {
+			// Directory doesn't exist, try to create it
+			log.Printf("Creating directory %q", luaRoot)
+			reply, err = client.Do("MKD " + luaRoot)
+			if err != nil {
+				return err
+			} else if !reply.PositiveComplete() {
+				return reply
+			}
+
+			// Directory created, change to it
+			reply, err := client.Do("CWD " + luaRoot)
+			if err != nil {
+				return err
+			} else if !reply.Positive() {
+				return reply
+			}
 		} else {
 			return reply
 		}
