@@ -10,6 +10,7 @@ import (
 	slashpath "path"
 	"path/filepath"
 	"strings"
+	"sync"
 )
 
 func main() {
@@ -68,14 +69,28 @@ func uploadLua(args []string, address *net.TCPAddr) error {
 		log.Fatal("usage: frctool lua DIR")
 	}
 
-	client, err := connect(address)
-	if err != nil {
-		return err
+	// Create clients
+	clients := make([]*ftp.Client, 2)
+	for i := range clients {
+		var err error
+		clients[i], err = connect(address)
+		if err != nil {
+			if i == 0 {
+				return err
+			} else {
+				clients = clients[:i]
+				break
+			}
+		}
 	}
-	defer client.Quit()
+	defer func() {
+		for i := range clients {
+			clients[i].Quit()
+		}
+	}()
 
 	// Change to Lua root directory
-	if reply, err := client.Do("CWD " + luaRoot); err != nil || !reply.Positive() {
+	if reply, err := clients[0].Do("CWD " + luaRoot); err != nil || !reply.Positive() {
 		if err != nil {
 			return err
 		}
@@ -83,7 +98,7 @@ func uploadLua(args []string, address *net.TCPAddr) error {
 		if reply.Code == ftp.CodeFileUnavailable {
 			// Directory doesn't exist, try to create it
 			log.Printf("Creating directory %q", luaRoot)
-			reply, err = client.Do("MKD " + luaRoot)
+			reply, err = clients[0].Do("MKD " + luaRoot)
 			if err != nil {
 				return err
 			} else if !reply.PositiveComplete() {
@@ -91,7 +106,7 @@ func uploadLua(args []string, address *net.TCPAddr) error {
 			}
 
 			// Directory created, change to it
-			reply, err := client.Do("CWD " + luaRoot)
+			reply, err := clients[0].Do("CWD " + luaRoot)
 			if err != nil {
 				return err
 			} else if !reply.Positive() {
@@ -102,13 +117,42 @@ func uploadLua(args []string, address *net.TCPAddr) error {
 		}
 	}
 
+	for _, client := range clients[1:] {
+		reply, err := client.Do("CWD " + luaRoot)
+		if err != nil {
+			return err
+		} else if !reply.Positive() {
+			return reply
+		}
+	}
+
 	// Get root directory, ensuring it ends in a trailing slash
 	root := filepath.Clean(args[0])
 	if !strings.HasSuffix(root, string(filepath.Separator)) {
 		root += string(filepath.Separator)
 	}
 
-	err = filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
+	// Start uploading pool
+	ch := make(chan uploadRequest)
+	var wg sync.WaitGroup
+	wg.Add(len(clients))
+	for i := range clients {
+		go func(client *ftp.Client) {
+			for r := range ch {
+				err := upload(client, r.DestPath, r.Path)
+				if err == nil {
+					log.Printf("Uploaded %q to %q", r.Path, slashpath.Join(luaRoot, r.DestPath))
+				} else {
+					// Log error, but try to continue uploading
+					log.Printf("ERROR for %q: %v", r.Path, err)
+				}
+			}
+			wg.Done()
+		}(clients[i])
+	}
+
+	// Walk files
+	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if info.IsDir() || filepath.Ext(path) != ".lua" {
 			return nil
 		}
@@ -120,17 +164,21 @@ func uploadLua(args []string, address *net.TCPAddr) error {
 		}
 		destPath = filepath.ToSlash(destPath)
 
-		// Upload
-		log.Printf("Uploading %q to %q", path, slashpath.Join(luaRoot, destPath))
-		err = upload(client, destPath, path)
-		if err != nil {
-			// Log error, but try to continue uploading
-			log.Printf("ERROR for %q: %v", path, err)
-		}
+		// Start upload
+		ch <- uploadRequest{path, destPath}
 		return nil
 	})
 
+	log.Println("Waiting for uploading to finish...")
+
+	close(ch)
+	wg.Wait()
 	return err
+}
+
+type uploadRequest struct {
+	Path     string
+	DestPath string
 }
 
 func downloadLuaError(args []string, address *net.TCPAddr) error {
