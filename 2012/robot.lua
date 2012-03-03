@@ -26,10 +26,12 @@ local feedWatchdog, enableWatchdog, disableWatchdog
 
 local hellautonomous, teleop, calibrateAll
 local controlMap, strafe, rotation, gear, presetShift, fieldCentric
+local deploySkid
 local zeroMode, possessionTimer, rotationHoldTimer
 local fudgeMode, fudgeWheel, fudgeMovement
 
 local compressor, pressureSwitch, gearSwitch
+local frontSkid
 local wheels
 
 -- End Declarations
@@ -105,6 +107,8 @@ function teleop()
         else
             compressor:Set(wpilib.Relay_kOn)
         end
+
+        frontSkid:Set(deploySkid)
 
         dashboard:PutDouble("Flywheel P", turret.flywheelPID.p)
         dashboard:PutDouble("Flywheel D", turret.flywheelPID.d)
@@ -274,6 +278,7 @@ end
 compressor = wpilib.Relay(2, 1, wpilib.Relay_kForwardOnly)
 pressureSwitch = wpilib.DigitalInput(2, 14)
 gearSwitch = wpilib.Solenoid(1, 1)
+frontSkid = wpilib.Solenoid(3)
 
 local turnPIDConstants = {p=0.06, i=0, d=0}
 
@@ -400,6 +405,7 @@ controlMap =
                 gear = "high"
             end
         end},
+        [6] = {tick=function(held) deploySkid = held end},
         [7] = function() fudgeMode = true end,
         [8] = function() calibrateAll() end,
         [10] = {tick=function(held)
