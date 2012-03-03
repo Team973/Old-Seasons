@@ -28,6 +28,10 @@ allowRotate = false
 
 local HARD_LIMIT = 210
 
+function setTargetAngle(angle)
+    turnPID.target = calculateTarget(encoder:Get()/25, angle)
+end
+
 function setFromJoy(x,y)
     if allowRotate then
         local angle = math.atan2(x, y)
@@ -49,6 +53,11 @@ end
 -- Change the target flywheel speed
 function setFlywheelTargetSpeed(speed)
     flywheelTargetSpeed = speed
+end
+
+function resetFlywheel()
+    flywheelCounter:Reset()
+    flywheelPID.target = 0
 end
 
 function update()

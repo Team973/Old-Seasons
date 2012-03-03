@@ -71,9 +71,9 @@ end
 
 function teleop()
     turret.turnPID:start()
-    disableWatchdog()
-    calibrateAll()
     for _, wheel in pairs(wheels) do
+        wheel.turnEncoder:Reset()
+        wheel.turnEncoder:Start()
         wheel.turnPID:start()
     end
 
@@ -369,6 +369,12 @@ local function deadband(axis, threshold)
     end
 end
 
+local driverIntake = 0
+local operatorIntake = 0
+local driverFire = false
+
+local rpmPreset = 1000.0
+
 controlMap =
 {
     -- Joystick 1
@@ -378,7 +384,14 @@ controlMap =
         ["rx"] = function(axis)
             rotation = axis
         end,
-        ["ltrigger"] = {tick=function(held) fieldCentric = held end},
+        ["ltrigger"] = {tick=function(held)
+            if held then
+                driverIntake = 1.0
+            else
+                driverIntake = 0.0
+            end
+        end},
+        ["rtrigger"] = {tick=function(held) driverFire = held end},
         [5] = {tick=function(held)
             if held then
                 gear = "low"
@@ -386,7 +399,9 @@ controlMap =
                 gear = "high"
             end
         end},
-        [6] = {tick=function(held)
+        [7] = function() fudgeMode = true end,
+        [8] = function() calibrateAll() end,
+        [10] = {tick=function(held)
             if held then
                 if gear == "low" then
                     rotation = rotation * 0.5
@@ -395,9 +410,6 @@ controlMap =
                 end
             end
         end},
-        [7] = function() fudgeMode = true end,
-        [8] = function() calibrateAll() end,
-        [9] = function() zeroMode = true end,
     },
     -- Joystick 2
     {
@@ -410,40 +422,32 @@ controlMap =
             turretDirection.y = deadband(-axis, 0.2) 
             turret.setFromJoy(turretDirection.x, turretDirection.y)
         end,
+        [1] = function() turret.setTargetAngle(0.0) end,
         [4] = {tick=function(held) turret.allowRotate = held end},   
-        [5] = intake.toggleRaise,
-        ["ltrigger"] = {tick=function(held)
-            if held then
-                intake.setIntake(1.0)
-            else
-                intake.setIntake(0.0)
-            end
-        end},
-        ["rtrigger"] = {tick=function(held)
-            if held then
-                turret.setFlywheelTargetSpeed(5000.0)
-            else
-                turret.setFlywheelTargetSpeed(0.0)
-            end
-        end},
+        [5] = {tick=function(held) intake.setLowered(held) end},   
+        [7] = function() rpmPreset = 1000.0 end,
+        [8] = function() rpmPreset = 2000.0 end,
+        [9] = function() rpmPreset = 3000.0 end,
+        [10] = function() rpmPreset = 5000.0 end,
+        ["rtrigger"] = {
+            down=function()
+                turret.resetFlywheel()
+            end,
+            tick=function(held)
+                if held then
+                    turret.setFlywheelTargetSpeed(rpmPreset)
+                else
+                    turret.setFlywheelTargetSpeed(0.0)
+                end
+            end,
+        },
         ["update"] = function(stick)
             if stick:GetRawButton(2) then
-                intake.setIntake(-1.0)
-            end
-            -- No else clause because it is handled by ltrigger
-
-            if stick:GetRawButton(1) then
-                turret.setFlywheelTargetSpeed(2500.0)
-            elseif stick:GetRawButton(6) then
-                turret.setFlywheelTargetSpeed(3500.0)
-            end
-
-            if stick:GetRawButton(3) then
-                intake.towerRepack()
-            elseif stick:GetRawButton(4) then
-                intake.towerUp()
+                operatorIntake = -1.0
+            elseif controls.isLeftTriggerHeld(stick) then
+                operatorIntake = 1.0
             else
-                intake.towerStop()
+                operatorIntake = 0.0
             end
         end,
     },
@@ -455,6 +459,28 @@ controlMap =
     },
     -- Cypress Module
     cypress={},
+
+    update=function()
+        -- Tower intake
+        if driverFire then
+            intake.towerRepack()
+        elseif controls.sticks[2]:GetRawButton(3) then
+            intake.towerRepack()
+        elseif controls.sticks[2]:GetRawButton(6) then
+            intake.towerUp()
+        else
+            intake.towerStop()
+        end
+
+        -- Determine who wins the intake control
+        if operatorIntake ~= 0 then
+            intake.setIntake(operatorIntake)
+        elseif driverIntake ~= 0 then
+            intake.setIntake(driverIntake)
+        else
+            intake.setIntake(0.0)
+        end
+    end,
 }
 
 fudgeControlMap = {
