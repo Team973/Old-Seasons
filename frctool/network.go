@@ -4,8 +4,10 @@ import (
 	"bitbucket.org/zombiezen/ftp"
 	"errors"
 	"fmt"
+	"io"
 	"log"
 	"net"
+	"os"
 )
 
 // connect dials to a FTP server.
@@ -24,6 +26,25 @@ func connect(addr *net.TCPAddr) (*ftp.Client, error) {
 		return nil, err
 	}
 	return client, nil
+}
+
+// createClientPool opens up to n connections.  If there is an error obtaining
+// the first connection, it will be returned.  The function will return less
+// clients if an error occurs after the first connection.
+func createClientPool(n int, addr *net.TCPAddr) ([]*ftp.Client, error) {
+	clients := make([]*ftp.Client, 0, n)
+	for i := 0; i < n; i++ {
+		c, err := connect(addr)
+		if err != nil {
+			if i == 0 {
+				return nil, err
+			} else {
+				break
+			}
+		}
+		clients = append(clients, c)
+	}
+	return clients, nil
 }
 
 // extractTeamNumber extracts a team number from a FIRST IP address.
@@ -58,4 +79,22 @@ func hostTeamNumber() (int, error) {
 		}
 	}
 	return 0, errors.New("Host has no IP address with a team number")
+}
+
+// upload copies a file via FTP
+func upload(client *ftp.Client, dest, source string) error {
+	f, err := os.Open(source)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	dataConn, err := client.Binary("STOR " + dest)
+	if err != nil {
+		return err
+	}
+	defer dataConn.Close()
+
+	_, err = io.Copy(dataConn, f)
+	return err
 }
