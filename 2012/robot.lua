@@ -99,14 +99,12 @@ function teleop()
         feedWatchdog()
 
         -- Pneumatics
-        --[[
         dashboard:PutBoolean("pressure", pressureSwitch:Get())
         if pressureSwitch:Get() then
             compressor:Set(wpilib.Relay_kOff)
         else
             compressor:Set(wpilib.Relay_kOn)
         end
-        --]]
 
         dashboard:PutDouble("Flywheel P", turret.flywheelPID.p)
         dashboard:PutDouble("Flywheel D", turret.flywheelPID.d)
@@ -116,17 +114,15 @@ function teleop()
         turret.update()
 
         -- Drive
-        --[[
         if gear == "low" then
-            gearSwitch:Set(false)
-        elseif gear == "high" then
             gearSwitch:Set(true)
+        elseif gear == "high" then
+            gearSwitch:Set(false)
         else
             -- Unrecognized state, default to low gear
             -- TODO: log error
             gearSwitch:Set(false)
         end
-        --]]
 
         if zeroMode then
             for _, wheel in pairs(wheels) do
@@ -275,11 +271,9 @@ local function LinearVictor(...)
     return linearize.wrap(wpilib.Victor(...))
 end
 
---[[
-compressor = wpilib.Relay(4, 1, wpilib.Relay_kForwardOnly)
-pressureSwitch = wpilib.DigitalInput(4, 13)
-gearSwitch = wpilib.Solenoid(7, 3)
---]]
+compressor = wpilib.Relay(2, 1, wpilib.Relay_kForwardOnly)
+pressureSwitch = wpilib.DigitalInput(2, 14)
+gearSwitch = wpilib.Solenoid(1, 1)
 
 local turnPIDConstants = {p=0.06, i=0, d=0}
 
