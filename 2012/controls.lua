@@ -59,6 +59,14 @@ end
 
 local TRIGGER_THRESHOLD = 0.5
 
+function isLeftTriggerHeld(stick)
+    return stick:GetRawAxis(3) > TRIGGER_THRESHOLD
+end
+
+function isRightTriggerHeld(stick)
+    return stick:GetRawAxis(3) < -TRIGGER_THRESHOLD
+end
+
 -- update calls the event handlers.
 function update(map)
     for i, stick in ipairs(sticks) do

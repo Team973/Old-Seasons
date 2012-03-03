@@ -44,6 +44,10 @@ function toggleRaise()
     lowered = not lowered
 end
 
+function setLowered(val)
+    lowered = val
+end
+
 function update(turretReady)
     sideIntake:Set(sideSpeed)
     frontIntake:Set(frontSpeed)
