@@ -138,7 +138,7 @@ func uploadLua(args []string, address *net.TCPAddr) error {
 	}
 
 	err = filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
-		if info.IsDir() {
+		if info.IsDir() || filepath.Ext(path) != ".lua" {
 			return nil
 		}
 
