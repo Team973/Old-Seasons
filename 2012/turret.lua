@@ -8,10 +8,14 @@ local wpilib = require("wpilib")
 
 module(...)
 
-flywheelPID = pid.new(0.05, 0.0, 0.001)
 local flywheelSpeedTable = {
     numSamples=10,
 }
+flywheelPID = pid.new(0.025, 0.0, -0.001,
+    nil,
+    function()
+        return flywheelSpeedTable:average()
+    end)
 
 local flywheelTargetSpeed = 0.0
 local flywheelFeedforward = 7800
@@ -93,12 +97,12 @@ function update()
     turnPID:update(encoder:Get()/25)
     motor:Set(turnPID.output)
 
+    flywheelSpeedTable:add(60.0 / (flywheelCounter:GetPeriod() * flywheelTicksPerRevolution))
+
     flywheelPID.timer:Start()
     local pos = flywheelCounter:Get() / flywheelTicksPerRevolution -- in revolutions
     local dt = flywheelPID.timer:Get() / 60.0 -- in minutes
     flywheelPID.timer:Reset()
-
-    flywheelSpeedTable:add(60.0 / (flywheelCounter:GetPeriod() * flywheelTicksPerRevolution))
 
     flywheelPID.target = flywheelPID.target + flywheelTargetSpeed * dt
     local flywheelOutput = flywheelPID:update(pos, dt) + flywheelTargetSpeed * (1/flywheelFeedforward - flywheelPID.d)
