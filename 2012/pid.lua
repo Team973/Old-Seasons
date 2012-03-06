@@ -23,9 +23,14 @@ local function defaultError(actual, target)
     return target - actual
 end
 
-function PID:new(p, i, d, errFunc)
+local function defaultDerivative(err, prevErr, time)
+    return (err - prevErr) / time
+end
+
+function PID:new(p, i, d, errFunc, derivFunc)
     local pidObj = {p=p or 0, i=i or 0, d=d or 0,
-                    errFunc=errFunc or defaultError}
+                    errFunc=errFunc or defaultError,
+                    derivFunc=derivFunc or defaultDerivative}
     setmetatable(pidObj, {__index=self})
     pidObj:reset()
     return pidObj
@@ -108,7 +113,7 @@ function PID:update(actual, time)
     self.integral = self.integral + e * time
     
     -- Calculate derivative
-    local derivative = (e - self.previousError) / time
+    local derivative = self.derivFunc(e, self.previousError, time)
     
     -- Compute output
     self.output = (self.p * e) + (self.i * self.integral) + (self.d * derivative)
