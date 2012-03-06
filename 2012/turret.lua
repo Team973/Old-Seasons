@@ -12,10 +12,10 @@ local flywheelPrevPos = 0.0
 local flywheelSpeedTimer = wpilib.Timer()
 
 local flywheelTargetSpeed = 0.0
-local flywheelFeedforward = 19300.0 / 80.0 * 36.0
+local flywheelFeedforward = 7800
 local flywheelCounter = wpilib.Counter(2, 6)
 local flywheelMotor = wpilib.Victor(2, 6)
-local flywheelTicksPerRevolution = 2.0
+local flywheelTicksPerRevolution = 6.0
 
 flywheelCounter:Start()
 
