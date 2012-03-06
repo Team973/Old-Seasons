@@ -378,7 +378,7 @@ local driverIntake = 0
 local operatorIntake = 0
 local driverFire = false
 
-local rpmPreset = 1000.0
+local rpmPreset = 3300.0
 local prevOperatorDpad = 0.0
 
 controlMap =
@@ -444,10 +444,10 @@ controlMap =
         [1] = function() turret.setTargetAngle(0.0) end,
         [4] = {tick=function(held) turret.allowRotate = held end},   
         [5] = {tick=function(held) intake.setLowered(held) end},   
-        [7] = function() rpmPreset = 1000.0 end,
-        [8] = function() rpmPreset = 2000.0 end,
-        [9] = function() rpmPreset = 3000.0 end,
-        [10] = function() rpmPreset = 5000.0 end,
+        [7] = function() rpmPreset = 3000.0 end,
+        [8] = function() rpmPreset = 3300.0 end,
+        [9] = function() rpmPreset = 3500.0 end,
+        [10] = function() rpmPreset = 3700.0 end,
         ["rtrigger"] = {
             down=function()
                 turret.resetFlywheel()
@@ -482,7 +482,7 @@ controlMap =
     update=function()
         -- Tower intake
         if driverFire then
-            intake.towerRepack()
+            intake.towerFire()
         elseif controls.sticks[2]:GetRawButton(3) then
             intake.towerRepack()
         elseif controls.sticks[2]:GetRawButton(6) then
