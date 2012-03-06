@@ -1,5 +1,7 @@
 -- turret.lua
 
+local ipairs = ipairs
+
 local pid = require("pid")
 local math = require("math")
 local wpilib = require("wpilib")
@@ -7,9 +9,9 @@ local wpilib = require("wpilib")
 module(...)
 
 flywheelPID = pid.new(0.05, 0.0, 0.001)
-local flywheelSpeed = 0.0
-local flywheelPrevPos = 0.0
-local flywheelSpeedTimer = wpilib.Timer()
+local flywheelSpeedTable = {
+    numSamples=10,
+}
 
 local flywheelTargetSpeed = 0.0
 local flywheelFeedforward = 7800
@@ -46,7 +48,26 @@ end
 
 -- Calculate the current flywheel speed (in RPM).
 function getFlywheelSpeed()
-    return flywheelSpeed
+    return flywheelSpeedTable:average()
+end
+
+function flywheelSpeedTable:add(val)
+    if #self < self.numSamples then
+        self[#self + 1] = val
+    else
+        for i = 1, #self - 1 do
+            self[i] = self[i + 1]
+        end
+        self[#self] = val
+    end
+end
+
+function flywheelSpeedTable:average()
+    local sum = 0.0
+    for _, val in ipairs(self) do
+        sum = sum + val
+    end
+    return sum / #self
 end
 
 -- Retrieve the target flywheel speed
@@ -77,11 +98,7 @@ function update()
     local dt = flywheelPID.timer:Get() / 60.0 -- in minutes
     flywheelPID.timer:Reset()
 
-    flywheelSpeedTimer:Start()
-    if flywheelSpeedTimer:HasPeriodPassed(0.5) then
-        flywheelSpeed = (pos - flywheelPrevPos) / (0.5 / 60.0)
-        flywheelPrevPos = pos
-    end
+    flywheelSpeedTable:add(60.0 / (flywheelCounter:GetPeriod() * flywheelTicksPerRevolution))
 
     flywheelPID.target = flywheelPID.target + flywheelTargetSpeed * dt
     local flywheelOutput = flywheelPID:update(pos, dt) + flywheelTargetSpeed * (1/flywheelFeedforward - flywheelPID.d)
