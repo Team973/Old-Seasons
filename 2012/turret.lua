@@ -11,7 +11,7 @@ module(...)
 local flywheelSpeedTable = {
     numSamples=10,
 }
-flywheelPID = pid.new(0.025, 0.0, -0.001,
+flywheelPID = pid.new(0.0025, 0.0, -0.001,
     nil,
     function()
         return flywheelSpeedTable:average()
@@ -92,20 +92,26 @@ end
 function update()
     local dashboard = wpilib.SmartDashboard_GetInstance()
 
+    -- Turret rotation
     dashboard:PutInt("TURN.TARGET", turnPID.target)
     dashboard:PutInt("TURN.ANGLE", encoder:Get()/25)
     turnPID:update(encoder:Get()/25)
     motor:Set(turnPID.output)
 
+    -- Add flywheel velocity sample
     flywheelSpeedTable:add(60.0 / (flywheelCounter:GetPeriod() * flywheelTicksPerRevolution))
 
+    -- Get flywheel position and time
     flywheelPID.timer:Start()
     local pos = flywheelCounter:Get() / flywheelTicksPerRevolution -- in revolutions
     local dt = flywheelPID.timer:Get() / 60.0 -- in minutes
     flywheelPID.timer:Reset()
 
+    -- Update flywheel PID
     flywheelPID.target = flywheelPID.target + flywheelTargetSpeed * dt
-    local flywheelOutput = flywheelPID:update(pos, dt) + flywheelTargetSpeed * (1/flywheelFeedforward - flywheelPID.d)
+    local extraTerm = flywheelTargetSpeed * (1/flywheelFeedforward - flywheelPID.d)
+    flywheelPID.target = math.min(pos - (1 - flywheelPID.d - extraTerm) / flywheelPID.p, flywheelPID.target)
+    local flywheelOutput = flywheelPID:update(pos, dt) + extraTerm
     if flywheelOutput > 0.0 then
         flywheelMotor:Set(flywheelOutput)
     else
