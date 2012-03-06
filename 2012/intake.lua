@@ -56,7 +56,7 @@ function update(turretReady)
     
     if towerState == "fire" then
         verticalConveyer:Set(.3)
-        cheaterRoller:Set(.3)
+        cheaterRoller:Set(.6)
     elseif towerState == "repack" then
         verticalConveyer:Set(-.5)
         cheaterRoller:Set(.5)
