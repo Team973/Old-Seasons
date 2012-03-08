@@ -418,6 +418,16 @@ controlMap =
                 end
             end
         end},
+				
+	["update"] = function(stick)
+		if controls.isLeftTriggerHeld(stick) then
+			strafe.x = 0
+		elseif controls.isRightTriggerHeld(stick) then
+			strafe.x = strafe.y
+			strafe.y = 0
+		end
+	end
+
     },
     -- Joystick 2
     {
