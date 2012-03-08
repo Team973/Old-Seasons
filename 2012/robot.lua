@@ -398,12 +398,12 @@ controlMap =
         ["rx"] = function(axis)
             rotation = axis
         end,
-        ["ltrigger"] = {tick=function(held)
-
-        end},
-        ["rtrigger"] = {tick=function(held) driverFire = held end},
         [5] = {tick=function(held)
-
+            if held then
+                gear = "low"
+            else
+                gear = "high"
+            end
         end},
         [6] = {tick=function(held) deploySkid = held end},
         [7] = function() fudgeMode = true end,
