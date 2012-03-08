@@ -33,6 +33,7 @@ local fudgeMode, fudgeWheel, fudgeMovement
 local compressor, pressureSwitch, gearSwitch
 local frontSkid
 local wheels
+local driveMode = 0
 
 -- End Declarations
 
@@ -183,10 +184,16 @@ function teleop()
                     wheel.driveMotor:Set(value.speed * driveScale)
                 else
                     -- In deadband
-                    if wheelName == "leftFront" or wheelName == "rightBack" then
-                        wheel.turnPID.target = 45
-                    else
-                        wheel.turnPID.target = -45
+                    if driveMode == 0 then
+                        if wheelName == "leftFront" or wheelName == "rightBack" then
+                            wheel.turnPID.target = 45
+                        else
+                            wheel.turnPID.target = -45
+                        end
+                    elseif driveMode == 1 then
+                        wheel.turnPID.target = 0
+                    elseif driveMode == 2 then
+                        wheel.turnPID.target = 90 
                     end
                     wheel.driveMotor:Set(0)
                 end
@@ -418,15 +425,19 @@ controlMap =
                 end
             end
         end},
-				
-	["update"] = function(stick)
-		if controls.isLeftTriggerHeld(stick) then
-			strafe.x = 0
-		elseif controls.isRightTriggerHeld(stick) then
-			strafe.x = strafe.y
-			strafe.y = 0
-		end
-	end
+                                
+        ["update"] = function(stick)
+            if controls.isLeftTriggerHeld(stick) then
+                strafe.x = 0
+                driveMode = 1
+            elseif controls.isRightTriggerHeld(stick) then
+                strafe.x = strafe.y
+                strafe.y = 0
+                driveMode = 2
+            else
+                driveMode = 0
+            end
+        end
 
     },
     -- Joystick 2
