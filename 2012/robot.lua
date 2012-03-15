@@ -388,6 +388,11 @@ local driverFire = false
 
 local rpmPreset = 3300.0
 local prevOperatorDpad = 0.0
+local function presetValues (flywheelRPM, hoodAngle, turretAngle)
+    rpmPreset = flywheelRPM
+    turret.setHoodTarget(hoodAngle)
+    turret.setTargetAngle(turretAngle)
+end
 
 controlMap =
 {
@@ -458,10 +463,10 @@ controlMap =
         [1] = function() turret.setTargetAngle(0.0) end,
         [4] = {tick=function(held) turret.allowRotate = held end},   
         [5] = {tick=function(held) intake.setLowered(held) end},   
-        [7] = function() rpmPreset = 3000.0 end,
-        [8] = function() rpmPreset = 3300.0 end,
-        [9] = function() rpmPreset = 3500.0 end,
-        [10] = function() rpmPreset = 3700.0 end,
+        [7] = function() presetValues(3000,0,0) end,
+        [8] = function() presetValues(3300,0,0) end,
+        [9] = function() presetValues(3500,0,0) end,
+        [10] = function() presetValues(3700,0,0) end,
         ["rtrigger"] = {
             down=function()
                 turret.resetFlywheel()
