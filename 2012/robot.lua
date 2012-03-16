@@ -159,6 +159,7 @@ function teleop()
         dashboard:PutDouble("Flywheel P", turret.flywheelPID.p)
         dashboard:PutDouble("Flywheel D", turret.flywheelPID.d)
         dashboard:PutDouble("Flywheel Speed", turret.getFlywheelSpeed())
+        dashboard:PutInt("Flywheel Speed(Int)", turret.getFlywheelSpeed())
         dashboard:PutDouble("Flywheel Target Speed", turret.getFlywheelTargetSpeed())
 
         -- Drive
@@ -481,12 +482,13 @@ local function deadband(axis, threshold)
     end
 end
 
-local driverIntake = 0
-local operatorIntake = 0
-local driverFire = false
-
 local rpmPreset = 3300.0
 local prevOperatorDpad = 0.0
+local function presetValues (flywheelRPM, hoodAngle, turretAngle)
+    rpmPreset = flywheelRPM
+    turret.setHoodTarget(hoodAngle)
+    turret.setTargetAngle(turretAngle)
+end
 
 controlMap =
 {
@@ -554,6 +556,12 @@ controlMap =
             turretDirection.y = deadband(-axis, 0.2) 
             turret.setFromJoy(turretDirection.x, turretDirection.y)
         end,
+        ["rx"] = function(axis)
+            intake.setCheaterSpeed(deadband(axis, 0.2))
+        end,
+        ["ry"] = function(axis)
+            intake.setVerticalSpeed(deadband(axis, 0.2))
+        end,
         ["hatx"] = function(axis)
             local increment = 1
             if axis > 0.5 and prevOperatorDpad <= 0.5 then
@@ -566,13 +574,28 @@ controlMap =
             end
             prevOperatorDpad = axis
         end,
-        [1] = function() turret.setTargetAngle(0.0) end,
-        [4] = {tick=function(held) turret.allowRotate = held end},   
+        [1] = function() presetValues(3300,0,0) end, -- Fender
+        [2] = function() presetValues(4500,0,0) end, -- Side
+        [3] = function() presetValues(6600,0,0) end, -- Key
         [5] = {tick=function(held) intake.setLowered(held) end},   
-        [7] = function() rpmPreset = 3000.0 end,
-        [8] = function() rpmPreset = 3300.0 end,
-        [9] = function() rpmPreset = 3500.0 end,
-        [10] = function() rpmPreset = 3700.0 end,
+        [6] = function()
+            intake.setVerticalSpeed(1.0)
+            intake.setCheaterSpeed(1.0)
+        end,
+        [7] = function()
+            rpmPreset = rpmPreset - 100
+        end,
+        [8] = function()
+            rpmPreset = rpmPreset + 100
+        end,
+        [9] = {tick=function(held) turret.allowRotate = held end},   
+        ["ltrigger"] = {tick=function(held)
+            if held then
+                intake.setIntake(1.0)
+            else
+                intake.setIntake(0.0)
+            end
+        end},
         ["rtrigger"] = {
             down=function()
                 turret.resetFlywheel()
@@ -585,15 +608,6 @@ controlMap =
                 end
             end,
         },
-        ["update"] = function(stick)
-            if stick:GetRawButton(2) then
-                operatorIntake = -1.0
-            elseif controls.isLeftTriggerHeld(stick) then
-                operatorIntake = 1.0
-            else
-                operatorIntake = 0.0
-            end
-        end,
     },
     -- Joystick 3
     {
@@ -603,28 +617,6 @@ controlMap =
     },
     -- Cypress Module
     cypress={},
-
-    update=function()
-        -- Tower intake
-        if driverFire then
-            intake.towerFire()
-        elseif controls.sticks[2]:GetRawButton(3) then
-            intake.towerRepack()
-        elseif controls.sticks[2]:GetRawButton(6) then
-            intake.towerUp()
-        else
-            intake.towerStop()
-        end
-
-        -- Determine who wins the intake control
-        if operatorIntake ~= 0 then
-            intake.setIntake(operatorIntake)
-        elseif driverIntake ~= 0 then
-            intake.setIntake(driverIntake)
-        else
-            intake.setIntake(0.0)
-        end
-    end,
 }
 
 fudgeControlMap = {
