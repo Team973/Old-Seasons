@@ -25,6 +25,16 @@ local flywheelTicksPerRevolution = 6.0
 
 flywheelCounter:Start()
 
+hoodMotor1= wpilib.Victor(2,7) 
+hoodMotor2= wpilib.Victor(2,8) 
+
+hoodPID = pid.new(0, 0, 0)
+hoodPID:start()
+
+function setHoodTarget(target)
+hoodPID.target = target
+end
+
 encoder = wpilib.Encoder(2, 2, 2, 3, true, wpilib.CounterBase_k1X)
 encoder:Start()
 motor = wpilib.Jaguar(2, 3) 
@@ -43,8 +53,14 @@ function setTargetAngle(angle)
 end
 
 function setFromJoy(x,y)
+    local THRESHOLD = 0.5
     if allowRotate then
-        local angle = math.atan2(x, y)
+        local angle
+        if x*x + y*y > THRESHOLD*THRESHOLD then
+            angle = math.atan2(x, y)
+        else
+            angle = 0
+        end
         angle = angle*180/math.pi
         turnPID.target = calculateTarget(encoder:Get()/25, angle)
     end
@@ -117,6 +133,10 @@ function update()
     else
         flywheelMotor:Set(0.0)
     end
+    --TODO
+    hoodPID:update(0)
+    hoodMotor1:Set(hoodPID.output)
+    hoodMotor2:Set(-hoodPID.output)
 end
 
 function calculateTarget(turretAngle, desiredAngle)

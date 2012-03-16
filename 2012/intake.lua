@@ -9,10 +9,11 @@ local wpilib = require("wpilib")
 
 module(...)
 
-local towerState = "stop"
 local lowered = false
 local frontSpeed = 0 -- front intake roller
 local sideSpeed = 0 -- side intake roller
+local verticalSpeed = 0
+local cheaterSpeed = 0
 
 local verticalConveyer = wpilib.Victor(2,4)
 local cheaterRoller = wpilib.Victor(2,5)
@@ -20,24 +21,12 @@ local sideIntake = wpilib.Victor(2,1)
 local frontIntake = wpilib.Victor(2,2)
 local intakeSolenoid = wpilib.Solenoid(2)
 
-function towerFire()
-	towerState = "fire"
+function setVerticalSpeed(speed)
+    verticalSpeed = speed
 end
 
-function towerRepack()
-	towerState = "repack"
-end
-
-function towerUp()
-	towerState = "up"
-end
-
-function towerDown()
-	towerState = "down"
-end
-
-function towerStop()
-	towerState = "stop"
+function setCheaterSpeed(speed)
+    cheaterSpeed = speed
 end
 
 function toggleRaise()
@@ -54,25 +43,8 @@ function update(turretReady)
 
     intakeSolenoid:Set(lowered)
     
-    if towerState == "fire" then
-        verticalConveyer:Set(.3)
-        cheaterRoller:Set(.6)
-    elseif towerState == "repack" then
-        verticalConveyer:Set(-.5)
-        cheaterRoller:Set(.5)
-    elseif towerState == "up" then
-        verticalConveyer:Set(1)
-        cheaterRoller:Set(1)
-    elseif towerState == "down" then
-        verticalConveyer:Set(-1)
-        cheaterRoller:Set(-1)
-    elseif towerState == "stop" then
-        verticalConveyer:Set(0)
-        cheaterRoller:Set(0)
-    else
-        verticalConveyer:Set(0)
-        cheaterRoller:Set(0)
-    end
+    verticalConveyer:Set(verticalSpeed)
+    cheaterRoller:Set(cheaterSpeed)
 end
 
 function setIntake(speed)
@@ -83,7 +55,8 @@ end
 function intakeStop()
 	frontSpeed = 0
 	sideSpeed = 0
-	towerState = "stop"
+    verticalSpeed = 0
+    cheaterSpeed = 0
 end
 
 -- vim: ft=lua et ts=4 sts=4 sw=4
