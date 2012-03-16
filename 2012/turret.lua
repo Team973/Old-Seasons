@@ -53,8 +53,14 @@ function setTargetAngle(angle)
 end
 
 function setFromJoy(x,y)
+    local THRESHOLD = 0.5
     if allowRotate then
-        local angle = math.atan2(x, y)
+        local angle
+        if x*x + y*y > THRESHOLD*THRESHOLD then
+            angle = math.atan2(x, y)
+        else
+            angle = 0
+        end
         angle = angle*180/math.pi
         turnPID.target = calculateTarget(encoder:Get()/25, angle)
     end
