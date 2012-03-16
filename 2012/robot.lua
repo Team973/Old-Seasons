@@ -325,8 +325,8 @@ local function LinearVictor(...)
     return linearize.wrap(wpilib.Victor(...))
 end
 
-compressor = wpilib.Relay(2, 1, wpilib.Relay_kForwardOnly)
-pressureSwitch = wpilib.DigitalInput(2, 14)
+compressor = wpilib.Relay(1, 1, wpilib.Relay_kForwardOnly)
+pressureSwitch = wpilib.DigitalInput(1, 14)
 gearSwitch = wpilib.Solenoid(1, 1)
 frontSkid = wpilib.Solenoid(3)
 
