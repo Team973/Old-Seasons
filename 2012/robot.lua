@@ -117,6 +117,7 @@ function teleop()
         dashboard:PutDouble("Flywheel P", turret.flywheelPID.p)
         dashboard:PutDouble("Flywheel D", turret.flywheelPID.d)
         dashboard:PutDouble("Flywheel Speed", turret.getFlywheelSpeed())
+        dashboard:PutInt("Flywheel Speed(Int)", turret.getFlywheelSpeed())
         dashboard:PutDouble("Flywheel Target Speed", turret.getFlywheelTargetSpeed())
 
         -- Drive
