@@ -85,10 +85,10 @@ function hellautonomous()
             intake.setVerticalSpeed(0.0)
             intake.setCheaterSpeed(0.0)
         else
-            intake.setVerticalSpeed(0.2)
+            intake.setVerticalSpeed(0.3)
             intake.setCheaterSpeed(1.0)
         end
-        if (time > 5 and time < 9) or time > 12-SKID_DELAY then 
+        if (time > 5 and time < 9) or time > 12-SKID_DELAY then
             intake.setLowered(true)
         else
             intake.setLowered(false)
@@ -100,7 +100,6 @@ function hellautonomous()
         end
 
         frontSkid:Set((time > 5+SKID_DELAY and time < 9-SKID_DELAY) or time > 12)
-        
 
         -- Update
         turret.update()
@@ -449,13 +448,13 @@ controlMap =
         ["rx"] = function(axis)
             rotation = axis
         end,
-        -- [5] = {tick=function(held)
-            -- if held then
-              -- gear = "low"
-           -- else
-             -- gear = "high"
-          -- end
-        -- end},
+        [5] = {tick=function(held)
+            if held then
+                gear = "low"
+            else
+                gear = "high"
+            end
+        end},
         [7] = function() fudgeMode = true end,
         [8] = function() calibrateAll() end,
         [10] = {tick=function(held)
@@ -519,7 +518,7 @@ controlMap =
         [5] = {tick=function(held) intake.setLowered(held) end},   
         [6] = {tick=function(held)
             if held then
-                intake.setVerticalSpeed(0.2)
+                intake.setVerticalSpeed(0.3)
                 intake.setCheaterSpeed(1.0)
             end
         end},
