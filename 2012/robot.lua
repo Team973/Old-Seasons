@@ -452,7 +452,6 @@ controlMap =
              -- gear = "high"
           -- end
         -- end},
-        [6] = {tick=function(held) deploySkid = held end},
         [7] = function() fudgeMode = true end,
         [8] = function() calibrateAll() end,
         [10] = {tick=function(held)
@@ -512,6 +511,7 @@ controlMap =
         [1] = function() presetValues(3300,20,0) end, -- Fender
         [2] = function() presetValues(4500,200,0) end, -- Side
         [3] = function() presetValues(6600,1200,0) end, -- Key
+        [4] = {tick=function(held) deploySkid = held end},
         [5] = {tick=function(held) intake.setLowered(held) end},   
         [6] = {tick=function(held)
             if held then
