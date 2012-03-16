@@ -41,6 +41,10 @@ hoodPID2 = pid.new(0.01, 0, 0)
 hoodPID2:start()
 runHood = 0
 
+function getHoodTarget()
+    return hoodPID1.target
+end
+
 function setHoodTarget(target)
     hoodPID1.target = target
     hoodPID2.target = target
@@ -253,6 +257,13 @@ function calculateTarget(turretAngle, desiredAngle)
     end
 
     return desiredAngle
+end
+
+function fullStop()
+    motor:Set(0.0)
+    flywheelMotor:Set(0.0)
+    hoodMotor1:Set(0.0)
+    hoodMotor2:Set(0.0)
 end
 
 -- vim: ft=lua et ts=4 sts=4 sw=4

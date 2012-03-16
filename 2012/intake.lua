@@ -63,4 +63,11 @@ function intakeStop()
     cheaterSpeed = 0
 end
 
+function fullStop()
+    verticalConveyer:Set(0.0)
+    cheaterRoller:Set(0.0)
+    sideIntake:Set(0.0)
+    frontIntake:Set(0.0)
+end
+
 -- vim: ft=lua et ts=4 sts=4 sw=4
