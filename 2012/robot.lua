@@ -74,41 +74,29 @@ function hellautonomous()
 
     local t = wpilib.Timer()
     t:Start()
-    while t:Get() < 2.0 and wpilib.IsAutonomous() and wpilib.IsEnabled() do
+    while wpilib.IsAutonomous() and wpilib.IsEnabled() do
         -- Set up for key shot
         turret.setFlywheelTargetSpeed(RPM)
         turret.setHoodTarget(HOOD_TARGET)
 
-        -- Don't run intake or conveyer yet.
-        intake.setVerticalSpeed(0.0)
-        intake.setCheaterSpeed(0.0)
-        intake.setIntake(0.0)
-
-        -- Update
-        turret.update()
-        intake.update()
-
-        -- Pneumatics
-        dashboard:PutBoolean("pressure", pressureSwitch:Get())
-        if pressureSwitch:Get() then
-            compressor:Set(wpilib.Relay_kOff)
+        if t:Get() < 2 then 
+            intake.setVerticalSpeed(0.0)
+            intake.setCheaterSpeed(0.0)
+            intake.setIntake(0.0)
         else
-            compressor:Set(wpilib.Relay_kOn)
+            intake.setVerticalSpeed(0.2)
+            intake.setCheaterSpeed(1.0)
+            intake.setIntake(0.0)
+        end
+        if t:Get() > 5 then 
+            intake.setLowered(true)
+            intake.setIntake(1)
+        else
+            intake.setLowered(false)
+            intake.setIntake(0)
         end
 
-        wpilib.Wait(TELEOP_LOOP_LAG)
-    end
-
-    t:Reset()
-    while t:Get() < 5.0 and wpilib.IsAutonomous() and wpilib.IsEnabled() do
-        -- Set up for key shot
-        turret.setFlywheelTargetSpeed(RPM)
-        turret.setHoodTarget(HOOD_TARGET)
-
-        -- Run conveyer, but no intake.
-        intake.setVerticalSpeed(0.2)
-        intake.setCheaterSpeed(1.0)
-        intake.setIntake(0.0)
+        frontSkid:Set(t:Get() > 5.5)
 
         -- Update
         turret.update()
