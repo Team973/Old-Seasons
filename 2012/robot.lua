@@ -557,9 +557,10 @@ controlMap =
             turret.setFromJoy(turretDirection.x, turretDirection.y)
         end,
         ["rx"] = function(axis)
-            intake.setCheaterSpeed(deadband(axis, 0.2))
+            intake.setIntake(deadband(axis, 0.2))
         end,
         ["ry"] = function(axis)
+            intake.setCheaterSpeed(deadband(axis, 0.2))
             intake.setVerticalSpeed(deadband(axis, 0.2))
         end,
         ["hatx"] = function(axis)
@@ -579,7 +580,7 @@ controlMap =
         [3] = function() presetValues(6600,0,0) end, -- Key
         [5] = {tick=function(held) intake.setLowered(held) end},   
         [6] = function()
-            intake.setVerticalSpeed(1.0)
+            intake.setVerticalSpeed(0.3)
             intake.setCheaterSpeed(1.0)
         end,
         [7] = function()
@@ -592,8 +593,6 @@ controlMap =
         ["ltrigger"] = {tick=function(held)
             if held then
                 intake.setIntake(1.0)
-            else
-                intake.setIntake(0.0)
             end
         end},
         ["rtrigger"] = {
