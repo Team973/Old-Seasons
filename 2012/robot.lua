@@ -71,6 +71,7 @@ function hellautonomous()
 
     local RPM = 6600
     local HOOD_TARGET = 1200
+    local SKID_DELAY = 0.3
 
     local t = wpilib.Timer()
     t:Start()
@@ -79,24 +80,27 @@ function hellautonomous()
         turret.setFlywheelTargetSpeed(RPM)
         turret.setHoodTarget(HOOD_TARGET)
 
-        if t:Get() < 2 then 
+        local time = t:Get()
+        if time < 2 then 
             intake.setVerticalSpeed(0.0)
             intake.setCheaterSpeed(0.0)
-            intake.setIntake(0.0)
         else
             intake.setVerticalSpeed(0.2)
             intake.setCheaterSpeed(1.0)
-            intake.setIntake(0.0)
         end
-        if t:Get() > 5 then 
+        if (time > 5 and time < 9) or time > 12-SKID_DELAY then 
             intake.setLowered(true)
-            intake.setIntake(1)
         else
             intake.setLowered(false)
+        end
+        if time > 5 then
+            intake.setIntake(1)
+        else
             intake.setIntake(0)
         end
 
-        frontSkid:Set(t:Get() > 5.5)
+        frontSkid:Set((time > 5+SKID_DELAY and time < 9-SKID_DELAY) or time > 12)
+        
 
         -- Update
         turret.update()
