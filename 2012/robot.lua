@@ -560,8 +560,8 @@ controlMap =
             intake.setIntake(deadband(axis, 0.2))
         end,
         ["ry"] = function(axis)
-            intake.setCheaterSpeed(deadband(axis, 0.2))
-            intake.setVerticalSpeed(deadband(axis, 0.2))
+            intake.setCheaterSpeed(deadband(-axis, 0.2))
+            intake.setVerticalSpeed(deadband(-axis, 0.2))
         end,
         ["hatx"] = function(axis)
             local increment = 1
@@ -579,10 +579,12 @@ controlMap =
         [2] = function() presetValues(4500,0,0) end, -- Side
         [3] = function() presetValues(6600,0,0) end, -- Key
         [5] = {tick=function(held) intake.setLowered(held) end},   
-        [6] = function()
-            intake.setVerticalSpeed(0.3)
-            intake.setCheaterSpeed(1.0)
-        end,
+        [6] = {tick=function(held)
+            if held then
+                intake.setVerticalSpeed(0.3)
+                intake.setCheaterSpeed(1.0)
+            end
+        end},
         [7] = function()
             rpmPreset = rpmPreset - 100
         end,

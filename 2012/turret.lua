@@ -19,7 +19,10 @@ flywheelPID = pid.new(0.0025, 0.0, -0.001,
 
 local flywheelTargetSpeed = 0.0
 local flywheelFeedforward = 7800
-local flywheelCounter = wpilib.Counter(2, 6)
+local in4 = wpilib.DigitalInput(2, 4)
+local in5 = wpilib.DigitalInput(2, 5)
+local in6 = wpilib.DigitalInput(2, 6)
+local flywheelCounter = wpilib.Counter(in5)
 local flywheelMotor = wpilib.Victor(2, 6)
 local flywheelTicksPerRevolution = 6.0
 
@@ -109,6 +112,9 @@ function update()
     local dashboard = wpilib.SmartDashboard_GetInstance()
 
     -- Turret rotation
+    dashboard:PutBoolean("Input 4", in4:Get())
+    dashboard:PutBoolean("Input 5", in5:Get())
+    dashboard:PutBoolean("Input 6", in6:Get())
     dashboard:PutInt("TURN.TARGET", turnPID.target)
     dashboard:PutInt("TURN.ANGLE", encoder:Get()/25)
     turnPID:update(encoder:Get()/25)
@@ -133,6 +139,7 @@ function update()
     else
         flywheelMotor:Set(0.0)
     end
+
     --TODO
     hoodPID:update(0)
     hoodMotor1:Set(hoodPID.output)
