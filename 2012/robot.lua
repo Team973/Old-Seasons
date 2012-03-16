@@ -394,7 +394,7 @@ local function presetValues (flywheelRPM, hoodAngle, turretAngle)
     turret.setHoodTarget(hoodAngle)
     turret.setTargetAngle(turretAngle)
 end
-local prevRY = 0.0
+
 controlMap =
 {
     -- Joystick 1
@@ -448,14 +448,6 @@ controlMap =
         ["y"] = function(axis) 
             turretDirection.y = deadband(-axis, 0.2) 
             turret.setFromJoy(turretDirection.x, turretDirection.y)
-        end,
-        ["ry"] = function(axis)
-            if prevRY > -0.5 and axis < -0.5 then
-                rpmPreset = rpmPreset + 100
-            elseif prevRY < 0.5 and axis > 0.5 then
-                rpmPreset = rpmPreset - 100
-            end
-            prevRY = axis
         end,
         ["hatx"] = function(axis)
             local increment = 1
