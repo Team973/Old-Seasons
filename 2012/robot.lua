@@ -106,7 +106,7 @@ function hellautonomous()
         turret.setHoodTarget(HOOD_TARGET)
 
         -- Run conveyer, but no intake.
-        intake.setVerticalSpeed(0.3)
+        intake.setVerticalSpeed(0.2)
         intake.setCheaterSpeed(1.0)
         intake.setIntake(0.0)
 
@@ -457,13 +457,13 @@ controlMap =
         ["rx"] = function(axis)
             rotation = axis
         end,
-        [5] = {tick=function(held)
-            if held then
-                gear = "low"
-            else
-                gear = "high"
-            end
-        end},
+        -- [5] = {tick=function(held)
+            -- if held then
+              -- gear = "low"
+           -- else
+             -- gear = "high"
+          -- end
+        -- end},
         [6] = {tick=function(held) deploySkid = held end},
         [7] = function() fudgeMode = true end,
         [8] = function() calibrateAll() end,
@@ -527,7 +527,7 @@ controlMap =
         [5] = {tick=function(held) intake.setLowered(held) end},   
         [6] = {tick=function(held)
             if held then
-                intake.setVerticalSpeed(0.3)
+                intake.setVerticalSpeed(0.2)
                 intake.setCheaterSpeed(1.0)
             end
         end},
