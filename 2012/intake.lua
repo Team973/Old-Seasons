@@ -38,6 +38,8 @@ function setLowered(val)
 end
 
 function update(turretReady)
+    local dashboard = wpilib.SmartDashboard_GetInstance()
+
     sideIntake:Set(sideSpeed)
     frontIntake:Set(frontSpeed)
 
@@ -45,6 +47,8 @@ function update(turretReady)
     
     verticalConveyer:Set(verticalSpeed)
     cheaterRoller:Set(cheaterSpeed)
+    dashboard:PutDouble("Vertical Speed", verticalSpeed)
+    dashboard:PutDouble("Cheater Speed", cheaterSpeed)
 end
 
 function setIntake(speed)
