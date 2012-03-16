@@ -42,6 +42,7 @@ local dashboard = wpilib.SmartDashboard_GetInstance()
 dashboard:PutString("mode", "Waiting for Gyro...")
 
 function run()
+    turret.initI2C()
     dashboard:PutString("mode", "Ready")
 
     -- Main loop
@@ -67,14 +68,68 @@ end
 
 function hellautonomous()
     disableWatchdog()
-    while wpilib.IsAutonomous() and wpilib.IsEnabled() do
+
+    local RPM = 6600
+    local HOOD_TARGET = 1200
+
+    local t = wpilib.Timer()
+    t:Start()
+    while t:Get() < 2.0 and wpilib.IsAutonomous() and wpilib.IsEnabled() do
+        -- Set up for key shot
+        turret.setFlywheelTargetSpeed(RPM)
+        turret.setHoodTarget(HOOD_TARGET)
+
+        -- Don't run intake or conveyer yet.
+        intake.setVerticalSpeed(0.0)
+        intake.setCheaterSpeed(0.0)
+        intake.setIntake(0.0)
+
+        -- Update
+        turret.update()
+        intake.update()
+
+        -- Pneumatics
+        dashboard:PutBoolean("pressure", pressureSwitch:Get())
+        if pressureSwitch:Get() then
+            compressor:Set(wpilib.Relay_kOff)
+        else
+            compressor:Set(wpilib.Relay_kOn)
+        end
+
         wpilib.Wait(TELEOP_LOOP_LAG)
     end
+
+    t:Reset()
+    while t:Get() < 5.0 and wpilib.IsAutonomous() and wpilib.IsEnabled() do
+        -- Set up for key shot
+        turret.setFlywheelTargetSpeed(RPM)
+        turret.setHoodTarget(HOOD_TARGET)
+
+        -- Run conveyer, but no intake.
+        intake.setVerticalSpeed(0.3)
+        intake.setCheaterSpeed(1.0)
+        intake.setIntake(0.0)
+
+        -- Update
+        turret.update()
+        intake.update()
+
+        -- Pneumatics
+        dashboard:PutBoolean("pressure", pressureSwitch:Get())
+        if pressureSwitch:Get() then
+            compressor:Set(wpilib.Relay_kOff)
+        else
+            compressor:Set(wpilib.Relay_kOn)
+        end
+
+        wpilib.Wait(TELEOP_LOOP_LAG)
+    end
+
+    turret.fullStop()
+    intake.fullStop()
 end
 
 function teleop()
-    turret.initI2C()
-
     turret.turnPID:start()
     for _, wheel in pairs(wheels) do
         wheel.turnEncoder:Reset()
@@ -458,17 +513,17 @@ controlMap =
             local increment = 1
             if axis > 0.5 and prevOperatorDpad <= 0.5 then
                 -- Dpad right
-                turret.setTargetAngle(turret.getTargetAngle() + increment)
+                turret.setHoodTarget(turret.getHoodTarget() + 10)
             end
             if axis < -0.5 and prevOperatorDpad >= -0.5 then
                 -- Dpad left
-                turret.setTargetAngle(turret.getTargetAngle() - increment)
+                turret.setHoodTarget(turret.getHoodTarget() - 10)
             end
             prevOperatorDpad = axis
         end,
         [1] = function() presetValues(3300,20,0) end, -- Fender
         [2] = function() presetValues(4500,200,0) end, -- Side
-        [3] = function() presetValues(6600,800,0) end, -- Key
+        [3] = function() presetValues(6600,1200,0) end, -- Key
         [5] = {tick=function(held) intake.setLowered(held) end},   
         [6] = {tick=function(held)
             if held then
