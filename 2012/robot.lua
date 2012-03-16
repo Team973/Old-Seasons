@@ -5,14 +5,12 @@ local wpilib = require("wpilib")
 -- Inject WPILib timer object into PID
 pid.PID.timerNew = wpilib.Timer
 
-local bit = require("bit")
 local controls = require("controls")
 local drive = require("drive")
 local intake = require("intake")
 local lcd = require("lcd")
 local linearize = require("linearize")
 local math = require("math")
-local string = require("string")
 local turret = require("turret")
 
 local pairs = pairs
@@ -26,19 +24,16 @@ local TELEOP_LOOP_LAG = 0.005
 local watchdogEnabled = false
 local feedWatchdog, enableWatchdog, disableWatchdog
 
-local hellautonomous, teleop, calibrateAll, initI2C
+local hellautonomous, teleop, calibrateAll
 local controlMap, strafe, rotation, gear, presetShift, fieldCentric
 local deploySkid
 local zeroMode, possessionTimer, rotationHoldTimer
 local fudgeMode, fudgeWheel, fudgeMovement
 
 local compressor, pressureSwitch, gearSwitch
-local hoodEncoder1, hoodEncoder2
-local hoodMotor1, hoodMotor2
 local frontSkid
 local wheels
 local driveMode = 0
-local runHood = 0
 
 -- End Declarations
 
@@ -77,33 +72,8 @@ function hellautonomous()
     end
 end
 
-local function readVexEncoder(encoder)
-    local val = 0
-    local data = wpilib.new_UINT8array(4)
-
-    -- TODO: The error result should probably be examined.
-    encoder:Read(0x40, 4, data)
-    val = bit.bor(val, bit.lshift(wpilib.UINT8array_getitem(data, 0), 8))
-    val = bit.bor(val, bit.lshift(wpilib.UINT8array_getitem(data, 1), 0))
-    val = bit.bor(val, bit.lshift(wpilib.UINT8array_getitem(data, 2), 24))
-    val = bit.bor(val, bit.lshift(wpilib.UINT8array_getitem(data, 3), 16))
-
-    -- XXX: For a few bits more:
-    --[[
-    if not encoder:Read(0x46, 2, data) then
-        --return nil
-    end
-    val = bit.bor(val, bit.lshift(wpilib.UINT8array_getitem(data, 0), 40))
-    val = bit.bor(val, bit.lshift(wpilib.UINT8array_getitem(data, 1), 32))
-    --]]
-
-    wpilib.delete_UINT8array(data)
-
-    return val
-end
-
 function teleop()
-    initI2C()
+    turret.initI2C()
 
     turret.turnPID:start()
     for _, wheel in pairs(wheels) do
@@ -132,16 +102,6 @@ function teleop()
             controls.update(controlMap)
         end
         feedWatchdog()
-
-        -- Display hood encoder
-        do
-            local e1 = -readVexEncoder(hoodEncoder1)
-            local e2 = readVexEncoder(hoodEncoder2)
-            dashboard:PutDouble("Hood 1", e1)
-            dashboard:PutDouble("Hood 2", e2)
-            hoodMotor1:Set(runHood)
-            hoodMotor2:Set(-runHood)
-        end
 
         -- Pneumatics
         dashboard:PutBoolean("pressure", pressureSwitch:Get())
@@ -331,63 +291,6 @@ pressureSwitch = wpilib.DigitalInput(1, 14)
 gearSwitch = wpilib.Solenoid(1, 1)
 frontSkid = wpilib.Solenoid(3)
 
-hoodMotor1 = wpilib.Victor(2, 7)
-hoodMotor2 = wpilib.Victor(2, 8)
-
-local vexMagic = wpilib.new_UINT8array(3)
-wpilib.UINT8array_setitem(vexMagic, 0, string.byte("V"))
-wpilib.UINT8array_setitem(vexMagic, 1, string.byte("E"))
-wpilib.UINT8array_setitem(vexMagic, 2, string.byte("X"))
-
-local I2C_DELAY = 0.1
-local I2C_SIDECAR = 2
-
-local function initVexEncoder(address, num, terminated)
-    local mod = wpilib.DigitalModule_GetInstance(I2C_SIDECAR)
-    local encoder
-
-    local i2c = mod:GetI2C(0x60)
-    i2c:SetCompatibilityMode(true)
-
-    -- Change address
-    i2c:Write(0x4d, address)
-    wpilib.Wait(I2C_DELAY)
-
-    -- Get encoder at new address
-    encoder = mod:GetI2C(address)
-    encoder:SetCompatibilityMode(true)
-
-    -- Verify
-    dashboard:PutBoolean("VEX Encoder Check " .. num, encoder:VerifySensor(0x08, 3, vexMagic))
-    wpilib.Wait(I2C_DELAY)
-
-    -- Terminate (or not)
-    if terminated then
-        encoder:Write(0x4c, 0xff)
-    else
-        encoder:Write(0x4b, 0xff)
-    end
-    wpilib.Wait(I2C_DELAY)
-
-    return encoder
-end
-
-function initI2C()
-    dashboard:PutString("mode", "I2C Init")
-
-    -- Reset encoder addresses
-    local i2c = wpilib.DigitalModule_GetInstance(I2C_SIDECAR):GetI2C(0x00)
-    i2c:SetCompatibilityMode(true)
-    -- ORDER IS SIGNIFICANT HERE
-    i2c:Write(0x4f, 0x03)
-    wpilib.Wait(I2C_DELAY)
-    i2c:Write(0x4e, 0xca)
-    wpilib.Wait(I2C_DELAY)
-
-    hoodEncoder1 = initVexEncoder(0x20, "1", false)
-    hoodEncoder2 = initVexEncoder(0x22, "2", true)
-end
-
 local turnPIDConstants = {p=0.06, i=0, d=0}
 
 wheels = {
@@ -499,18 +402,6 @@ controlMap =
         ["rx"] = function(axis)
             rotation = axis
         end,
-        [1] = {tick=function(held)
-            if held then
-                runHood = -0.2
-            else
-                runHood = 0.0
-            end
-        end},
-        [2] = {tick=function(held)
-            if held then
-                runHood = 0.2
-            end
-        end},
         [5] = {tick=function(held)
             if held then
                 gear = "low"
@@ -575,9 +466,9 @@ controlMap =
             end
             prevOperatorDpad = axis
         end,
-        [1] = function() presetValues(3300,0,0) end, -- Fender
-        [2] = function() presetValues(4500,0,0) end, -- Side
-        [3] = function() presetValues(6600,0,0) end, -- Key
+        [1] = function() presetValues(3300,20,0) end, -- Fender
+        [2] = function() presetValues(4500,200,0) end, -- Side
+        [3] = function() presetValues(6600,800,0) end, -- Key
         [5] = {tick=function(held) intake.setLowered(held) end},   
         [6] = {tick=function(held)
             if held then

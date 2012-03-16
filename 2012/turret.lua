@@ -2,8 +2,10 @@
 
 local ipairs = ipairs
 
+local bit = require("bit")
 local pid = require("pid")
 local math = require("math")
+local string = require("string")
 local wpilib = require("wpilib")
 
 module(...)
@@ -17,6 +19,8 @@ flywheelPID = pid.new(0.0025, 0.0, -0.001,
         return flywheelSpeedTable:average()
     end)
 
+local dashboard = wpilib.SmartDashboard_GetInstance()
+
 local flywheelTargetSpeed = 0.0
 local flywheelFeedforward = 7800
 local in4 = wpilib.DigitalInput(2, 4)
@@ -28,14 +32,18 @@ local flywheelTicksPerRevolution = 6.0
 
 flywheelCounter:Start()
 
-hoodMotor1= wpilib.Victor(2,7) 
-hoodMotor2= wpilib.Victor(2,8) 
-
-hoodPID = pid.new(0, 0, 0)
-hoodPID:start()
+local hoodEncoder1, hoodEncoder2
+local hoodMotor1= wpilib.Victor(2,7) 
+local hoodMotor2= wpilib.Victor(2,8) 
+hoodPID1 = pid.new(0.01, 0, 0)
+hoodPID1:start()
+hoodPID2 = pid.new(0.01, 0, 0)
+hoodPID2:start()
+runHood = 0
 
 function setHoodTarget(target)
-hoodPID.target = target
+    hoodPID1.target = target
+    hoodPID2.target = target
 end
 
 encoder = wpilib.Encoder(2, 2, 2, 3, true, wpilib.CounterBase_k1X)
@@ -46,6 +54,85 @@ turnPID = pid.new(0.05, 0, 0)
 allowRotate = false
 
 local HARD_LIMIT = 90
+
+local function readVexEncoder(encoder)
+    local val = 0
+    local data = wpilib.new_UINT8array(4)
+
+    -- TODO: The error result should probably be examined.
+    encoder:Read(0x40, 4, data)
+    val = bit.bor(val, bit.lshift(wpilib.UINT8array_getitem(data, 0), 8))
+    val = bit.bor(val, bit.lshift(wpilib.UINT8array_getitem(data, 1), 0))
+    val = bit.bor(val, bit.lshift(wpilib.UINT8array_getitem(data, 2), 24))
+    val = bit.bor(val, bit.lshift(wpilib.UINT8array_getitem(data, 3), 16))
+
+    -- XXX: For a few bits more:
+    --[[
+    if not encoder:Read(0x46, 2, data) then
+        --return nil
+    end
+    val = bit.bor(val, bit.lshift(wpilib.UINT8array_getitem(data, 0), 40))
+    val = bit.bor(val, bit.lshift(wpilib.UINT8array_getitem(data, 1), 32))
+    --]]
+
+    wpilib.delete_UINT8array(data)
+
+    return val
+end
+
+local vexMagic = wpilib.new_UINT8array(3)
+wpilib.UINT8array_setitem(vexMagic, 0, string.byte("V"))
+wpilib.UINT8array_setitem(vexMagic, 1, string.byte("E"))
+wpilib.UINT8array_setitem(vexMagic, 2, string.byte("X"))
+
+local I2C_DELAY = 0.1
+local I2C_SIDECAR = 2
+
+local function initVexEncoder(address, num, terminated)
+    local mod = wpilib.DigitalModule_GetInstance(I2C_SIDECAR)
+    local encoder
+
+    local i2c = mod:GetI2C(0x60)
+    i2c:SetCompatibilityMode(true)
+
+    -- Change address
+    i2c:Write(0x4d, address)
+    wpilib.Wait(I2C_DELAY)
+
+    -- Get encoder at new address
+    encoder = mod:GetI2C(address)
+    encoder:SetCompatibilityMode(true)
+
+    -- Verify
+    dashboard:PutBoolean("VEX Encoder Check " .. num, encoder:VerifySensor(0x08, 3, vexMagic))
+    wpilib.Wait(I2C_DELAY)
+
+    -- Terminate (or not)
+    if terminated then
+        encoder:Write(0x4c, 0xff)
+    else
+        encoder:Write(0x4b, 0xff)
+    end
+    wpilib.Wait(I2C_DELAY)
+
+    return encoder
+end
+
+function initI2C()
+    dashboard:PutString("mode", "I2C Init")
+
+    -- Reset encoder addresses
+    local i2c = wpilib.DigitalModule_GetInstance(I2C_SIDECAR):GetI2C(0x00)
+    i2c:SetCompatibilityMode(true)
+    -- ORDER IS SIGNIFICANT HERE
+    i2c:Write(0x4f, 0x03)
+    wpilib.Wait(I2C_DELAY)
+    i2c:Write(0x4e, 0xca)
+    wpilib.Wait(I2C_DELAY)
+
+    hoodEncoder1 = initVexEncoder(0x20, "1", false)
+    hoodEncoder2 = initVexEncoder(0x22, "2", true)
+end
 
 function getTargetAngle()
     return turnPID.target
@@ -109,8 +196,6 @@ function resetFlywheel()
 end
 
 function update()
-    local dashboard = wpilib.SmartDashboard_GetInstance()
-
     -- Turret rotation
     dashboard:PutBoolean("Input 4", in4:Get())
     dashboard:PutBoolean("Input 5", in5:Get())
@@ -140,10 +225,14 @@ function update()
         flywheelMotor:Set(0.0)
     end
 
-    --TODO
-    hoodPID:update(0)
-    hoodMotor1:Set(hoodPID.output)
-    hoodMotor2:Set(-hoodPID.output)
+    local e1 = -readVexEncoder(hoodEncoder1)
+    local e2 = readVexEncoder(hoodEncoder2)
+    dashboard:PutDouble("Hood 1", e1)
+    dashboard:PutDouble("Hood 2", e2)
+    hoodPID1:update(e1)
+    hoodPID2:update(e2)
+    hoodMotor1:Set(-hoodPID1.output)
+    hoodMotor2:Set(hoodPID2.output)
 end
 
 function calculateTarget(turretAngle, desiredAngle)
