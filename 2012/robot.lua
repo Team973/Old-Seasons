@@ -71,7 +71,6 @@ function hellautonomous()
 
     local RPM = 6400
     local HOOD_TARGET = 950
-    local SKID_DELAY = 0.3
 
     local t = wpilib.Timer()
     t:Start()
@@ -88,7 +87,7 @@ function hellautonomous()
             intake.setVerticalSpeed(0.3)
             intake.setCheaterSpeed(1.0)
         end
-        if (time > 5 and time < 9) or time > 12-SKID_DELAY then
+        if (time > 5 and time < 9) or time > 12 then
             intake.setLowered(true)
         else
             intake.setLowered(false)
@@ -98,8 +97,6 @@ function hellautonomous()
         else
             intake.setIntake(0)
         end
-
-        frontSkid:Set((time > 5+SKID_DELAY and time < 9-SKID_DELAY) or time > 12)
 
         -- Update
         turret.update()
