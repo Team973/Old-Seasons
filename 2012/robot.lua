@@ -69,7 +69,7 @@ end
 function hellautonomous()
     disableWatchdog()
 
-    local RPM = 6800
+    local RPM = 6400
     local HOOD_TARGET = 950
     local SKID_DELAY = 0.3
 
@@ -513,7 +513,7 @@ controlMap =
         end,
         [1] = function() presetValues(3300,20,0) end, -- Fender
         [2] = function() presetValues(4500,200,0) end, -- Side
-        [3] = function() presetValues(6800,950,0) end, -- Key
+        [3] = function() presetValues(6400,950,0) end, -- Key
         [4] = {tick=function(held) deploySkid = held end},
         [5] = {tick=function(held) intake.setLowered(held) end},   
         [6] = {tick=function(held)
