@@ -26,11 +26,11 @@ local feedWatchdog, enableWatchdog, disableWatchdog
 
 local hellautonomous, teleop, calibrateAll
 local controlMap, strafe, rotation, gear, presetShift, fieldCentric
-local deploySkid
+local deploySkid, deployStinger
 local zeroMode, possessionTimer, rotationHoldTimer
 local fudgeMode, fudgeWheel, fudgeMovement
 
-local compressor, pressureSwitch, gearSwitch
+local compressor, pressureSwitch, gearSwitch, stinger
 local frontSkid
 local wheels
 local driveMode = 0
@@ -83,20 +83,19 @@ function hellautonomous()
         if time < 2 then 
             intake.setVerticalSpeed(0.0)
             intake.setCheaterSpeed(0.0)
+            intake.setIntake(0)
         else
             intake.setVerticalSpeed(0.3)
             intake.setCheaterSpeed(1.0)
+            intake.setIntake(1)
         end
+        --[[
         if (time > 5 and time < 9) or time > 12 then
             intake.setLowered(true)
         else
             intake.setLowered(false)
         end
-        if time > 5 then
-            intake.setIntake(1)
-        else
-            intake.setIntake(0)
-        end
+        --]]
 
         -- Update
         turret.update()
@@ -145,6 +144,8 @@ function teleop()
             controls.update(controlMap)
         end
         feedWatchdog()
+
+        stinger:Set(deployStinger)
 
         -- Pneumatics
         dashboard:PutBoolean("pressure", pressureSwitch:Get())
@@ -333,7 +334,7 @@ compressor = wpilib.Relay(1, 1, wpilib.Relay_kForwardOnly)
 pressureSwitch = wpilib.DigitalInput(1, 14)
 gearSwitch = wpilib.Solenoid(1, 1)
 frontSkid = wpilib.Solenoid(3)
-
+stinger = wpilib.Solenoid(7)
 local turnPIDConstants = {p=0.06, i=0, d=0}
 
 wheels = {
@@ -445,6 +446,7 @@ controlMap =
         ["rx"] = function(axis)
             rotation = axis
         end,
+        [1] = {tick=function(held) deployStinger = held end},
         [5] = {tick=function(held)
             if held then
                 gear = "low"
