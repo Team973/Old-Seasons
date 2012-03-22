@@ -1,14 +1,13 @@
 -- robot.lua
 
 local controls = require("controls")
+local io = require("io")
 local lcd = require("lcd")
 local linearize = require("linearize")
 local pid = require ("pid")
+local string = require("string")
 local wpilib = require("wpilib")
 local pairs = pairs
-
-local x, motors, encoders
-local motorNum, encoderNum = 1, 1
 
 module(..., package.seeall)
 
@@ -20,7 +19,15 @@ local TELEOP_LOOP_LAG = 0.005
 local watchdogEnabled = false
 local feedWatchdog, enableWatchdog, disableWatchdog
 
+local x, motors, encoders, switches, inputs
+local motorNum, encoderNum = 1, 1
+local runningFlywheel = true
+
 local teleop
+local flywheelMotor
+local flywheelCounter
+local flywheelTimer
+local flywheelData = {}
 
 local controlMap
 -- End Declarations
@@ -82,6 +89,50 @@ function teleop()
             dashboard:PutBoolean("Input " .. tostring(i), inputs[i]:Get())
         end
 
+        -- Run flywheel
+        if runningFlywheel then
+            if not flywheelTimer then
+                flywheelTimer = wpilib.Timer()
+                flywheelTimer:Start()
+                flywheelData = {}
+                flywheelCounter:Reset()
+            end
+
+            local time = flywheelTimer:Get()
+            if time < 1 then
+                flywheelMotor:Set(0.0)
+            elseif time < 5 then
+                flywheelMotor:Set(1.0)
+            else
+                flywheelMotor:Set(0.0)
+                runningFlywheel = false
+                flywheelTimer:Stop()
+                flywheelTimer = nil
+
+                -- Write to CSV file
+                local f = io.open("flywheel-data.csv", "w")
+                f:write("Time,Rotations,Power")
+                for _, datum in ipairs(flywheelData) do
+                    -- Write each row
+                    f:write(string.format("%.3f,%.3f,%.1f", datum.time, datum.rotations, datum.power))
+                end
+                f:close()
+
+                -- Remove data from memory
+                flywheelData = nil
+            end
+
+            if runningFlywheel then
+                -- New data point
+                local flywheelTicksPerRevolution = 6
+                flywheelData[#flywheelData + 1] = {
+                    time=time,
+                    rotations=flywheelCounter:Get() / flywheelTicksPerRevolution,
+                    power=flywheelMotor:Get(),
+                }
+            end
+        end
+
         wpilib.Wait(TELEOP_LOOP_LAG)
     end
 end
@@ -91,6 +142,9 @@ end
 local function LinearVictor(...)
     return linearize.wrap(wpilib.Victor(...))
 end
+
+flywheelMotor = LinearVictor(2, 6)
+flywheelCounter = wpilib.Counter(2, 5)
 
 motors = {
     LinearVictor(1, 7),
@@ -107,7 +161,7 @@ motors = {
     wpilib.Jaguar(2, 3),
     LinearVictor(2, 4),
     LinearVictor(2, 5),
-    LinearVictor(2, 6),
+    flywheelMotor,
     LinearVictor(2, 7),
     LinearVictor(2, 8),
 }
@@ -118,6 +172,7 @@ encoders = {
     wpilib.Encoder(1, 4, 1, 5, false, wpilib.CounterBase_k1X),
     wpilib.Encoder(1, 1, 1, 2, false, wpilib.CounterBase_k1X),
     wpilib.Encoder(2, 2, 2, 3, false, wpilib.CounterBase_k1X),
+    flywheelCounter,
 }
 for _, e in ipairs(encoders) do
     e:Start()
@@ -173,6 +228,7 @@ controlMap =
                 encoderNum = 1
             end
         end,
+        [5] = function() runningFlywheel = true end,
     },
     -- Joystick 2
     {
