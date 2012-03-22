@@ -111,10 +111,10 @@ function teleop()
 
                 -- Write to CSV file
                 local f = io.open("flywheel-data.csv", "w")
-                f:write("Time,Rotations,Power")
+                f:write("Time,Rotations,Power\r\n")
                 for _, datum in ipairs(flywheelData) do
                     -- Write each row
-                    f:write(string.format("%.3f,%.3f,%.1f", datum.time, datum.rotations, datum.power))
+                    f:write(string.format("%.3f,%.3f,%.1f\r\n", datum.time, datum.rotations, datum.power))
                 end
                 f:close()
 
