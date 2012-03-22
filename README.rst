@@ -11,7 +11,9 @@ Subdirectories
 ================
 
 ``2012``
-   The unnamed 2012 season code
+   The 2012 season code for Encore
+``2012-testbed``
+   The code for system testing and rapid prototyping Encore
 ``2011-ek``
    Latest off-season code for Emperor Krab
 ``2011-crapoffseason``
