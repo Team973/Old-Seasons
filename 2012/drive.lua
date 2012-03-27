@@ -23,15 +23,8 @@ function calculate(x, y, w, gyroDeg, wheelBase, trackWidth)
     local r = math.sqrt(wheelBase ^ 2 + trackWidth ^ 2)
     local gyroRad = math.rad(gyroDeg)
 
-    --dashboard:PutDouble("Unshifted X", X)
-    --dashboard:PutDouble("Unshifted Y", Y)
-
-
-    y, x = x * math.cos(-gyroRad) + y * math.sin(-gyroRad), -x * math.sin(-gyroRad) + y * math.cos(-gyroRad)
-    
-    --dashboard:PutDouble("Shifted X", X)
-    --dashboard:PutDouble("Shifted Y", Y)
-    
+    y = x * math.cos(gyroRad) + y * math.sin(gyroRad)
+    x = -x * math.sin(gyroRad) + y * math.cos(gyroRad)
     local a = y - w * (wheelBase / r)
     local b = y + w * (wheelBase / r)
     local c = x - w * (trackWidth / r)
