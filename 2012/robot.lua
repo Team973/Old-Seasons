@@ -178,7 +178,9 @@ function teleop()
             gearSwitch:Set(false)
         end
 
-        local gyroAngle = gyro:GetAngle()
+        local gyroAngle = -gyro:GetAngle()
+        
+        dashboard:PutInt("Gyro Angle", gyroAngle)
 
         if zeroMode then
             for _, wheel in pairs(wheels) do
@@ -200,9 +202,13 @@ function teleop()
                 fudgeWheel.turnMotor:Set(fudgeMovement)
             end
         else
-            local appliedGyro = gyroAngle
+            local appliedGyro = 
+            
+            gyroAngle
             local appliedRotation = rotation
             local deadband = 0.1
+
+            fieldCentric = true
 
             if not fieldCentric then
                 appliedGyro = 0
@@ -631,9 +637,9 @@ end
 
 -- Only create the gyro at the end, because it blocks the entire thread.
 gyro = wpilib.Gyro(1, 1)    -- TODO: Update to correct channel
-gyro:SetSensitivity(0.006)  -- TODO: Is this correct?
+gyro:SetSensitivity(0.002*2940/1800)  -- TODO: Is this correct?
 gyro:Reset()
 
-rotationPID = pid.new(0.5, 0, 0)
+rotationPID = pid.new(0.01, 0, 0)
 
 -- vim: ft=lua et ts=4 sts=4 sw=4
