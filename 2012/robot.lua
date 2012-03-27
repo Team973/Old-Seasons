@@ -206,7 +206,7 @@ function teleop()
             local appliedRotation = rotation
             local deadband = 0.1
 
-            if driveMode == 0 then
+            if driveMode ~= 0 then
                 appliedGyro = 0
             end
             
@@ -463,6 +463,7 @@ controlMap =
         ["y"] = function(axis) strafe.y = deadband(-axis, 0.15) end,
         ["rx"] = function(axis) rotation = deadband(axis, 0.15) end,
         [1] = {tick=function(held) deployStinger = held end},
+        [2] = function() gyro:Reset() end,
         [5] = {tick=function(held)
             if held then
                 gear = "low"
@@ -518,11 +519,11 @@ controlMap =
             local increment = 1
             if axis > 0.5 and prevOperatorDpad <= 0.5 then
                 -- Dpad right
-                turret.setHoodTarget(turret.getHoodTarget() + 10)
+                turret.setTargetAngle(turret.getTargetAngle() + 1)
             end
             if axis < -0.5 and prevOperatorDpad >= -0.5 then
                 -- Dpad left
-                turret.setHoodTarget(turret.getHoodTarget() - 10)
+                turret.setTargetAngle(turret.getTargetAngle() - 1)
             end
             prevOperatorDpad = axis
         end,
