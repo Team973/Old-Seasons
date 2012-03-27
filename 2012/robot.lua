@@ -463,7 +463,12 @@ controlMap =
         ["y"] = function(axis) strafe.y = deadband(-axis, 0.15) end,
         ["rx"] = function(axis) rotation = deadband(axis, 0.15) end,
         [1] = {tick=function(held) deployStinger = held end},
-        [2] = function() gyro:Reset() end,
+        [2] = function()
+            gyro:Reset()
+            if rotationPID.target then
+                rotationPID.target = 0
+            end
+        end,
         [5] = {tick=function(held)
             if held then
                 gear = "low"
