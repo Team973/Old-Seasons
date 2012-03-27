@@ -25,7 +25,7 @@ local watchdogEnabled = false
 local feedWatchdog, enableWatchdog, disableWatchdog
 
 local hellautonomous, teleop, calibrateAll
-local controlMap, fudgeControlMap, strafe, rotation, gear, presetShift, fieldCentric
+local controlMap, fudgeControlMap, strafe, rotation, gear, presetShift
 local deploySkid, deployStinger
 local zeroMode, possessionTimer, rotationHoldTimer
 local fudgeMode, fudgeWheel, fudgeMovement
@@ -202,15 +202,11 @@ function teleop()
                 fudgeWheel.turnMotor:Set(fudgeMovement)
             end
         else
-            local appliedGyro = 
-            
-            gyroAngle
+            local appliedGyro = -gyroAngle
             local appliedRotation = rotation
             local deadband = 0.1
 
-            fieldCentric = true
-
-            if not fieldCentric then
+            if driveMode == 0 then
                 appliedGyro = 0
             end
             
@@ -411,7 +407,6 @@ end
 -- Controls
 strafe = {x=0, y=0}
 rotation = 0
-fieldCentric = false
 gear = "high"
 turretDirection = {x=0, y=0} 
 
@@ -636,8 +631,8 @@ else
 end
 
 -- Only create the gyro at the end, because it blocks the entire thread.
-gyro = wpilib.Gyro(1, 1)    -- TODO: Update to correct channel
-gyro:SetSensitivity(0.002*2940/1800)  -- TODO: Is this correct?
+gyro = wpilib.Gyro(1, 1)
+gyro:SetSensitivity(0.002*2940/1800)
 gyro:Reset()
 
 rotationPID = pid.new(0.01, 0, 0)
