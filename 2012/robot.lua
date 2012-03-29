@@ -25,14 +25,15 @@ local watchdogEnabled = false
 local feedWatchdog, enableWatchdog, disableWatchdog
 
 local hellautonomous, teleop, calibrateAll
-local controlMap, strafe, rotation, gear, presetShift, fieldCentric
+local controlMap, fudgeControlMap, strafe, rotation, gear, presetShift
 local deploySkid, deployStinger
 local zeroMode, possessionTimer, rotationHoldTimer
 local fudgeMode, fudgeWheel, fudgeMovement
 
-local compressor, pressureSwitch, gearSwitch, stinger
+local compressor, pressureSwitch, gearSwitch, stinger, gyro
 local frontSkid
 local wheels
+local rotationPID
 local driveMode = 0
 
 -- End Declarations
@@ -177,6 +178,10 @@ function teleop()
             gearSwitch:Set(false)
         end
 
+        local gyroAngle = -gyro:GetAngle()
+        
+        dashboard:PutInt("Gyro Angle", gyroAngle)
+
         if zeroMode then
             for _, wheel in pairs(wheels) do
                 local currentTurn = wheel.turnEncoder:GetDistance()
@@ -197,20 +202,33 @@ function teleop()
                 fudgeWheel.turnMotor:Set(fudgeMovement)
             end
         else
-            local appliedGyro = 0.0
+            local appliedGyro = -gyroAngle
             local appliedRotation = rotation
             local deadband = 0.1
+
+            if driveMode ~= 0 then
+                appliedGyro = 0
+            end
             
             -- Keep rotation steady in deadband
-            if math.abs(rotation) < deadband then
-                if rotationHoldTimer == nil then
-                    rotationHoldTimer = wpilib.Timer()
-                    rotationHoldTimer:Start()
-                elseif rotationHoldTimer:Get() > 0.5 then
-                    rotationHoldTimer:Stop()
-                    rotationHoldTimer = nil
+            if rotation == 0 then
+                if rotationPID.target == nil then
+                    if rotationHoldTimer == nil then
+                        rotationHoldTimer = wpilib.Timer()
+                        rotationHoldTimer:Start()
+                    elseif rotationHoldTimer:Get() > 0.5 then
+                        rotationHoldTimer:Stop()
+                        rotationHoldTimer = nil
+                        rotationPID.target = gyroAngle
+                        rotationPID:start()
+                    end
+                    appliedRotation = 0
+                else
+                    appliedRotation = rotationPID:update(gyroAngle)
                 end
-                appliedRotation = 0
+            else
+                rotationPID.target = nil
+                rotationPID:stop()
             end
             
             local wheelValues = drive.calculate(
@@ -335,8 +353,8 @@ pressureSwitch = wpilib.DigitalInput(1, 14)
 gearSwitch = wpilib.Solenoid(1, 1)
 frontSkid = wpilib.Solenoid(3)
 stinger = wpilib.Solenoid(7)
-local turnPIDConstants = {p=0.06, i=0, d=0}
 
+local turnPIDConstants = {p=0.06, i=0, d=0}
 wheels = {
     leftFront={
         shortName="LF",
@@ -443,10 +461,14 @@ controlMap =
     {
         ["x"] = function(axis) strafe.x = deadband(axis, 0.15) end,
         ["y"] = function(axis) strafe.y = deadband(-axis, 0.15) end,
-        ["rx"] = function(axis)
-            rotation = axis
-        end,
+        ["rx"] = function(axis) rotation = deadband(axis, 0.15) end,
         [1] = {tick=function(held) deployStinger = held end},
+        [2] = function()
+            gyro:Reset()
+            if rotationPID.target then
+                rotationPID.target = 0
+            end
+        end,
         [5] = {tick=function(held)
             if held then
                 gear = "low"
@@ -502,11 +524,11 @@ controlMap =
             local increment = 1
             if axis > 0.5 and prevOperatorDpad <= 0.5 then
                 -- Dpad right
-                turret.setHoodTarget(turret.getHoodTarget() + 10)
+                turret.setTargetAngle(turret.getTargetAngle() + 1)
             end
             if axis < -0.5 and prevOperatorDpad >= -0.5 then
                 -- Dpad left
-                turret.setHoodTarget(turret.getHoodTarget() - 10)
+                turret.setTargetAngle(turret.getTargetAngle() - 1)
             end
             prevOperatorDpad = axis
         end,
@@ -613,5 +635,12 @@ else
     enableWatchdog = function() end
     disableWatchdog = function() end
 end
+
+-- Only create the gyro at the end, because it blocks the entire thread.
+gyro = wpilib.Gyro(1, 1)
+gyro:SetSensitivity(0.002*2940/1800)
+gyro:Reset()
+
+rotationPID = pid.new(0.01, 0, 0)
 
 -- vim: ft=lua et ts=4 sts=4 sw=4
