@@ -24,11 +24,12 @@ local TELEOP_LOOP_LAG = 0.005
 local watchdogEnabled = false
 local feedWatchdog, enableWatchdog, disableWatchdog
 
-local hellautonomous, teleop, calibrateAll
+local disabledIdle, hellautonomous, teleop, calibrateAll
 local controlMap, fudgeControlMap, strafe, rotation, gear, presetShift
 local deploySkid, deployStinger
 local zeroMode, possessionTimer, rotationHoldTimer
 local fudgeMode, fudgeWheel, fudgeMovement
+local gyroOkay
 
 local compressor, pressureSwitch, gearSwitch, stinger, gyro
 local frontSkid
@@ -49,7 +50,7 @@ function run()
     -- Main loop
     while true do
         if wpilib.IsDisabled() then
-            -- TODO: run disabled function
+            disabledIdle()
             disableWatchdog()
             repeat wpilib.Wait(0.01) until not wpilib.IsDisabled()
             enableWatchdog()
@@ -64,6 +65,23 @@ function run()
             repeat wpilib.Wait(0.01) until not wpilib.IsOperatorControl() or not wpilib.IsEnabled()
             enableWatchdog()
         end
+    end
+end
+
+function disabledIdle()
+    local gyroTimer = wpilib.Timer()
+
+    while wpilib.IsDisabled() do
+        if gyroTimer and gyroTimer:Get() > 1 then
+            if gyro:GetAngle() > 10 then
+                gyroOkay = false
+                dashboard:PutBoolean("Gyro Okay", true)
+            end
+            gyroTimer:Stop()
+            gyroTimer = nil
+        end
+
+        wpilib.Wait(TELEOP_LOOP_LAG)
     end
 end
 
@@ -179,6 +197,9 @@ function teleop()
         end
 
         local gyroAngle = -gyro:GetAngle()
+        if not gyroOkay then
+            gyroAngle = 0
+        end
         
         dashboard:PutInt("Gyro Angle", gyroAngle)
 
@@ -240,25 +261,24 @@ function teleop()
             for wheelName, value in pairs(wheelValues) do
                 local wheel = wheels[wheelName]
 
-                local deadband = 0.1
                 local currentTurn = wheel.turnEncoder:GetDistance()
 
-                if math.abs(strafe.x) > deadband or math.abs(strafe.y) > deadband or math.abs(appliedRotation) > deadband then
+                if strafe.x ~= 0 or strafe.y ~= 0 or appliedRotation ~= 0 then
                     wheel.turnPID.target = drive.normalizeAngle(value.angleDeg)
                     local driveScale = drive.driveScale(drive.calculateTurn(currentTurn, wheel.turnPID.target))
                     wheel.driveMotor:Set(value.speed * driveScale)
                 else
                     -- In deadband
-                    if driveMode == 0 then
+                    if driveMode == 1 then
+                        wheel.turnPID.target = 0
+                    elseif driveMode == 2 then
+                        wheel.turnPID.target = 90 
+                    else
                         if wheelName == "leftFront" or wheelName == "rightBack" then
                             wheel.turnPID.target = 45
                         else
                             wheel.turnPID.target = -45
                         end
-                    elseif driveMode == 1 then
-                        wheel.turnPID.target = 0
-                    elseif driveMode == 2 then
-                        wheel.turnPID.target = 90 
                     end
                     wheel.driveMotor:Set(0)
                 end
@@ -640,6 +660,8 @@ end
 gyro = wpilib.Gyro(1, 1)
 gyro:SetSensitivity(0.002*2940/1800)
 gyro:Reset()
+gyroOkay = true
+dashboard:PutBoolean("Gyro Okay", true)
 
 rotationPID = pid.new(0.01, 0, 0)
 
