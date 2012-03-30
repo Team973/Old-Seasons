@@ -21,7 +21,7 @@ local flywheelSpeedFilter = {
 flywheelPID = pid.new(0.0025, 0.0, -0.001,
     nil,
     function()
-        return flywheelSpeedTable:average()
+        return flywheelSpeedFilter:average()
     end)
 
 local dashboard = wpilib.SmartDashboard_GetInstance()
