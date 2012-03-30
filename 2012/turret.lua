@@ -13,6 +13,11 @@ module(...)
 local flywheelSpeedTable = {
     numSamples=10,
 }
+local flywheelSpeedFilter = {
+    prev=0,
+    curr=0,
+    weight=0.2,
+}
 flywheelPID = pid.new(0.0025, 0.0, -0.001,
     nil,
     function()
@@ -184,6 +189,18 @@ function flywheelSpeedTable:average()
     return sum / #self
 end
 
+function getFlywheelFilterSpeed()
+    return flywheelSpeedFilter:average()
+end
+
+function flywheelSpeedFilter:add(val)
+    self.prev, self.curr = self:average(), val
+end
+
+function flywheelSpeedFilter:average()
+    return (1 - self.weight) * self.prev + self.weight * self.curr
+end
+
 -- Retrieve the target flywheel speed
 function getFlywheelTargetSpeed(speed)
     return flywheelTargetSpeed
@@ -210,7 +227,9 @@ function update()
     motor:Set(turnPID.output)
 
     -- Add flywheel velocity sample
-    flywheelSpeedTable:add(60.0 / (flywheelCounter:GetPeriod() * flywheelTicksPerRevolution))
+    local speedSample = 60.0 / (flywheelCounter:GetPeriod() * flywheelTicksPerRevolution)
+    flywheelSpeedTable:add(speedSample)
+    flywheelSpeedFilter:add(speedSample)
 
     -- Get flywheel position and time
     flywheelPID.timer:Start()
