@@ -11,13 +11,14 @@ local wpilib = require("wpilib")
 module(...)
 
 local flywheelSpeedTable = {
-    numSamples=10,
+    numSamples=25,
 }
 local flywheelSpeedFilter = {
     prev=0,
     curr=0,
     weight=0.2,
 }
+local flywheelFired = false
 flywheelPID = pid.new(0.0025, 0.0, -0.001,
     nil,
     function()
@@ -201,6 +202,14 @@ function flywheelSpeedFilter:average()
     return (1 - self.weight) * self.prev + self.weight * self.curr
 end
 
+function clearFlywheelFired()
+    flywheelFired = false
+end
+
+function getFlywheelFired()
+    return flywheelFired
+end
+
 -- Retrieve the target flywheel speed
 function getFlywheelTargetSpeed(speed)
     return flywheelTargetSpeed
@@ -230,6 +239,11 @@ function update()
     local speedSample = 60.0 / (flywheelCounter:GetPeriod() * flywheelTicksPerRevolution)
     flywheelSpeedTable:add(speedSample)
     flywheelSpeedFilter:add(speedSample)
+
+    if flywheelSpeedTable:average() - flywheelSpeedFilter:average() > 300 then
+        flywheelFired = true
+    end
+    dashboard:PutBoolean("Flywheel Fired", flywheelFired)
 
     -- Get flywheel position and time
     flywheelPID.timer:Start()

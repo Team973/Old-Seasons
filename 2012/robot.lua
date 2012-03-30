@@ -558,12 +558,15 @@ controlMap =
         [3] = function() presetValues(6400,950,0) end, -- Key
         [4] = {tick=function(held) deploySkid = held end},
         [5] = {tick=function(held) intake.setLowered(held) end},   
-        [6] = {tick=function(held)
-            if held then
-                intake.setVerticalSpeed(0.3)
-                intake.setCheaterSpeed(1.0)
-            end
-        end},
+        [6] = {
+            down=turret.clearFlywheelFired,
+            tick=function(held)
+                if held and not turret.getFlywheelFired() then
+                    intake.setVerticalSpeed(1.0)
+                    intake.setCheaterSpeed(1.0)
+                end
+            end,
+        },
         [7] = function()
             rpmPreset = rpmPreset - 100
         end,
