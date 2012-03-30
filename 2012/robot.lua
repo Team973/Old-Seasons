@@ -199,7 +199,7 @@ function teleop()
 
         local gyroAngle = -gyro:GetAngle()
         if not gyroOkay then
-            gyroAngle = 0
+            gyroAngle =0
         end
         
         dashboard:PutInt("Gyro Angle", gyroAngle)
