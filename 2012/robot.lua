@@ -384,8 +384,8 @@ frontSkid = wpilib.Solenoid(3)
 stinger = wpilib.Solenoid(7)
 squishMeter = wpilib.AnalogChannel(5)
 
-followerEncoderX = wpilib.Encoder(2, 11, 2, 12, false, wpilib.CounterBase_k1X)
-followerEncoderY = wpilib.Encoder(2, 13, 2, 14, false, wpilib.CounterBase_k1X)
+followerEncoderX = wpilib.Encoder(2, 13, 2, 14, true, wpilib.CounterBase_k1X)
+followerEncoderY = wpilib.Encoder(2, 11, 2, 12, false, wpilib.CounterBase_k1X)
 
 followerEncoderX:Start()
 followerEncoderY:Start()
