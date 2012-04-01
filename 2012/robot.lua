@@ -32,7 +32,7 @@ local fudgeMode, fudgeWheel, fudgeMovement
 local gyroOkay
 
 local compressor, pressureSwitch, gearSwitch, stinger, gyro
-local followerEncoderX, followerEncoderY
+local followerEncoderX, followerEncoderY, convertFollowerToFeet
 local frontSkid
 local wheels
 local rotationPID
@@ -90,12 +90,31 @@ end
 function hellautonomous()
     disableWatchdog()
 
+    --[[
+    local autodrivePID = pid.new(0.5)
+    autodrivePID:start()
+    autodrivePID.target = 4.0
+    autodrivePID.min, autodrivePID.max = -1, 1
+    followerEncoderX:Reset()
+    followerEncoderY:Reset()
+    --]]
+
     local RPM = 6400
     local HOOD_TARGET = 950
 
     local t = wpilib.Timer()
     t:Start()
+
     while wpilib.IsAutonomous() and wpilib.IsEnabled() do
+        -- Drive
+        --[[
+        autodrivePID:update(convertFollowerToFeet(followerEncoderY:Get()))
+        runDrive({x=0, y=autodrivePID.output}, 0)
+        dashboard:PutDouble("Follower X", convertFollowerToFeet(followerEncoderX:Get()))
+        dashboard:PutDouble("Follower Y", convertFollowerToFeet(followerEncoderY:Get()))
+        dashboard:PutDouble("Autodrive Output", autodrivePID.output)
+        --]]
+
         -- Set up for key shot
         turret.setFlywheelTargetSpeed(RPM)
         turret.setHoodTarget(HOOD_TARGET)
@@ -189,10 +208,8 @@ function teleop()
         dashboard:PutDouble("Flywheel Target Speed", turret.getFlywheelTargetSpeed())
         dashboard:PutDouble("Squish Meter", squishMeter:GetVoltage())
 
-        local followerEncoderCPR = 360
-        local followerWheelDiameter = 2.75 -- inches
-        dashboard:PutInt("Follower X", followerEncoderX:Get() / followerEncoderCPR * (followerWheelDiameter * math.pi) / 12)
-        dashboard:PutInt("Follower Y", followerEncoderY:Get() / followerEncoderCPR * (followerWheelDiameter * math.pi) / 12)
+        dashboard:PutDouble("Follower X", convertFollowerToFeet(followerEncoderX:Get()))
+        dashboard:PutDouble("Follower Y", convertFollowerToFeet(followerEncoderY:Get()))
 
         -- Drive
         if gear == "low" then
@@ -376,6 +393,12 @@ end
 
 -- Inputs/Outputs
 -- Don't forget to add to declarations at the top!
+
+function convertFollowerToFeet(ticks)
+    local followerEncoderCPR = 360
+    local followerWheelDiameter = 2.75 -- inches
+    return ticks / followerEncoderCPR * (followerWheelDiameter * math.pi) / 12
+end
 
 local function LinearVictor(...)
     return linearize.wrap(wpilib.Victor(...))
