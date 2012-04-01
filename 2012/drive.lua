@@ -1,6 +1,7 @@
 -- drive.lua
 
 local math = require("math")
+local wpilib = require("wpilib")
 
 local pairs = pairs
 
@@ -23,7 +24,12 @@ function calculate(x, y, w, gyroDeg, wheelBase, trackWidth)
     local r = math.sqrt(wheelBase ^ 2 + trackWidth ^ 2)
     local gyroRad = math.rad(gyroDeg)
 
-    y, x = x * math.cos(gyroRad) + y * math.sin(gyroRad), -x * math.sin(gyroRad) + y * math.cos(gyroRad)
+    -- XXX: There is something in the wheel calculation below that flips the
+    -- coordinate system (see comment).  As a kludge, we swap the x and y.
+    x, y = y, x
+    x, y = x * math.cos(gyroRad) + y * math.sin(gyroRad), -x * math.sin(gyroRad) + y * math.cos(gyroRad)
+
+    -- XXX: The problem lies somewhere below here.
     local a = y - w * (wheelBase / r)
     local b = y + w * (wheelBase / r)
     local c = x - w * (trackWidth / r)
