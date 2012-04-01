@@ -37,6 +37,7 @@ local wheels
 local rotationPID
 local driveMode = 0
 local delay
+local autoMode
 
 -- End Declarations
 
@@ -86,9 +87,34 @@ function disabledIdle()
     end
 end
 
+
 function changedelay(newDelay)
     delayMap = {.5, 1, 2}
     delay = delayMap[newDelay]
+end
+
+function takeShots(t) 
+    turret.setFlywheelTargetSpeed(RPM)
+    turret.setHoodTarget(HOOD_TARGET)
+
+    if isFiring then 
+        if turret.getFlywheelFired() then
+            intake.setVerticalSpeed(0)
+            intake.setCheaterSpeed(0)
+            t:Reset()
+            t:Start()
+            isFiring = false
+        end
+    elseif t:Get() > delay then
+        intake.setVerticalSpeed(1.0)
+        intake.setCheaterSpeed(1.0)
+        isFiring = true
+    end
+end
+
+function setAuto(mode)
+    functionMap = {takeShots}
+    autoMode = functionMap[mode]
 end
 
 function hellautonomous()
@@ -102,31 +128,9 @@ function hellautonomous()
     t:Start()
     while wpilib.IsAutonomous() and wpilib.IsEnabled() do
         -- Set up for key shot
-        turret.setFlywheelTargetSpeed(RPM)
-        turret.setHoodTarget(HOOD_TARGET)
-
-            --intake.setVerticalSpeed(1.0)
-            --intake.setCheaterSpeed(1.0)
-        if isFiring then 
-            if turret.getFlywheelFired() then
-                intake.setVerticalSpeed(0)
-                intake.setCheaterSpeed(0)
-                t:Reset()
-                t:Start()
-                isFiring = false
-            end
-        elseif t:Get() > delay then
-               intake.setVerticalSpeed(1.0)
-               intake.setCheaterSpeed(1.0)
-               isFiring = true
+        if autoMode then
+            autoMode(t) 
         end
---[[
-        if (time > 5 and time < 9) or time > 12 then
-            intake.setLowered(true)
-        else
-            intake.setLowered(false)
-        end
-        --]]
 
         -- Update
         turret.update()
