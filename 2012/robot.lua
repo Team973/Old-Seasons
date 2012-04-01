@@ -24,7 +24,7 @@ local TELEOP_LOOP_LAG = 0.005
 local watchdogEnabled = false
 local feedWatchdog, enableWatchdog, disableWatchdog
 
-local disabledIdle, hellautonomous, teleop, calibrateAll
+local disabledIdle, hellautonomous, teleop, runDrive, calibrateAll
 local controlMap, fudgeControlMap, strafe, rotation, gear, presetShift
 local deploySkid, deployStinger
 local zeroMode, possessionTimer, rotationHoldTimer
@@ -205,12 +205,6 @@ function teleop()
             gearSwitch:Set(false)
         end
 
-        local gyroAngle = drive.normalizeAngle(-gyro:GetAngle())
-        if not gyroOkay then
-            gyroAngle = 0
-        end
-        
-        dashboard:PutInt("Gyro Angle", gyroAngle)
 
         if zeroMode then
             for _, wheel in pairs(wheels) do
@@ -222,7 +216,6 @@ function teleop()
                 wheel.driveMotor:Set(0)
             end
         elseif fudgeMode then
-            -- Fudge mode
             for _, wheel in pairs(wheels) do
                 wheel.driveMotor:Set(0)
                 wheel.turnMotor:Set(0)
@@ -232,75 +225,86 @@ function teleop()
                 fudgeWheel.turnMotor:Set(fudgeMovement)
             end
         else
-            local appliedGyro = gyroAngle
-            local appliedRotation = rotation
-            local deadband = 0.1
-
-            if driveMode ~= 0 then
-                appliedGyro = 0
-            end
-            
-            -- Keep rotation steady in deadband
-            if rotation == 0 then
-                if rotationPID.target == nil then
-                    if rotationHoldTimer == nil then
-                        rotationHoldTimer = wpilib.Timer()
-                        rotationHoldTimer:Start()
-                    elseif rotationHoldTimer:Get() > 0.5 then
-                        rotationHoldTimer:Stop()
-                        rotationHoldTimer = nil
-                        rotationPID.target = gyroAngle
-                        rotationPID:start()
-                    end
-                    appliedRotation = 0
-                else
-                    appliedRotation = rotationPID:update(gyroAngle)
-                end
-            else
-                rotationPID.target = nil
-                rotationPID:stop()
-            end
-            
-            local wheelValues = drive.calculate(
-                strafe.x, strafe.y, appliedRotation, appliedGyro,
-                31.5,     -- wheel base (in inches)
-                21.4      -- track width (in inches)
-            )
-
-            for wheelName, value in pairs(wheelValues) do
-                local wheel = wheels[wheelName]
-
-                local currentTurn = wheel.turnEncoder:GetDistance()
-
-                if strafe.x ~= 0 or strafe.y ~= 0 or rotation ~= 0 then
-                    wheel.turnPID.target = drive.normalizeAngle(value.angleDeg)
-                    local driveScale = drive.driveScale(drive.calculateTurn(currentTurn, wheel.turnPID.target))
-                    wheel.driveMotor:Set(value.speed * driveScale)
-                else
-                    -- In deadband
-                    if driveMode == 1 then
-                        wheel.turnPID.target = 0
-                    elseif driveMode == 2 then
-                        wheel.turnPID.target = 90 
-                    else
-                        if wheelName == "leftFront" or wheelName == "rightBack" then
-                            wheel.turnPID.target = 45
-                        else
-                            wheel.turnPID.target = -45
-                        end
-                    end
-                    wheel.driveMotor:Set(0)
-                end
-
-                wheel.turnPID:update(currentTurn)
-                wheel.turnMotor:Set(wheel.turnPID.output)
-            end
+            runDrive(strafe, rotation, driveMode)
         end
 
         -- Iteration cleanup
         feedWatchdog()
         wpilib.Wait(TELEOP_LOOP_LAG)
         feedWatchdog()
+    end
+end
+
+function runDrive(strafe, rotation, driveMode)
+    driveMode = driveMode or 0
+
+    local gyroAngle = drive.normalizeAngle(-gyro:GetAngle())
+    if not gyroOkay then
+        gyroAngle = 0
+    end
+    dashboard:PutInt("Gyro Angle", gyroAngle)
+
+    local appliedGyro = gyroAngle
+    local appliedRotation = rotation
+
+    if driveMode ~= 0 then
+        appliedGyro = 0
+    end
+    
+    -- Keep rotation steady in deadband
+    if rotation == 0 then
+        if rotationPID.target == nil then
+            if rotationHoldTimer == nil then
+                rotationHoldTimer = wpilib.Timer()
+                rotationHoldTimer:Start()
+            elseif rotationHoldTimer:Get() > 0.5 then
+                rotationHoldTimer:Stop()
+                rotationHoldTimer = nil
+                rotationPID.target = gyroAngle
+                rotationPID:start()
+            end
+            appliedRotation = 0
+        else
+            appliedRotation = rotationPID:update(gyroAngle)
+        end
+    else
+        rotationPID.target = nil
+        rotationPID:stop()
+    end
+    
+    local wheelValues = drive.calculate(
+        strafe.x, strafe.y, appliedRotation, appliedGyro,
+        31.5,     -- wheel base (in inches)
+        21.4      -- track width (in inches)
+    )
+
+    for wheelName, value in pairs(wheelValues) do
+        local wheel = wheels[wheelName]
+
+        local currentTurn = wheel.turnEncoder:GetDistance()
+
+        if strafe.x ~= 0 or strafe.y ~= 0 or rotation ~= 0 then
+            wheel.turnPID.target = drive.normalizeAngle(value.angleDeg)
+            local driveScale = drive.driveScale(drive.calculateTurn(currentTurn, wheel.turnPID.target))
+            wheel.driveMotor:Set(value.speed * driveScale)
+        else
+            -- In deadband
+            if driveMode == 1 then
+                wheel.turnPID.target = 0
+            elseif driveMode == 2 then
+                wheel.turnPID.target = 90 
+            else
+                if wheelName == "leftFront" or wheelName == "rightBack" then
+                    wheel.turnPID.target = 45
+                else
+                    wheel.turnPID.target = -45
+                end
+            end
+            wheel.driveMotor:Set(0)
+        end
+
+        wheel.turnPID:update(currentTurn)
+        wheel.turnMotor:Set(wheel.turnPID.output)
     end
 end
 
