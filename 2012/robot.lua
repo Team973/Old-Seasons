@@ -122,11 +122,9 @@ function hellautonomous()
         local time = t:Get()
         if time < 2 then 
             intake.setVerticalSpeed(0.0)
-            intake.setCheaterSpeed(0.0)
             intake.setIntake(0)
         else
             intake.setVerticalSpeed(0.3)
-            intake.setCheaterSpeed(1.0)
             intake.setIntake(1)
         end
         --[[
@@ -580,7 +578,6 @@ controlMap =
             intake.setIntake(deadband(axis, 0.2))
         end,
         ["ry"] = function(axis)
-            intake.setCheaterSpeed(deadband(-axis, 0.2))
             intake.setVerticalSpeed(deadband(-axis, 0.2))
         end,
         ["hatx"] = function(axis)
@@ -605,7 +602,6 @@ controlMap =
             tick=function(held)
                 if held and not turret.getFlywheelFired() then
                     intake.setVerticalSpeed(1.0)
-                    intake.setCheaterSpeed(1.0)
                 end
             end,
         },
@@ -616,6 +612,7 @@ controlMap =
             rpmPreset = rpmPreset + 100
         end,
         [9] = {tick=function(held) turret.allowRotate = held end},   
+        [10] = {tick=intake.setRepack},
         ["ltrigger"] = {tick=function(held)
             if held then
                 intake.setIntake(1.0)

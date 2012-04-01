@@ -5,6 +5,7 @@
 --codriver intake up down
 --fire cheaterroller + verticalintake up at slow speed
 
+local math = require("math")
 local wpilib = require("wpilib")
 
 module(...)
@@ -13,7 +14,7 @@ local lowered = false
 local frontSpeed = 0 -- front intake roller
 local sideSpeed = 0 -- side intake roller
 local verticalSpeed = 0
-local cheaterSpeed = 0
+local repack = false
 
 local verticalConveyer = wpilib.Victor(2,4)
 local cheaterRoller = wpilib.Victor(2,5)
@@ -25,8 +26,8 @@ function setVerticalSpeed(speed)
     verticalSpeed = speed
 end
 
-function setCheaterSpeed(speed)
-    cheaterSpeed = speed
+function setRepack(val)
+    repack = val
 end
 
 function toggleRaise()
@@ -44,16 +45,24 @@ function update(turretReady)
     frontIntake:Set(frontSpeed)
 
     intakeSolenoid:Set(lowered)
+    if repack then
+        verticalSpeed = -1
+        cheaterRoller:Set(1)
+    elseif math.abs(frontSpeed) > math.abs(verticalSpeed) then
+        cheaterRoller:Set(frontSpeed)
+    elseif cheatSpeed == vericalSpeed then
+        cheaterRoller:Set(verticalSpeed)
+    end
     
     verticalConveyer:Set(verticalSpeed)
-    cheaterRoller:Set(cheaterSpeed)
     dashboard:PutDouble("Vertical Speed", verticalSpeed)
-    dashboard:PutDouble("Cheater Speed", cheaterSpeed)
+    dashboard:PutDouble("Cheater Speed", cheaterRoller:Get())
 end
 
 function setIntake(speed)
 	frontSpeed = speed
 	sideSpeed = speed
+
 end
 
 function intakeStop()
