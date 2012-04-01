@@ -20,6 +20,10 @@ local cheaterRoller = wpilib.Victor(2,5)
 local sideIntake = wpilib.Victor(2,1)
 local frontIntake = wpilib.Victor(2,2)
 local intakeSolenoid = wpilib.Solenoid(2)
+local verticalConveyerEncoder = wpilib.Encoder(2,7,2,8)
+local conveyorPID = pid.new(0, 0, 0) 
+
+verticalConveyerEncoder:Start()
 
 function setVerticalSpeed(speed)
     verticalSpeed = speed
@@ -49,7 +53,14 @@ function update(turretReady)
     cheaterRoller:Set(cheaterSpeed)
     dashboard:PutDouble("Vertical Speed", verticalSpeed)
     dashboard:PutDouble("Cheater Speed", cheaterSpeed)
+    conveyerPID:update(verticalConveyerEncoder:Get())
+    verticalConveyer:Set(conveyerPID.output)
 end
+
+function ConveyerUp()
+    conveyerPID.target = conveyerPID.target + 12
+end
+    
 
 function setIntake(speed)
 	frontSpeed = speed
