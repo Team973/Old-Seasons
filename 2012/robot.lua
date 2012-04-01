@@ -35,6 +35,7 @@ local compressor, pressureSwitch, gearSwitch, stinger, gyro
 local frontSkid
 local wheels
 local rotationPID
+local squishMeter
 local driveMode = 0
 
 -- End Declarations
@@ -185,6 +186,7 @@ function teleop()
         dashboard:PutInt("Flywheel Speed(Int)", turret.getFlywheelSpeed())
         dashboard:PutInt("Flywheel Speed(Filter Int)", turret.getFlywheelFilterSpeed())
         dashboard:PutDouble("Flywheel Target Speed", turret.getFlywheelTargetSpeed())
+        dashboard:PutDouble("Squish Meter", squishMeter:GetVoltage())
 
         -- Drive
         if gear == "low" then
@@ -374,6 +376,7 @@ pressureSwitch = wpilib.DigitalInput(1, 14)
 gearSwitch = wpilib.Solenoid(1, 1)
 frontSkid = wpilib.Solenoid(3)
 stinger = wpilib.Solenoid(7)
+squishMeter = wpilib.AnalogChannel(5)
 
 local turnPIDConstants = {p=0.06, i=0, d=0}
 wheels = {
