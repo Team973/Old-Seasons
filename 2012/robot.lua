@@ -32,6 +32,7 @@ local fudgeMode, fudgeWheel, fudgeMovement
 local gyroOkay
 
 local compressor, pressureSwitch, gearSwitch, stinger, gyro
+local followerEncoderX, followerEncoderY
 local frontSkid
 local wheels
 local rotationPID
@@ -188,6 +189,11 @@ function teleop()
         dashboard:PutDouble("Flywheel Target Speed", turret.getFlywheelTargetSpeed())
         dashboard:PutDouble("Squish Meter", squishMeter:GetVoltage())
 
+        local followerEncoderCPR = 360
+        local followerWheelDiameter = 2.75 -- inches
+        dashboard:PutInt("Follower X", followerEncoderX:Get() / followerEncoderCPR * (followerWheelDiameter * math.pi) / 12)
+        dashboard:PutInt("Follower Y", followerEncoderY:Get() / followerEncoderCPR * (followerWheelDiameter * math.pi) / 12)
+
         -- Drive
         if gear == "low" then
             gearSwitch:Set(true)
@@ -199,7 +205,7 @@ function teleop()
             gearSwitch:Set(false)
         end
 
-        local gyroAngle = -gyro:GetAngle()
+        local gyroAngle = drive.normalizeAngle(-gyro:GetAngle())
         if not gyroOkay then
             gyroAngle = 0
         end
@@ -226,7 +232,7 @@ function teleop()
                 fudgeWheel.turnMotor:Set(fudgeMovement)
             end
         else
-            local appliedGyro = -gyroAngle
+            local appliedGyro = gyroAngle
             local appliedRotation = rotation
             local deadband = 0.1
 
@@ -377,6 +383,12 @@ gearSwitch = wpilib.Solenoid(1, 1)
 frontSkid = wpilib.Solenoid(3)
 stinger = wpilib.Solenoid(7)
 squishMeter = wpilib.AnalogChannel(5)
+
+followerEncoderX = wpilib.Encoder(2, 11, 2, 12, false, wpilib.CounterBase_k1X)
+followerEncoderY = wpilib.Encoder(2, 13, 2, 14, false, wpilib.CounterBase_k1X)
+
+followerEncoderX:Start()
+followerEncoderY:Start()
 
 local turnPIDConstants = {p=0.06, i=0, d=0}
 wheels = {
