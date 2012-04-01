@@ -19,7 +19,7 @@ local flywheelSpeedFilter = {
     weight=0.2,
 }
 local flywheelFired = false
-flywheelPID = pid.new(0.0025, 0.0, -0.001,
+flywheelPID = pid.new(0.001, 0.0, -0.001,
     nil,
     function()
         return flywheelSpeedFilter:average()
@@ -28,7 +28,7 @@ flywheelPID = pid.new(0.0025, 0.0, -0.001,
 local dashboard = wpilib.SmartDashboard_GetInstance()
 
 local flywheelTargetSpeed = 0.0
-local flywheelFeedforward = 7800
+local flywheelFeedforward = math.huge
 local in4 = wpilib.DigitalInput(2, 4)
 local in5 = wpilib.DigitalInput(2, 5)
 local in6 = wpilib.DigitalInput(2, 6)
