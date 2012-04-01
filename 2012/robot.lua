@@ -36,6 +36,7 @@ local frontSkid
 local wheels
 local rotationPID
 local driveMode = 0
+local delay
 
 -- End Declarations
 
@@ -85,12 +86,18 @@ function disabledIdle()
     end
 end
 
+function changedelay(newDelay)
+    delayMap = {.5, 1, 2}
+    delay = delayMap[newDelay]
+end
+
 function hellautonomous()
     disableWatchdog()
 
+    local delay = delay or 1 
     local RPM = 6400
     local HOOD_TARGET = 950
-
+    local isFiring = false
     local t = wpilib.Timer()
     t:Start()
     while wpilib.IsAutonomous() and wpilib.IsEnabled() do
@@ -98,17 +105,22 @@ function hellautonomous()
         turret.setFlywheelTargetSpeed(RPM)
         turret.setHoodTarget(HOOD_TARGET)
 
-        local time = t:Get()
-        if time < 2 then 
-            intake.setVerticalSpeed(0.0)
-            intake.setCheaterSpeed(0.0)
-            intake.setIntake(0)
-        else
-            intake.setVerticalSpeed(0.3)
-            intake.setCheaterSpeed(1.0)
-            intake.setIntake(1)
+            --intake.setVerticalSpeed(1.0)
+            --intake.setCheaterSpeed(1.0)
+        if isFiring then 
+            if turret.getFlywheelFired() then
+                intake.setVerticalSpeed(0)
+                intake.setCheaterSpeed(0)
+                t:Reset()
+                t:Start()
+                isFiring = false
+            end
+        elseif t:Get() > delay then
+               intake.setVerticalSpeed(1.0)
+               intake.setCheaterSpeed(1.0)
+               isFiring = true
         end
-        --[[
+--[[
         if (time > 5 and time < 9) or time > 12 then
             intake.setLowered(true)
         else
@@ -130,6 +142,7 @@ function hellautonomous()
 
         wpilib.Wait(TELEOP_LOOP_LAG)
     end
+    turret.setFlywheelTargetSpeed(0)
 
     turret.fullStop()
     intake.fullStop()
@@ -476,6 +489,7 @@ local function presetValues (flywheelRPM, hoodAngle, turretAngle)
     turret.setTargetAngle(turretAngle)
 end
 
+
 controlMap =
 {
     -- Joystick 1
@@ -560,12 +574,12 @@ controlMap =
         [5] = {tick=function(held) intake.setLowered(held) end},   
         [6] = {
             down=turret.clearFlywheelFired,
-            tick=function(held)
+            tick=function(held) 
                 if held and not turret.getFlywheelFired() then
                     intake.setVerticalSpeed(1.0)
                     intake.setCheaterSpeed(1.0)
                 end
-            end,
+            end
         },
         [7] = function()
             rpmPreset = rpmPreset - 100
