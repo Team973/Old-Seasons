@@ -272,7 +272,7 @@ function teleop()
 
                 local currentTurn = wheel.turnEncoder:GetDistance()
 
-                if strafe.x ~= 0 or strafe.y ~= 0 or appliedRotation ~= 0 then
+                if strafe.x ~= 0 or strafe.y ~= 0 or rotation ~= 0 then
                     wheel.turnPID.target = drive.normalizeAngle(value.angleDeg)
                     local driveScale = drive.driveScale(drive.calculateTurn(currentTurn, wheel.turnPID.target))
                     wheel.driveMotor:Set(value.speed * driveScale)
