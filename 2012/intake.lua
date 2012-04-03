@@ -50,7 +50,7 @@ function update(turretReady)
         cheaterRoller:Set(1)
     elseif math.abs(frontSpeed) > math.abs(verticalSpeed) then
         cheaterRoller:Set(frontSpeed)
-    elseif cheatSpeed == vericalSpeed then
+    else
         cheaterRoller:Set(verticalSpeed)
     end
     
