@@ -37,6 +37,8 @@ local frontSkid
 local wheels
 local squishMeter
 local driveMode = 0
+local delay
+local autoMode
 
 -- End Declarations
 
@@ -86,6 +88,41 @@ function disabledIdle()
     end
 end
 
+function changedelay(newDelay)
+    delayMap = {.5, 1, 2}
+    delay = delayMap[newDelay]
+end
+
+function takeShots(t) 
+    local RPM = 6400
+    local HOOD_TARGET = 950
+    local isFiring = false
+
+    local delay = delay or 2
+    
+    turret.setFlywheelTargetSpeed(RPM)
+    turret.setHoodTarget(HOOD_TARGET)
+
+    if isFiring then 
+        if turret.getFlywheelFired() then
+            intake.setVerticalSpeed(0)
+            t:Reset()
+            t:Start()
+            isFiring = false
+        end
+    elseif t:Get() > delay then
+        intake.setVerticalSpeed(1.0)
+        isFiring = true
+    end
+end
+
+function setAuto(mode)
+    functionMap = {takeShots}
+    autoMode = functionMap[mode]
+end
+
+setAuto(1)
+
 function hellautonomous()
     disableWatchdog()
 
@@ -97,9 +134,6 @@ function hellautonomous()
     followerEncoderX:Reset()
     followerEncoderY:Reset()
     --]]
-
-    local RPM = 6400
-    local HOOD_TARGET = 950
 
     local t = wpilib.Timer()
     t:Start()
@@ -115,24 +149,9 @@ function hellautonomous()
         --]]
 
         -- Set up for key shot
-        turret.setFlywheelTargetSpeed(RPM)
-        turret.setHoodTarget(HOOD_TARGET)
-
-        local time = t:Get()
-        if time < 2 then 
-            intake.setVerticalSpeed(0.0)
-            intake.setIntake(0)
-        else
-            intake.setVerticalSpeed(0.3)
-            intake.setIntake(1)
+        if autoMode then
+            autoMode(t) 
         end
-        --[[
-        if (time > 5 and time < 9) or time > 12 then
-            intake.setLowered(true)
-        else
-            intake.setLowered(false)
-        end
-        --]]
 
         -- Update
         turret.update()
