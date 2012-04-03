@@ -160,7 +160,7 @@ function hellautonomous()
         --]]
 
         -- Set up for key shot
-        autoMode(t,0,0,0) 
+        autoMode(t:Get(),3,0,0) 
 
         -- Update
         turret.update()
