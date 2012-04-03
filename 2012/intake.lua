@@ -6,6 +6,7 @@
 --fire cheaterroller + verticalintake up at slow speed
 
 local wpilib = require("wpilib")
+local pid = require("pid")
 
 module(...)
 
@@ -21,7 +22,7 @@ local sideIntake = wpilib.Victor(2,1)
 local frontIntake = wpilib.Victor(2,2)
 local intakeSolenoid = wpilib.Solenoid(2)
 local verticalConveyerEncoder = wpilib.Encoder(2,7,2,8)
-local conveyorPID = pid.new(0, 0, 0) 
+local conveyerPID = pid.new(0, 0, 0) 
 
 verticalConveyerEncoder:Start()
 
