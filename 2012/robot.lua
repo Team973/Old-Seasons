@@ -37,8 +37,6 @@ local frontSkid
 local wheels
 local squishMeter
 local driveMode = 0
-local delay
-local autoMode
 
 -- End Declarations
 
@@ -88,41 +86,54 @@ function disabledIdle()
     end
 end
 
-function changedelay(newDelay)
-    delayMap = {.5, 1, 2}
-    delay = delayMap[newDelay]
+local fireTimer = nil
+local FIRE_COOLDOWN = 1.0
+
+function fire()
+    if fireTimer and fireTimer:Get() > FIRE_COOLDOWN then
+        fireTimer = nil
+    end
+
+    if fireTimer == nil then
+        -- Ready to fire
+        intake.setVerticalSpeed(1)
+        if turret.getFlywheelFired() then 
+            fireTimer = wpilib.Timer() 
+            fireTimer:Start()
+        end
+    else
+        -- Cooldown
+        intake.setVerticalSpeed(0)
+    end
+    turret.clearFlywheelFired()
 end
 
-function takeShots(t) 
+function stopFire()
+    if fireTimer and fireTimer:Get() > FIRE_COOLDOWN then
+        fireTimer = nil
+    end
+
+    intake.setVerticalSpeed(0)
+    turret.clearFlywheelFired()
+end
+
+function sittingKeyshot(t, Delay_1, Delay_2, Delay_3)
     local RPM = 6400
     local HOOD_TARGET = 950
-    local isFiring = false
-
-    local delay = delay or 2
-    
-    turret.setFlywheelTargetSpeed(RPM)
     turret.setHoodTarget(HOOD_TARGET)
-
-    if isFiring then 
-        if turret.getFlywheelFired() then
-            intake.setVerticalSpeed(0)
-            t:Reset()
-            t:Start()
-            isFiring = false
-        end
-    elseif t:Get() > delay then
-        intake.setVerticalSpeed(1.0)
-        isFiring = true
+    if t < Delay_1 - 2 then
+        turret.setFlywheelTargetSpeed(0)
+        stopFire()
+    elseif t < Delay_1 then
+        turret.setFlywheelTargetSpeed(RPM)
+        stopFire()
+    else
+        turret.setFlywheelTargetSpeed(RPM)
+        fire()
     end
 end
 
-function setAuto(mode)
-    functionMap = {takeShots}
-    autoMode = functionMap[mode]
-end
-
-setAuto(1)
-
+local autoMode = sittingKeyshot
 function hellautonomous()
     disableWatchdog()
 
@@ -149,9 +160,7 @@ function hellautonomous()
         --]]
 
         -- Set up for key shot
-        if autoMode then
-            autoMode(t) 
-        end
+        autoMode(t,0,0,0) 
 
         -- Update
         turret.update()
