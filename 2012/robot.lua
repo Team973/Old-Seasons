@@ -91,7 +91,7 @@ function hellautonomous()
     disableWatchdog()
 
     --[[
-    local autodrivePID = pid.new(0.5)
+    local autodrivePID = pid.new(1.0)
     autodrivePID:start()
     autodrivePID.target = 4.0
     autodrivePID.min, autodrivePID.max = -1, 1
@@ -109,7 +109,7 @@ function hellautonomous()
         -- Drive
         --[[
         autodrivePID:update(convertFollowerToFeet(followerEncoderY:Get()))
-        runDrive({x=0, y=autodrivePID.output}, 0)
+        runDrive({x=0, y=autodrivePID.output}, 0, 1)
         dashboard:PutDouble("Follower X", convertFollowerToFeet(followerEncoderX:Get()))
         dashboard:PutDouble("Follower Y", convertFollowerToFeet(followerEncoderY:Get()))
         dashboard:PutDouble("Autodrive Output", autodrivePID.output)
@@ -707,5 +707,6 @@ gyroOkay = true
 dashboard:PutBoolean("Gyro Okay", true)
 
 rotationPID = pid.new(0.01, 0, 0)
+rotationPID.min, rotationPID.max = -1, 1
 
 -- vim: ft=lua et ts=4 sts=4 sw=4
