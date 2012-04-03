@@ -89,13 +89,16 @@ function disabledIdle()
     end
 end
 
-
 function changedelay(newDelay)
     delayMap = {.5, 1, 2}
     delay = delayMap[newDelay]
 end
 
 function takeShots(t) 
+    local RPM = 6400
+    local HOOD_TARGET = 950
+    local isFiring = false
+    
     turret.setFlywheelTargetSpeed(RPM)
     turret.setHoodTarget(HOOD_TARGET)
 
@@ -132,10 +135,6 @@ function hellautonomous()
     followerEncoderX:Reset()
     followerEncoderY:Reset()
     --]]
-
-    local RPM = 6400
-    local HOOD_TARGET = 950
-    local isFiring = false
 
     local t = wpilib.Timer()
     t:Start()
