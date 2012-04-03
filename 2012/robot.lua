@@ -90,6 +90,7 @@ local fireTimer = nil
 local FIRE_COOLDOWN = 1.0
 
 function fire()
+    local fireCount = 0
     if fireTimer and fireTimer:Get() > FIRE_COOLDOWN then
         fireTimer = nil
     end
@@ -100,12 +101,14 @@ function fire()
         if turret.getFlywheelFired() then 
             fireTimer = wpilib.Timer() 
             fireTimer:Start()
+            fireCount = 1
         end
     else
         -- Cooldown
         intake.setVerticalSpeed(0)
     end
     turret.clearFlywheelFired()
+    return fireCount
 end
 
 function stopFire()
@@ -116,6 +119,8 @@ function stopFire()
     intake.setVerticalSpeed(0)
     turret.clearFlywheelFired()
 end
+
+local fireCount = 0
 
 function sittingKeyshot(t, Delay_1, Delay_2, Delay_3)
     local RPM = 6400
@@ -129,13 +134,19 @@ function sittingKeyshot(t, Delay_1, Delay_2, Delay_3)
         stopFire()
     else
         turret.setFlywheelTargetSpeed(RPM)
-        fire()
+        if fireCount < 2 then
+            fireCount = fireCount + fire()
+        else
+            stopFire()
+        end
     end
 end
+
 
 local autoMode = sittingKeyshot
 function hellautonomous()
     disableWatchdog()
+    fireCount = 0
 
     --[[
     local autodrivePID = pid.new(1.0)
