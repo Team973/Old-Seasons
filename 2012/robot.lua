@@ -138,6 +138,7 @@ function sittingKeyshot(t, Delay_1, Delay_2, Delay_3)
             fireCount = fireCount + fire()
         else
             stopFire()
+            turret.setFlywheelTargetSpeed(0)
         end
     end
 end
