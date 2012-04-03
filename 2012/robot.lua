@@ -165,14 +165,15 @@ function keyShotWithCoOpBridge(t, Delay_1, Delay_2, Delay_3)
         turret.setFlywheelTargetSpeed(KEY_RPM)
         if fireCount < 2 then
             fireCount = fireCount + fire()
+            runDrive({x=0, y=0}, 0, 1)
         else
             stopFire() 
+            autodrivePID.target = -4.0
+            runDrive({x=0, y=autodrivePID.output}, 0, 1)
         end
-        autodrivePID.target = -4.0
-        runDrive({x=0, y=autodrivePID.output}, 0, 1)
         intake.setIntake(1.0)
     else
-        turret.setFlywheelTargetSpeed(BRIDGE)
+        turret.setFlywheelTargetSpeed(BRIDGE_RPM)
         runDrive({x=0, y=autodrivePID.output}, 0, 1)
         fireCount = fireCount + fire()
         intake.setIntake(1.0)
@@ -180,7 +181,7 @@ function keyShotWithCoOpBridge(t, Delay_1, Delay_2, Delay_3)
 end
 
 
-local autoMode = sittingKeyshot
+local autoMode = keyShotWithCoOpBridge
 function hellautonomous()
     disableWatchdog()
     fireCount = 0
@@ -208,7 +209,7 @@ function hellautonomous()
         --]]
 
         -- Set up for key shot
-        autoMode(t:Get(),3,0,0) 
+        autoMode(t:Get(),3,10,0) 
 
         -- Update
         turret.update()
