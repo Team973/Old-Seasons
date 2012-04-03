@@ -121,6 +121,8 @@ function stopFire()
 end
 
 local fireCount = 0
+local autodrivePID = pid.new(1.0)
+autodrivePID.min, autodrivePID.max = -1, 1
 
 function sittingKeyshot(t, Delay_1, Delay_2, Delay_3)
     local RPM = 6400
@@ -142,35 +144,55 @@ function sittingKeyshot(t, Delay_1, Delay_2, Delay_3)
     end
 end
 
+function keyShotWithCoOpBridge(t, Delay_1, Delay_2, Delay_3)
+    local BRIDGE_RPM = 7000
+    local HOOD_TARGET = 950
+    local KEY_RPM = 6400
+    autodrivePID:update(convertFollowerToFeet(followerEncoderY:Get()))
+    if t < Delay_1 - 2 then
+        turret.setFlywheelTargetSpeed(0)
+        stopFire()
+        runDrive({x=0, y=0}, 0, 1)
+        intake.setIntake(0.0)
+    elseif t < Delay_1 then
+        turret.setFlywheelTargetSpeed(KEY_RPM)
+        stopFire()
+        runDrive({x=0, y=0}, 0, 1)
+        intake.setIntake(0.0)
+    elseif t < Delay_2 then
+        --TODO: Lower mantis
+        turret.setFlywheelTargetSpeed(KEY_RPM)
+        if fireCount < 2 then
+            fireCount = fireCount + fire()
+        else
+            stopFire() 
+        end
+        autodrivePID.target = -4.0
+        runDrive({x=0, y=autodrivePID.output}, 0, 1)
+        intake.setIntake(1.0)
+    else
+        turret.setFlywheelTargetSpeed(BRIDGE)
+        runDrive({x=0, y=autodrivePID.output}, 0, 1)
+        fireCount = fireCount + fire()
+        intake.setIntake(1.0)
+    end
+end
+
 
 local autoMode = sittingKeyshot
 function hellautonomous()
     disableWatchdog()
     fireCount = 0
 
-    --[[
-    local autodrivePID = pid.new(1.0)
     autodrivePID:start()
-    autodrivePID.target = 4.0
-    autodrivePID.min, autodrivePID.max = -1, 1
     followerEncoderX:Reset()
     followerEncoderY:Reset()
-    --]]
 
     local t = wpilib.Timer()
     t:Start()
 
     while wpilib.IsAutonomous() and wpilib.IsEnabled() do
-        -- Drive
-        --[[
-        autodrivePID:update(convertFollowerToFeet(followerEncoderY:Get()))
-        runDrive({x=0, y=autodrivePID.output}, 0, 1)
-        dashboard:PutDouble("Follower X", convertFollowerToFeet(followerEncoderX:Get()))
-        dashboard:PutDouble("Follower Y", convertFollowerToFeet(followerEncoderY:Get()))
-        dashboard:PutDouble("Autodrive Output", autodrivePID.output)
-        --]]
-
-        -- Set up for key shot
+        -- Run auto function
         autoMode(t,0,0,0) 
 
         -- Update
