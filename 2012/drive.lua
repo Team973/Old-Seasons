@@ -179,6 +179,13 @@ function resetFollowerPosition()
     followerEncoderY:Reset()
 end
 
+function isFollowerStopped()
+    local THRESHOLD = 0.1 -- feet per second
+    local feetPerSecondX = convertFollowerToFeet(1 / followerEncoderX:GetPeriod())
+    local feetPerSecondY = convertFollowerToFeet(1 / followerEncoderY:GetPeriod())
+    return math.abs(feetPerSecondX) < THRESHOLD or math.abs(feetPerSecondY) < THRESHOLD
+end
+
 local function LinearVictor(...)
     return linearize.wrap(wpilib.Victor(...))
 end
