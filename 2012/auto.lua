@@ -12,10 +12,32 @@ local dashboard = wpilib.SmartDashboard_GetInstance()
 
 local autoMode
 local fireCount = 0
-local autodrivePIDX = pid.new(0.1)
+
+local driveGains = {p=0.5, i=0, d=0.01}
+local stableGains = {p=0.1, i=0, d=0}
+local autodrivePIDX = pid.new()
 autodrivePIDX.min, autodrivePIDX.max = -1, 1
-local autodrivePIDY = pid.new(0.5, 0.0, 0.01)
+local autodrivePIDY = pid.new()
 autodrivePIDY.min, autodrivePIDY.max = -1, 1
+
+local function setDriveAxis(axis)
+    if axis == "x" then
+        autodrivePIDX.p = driveGains.p
+        autodrivePIDX.i = driveGains.i
+        autodrivePIDX.d = driveGains.d
+        autodrivePIDY.p = stableGains.p
+        autodrivePIDY.i = stableGains.i
+        autodrivePIDY.d = stableGains.d
+    else
+        autodrivePIDX.p = stableGains.p
+        autodrivePIDX.i = stableGains.i
+        autodrivePIDX.d = stableGains.d
+        autodrivePIDY.p = driveGains.p
+        autodrivePIDY.i = driveGains.i
+        autodrivePIDY.d = driveGains.d
+    end
+end
+setDriveAxis("y")
 
 local fireTimer = nil
 local FIRE_COOLDOWN = 1.0
@@ -74,6 +96,14 @@ function stopFire()
     turret.clearFlywheelFired()
 end
 
+-- For each autonomous mode, make sure you set:
+--[[
+1. Drive
+2. Flywheel Speed
+3. Intake speed
+4. Fire/stopFire
+--]]
+
 function sittingKeyshot(t, Delay_1, Delay_2, Delay_3)
     local RPM = 6400
     local HOOD_TARGET = 950
@@ -125,6 +155,7 @@ function keyShotWithCoOpBridge(t, Delay_1, Delay_2, Delay_3)
             stopFire() 
             autodrivePIDX.target = 0.0
             autodrivePIDY.target = -4.0
+            setDriveAxis("y")
             drive.run({x=autodrivePIDX.output, y=autodrivePIDY.output}, 0, 1)
         end
         intake.setIntake(1.0)
@@ -137,6 +168,30 @@ function keyShotWithCoOpBridge(t, Delay_1, Delay_2, Delay_3)
         end
         fireCount = fireCount + fire()
         intake.setIntake(1.0)
+    end
+end
+
+function lshape(t, Delay_1, Delay_2, Delay_3)
+    local posx, posy = drive.getFollowerPosition()
+    autodrivePIDX:update(posx)
+    autodrivePIDY:update(posy)
+    dashboard:PutDouble("Follower X", posx)
+    dashboard:PutDouble("Follower Y", posy)
+
+    intake.setIntake(0.0)
+    turret.setFlywheelTargetSpeed(0)
+    stopFire()
+
+    if t < Delay_1 then
+        autodrivePIDX.target = 0.0
+        autodrivePIDY.target = -4.0
+        setDriveAxis("y")
+        drive.run({x=autodrivePIDX.output, y=autodrivePIDY.output}, 0, 1)
+    else
+        autodrivePIDX.target = 4.0
+        autodrivePIDY.target = -4.0
+        setDriveAxis("x")
+        drive.run({x=autodrivePIDX.output, y=autodrivePIDY.output}, 0, 1)
     end
 end
 
