@@ -5,11 +5,10 @@ local wpilib = require("wpilib")
 -- Inject WPILib timer object into PID
 pid.PID.timerNew = wpilib.Timer
 
+local auto = require("auto")
 local controls = require("controls")
 local drive = require("drive")
 local intake = require("intake")
-local lcd = require("lcd")
-local linearize = require("linearize")
 local math = require("math")
 local turret = require("turret")
 
@@ -24,26 +23,20 @@ local TELEOP_LOOP_LAG = 0.005
 local watchdogEnabled = false
 local feedWatchdog, enableWatchdog, disableWatchdog
 
-local disabledIdle, hellautonomous, teleop, runDrive, calibrateAll
-local controlMap, fudgeControlMap, strafe, rotation, gear, presetShift
+local disabledIdle, hellautonomous, teleop, updateCompressor
+local controlMap, fudgeControlMap, strafe, rotation
 local deploySkid, deployStinger
-local zeroMode, possessionTimer, rotationHoldTimer
+local zeroMode, possessionTimer
 local fudgeMode, fudgeWheel, fudgeMovement
-local gyroOkay
 
-local compressor, pressureSwitch, gearSwitch, stinger, gyro
-local followerEncoderX, followerEncoderY, convertFollowerToFeet
+local compressor, pressureSwitch, stinger
 local frontSkid
-local wheels
-local rotationPID
 local squishMeter
 local driveMode = 0
 
 -- End Declarations
 
 local dashboard = wpilib.SmartDashboard_GetInstance()
-
-dashboard:PutString("mode", "Waiting for Gyro...")
 
 function run()
     turret.initI2C()
@@ -57,7 +50,8 @@ function run()
             repeat wpilib.Wait(0.01) until not wpilib.IsDisabled()
             enableWatchdog()
         elseif wpilib.IsAutonomous() then
-            hellautonomous()
+            disableWatchdog()
+            auto.run(updateCompressor)
             disableWatchdog()
             repeat wpilib.Wait(0.01) until not wpilib.IsAutonomous() or not wpilib.IsEnabled()
             enableWatchdog()
@@ -73,11 +67,11 @@ end
 function disabledIdle()
     local gyroTimer = wpilib.Timer()
 
+    local initAngle = drive.getGyroAngle()
     while wpilib.IsDisabled() do
         if gyroTimer and gyroTimer:Get() > 1 then
-            if gyro:GetAngle() > 10 then
-                gyroOkay = false
-                dashboard:PutBoolean("Gyro Okay", true)
+            if math.abs(drive.getGyroAngle() - initAngle) > 10 then
+                drive.disableGyro()
             end
             gyroTimer:Stop()
             gyroTimer = nil
@@ -87,157 +81,8 @@ function disabledIdle()
     end
 end
 
-local fireTimer = nil
-local FIRE_COOLDOWN = 1.0
-
-function fire()
-    local fireCount = 0
-    if fireTimer and fireTimer:Get() > FIRE_COOLDOWN then
-        fireTimer = nil
-    end
-
-    if fireTimer == nil then
-        -- Ready to fire
-        intake.setVerticalSpeed(1)
-        if turret.getFlywheelFired() then 
-            fireTimer = wpilib.Timer() 
-            fireTimer:Start()
-            fireCount = 1
-        end
-    else
-        -- Cooldown
-        intake.setVerticalSpeed(0)
-    end
-    turret.clearFlywheelFired()
-    return fireCount
-end
-
-function stopFire()
-    if fireTimer and fireTimer:Get() > FIRE_COOLDOWN then
-        fireTimer = nil
-    end
-
-    intake.setVerticalSpeed(0)
-    turret.clearFlywheelFired()
-end
-
-local fireCount = 0
-local autodrivePID = pid.new(1.0)
-autodrivePID.min, autodrivePID.max = -1, 1
-
-function sittingKeyshot(t, Delay_1, Delay_2, Delay_3)
-    local RPM = 6400
-    local HOOD_TARGET = 950
-    turret.setHoodTarget(HOOD_TARGET)
-    if t < Delay_1 - 2 then
-        turret.setFlywheelTargetSpeed(0)
-        stopFire()
-    elseif t < Delay_1 then
-        turret.setFlywheelTargetSpeed(RPM)
-        stopFire()
-    else
-        turret.setFlywheelTargetSpeed(RPM)
-        if fireCount < 2 then
-            fireCount = fireCount + fire()
-        else
-            stopFire()
-            turret.setFlywheelTargetSpeed(0)
-        end
-    end
-end
-
-function keyShotWithCoOpBridge(t, Delay_1, Delay_2, Delay_3)
-    local BRIDGE_RPM = 7000
-    local HOOD_TARGET = 950
-    local KEY_RPM = 6400
-    autodrivePID:update(convertFollowerToFeet(followerEncoderY:Get()))
-    if t < Delay_1 - 2 then
-        turret.setFlywheelTargetSpeed(0)
-        stopFire()
-        runDrive({x=0, y=0}, 0, 1)
-        intake.setIntake(0.0)
-    elseif t < Delay_1 then
-        turret.setFlywheelTargetSpeed(KEY_RPM)
-        stopFire()
-        runDrive({x=0, y=0}, 0, 1)
-        intake.setIntake(0.0)
-    elseif t < Delay_2 then
-        --TODO: Lower mantis
-        turret.setFlywheelTargetSpeed(KEY_RPM)
-        if fireCount < 2 then
-            fireCount = fireCount + fire()
-            runDrive({x=0, y=0}, 0, 1)
-        else
-            stopFire() 
-            autodrivePID.target = -4.0
-            runDrive({x=0, y=autodrivePID.output}, 0, 1)
-        end
-        intake.setIntake(1.0)
-    else
-        turret.setFlywheelTargetSpeed(BRIDGE_RPM)
-        runDrive({x=0, y=autodrivePID.output}, 0, 1)
-        fireCount = fireCount + fire()
-        intake.setIntake(1.0)
-    end
-end
-
-
-local autoMode = keyShotWithCoOpBridge
-function hellautonomous()
-    disableWatchdog()
-    fireCount = 0
-
-    --[[
-    local autodrivePID = pid.new(1.0)
-    autodrivePID:start()
-    autodrivePID.target = 4.0
-    autodrivePID.min, autodrivePID.max = -1, 1
-    followerEncoderX:Reset()
-    followerEncoderY:Reset()
-    --]]
-
-    local t = wpilib.Timer()
-    t:Start()
-
-    while wpilib.IsAutonomous() and wpilib.IsEnabled() do
-        -- Drive
-        --[[
-        autodrivePID:update(convertFollowerToFeet(followerEncoderY:Get()))
-        runDrive({x=0, y=autodrivePID.output}, 0, 1)
-        dashboard:PutDouble("Follower X", convertFollowerToFeet(followerEncoderX:Get()))
-        dashboard:PutDouble("Follower Y", convertFollowerToFeet(followerEncoderY:Get()))
-        dashboard:PutDouble("Autodrive Output", autodrivePID.output)
-        --]]
-
-        -- Set up for key shot
-        autoMode(t:Get(),3,10,0) 
-
-        -- Update
-        turret.update()
-        intake.update()
-
-        -- Pneumatics
-        dashboard:PutBoolean("pressure", pressureSwitch:Get())
-        if pressureSwitch:Get() then
-            compressor:Set(wpilib.Relay_kOff)
-        else
-            compressor:Set(wpilib.Relay_kOn)
-        end
-
-        wpilib.Wait(TELEOP_LOOP_LAG)
-    end
-
-    turret.fullStop()
-    intake.fullStop()
-end
-
 function teleop()
     turret.turnPID:start()
-    for _, wheel in pairs(wheels) do
-        wheel.turnEncoder:Reset()
-        wheel.turnEncoder:Start()
-        wheel.turnPID:start()
-    end
 
     while wpilib.IsOperatorControl() and wpilib.IsEnabled() do
         enableWatchdog()
@@ -247,9 +92,6 @@ function teleop()
             dashboard:PutString("mode", "Running")
         else
             dashboard:PutString("mode", "Fudge Mode")
-        end
-        for _, wheel in pairs(wheels) do
-            dashboard:PutString(wheel.shortName .. ".turnEncoder", wheel.turnEncoder:GetDistance())
         end
 
         -- Read controls
@@ -263,12 +105,7 @@ function teleop()
         stinger:Set(deployStinger)
 
         -- Pneumatics
-        dashboard:PutBoolean("pressure", pressureSwitch:Get())
-        if pressureSwitch:Get() then
-            compressor:Set(wpilib.Relay_kOff)
-        else
-            compressor:Set(wpilib.Relay_kOn)
-        end
+        updateCompressor()
 
         frontSkid:Set(deploySkid)
 
@@ -283,23 +120,13 @@ function teleop()
         dashboard:PutDouble("Flywheel Target Speed", turret.getFlywheelTargetSpeed())
         dashboard:PutDouble("Squish Meter", squishMeter:GetVoltage())
 
-        dashboard:PutDouble("Follower X", convertFollowerToFeet(followerEncoderX:Get()))
-        dashboard:PutDouble("Follower Y", convertFollowerToFeet(followerEncoderY:Get()))
+        local followerX, followerY = drive.getFollowerPosition()
+        dashboard:PutDouble("Follower X", followerX)
+        dashboard:PutDouble("Follower Y", followerY)
 
         -- Drive
-        if gear == "low" then
-            gearSwitch:Set(true)
-        elseif gear == "high" then
-            gearSwitch:Set(false)
-        else
-            -- Unrecognized state, default to low gear
-            -- TODO: log error
-            gearSwitch:Set(false)
-        end
-
-
         if zeroMode then
-            for _, wheel in pairs(wheels) do
+            for _, wheel in pairs(drive.wheels) do
                 local currentTurn = wheel.turnEncoder:GetDistance()
                 wheel.turnPID.errFunc = drive.normalizeAngle
                 wheel.turnPID.target = 0
@@ -308,7 +135,7 @@ function teleop()
                 wheel.driveMotor:Set(0)
             end
         elseif fudgeMode then
-            for _, wheel in pairs(wheels) do
+            for _, wheel in pairs(drive.wheels) do
                 wheel.driveMotor:Set(0)
                 wheel.turnMotor:Set(0)
             end
@@ -317,7 +144,7 @@ function teleop()
                 fudgeWheel.turnMotor:Set(fudgeMovement)
             end
         else
-            runDrive(strafe, rotation, driveMode)
+            drive.run(strafe, rotation, driveMode)
         end
 
         -- Iteration cleanup
@@ -327,225 +154,27 @@ function teleop()
     end
 end
 
-function runDrive(strafe, rotation, driveMode)
-    driveMode = driveMode or 0
-
-    local gyroAngle = drive.normalizeAngle(-gyro:GetAngle())
-    if not gyroOkay then
-        gyroAngle = 0
-    end
-    dashboard:PutInt("Gyro Angle", gyroAngle)
-
-    local appliedGyro = gyroAngle
-    local appliedRotation = rotation
-
-    if driveMode ~= 0 then
-        appliedGyro = 0
-    end
-    
-    -- Keep rotation steady in deadband
-    if rotation == 0 then
-        if rotationPID.target == nil then
-            if rotationHoldTimer == nil then
-                rotationHoldTimer = wpilib.Timer()
-                rotationHoldTimer:Start()
-            elseif rotationHoldTimer:Get() > 0.5 then
-                rotationHoldTimer:Stop()
-                rotationHoldTimer = nil
-                rotationPID.target = gyroAngle
-                rotationPID:start()
-            end
-            appliedRotation = 0
-        else
-            appliedRotation = rotationPID:update(gyroAngle)
-        end
+function updateCompressor()
+    dashboard:PutBoolean("pressure", pressureSwitch:Get())
+    if pressureSwitch:Get() then
+        compressor:Set(wpilib.Relay_kOff)
     else
-        rotationPID.target = nil
-        rotationPID:stop()
-    end
-    
-    local wheelValues = drive.calculate(
-        strafe.x, strafe.y, appliedRotation, appliedGyro,
-        31.5,     -- wheel base (in inches)
-        21.4      -- track width (in inches)
-    )
-
-    for wheelName, value in pairs(wheelValues) do
-        local wheel = wheels[wheelName]
-
-        local currentTurn = wheel.turnEncoder:GetDistance()
-
-        if strafe.x ~= 0 or strafe.y ~= 0 or rotation ~= 0 then
-            wheel.turnPID.target = drive.normalizeAngle(value.angleDeg)
-            local driveScale = drive.driveScale(drive.calculateTurn(currentTurn, wheel.turnPID.target))
-            wheel.driveMotor:Set(value.speed * driveScale)
-        else
-            -- In deadband
-            if driveMode == 1 then
-                wheel.turnPID.target = 0
-            elseif driveMode == 2 then
-                wheel.turnPID.target = 90 
-            else
-                if wheelName == "leftFront" or wheelName == "rightBack" then
-                    wheel.turnPID.target = 45
-                else
-                    wheel.turnPID.target = -45
-                end
-            end
-            wheel.driveMotor:Set(0)
-        end
-
-        wheel.turnPID:update(currentTurn)
-        wheel.turnMotor:Set(wheel.turnPID.output)
-    end
-end
-
-function calibrateAll()
-    dashboard:PutString("mode", "Calibrating")
-
-    local tolerance = 3.0 -- in degrees
-    local numCalibratedWheels = 0
-    local numWheels = 4
-    local speed = 1.0
-    for _, wheel in pairs(wheels) do
-        wheel.turnEncoder:Reset()
-        wheel.turnEncoder:Start()
-        if wheel.calibrateSwitch:Get() then
-            -- Already calibrated
-            wheel.calibrateState = 6
-            numCalibratedWheels = numCalibratedWheels + 1
-        else
-            wheel.calibrateState = 1
-        end
-    end
-    while numCalibratedWheels < numWheels do
-        for _, wheel in pairs(wheels) do
-            if wheel.calibrateState == 1 then
-                -- Initial state: turn clockwise, wait until tripped
-                wheel.turnMotor:Set(speed)
-                if wheel.calibrateSwitch:Get() then
-                    wheel.calibrateState = 2
-                end
-            elseif wheel.calibrateState == 2 then
-                -- Keep turning clockwise until falling edge
-                wheel.turnMotor:Set(speed)
-                if not wheel.calibrateSwitch:Get() then
-                    wheel.Angle1 = wheel.turnEncoder:GetDistance()
-                    wheel.calibrateState = 3
-                end
-            elseif wheel.calibrateState == 3 then
-                -- Turn counter-clockwise, wait until tripped
-                wheel.turnMotor:Set(-speed)
-                if wheel.calibrateSwitch:Get() then
-                    wheel.calibrateState = 4
-                end
-            elseif wheel.calibrateState == 4 then
-                -- Keep turning counter-clockwise until falling edge
-                wheel.turnMotor:Set(-speed)
-                if not wheel.calibrateSwitch:Get() then
-                    wheel.Angle2 = wheel.turnEncoder:GetDistance()
-                    wheel.calibrateState = 5
-                end
-            elseif wheel.calibrateState == 5 then
-                -- Move clockwise back to zero
-                wheel.turnMotor:Set(speed)
-                local targetAngle = (wheel.Angle1 + wheel.Angle2)/2
-                local dist = math.abs(wheel.turnEncoder:GetDistance() - targetAngle)
-                if dist < tolerance then
-                    wheel.turnMotor:Set(0)
-                    wheel.turnEncoder:Reset()
-                    numCalibratedWheels = numCalibratedWheels + 1
-                    wheel.calibrateState = 6
-                end
-            end
-        end
-
-        feedWatchdog()
-        wpilib.Wait(TELEOP_LOOP_LAG)
-        feedWatchdog()
+        compressor:Set(wpilib.Relay_kOn)
     end
 end
 
 -- Inputs/Outputs
 -- Don't forget to add to declarations at the top!
-
-function convertFollowerToFeet(ticks)
-    local followerEncoderCPR = 360
-    local followerWheelDiameter = 2.75 -- inches
-    return ticks / followerEncoderCPR * (followerWheelDiameter * math.pi) / 12
-end
-
-local function LinearVictor(...)
-    return linearize.wrap(wpilib.Victor(...))
-end
-
 compressor = wpilib.Relay(1, 1, wpilib.Relay_kForwardOnly)
 pressureSwitch = wpilib.DigitalInput(1, 14)
-gearSwitch = wpilib.Solenoid(1, 1)
 frontSkid = wpilib.Solenoid(3)
 stinger = wpilib.Solenoid(7)
 squishMeter = wpilib.AnalogChannel(5)
-
-followerEncoderX = wpilib.Encoder(2, 13, 2, 14, true, wpilib.CounterBase_k1X)
-followerEncoderY = wpilib.Encoder(2, 11, 2, 12, false, wpilib.CounterBase_k1X)
-
-followerEncoderX:Start()
-followerEncoderY:Start()
-
-local turnPIDConstants = {p=0.06, i=0, d=0}
-wheels = {
-    leftFront={
-        shortName="LF",
-        driveMotor=LinearVictor(1, 7),
-        turnMotor=LinearVictor(1, 8),
-
-        calibrateSwitch=wpilib.DigitalInput(1, 12),
-        turnEncoder=wpilib.Encoder(1, 10, 1, 11),
-        turnPID=pid.new(turnPIDConstants.p, turnPIDConstants.i,
-                        turnPIDConstants.d, drive.angleError),
-    },
-    leftBack={
-        shortName="LB",
-        driveMotor=LinearVictor(1, 5),
-        turnMotor=LinearVictor(1, 6),
-
-        calibrateSwitch=wpilib.DigitalInput(1, 9),
-        turnEncoder=wpilib.Encoder(1, 7, 1, 8),
-        turnPID=pid.new(turnPIDConstants.p, turnPIDConstants.i,
-                        turnPIDConstants.d, drive.angleError),
-    },
-    rightFront={
-        shortName="RF",
-        driveMotor=LinearVictor(1, 3),
-        turnMotor=LinearVictor(1, 4),
-
-        calibrateSwitch=wpilib.DigitalInput(1, 6),
-        turnEncoder=wpilib.Encoder(1, 4, 1, 5),
-        turnPID=pid.new(turnPIDConstants.p, turnPIDConstants.i,
-                        turnPIDConstants.d, drive.angleError),
-    },
-    rightBack={
-        shortName="RB",
-        driveMotor=LinearVictor(1, 1),
-        turnMotor=LinearVictor(1, 2),
-
-        calibrateSwitch=wpilib.DigitalInput(1, 3),
-        turnEncoder=wpilib.Encoder(1, 1, 1, 2),
-        turnPID=pid.new(turnPIDConstants.p, turnPIDConstants.i,
-                        turnPIDConstants.d, drive.angleError),
-    },
-}
-
-for _, wheel in pairs(wheels) do
-    wheel.turnEncoder:SetDistancePerPulse(50.0 / 38.0)
-    wheel.turnEncoder:SetReverseDirection(true)
-end
 -- End Inputs/Outputs
 
 -- Controls
 strafe = {x=0, y=0}
 rotation = 0
-gear = "high"
 turretDirection = {x=0, y=0} 
 
 zeroMode = false
@@ -601,26 +230,21 @@ controlMap =
         ["y"] = function(axis) strafe.y = deadband(-axis, 0.15) end,
         ["rx"] = function(axis) rotation = deadband(axis, 0.15) end,
         [1] = {tick=function(held) deployStinger = held end},
-        [2] = function()
-            gyro:Reset()
-            if rotationPID.target then
-                rotationPID.target = 0
-            end
-        end,
+        [2] = drive.resetGyro,
         [5] = {tick=function(held)
             if held then
-                gear = "low"
+                drive.setGear("low")
             else
-                gear = "high"
+                drive.setGear("high")
             end
         end},
         [7] = function() fudgeMode = true end,
-        [8] = function() calibrateAll() end,
+        [8] = function() drive.calibrateAll() end,
         [10] = {tick=function(held)
             if held then
-                if gear == "low" then
+                if drive.getGear() == "low" then
                     rotation = rotation * 0.5
-                elseif gear == "high" then
+                elseif drive.getGear() == "high" then
                     rotation = rotation * 0.5
                 end
             end
@@ -638,7 +262,6 @@ controlMap =
                 driveMode = 0
             end
         end
-
     },
     -- Joystick 2
     {
@@ -724,13 +347,13 @@ fudgeControlMap = {
         ["x"] = function(axis)
             fudgeMovement = deadband(axis, 0.15)
         end,
-        [1] = fudgeButton(wheels.rightBack),
-        [2] = fudgeButton(wheels.rightFront),
-        [3] = fudgeButton(wheels.leftBack),
-        [4] = fudgeButton(wheels.leftFront),
+        [1] = fudgeButton(drive.wheels.rightBack),
+        [2] = fudgeButton(drive.wheels.rightFront),
+        [3] = fudgeButton(drive.wheels.leftBack),
+        [4] = fudgeButton(drive.wheels.leftFront),
         [7] = function()
             fudgeMode = false
-            for _, wheel in pairs(wheels) do
+            for _, wheel in pairs(drive.wheels) do
                 wheel.turnEncoder:Reset()
             end
         end,
@@ -777,13 +400,7 @@ else
 end
 
 -- Only create the gyro at the end, because it blocks the entire thread.
-gyro = wpilib.Gyro(1, 1)
-gyro:SetSensitivity(0.002*2940/1800)
-gyro:Reset()
-gyroOkay = true
-dashboard:PutBoolean("Gyro Okay", true)
-
-rotationPID = pid.new(0.01, 0, 0)
-rotationPID.min, rotationPID.max = -1, 1
+dashboard:PutString("mode", "Waiting for Gyro...")
+drive.initGyro()
 
 -- vim: ft=lua et ts=4 sts=4 sw=4
