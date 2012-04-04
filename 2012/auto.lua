@@ -6,6 +6,7 @@ local pid = require("pid")
 local turret = require("turret")
 local wpilib = require("wpilib")
 
+local math = require("math")
 module(...)
 
 local dashboard = wpilib.SmartDashboard_GetInstance()
@@ -63,6 +64,10 @@ function run(extraUpdate)
 
     turret.fullStop()
     intake.fullStop()
+end
+
+function calculateTurretTarget(x,y,gyro)
+    return math.deg(-math.atan2(x,y)) - gyro
 end
 
 function fire()
@@ -171,6 +176,51 @@ function keyShotWithCoOpBridge(t, Delay_1, Delay_2, Delay_3)
     end
 end
 
+function foo(t, Delay_1, Delay_2, Delay_3)
+    local BRIDGE_RPM = 7000
+    local HOOD_TARGET = 950
+    local KEY_RPM = 6400
+    
+    local posx, posy = drive.getFollowerPosition()
+    autodrivePIDX:update(posx)
+    autodrivePIDY:update(posy)
+    dashboard:PutDouble("Follower X", posx)
+    dashboard:PutDouble("Follower Y", posy)
+    if t < Delay_1 - 2 then
+        turret.setFlywheelTargetSpeed(0)
+        stopFire()
+        drive.run({x=0, y=0}, 0, 1)
+        intake.setIntake(0.0)
+    elseif t < Delay_1 then
+        turret.setFlywheelTargetSpeed(KEY_RPM)
+        stopFire()
+        drive.run({x=0, y=0}, 0, 1)
+        intake.setIntake(0.0)
+    elseif t < Delay_2 then
+        --TODO: Lower mantis
+        turret.setFlywheelTargetSpeed(KEY_RPM)
+        if fireCount < 2 then
+            fireCount = fireCount + fire()
+            drive.run({x=0, y=0}, 0, 1)
+        else
+            stopFire() 
+            autodrivePIDX.target = 0.0
+            autodrivePIDY.target = -4.0
+            setDriveAxis("y")
+            drive.run({x=autodrivePIDX.output, y=autodrivePIDY.output}, 0, 1)
+        end
+        intake.setIntake(1.0)
+    else
+        turret.setFlywheelTargetSpeed(BRIDGE_RPM)
+        autodrivePIDX.target = 0.0
+        autodrivePIDY.target = 0.0
+        drive.run({x=autodrivePIDX.output, y=autodrivePIDY.output}, 0, 1)
+        fireCount = fireCount + fire()
+        intake.setIntake(1.0)
+        turret.setTargetAngle(calculateTurretTarget(posx, 12 - posy, drive.normalizeAngle(-drive.getGyroAngle())))
+    end
+end
+
 function lshape(t, Delay_1, Delay_2, Delay_3)
     local posx, posy = drive.getFollowerPosition()
     autodrivePIDX:update(posx)
@@ -195,4 +245,4 @@ function lshape(t, Delay_1, Delay_2, Delay_3)
     end
 end
 
-autoMode = keyShotWithCoOpBridge
+autoMode = foo
