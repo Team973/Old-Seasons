@@ -35,6 +35,7 @@ local compressor, pressureSwitch, gearSwitch, stinger, gyro
 local followerEncoderX, followerEncoderY, convertFollowerToFeet
 local frontSkid
 local wheels
+local rotationPID
 local squishMeter
 local driveMode = 0
 
@@ -342,6 +343,27 @@ function runDrive(strafe, rotation, driveMode)
         appliedGyro = 0
     end
     
+    -- Keep rotation steady in deadband
+    if rotation == 0 then
+        if rotationPID.target == nil then
+            if rotationHoldTimer == nil then
+                rotationHoldTimer = wpilib.Timer()
+                rotationHoldTimer:Start()
+            elseif rotationHoldTimer:Get() > 0.5 then
+                rotationHoldTimer:Stop()
+                rotationHoldTimer = nil
+                rotationPID.target = gyroAngle
+                rotationPID:start()
+            end
+            appliedRotation = 0
+        else
+            appliedRotation = rotationPID:update(gyroAngle)
+        end
+    else
+        rotationPID.target = nil
+        rotationPID:stop()
+    end
+    
     local wheelValues = drive.calculate(
         strafe.x, strafe.y, appliedRotation, appliedGyro,
         31.5,     -- wheel base (in inches)
@@ -579,7 +601,12 @@ controlMap =
         ["y"] = function(axis) strafe.y = deadband(-axis, 0.15) end,
         ["rx"] = function(axis) rotation = deadband(axis, 0.15) end,
         [1] = {tick=function(held) deployStinger = held end},
-        [2] = function() gyro:Reset() end,
+        [2] = function()
+            gyro:Reset()
+            if rotationPID.target then
+                rotationPID.target = 0
+            end
+        end,
         [5] = {tick=function(held)
             if held then
                 gear = "low"
@@ -755,5 +782,8 @@ gyro:SetSensitivity(0.002*2940/1800)
 gyro:Reset()
 gyroOkay = true
 dashboard:PutBoolean("Gyro Okay", true)
+
+rotationPID = pid.new(0.01, 0, 0)
+rotationPID.min, rotationPID.max = -1, 1
 
 -- vim: ft=lua et ts=4 sts=4 sw=4
