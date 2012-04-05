@@ -42,6 +42,7 @@ setDriveAxis("y")
 
 local fireTimer = nil
 local FIRE_COOLDOWN = 1.0
+local REPACK_COOLDOWN = 0.5
 
 function run(extraUpdate)
     fireCount = 0
@@ -87,7 +88,11 @@ function fire()
         end
     else
         -- Cooldown
-        intake.setVerticalSpeed(0)
+        if fireTimer:Get() < REPACK_COOLDOWN then
+            intake.setVerticalSpeed(-0.2)
+        else
+            intake.setVerticalSpeed(0.0)
+        end
     end
     turret.clearFlywheelFired()
     return fireCount
@@ -98,7 +103,11 @@ function stopFire()
         fireTimer = nil
     end
 
-    intake.setVerticalSpeed(0)
+    if fireTimer and fireTimer:Get() < REPACK_COOLDOWN then
+        intake.setVerticalSpeed(-0.2)
+    else
+        intake.setVerticalSpeed(0)
+    end
     turret.clearFlywheelFired()
 end
 
