@@ -128,6 +128,91 @@ function sittingKeyshot(t, Delay_1, Delay_2, Delay_3)
             turret.setFlywheelTargetSpeed(0)
         end
     end
+
+end
+
+function sittingKeyshotWithPass(t, Delay_1, Delay_2, Delay_3)
+    local RPM = 6400
+    local HOOD_TARGET = 950
+    turret.setHoodTarget(HOOD_TARGET)
+    if t < Delay_1 - 2 then
+        turret.setFlywheelTargetSpeed(0)
+        stopFire()
+        intake.setIntake(0.0)
+    elseif t < Delay_1 then
+        turret.setFlywheelTargetSpeed(RPM)
+        stopFire()
+        intake.setIntake(0.0)
+    elseif t < Delay_2 then
+        turret.setFlywheelTargetSpeed(RPM)
+        fireCount = fireCount + fire()
+        intake.setIntake(0.0)
+    elseif t < Delay_3 then
+        intake.setIntake(1.0)
+        turret.setFlywheelTargetSpeed(RPM)
+        stopFire()
+    else
+        turret.setFlywheelTargetSpeed(RPM)
+        fireCount = fireCount + fire()
+        intake.setIntake(1.0)
+    end
+end
+
+function sittingKeyshotWithDropPass(t, Delay_1, Delay_2, Delay_3)
+    local RPM = 6400
+    local HOOD_TARGET = 950
+    turret.setHoodTarget(HOOD_TARGET)
+    if t < Delay_1 - 2 then
+        turret.setFlywheelTargetSpeed(0)
+        stopFire()
+        intake.setIntake(0.0)
+    elseif t < Delay_1 then
+        turret.setFlywheelTargetSpeed(RPM)
+        stopFire()
+        intake.setIntake(0.0)
+    elseif t < Delay_2 then
+        turret.setFlywheelTargetSpeed(RPM)
+        fireCount = fireCount + fire()
+        intake.setIntake(0.0)
+    elseif t < Delay_3 then
+        intake.setIntake(1.0)
+        turret.setFlywheelTargetSpeed(RPM)
+        stopFire()
+        intake.setLowered(true)
+    else
+        turret.setFlywheelTargetSpeed(RPM)
+        fireCount = fireCount + fire()
+        intake.setIntake(1.0)
+    end
+end
+function sittingKeyshotWithDropPass(t, Delay_1, Delay_2, Delay_3)
+    local RPM = 640
+    local SLAP_INTERVAL = 1.5
+    local HOOD_TARGET = 950
+    turret.setHoodTarget(HOOD_TARGET)
+    if t < Delay_1 - 2 then
+        turret.setFlywheelTargetSpeed(0)
+        stopFire()
+        intake.setIntake(0.0)
+    elseif t < Delay_1 then
+        turret.setFlywheelTargetSpeed(RPM)
+        stopFire()
+        intake.setIntake(0.0)
+    elseif t < Delay_2 then
+        turret.setFlywheelTargetSpeed(RPM)
+        fireCount = fireCount + fire()
+        intake.setIntake(0.0)
+    elseif t < Delay_3 then
+        intake.setIntake(1.0)
+        turret.setFlywheelTargetSpeed(RPM)
+        stopFire()
+        intake.setLowered(math.floor((t-Delay_2)/SLAP_INTERVAL)%2 == 0)
+    else
+        turret.setFlywheelTargetSpeed(RPM)
+        fireCount = fireCount + fire()
+        intake.setIntake(1.0)
+        intake.setLowered(math.floor((t-Delay_2)/SLAP_INTERVAL)%2 == 0)
+    end
 end
 
 function keyShotWithCoOpBridge(t, Delay_1, Delay_2, Delay_3)
@@ -173,6 +258,50 @@ function keyShotWithCoOpBridge(t, Delay_1, Delay_2, Delay_3)
         end
         fireCount = fireCount + fire()
         intake.setIntake(1.0)
+    end
+end
+
+local driveStopped = false
+
+function keyShotWithCoOpBridgeFar(t, Delay_1, Delay_2, Delay_3)
+    local BRIDGE_RPM = 7000
+    local HOOD_TARGET = 950
+    local KEY_RPM = 6400
+    
+    local posx, posy = drive.getFollowerPosition()
+    autodrivePIDX:update(posx)
+    autodrivePIDY:update(posy)
+    dashboard:PutDouble("Follower X", posx)
+    dashboard:PutDouble("Follower Y", posy)
+    if t < Delay_1 - 2 then
+        turret.setFlywheelTargetSpeed(0)
+        stopFire()
+        drive.run({x=0, y=0}, 0, 1)
+        intake.setIntake(0.0)
+    elseif t < Delay_1 then
+        turret.setFlywheelTargetSpeed(KEY_RPM)
+        stopFire()
+        drive.run({x=0, y=0}, 0, 1)
+        intake.setIntake(0.0)
+    else
+        if fireCount < 2 then
+            fireCount = fireCount + fire()
+            intake.setIntake(1.0)
+            intake.setLowered(true)
+            autodrivePIDX.target = 0.0
+            autodrivePIDY.target = -8.0
+            turret.setTargetAngle(calculateTurretTarget(posx, 12 - posy, drive.normalizeAngle(-drive.getGyroAngle())))
+
+        elseif not driveStopped then
+            if drive.isFollowerStopped() then
+                driveStopped = true
+            else
+            end
+        elseif t < Delay_2 then
+            stopFire()
+        else
+            fireCount = fireCount + fire()
+        end
     end
 end
 
