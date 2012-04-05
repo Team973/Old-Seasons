@@ -83,10 +83,13 @@ end
 
 function teleop()
     turret.turnPID:start()
+    local loop_time = wpilib.Timer_GetFPGATimestamp() + TELEOP_LOOP_LAG
 
     while wpilib.IsOperatorControl() and wpilib.IsEnabled() do
         enableWatchdog()
         feedWatchdog()
+
+        turret.update()
 
         if not fudgeMode then
             dashboard:PutString("mode", "Running")
@@ -110,10 +113,7 @@ function teleop()
         frontSkid:Set(deploySkid)
 
         intake.update(true)
-        turret.update()
 
-        dashboard:PutDouble("Flywheel P", turret.flywheelPID.p)
-        dashboard:PutDouble("Flywheel D", turret.flywheelPID.d)
         dashboard:PutDouble("Flywheel Speed", turret.getFlywheelSpeed())
         dashboard:PutInt("Flywheel Speed(Int)", turret.getFlywheelSpeed())
         dashboard:PutInt("Flywheel Speed(Filter Int)", turret.getFlywheelFilterSpeed())
@@ -149,7 +149,11 @@ function teleop()
 
         -- Iteration cleanup
         feedWatchdog()
-        wpilib.Wait(TELEOP_LOOP_LAG)
+        while wpilib.Timer_GetFPGATimestamp() < loop_time do
+            -- Shooter!
+            turret.update()
+        end
+        loop_time = loop_time + TELEOP_LOOP_LAG
         feedWatchdog()
     end
 end
@@ -300,8 +304,11 @@ controlMap =
         [6] = {
             down=turret.clearFlywheelFired,
             tick=function(held)
-                if held and not turret.getFlywheelFired() then
+                if not held then return end
+                if not turret.getFlywheelFired() then
                     intake.setVerticalSpeed(1.0)
+                else
+                    intake.setVerticalSpeed(-0.2)
                 end
             end,
         },
@@ -319,9 +326,6 @@ controlMap =
             end
         end},
         ["rtrigger"] = {
-            down=function()
-                turret.resetFlywheel()
-            end,
             tick=function(held)
                 if held then
                     turret.setFlywheelTargetSpeed(rpmPreset)
