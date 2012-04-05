@@ -4,26 +4,18 @@ local ipairs = ipairs
 
 local bit = require("bit")
 local pid = require("pid")
+local linearize = require("linearize")
 local math = require("math")
+local matrix = require("matrix")
 local string = require("string")
 local wpilib = require("wpilib")
 
 module(...)
 
 local flywheelSpeedTable = {
-    numSamples=25,
-}
-local flywheelSpeedFilter = {
-    prev=0,
-    curr=0,
-    weight=0.2,
+    numSamples=100,
 }
 local flywheelFired = false
-flywheelPID = pid.new(0.001, 0.0, -0.001,
-    nil,
-    function()
-        return flywheelSpeedFilter:average()
-    end)
 
 local dashboard = wpilib.SmartDashboard_GetInstance()
 
@@ -32,8 +24,8 @@ local flywheelFeedforward = math.huge
 local in4 = wpilib.DigitalInput(2, 4)
 local in5 = wpilib.DigitalInput(2, 5)
 local in6 = wpilib.DigitalInput(2, 6)
-local flywheelCounter = wpilib.Counter(in5)
-local flywheelMotor = wpilib.Victor(2, 6)
+local flywheelCounter = wpilib.Counter(wpilib.CounterBase_k2X, in5, in5, false)
+local flywheelMotor = linearize.wrap(wpilib.Victor(2, 6))
 local flywheelTicksPerRevolution = 6.0
 
 flywheelCounter:Start()
@@ -46,6 +38,29 @@ hoodPID1:start()
 hoodPID2 = pid.new(0.01, 0, 0)
 hoodPID2:start()
 runHood = 0
+
+local numStates, numOutputs = 2, 1
+-- State Space equations
+-- x(n + 1) = A x(n) + B u(n)
+-- Y(n) = C x(n) + D u(n)
+local X = matrix(numStates, 1)
+local X_hat = matrix(numStates, 1)
+local Y = matrix(numOutputs, 1)
+local R = matrix(numStates, 1)
+local U = matrix(numOutputs, 1) -- control input
+local U_ff = matrix(numOutputs, 1)
+
+-- Number of states 2 Number of outputs 1
+local A = matrix{{1.0000000000, 0.0247014661}, {0.0000000000, 0.9762127298}}
+local B = matrix{{0.0180233658}, {1.4361069986}}
+local C = matrix{{1.0000000000, 0.0000000000}}
+local D = matrix{{0.0000000000}}
+local L = matrix{{0.6362127298}, {3.9943473648}}
+local K = matrix{{0.2088980837, 0.1757861242}}
+local U_max = matrix{{12.0000000000}}
+local U_min = matrix{{-1.0000000000}}
+
+local positionGoal -- double
 
 function getHoodTarget()
     return hoodPID1.target
@@ -191,15 +206,7 @@ function flywheelSpeedTable:average()
 end
 
 function getFlywheelFilterSpeed()
-    return flywheelSpeedFilter:average()
-end
-
-function flywheelSpeedFilter:add(val)
-    self.prev, self.curr = self:average(), val
-end
-
-function flywheelSpeedFilter:average()
-    return (1 - self.weight) * self.prev + self.weight * self.curr
+    return X_hat[2][1] / (2*math.pi) * 60
 end
 
 function clearFlywheelFired()
@@ -220,12 +227,14 @@ function setFlywheelTargetSpeed(speed)
     flywheelTargetSpeed = speed
 end
 
-function resetFlywheel()
-    flywheelCounter:Reset()
-    flywheelPID.target = 0
-end
-
+local flywheelTimeStep = 0.025
+local flywheelTimer = wpilib.Timer()
+local prevFlywheelPos = 0
+local prevFlywheelTime
+local nextFlywheelTime
 function update()
+    flywheelTimer:Start()
+
     -- Turret rotation
     dashboard:PutBoolean("Input 4", in4:Get())
     dashboard:PutBoolean("Input 5", in5:Get())
@@ -235,32 +244,83 @@ function update()
     turnPID:update(encoder:Get()/25)
     motor:Set(turnPID.output)
 
-    -- Add flywheel velocity sample
-    local speedSample = 60.0 / (flywheelCounter:GetPeriod() * flywheelTicksPerRevolution)
-    flywheelSpeedTable:add(speedSample)
-    flywheelSpeedFilter:add(speedSample)
+    if nextFlywheelTime == nil then
+        prevFlywheelTime = wpilib.Timer_GetFPGATimestamp()
+        nextFlywheelTime = prevFlywheelTime + flywheelTimeStep
+    end
+    local flywheelTime = wpilib.Timer_GetFPGATimestamp()
+    if flywheelTime > nextFlywheelTime then
+        -- <AUSTIN MAGIC>
+        local flywheelPos = flywheelCounter:Get()/2 / flywheelTicksPerRevolution * 2*math.pi
+        if positionGoal == nil then
+            positionGoal = flywheelPos
+        end
+        local velocityGoal = flywheelTargetSpeed / 60 * 2*math.pi
+        Y[1][1] = flywheelPos
+        local velocityWeightScalar = 0.35
+        local maxReference = (U_max[1][1] - velocityWeightScalar * (velocityGoal - X_hat[2][1]) * K[1][2]) / K[1][1] + X_hat[1][1]
+        local minReference = (U_min[1][1] - velocityWeightScalar * (velocityGoal - X_hat[2][1]) * K[1][2]) / K[1][1] + X_hat[1][1]
+        positionGoal = math.max(math.min(positionGoal, maxReference), minReference)
+        R = matrix{{positionGoal}, {velocityGoal}}
+        positionGoal = positionGoal + velocityGoal * flywheelTimeStep
+        -- Update()
+        do
+            local updateObserver = true
+            U = K * (R - X_hat)
+            for i = 1, numOutputs do
+                if U[i][1] > U_max[i][1] then
+                    U[i][1] = U_max[i][1]
+                elseif U[i][1] < U_min[i][1] then
+                    U[i][1] = U_min[i][1]
+                end
+            end
+            if updateObserver then
+                X_hat = (A - L * C) * X_hat + L * Y + B * U
+            else
+                X_hat = A * X_hat + B * U
+            end
+        end
+        -- /Update()
+        local out = 0.0
+        if velocityGoal < 1.0 then
+            flywheelMotor:Set(0.0)
+            -- Reset the positional error
+            positionGoal = flywheelPos
+        else
+            flywheelMotor:Set(U[1][1] / 12.0)
+            out = U[1][1] / 12.0
+        end
+        dashboard:PutDouble("Fly Out", out)
+        dashboard:PutDouble("Fly Pos", flywheelPos)
+        dashboard:PutDouble("Fly xhat[0]", X_hat[1][1])
+        dashboard:PutDouble("Fly xhat[1]", X_hat[2][1])
+        dashboard:PutDouble("Fly R[0]", X_hat[1][1])
+        dashboard:PutDouble("Fly R[1]", X_hat[2][1])
+        dashboard:PutDouble("Fly Dx/Dt", (flywheelPos - prevFlywheelPos) / flywheelTimeStep)
+        dashboard:PutDouble("Fly Dt", math.min(flywheelTime - prevFlywheelTime, flywheelTimeStep * 1.5))
 
-    if flywheelSpeedTable:average() - flywheelSpeedFilter:average() > 300 then
+        if flywheelMotor:Get() > 0 then
+            flywheelMotor:Set(flywheelMotor:Get() + 0.01)
+        elseif flywheelMotor:Get() < 0 then
+            flywheelMotor:Set(flywheelMotor:Get() - 0.01)
+        end
+
+        prevFlywheelPos = flywheelPos
+        prevFlywheelTime = flywheelTime
+        local nextFlyTimeBefore = nextFlywheelTime
+        nextFlywheelTime = nextFlywheelTime + flywheelTimeStep
+        dashboard:PutDouble("Fly ideal Dt", math.min(nextFlywheelTime - nextFlyTimeBefore, flywheelTimeStep * 1.5))
+        -- </AUSTIN MAGIC>
+    end
+
+    -- Add flywheel velocity sample
+    local speedSample = X_hat[2][1] / (2*math.pi) * 60
+    flywheelSpeedTable:add(speedSample)
+
+    if flywheelTargetSpeed - speedSample > 200 then
         flywheelFired = true
     end
     dashboard:PutBoolean("Flywheel Fired", flywheelFired)
-
-    -- Get flywheel position and time
-    flywheelPID.timer:Start()
-    local pos = flywheelCounter:Get() / flywheelTicksPerRevolution -- in revolutions
-    local dt = flywheelPID.timer:Get() / 60.0 -- in minutes
-    flywheelPID.timer:Reset()
-
-    -- Update flywheel PID
-    flywheelPID.target = flywheelPID.target + flywheelTargetSpeed * dt
-    local extraTerm = flywheelTargetSpeed * (1/flywheelFeedforward - flywheelPID.d)
-    flywheelPID.target = math.min(pos - (1 - flywheelPID.d - extraTerm) / flywheelPID.p, flywheelPID.target)
-    local flywheelOutput = flywheelPID:update(pos, dt) + extraTerm
-    if flywheelOutput > 0.0 then
-        flywheelMotor:Set(flywheelOutput)
-    else
-        flywheelMotor:Set(0.0)
-    end
 
     local e1 = -readVexEncoder(hoodEncoder1)
     local e2 = readVexEncoder(hoodEncoder2)
