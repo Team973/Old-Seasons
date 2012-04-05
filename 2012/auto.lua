@@ -46,6 +46,7 @@ local FIRE_COOLDOWN = 1.0
 function run(extraUpdate)
     fireCount = 0
     drive.resetFollowerPosition()
+    drive.resetGyro()
 
     local t = wpilib.Timer()
     t:Start()
