@@ -255,4 +255,4 @@ function lshape(t, Delay_1, Delay_2, Delay_3)
     end
 end
 
-autoMode = foo
+autoMode = sittingKeyshot
