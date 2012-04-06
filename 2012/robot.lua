@@ -67,6 +67,18 @@ end
 function disabledIdle()
     local gyroTimer = wpilib.Timer()
 
+    local modes = {
+        {
+            name="Sitting Keyshot",
+            func=auto.sittingKeyshot,
+        },
+        {
+            name="Key Shot w/ Co-op Bridge",
+            func=auto.keyShotWithCoOpBridge,
+        },
+    }
+    local modeNum = 1
+
     local initAngle = drive.getGyroAngle()
     while wpilib.IsDisabled() do
         if gyroTimer and gyroTimer:Get() > 1 then
@@ -77,16 +89,69 @@ function disabledIdle()
             gyroTimer = nil
         end
 
+        controls.update({
+            -- Joystick 1
+            {
+                [2] = function() modeNum = modeNum + 1
+                    if modeNum > #modes then
+                        modeNum = 1 
+                    end
+                    -- TODO... etc...
+                end,
+                
+                [1] = function() modeNum = modeNum - 1
+                    if modeNum < 1 then
+                        modeNum = #modes
+                    end
+                end,
+
+                [4] = function() auto.Delay_1 = auto.Delay_1 + 1 
+                end,
+
+                [3] = function() auto.Delay_1 = auto.Delay_1 - 1
+                end,
+
+                [6] = function() auto.Delay_2 = auto.Delay_2 + 1 
+                end,
+
+                [5] = function() auto.Delay_2 = auto.Delay_2 - 1
+                end,
+
+                [8] = function() auto.Delay_3 = auto.Delay_3 + 1 
+                end,
+
+                [7] = function() auto.Delay_3 = auto.Delay_3 - 1 
+                end,
+
+            },
+            -- Joystick 2
+            {},
+            -- Joystick 3
+            {},
+            -- Joystick 4
+            {},
+        })
+
+        dashboard:PutString("Auto Mode", modes[modeNum].name)
+        dashboard:PutInt("Delay_1", auto.Delay_1)
+        dashboard:PutInt("Delay_2", auto.Delay_2)
+        dashboard:PutInt("Delay_3", auto.Delay_3)
+        auto.autoMode = modes[modeNum].func
+
+
         wpilib.Wait(TELEOP_LOOP_LAG)
     end
 end
 
 function teleop()
     turret.turnPID:start()
+    local loop_time = wpilib.Timer_GetFPGATimestamp() + TELEOP_LOOP_LAG
 
     while wpilib.IsOperatorControl() and wpilib.IsEnabled() do
         enableWatchdog()
         feedWatchdog()
+
+        turret.update()
 
         if not fudgeMode then
             dashboard:PutString("mode", "Running")
@@ -110,13 +175,8 @@ function teleop()
         frontSkid:Set(deploySkid)
 
         intake.update(true)
-        turret.update()
 
-        dashboard:PutDouble("Flywheel P", turret.flywheelPID.p)
-        dashboard:PutDouble("Flywheel D", turret.flywheelPID.d)
         dashboard:PutDouble("Flywheel Speed", turret.getFlywheelSpeed())
-        dashboard:PutInt("Flywheel Speed(Int)", turret.getFlywheelSpeed())
-        dashboard:PutInt("Flywheel Speed(Filter Int)", turret.getFlywheelFilterSpeed())
         dashboard:PutDouble("Flywheel Target Speed", turret.getFlywheelTargetSpeed())
         dashboard:PutDouble("Squish Meter", squishMeter:GetVoltage())
 
@@ -149,7 +209,11 @@ function teleop()
 
         -- Iteration cleanup
         feedWatchdog()
-        wpilib.Wait(TELEOP_LOOP_LAG)
+        while wpilib.Timer_GetFPGATimestamp() < loop_time do
+            -- Shooter!
+            turret.update()
+        end
+        loop_time = loop_time + TELEOP_LOOP_LAG
         feedWatchdog()
     end
 end
@@ -231,6 +295,8 @@ controlMap =
         ["rx"] = function(axis) rotation = deadband(axis, 0.15) end,
         [1] = {tick=function(held) deployStinger = held end},
         [2] = drive.resetGyro,
+        [4] = function() drive.effTheGyro()
+        end,
         [5] = {tick=function(held)
             if held then
                 drive.setGear("low")
@@ -294,14 +360,17 @@ controlMap =
         end,
         [1] = function() presetValues(3300,20,0) end, -- Fender
         [2] = function() presetValues(4500,200,0) end, -- Side
-        [3] = function() presetValues(6400,950,0) end, -- Key
+        [3] = function() presetValues(6300,1100,0) end, -- Key
         [4] = {tick=function(held) deploySkid = held end},
         [5] = {tick=function(held) intake.setLowered(held) end},   
         [6] = {
             down=turret.clearFlywheelFired,
             tick=function(held)
-                if held and not turret.getFlywheelFired() then
+                if not held then return end
+                if not turret.getFlywheelFired() then
                     intake.setVerticalSpeed(1.0)
+                else
+                    intake.setVerticalSpeed(-0.2)
                 end
             end,
         },
@@ -319,9 +388,6 @@ controlMap =
             end
         end},
         ["rtrigger"] = {
-            down=function()
-                turret.resetFlywheel()
-            end,
             tick=function(held)
                 if held then
                     turret.setFlywheelTargetSpeed(rpmPreset)

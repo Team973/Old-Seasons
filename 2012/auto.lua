@@ -5,13 +5,16 @@ local intake = require("intake")
 local pid = require("pid")
 local turret = require("turret")
 local wpilib = require("wpilib")
+local KEY_RPM = 6300
+local KEY_HOOD_TARGET = 1100
+
 
 local math = require("math")
 module(...)
 
 local dashboard = wpilib.SmartDashboard_GetInstance()
 
-local autoMode
+autoMode = nil
 local fireCount = 0
 
 local driveGains = {p=0.5, i=0, d=0.01}
@@ -20,6 +23,10 @@ local autodrivePIDX = pid.new()
 autodrivePIDX.min, autodrivePIDX.max = -1, 1
 local autodrivePIDY = pid.new()
 autodrivePIDY.min, autodrivePIDY.max = -1, 1
+
+Delay_1 = 0
+Delay_2 = 0
+Delay_3 = 0
 
 local function setDriveAxis(axis)
     if axis == "x" then
@@ -42,16 +49,18 @@ setDriveAxis("y")
 
 local fireTimer = nil
 local FIRE_COOLDOWN = 1.0
+local REPACK_COOLDOWN = 0.5
 
 function run(extraUpdate)
     fireCount = 0
     drive.resetFollowerPosition()
+    drive.resetGyro()
 
     local t = wpilib.Timer()
     t:Start()
 
     while wpilib.IsAutonomous() and wpilib.IsEnabled() do
-        autoMode(t:Get(),3,10,0) 
+        autoMode(t:Get()) 
 
         intake.update(true)
         turret.update()
@@ -64,6 +73,7 @@ function run(extraUpdate)
 
     turret.fullStop()
     intake.fullStop()
+    drive.undeployFollower()
 end
 
 function calculateTurretTarget(x,y,gyro)
@@ -86,7 +96,11 @@ function fire()
         end
     else
         -- Cooldown
-        intake.setVerticalSpeed(0)
+        if fireTimer:Get() < REPACK_COOLDOWN then
+            intake.setVerticalSpeed(-0.2)
+        else
+            intake.setVerticalSpeed(0.0)
+        end
     end
     turret.clearFlywheelFired()
     return fireCount
@@ -97,7 +111,11 @@ function stopFire()
         fireTimer = nil
     end
 
-    intake.setVerticalSpeed(0)
+    if fireTimer and fireTimer:Get() < REPACK_COOLDOWN then
+        intake.setVerticalSpeed(-0.2)
+    else
+        intake.setVerticalSpeed(0)
+    end
     turret.clearFlywheelFired()
 end
 
@@ -109,18 +127,16 @@ end
 4. Fire/stopFire
 --]]
 
-function sittingKeyshot(t, Delay_1, Delay_2, Delay_3)
-    local RPM = 6400
-    local HOOD_TARGET = 950
-    turret.setHoodTarget(HOOD_TARGET)
+function sittingKeyshot(t)
+    turret.setHoodTarget(KEY_HOOD_TARGET)
     if t < Delay_1 - 2 then
         turret.setFlywheelTargetSpeed(0)
         stopFire()
     elseif t < Delay_1 then
-        turret.setFlywheelTargetSpeed(RPM)
+        turret.setFlywheelTargetSpeed(KEY_RPM)
         stopFire()
     else
-        turret.setFlywheelTargetSpeed(RPM)
+        turret.setFlywheelTargetSpeed(KEY_RPM)
         if fireCount < 2 then
             fireCount = fireCount + fire()
         else
@@ -131,100 +147,96 @@ function sittingKeyshot(t, Delay_1, Delay_2, Delay_3)
 
 end
 
-function sittingKeyshotWithPass(t, Delay_1, Delay_2, Delay_3)
-    local RPM = 6400
-    local HOOD_TARGET = 950
-    turret.setHoodTarget(HOOD_TARGET)
+function sittingKeyshotWithPass(t)
+    turret.setHoodTarget(KEY_HOOD_TARGET)
     if t < Delay_1 - 2 then
         turret.setFlywheelTargetSpeed(0)
         stopFire()
         intake.setIntake(0.0)
     elseif t < Delay_1 then
-        turret.setFlywheelTargetSpeed(RPM)
+        turret.setFlywheelTargetSpeed(KEY_RPM)
         stopFire()
         intake.setIntake(0.0)
     elseif t < Delay_2 then
-        turret.setFlywheelTargetSpeed(RPM)
+        turret.setFlywheelTargetSpeed(KEY_RPM)
         fireCount = fireCount + fire()
         intake.setIntake(0.0)
     elseif t < Delay_3 then
         intake.setIntake(1.0)
-        turret.setFlywheelTargetSpeed(RPM)
+        turret.setFlywheelTargetSpeed(KEY_RPM)
         stopFire()
     else
-        turret.setFlywheelTargetSpeed(RPM)
+        turret.setFlywheelTargetSpeed(KEY_RPM)
         fireCount = fireCount + fire()
         intake.setIntake(1.0)
     end
 end
 
-function sittingKeyshotWithDropPass(t, Delay_1, Delay_2, Delay_3)
-    local RPM = 6400
-    local HOOD_TARGET = 950
-    turret.setHoodTarget(HOOD_TARGET)
+function sittingKeyshotWithDropPass(t)
+    turret.setHoodTarget(KEY_HOOD_TARGET)
     if t < Delay_1 - 2 then
         turret.setFlywheelTargetSpeed(0)
         stopFire()
         intake.setIntake(0.0)
     elseif t < Delay_1 then
-        turret.setFlywheelTargetSpeed(RPM)
+        turret.setFlywheelTargetSpeed(KEY_RPM)
         stopFire()
         intake.setIntake(0.0)
     elseif t < Delay_2 then
-        turret.setFlywheelTargetSpeed(RPM)
+        turret.setFlywheelTargetSpeed(KEY_RPM)
         fireCount = fireCount + fire()
         intake.setIntake(0.0)
     elseif t < Delay_3 then
         intake.setIntake(1.0)
-        turret.setFlywheelTargetSpeed(RPM)
+        turret.setFlywheelTargetSpeed(KEY_RPM)
         stopFire()
         intake.setLowered(true)
     else
-        turret.setFlywheelTargetSpeed(RPM)
+        turret.setFlywheelTargetSpeed(KEY_RPM)
         fireCount = fireCount + fire()
         intake.setIntake(1.0)
     end
 end
-function sittingKeyshotWithDropPass(t, Delay_1, Delay_2, Delay_3)
+
+function sittingKeyshotWithDropPass(t)
     local RPM = 640
     local SLAP_INTERVAL = 1.5
     local HOOD_TARGET = 950
-    turret.setHoodTarget(HOOD_TARGET)
+    turret.setHoodTarget(KEY_HOOD_TARGET)
     if t < Delay_1 - 2 then
         turret.setFlywheelTargetSpeed(0)
         stopFire()
         intake.setIntake(0.0)
     elseif t < Delay_1 then
-        turret.setFlywheelTargetSpeed(RPM)
+        turret.setFlywheelTargetSpeed(KEY_RPM)
         stopFire()
         intake.setIntake(0.0)
     elseif t < Delay_2 then
-        turret.setFlywheelTargetSpeed(RPM)
+        turret.setFlywheelTargetSpeed(KEY_RPM)
         fireCount = fireCount + fire()
         intake.setIntake(0.0)
     elseif t < Delay_3 then
         intake.setIntake(1.0)
-        turret.setFlywheelTargetSpeed(RPM)
+        turret.setFlywheelTargetSpeed(KEY_RPM)
         stopFire()
         intake.setLowered(math.floor((t-Delay_2)/SLAP_INTERVAL)%2 == 0)
     else
-        turret.setFlywheelTargetSpeed(RPM)
+        turret.setFlywheelTargetSpeed(KEY_RPM)
         fireCount = fireCount + fire()
         intake.setIntake(1.0)
         intake.setLowered(math.floor((t-Delay_2)/SLAP_INTERVAL)%2 == 0)
     end
 end
 
-function keyShotWithCoOpBridge(t, Delay_1, Delay_2, Delay_3)
+function keyShotWithCoOpBridge(t)
     local BRIDGE_RPM = 7000
-    local HOOD_TARGET = 950
-    local KEY_RPM = 6400
     
     local posx, posy = drive.getFollowerPosition()
     autodrivePIDX:update(posx)
     autodrivePIDY:update(posy)
     dashboard:PutDouble("Follower X", posx)
     dashboard:PutDouble("Follower Y", posy)
+    drive.deployFollower()
     if t < Delay_1 - 2 then
         turret.setFlywheelTargetSpeed(0)
         stopFire()
@@ -263,10 +275,8 @@ end
 
 local driveStopped = false
 
-function keyShotWithCoOpBridgeFar(t, Delay_1, Delay_2, Delay_3)
+function keyShotWithCoOpBridgeFar(t)
     local BRIDGE_RPM = 7000
-    local HOOD_TARGET = 950
-    local KEY_RPM = 6400
     
     local posx, posy = drive.getFollowerPosition()
     autodrivePIDX:update(posx)
@@ -305,10 +315,8 @@ function keyShotWithCoOpBridgeFar(t, Delay_1, Delay_2, Delay_3)
     end
 end
 
-function foo(t, Delay_1, Delay_2, Delay_3)
+function foo(t)
     local BRIDGE_RPM = 7000
-    local HOOD_TARGET = 950
-    local KEY_RPM = 6400
     
     local posx, posy = drive.getFollowerPosition()
     autodrivePIDX:update(posx)
@@ -350,7 +358,7 @@ function foo(t, Delay_1, Delay_2, Delay_3)
     end
 end
 
-function lshape(t, Delay_1, Delay_2, Delay_3)
+function lshape(t)
     local posx, posy = drive.getFollowerPosition()
     autodrivePIDX:update(posx)
     autodrivePIDY:update(posy)
@@ -374,4 +382,4 @@ function lshape(t, Delay_1, Delay_2, Delay_3)
     end
 end
 
-autoMode = foo
+autoMode = sittingKeyshot
