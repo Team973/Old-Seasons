@@ -332,6 +332,7 @@ function keyShotWithCoOpBridgeFar(t)
             bridgeTimer:Start()
         end
     else 
+        intake.setLowered(true)
         if bridgeTimer:Get() > 2 then
             autodrivePIDX.target = 0.0
             autodrivePIDY.target = 0.0
