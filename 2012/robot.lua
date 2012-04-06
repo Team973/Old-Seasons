@@ -67,6 +67,18 @@ end
 function disabledIdle()
     local gyroTimer = wpilib.Timer()
 
+    local modes = {
+        {
+            name="Sitting Keyshot",
+            func=auto.sittingKeyshot,
+        },
+        {
+            name="Key Shot w/ Co-op Bridge",
+            func=auto.keyShotWithCoOpBridge,
+        },
+    }
+    local modeNum = 1
+
     local initAngle = drive.getGyroAngle()
     while wpilib.IsDisabled() do
         if gyroTimer and gyroTimer:Get() > 1 then
@@ -76,6 +88,56 @@ function disabledIdle()
             gyroTimer:Stop()
             gyroTimer = nil
         end
+
+        controls.update({
+            -- Joystick 1
+            {
+                [2] = function() modeNum = modeNum + 1
+                    if modeNum > #modes then
+                        modeNum = 1 
+                    end
+                    -- TODO... etc...
+                end,
+                
+                [1] = function() modeNum = modeNum - 1
+                    if modeNum < 1 then
+                        modeNum = #modes
+                    end
+                end,
+
+                [4] = function() auto.Delay_1 = auto.Delay_1 + 1 
+                end,
+
+                [3] = function() auto.Delay_1 = auto.Delay_1 - 1
+                end,
+
+                [6] = function() auto.Delay_2 = auto.Delay_2 + 1 
+                end,
+
+                [5] = function() auto.Delay_2 = auto.Delay_2 - 1
+                end,
+
+                [8] = function() auto.Delay_3 = auto.Delay_3 + 1 
+                end,
+
+                [7] = function() auto.Delay_3 = auto.Delay_3 - 1 
+                end,
+
+            },
+            -- Joystick 2
+            {},
+            -- Joystick 3
+            {},
+            -- Joystick 4
+            {},
+        })
+
+        dashboard:PutString("Auto Mode", modes[modeNum].name)
+        dashboard:PutInt("Delay_1", auto.Delay_1)
+        dashboard:PutInt("Delay_2", auto.Delay_2)
+        dashboard:PutInt("Delay_3", auto.Delay_3)
+        auto.autoMode = modes[modeNum].func
+
 
         wpilib.Wait(TELEOP_LOOP_LAG)
     end
