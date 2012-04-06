@@ -79,6 +79,10 @@ function disabledIdle()
             name="Key Shot w/ Co-op Bridge",
             func=auto.keyShotWithCoOpBridge,
         },
+        {
+            name="Key Shot w/ Co-op Bridge (Far)",
+            func=auto.keyShotWithCoOpBridgeFar,
+        },
     }
     local modeNum = 1
 
