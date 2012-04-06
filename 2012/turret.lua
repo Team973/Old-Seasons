@@ -117,6 +117,7 @@ wpilib.UINT8array_setitem(vexMagic, 2, string.byte("X"))
 
 local I2C_DELAY = 0.1
 local I2C_SIDECAR = 2
+local hoodOkay
 
 local function initVexEncoder(address, num, terminated)
     local mod = wpilib.DigitalModule_GetInstance(I2C_SIDECAR)
@@ -134,7 +135,9 @@ local function initVexEncoder(address, num, terminated)
     encoder:SetCompatibilityMode(true)
 
     -- Verify
-    dashboard:PutBoolean("VEX Encoder Check " .. num, encoder:VerifySensor(0x08, 3, vexMagic))
+    local Okay = encoder:VerifySensor(0x08, 3, vexMagic)
+
+    dashboard:PutBoolean("VEX Encoder Check " .. num, Okay)
     wpilib.Wait(I2C_DELAY)
 
     -- Terminate (or not)
@@ -145,7 +148,7 @@ local function initVexEncoder(address, num, terminated)
     end
     wpilib.Wait(I2C_DELAY)
 
-    return encoder
+    return encoder, Okay
 end
 
 function initI2C()
@@ -160,8 +163,11 @@ function initI2C()
     i2c:Write(0x4e, 0xca)
     wpilib.Wait(I2C_DELAY)
 
-    hoodEncoder1 = initVexEncoder(0x20, "1", false)
-    hoodEncoder2 = initVexEncoder(0x22, "2", true)
+    local hood1Okay
+    local hood2Okay
+    hoodEncoder1, hood1Okay = initVexEncoder(0x20, "1", false)
+    hoodEncoder2, hood2Okay = initVexEncoder(0x22, "2", true)
+    hoodOkay = hood1Okay and hood2Okay
 end
 
 function getTargetAngle()
@@ -344,8 +350,13 @@ function update()
     dashboard:PutDouble("Hood 2", e2)
     hoodPID1:update(e1)
     hoodPID2:update(e2)
-    hoodMotor1:Set(-hoodPID1.output)
-    hoodMotor2:Set(hoodPID2.output)
+    if hoodOkay then
+        hoodMotor1:Set(-hoodPID1.output)
+        hoodMotor2:Set(hoodPID2.output)
+    else
+        hoodMotor1:Set(0)
+        hoodMotor2:Set(0)
+    end
 end
 
 function calculateTarget(turretAngle, desiredAngle)
