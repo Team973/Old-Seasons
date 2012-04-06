@@ -17,6 +17,7 @@ local ignoreGyro = false
 local rotationPID = pid.new(0.01, 0, 0)
 local rotationHoldTimer
 local gearSwitch = wpilib.Solenoid(1, 1)
+local frontSkid = wpilib.Solenoid(3)
 local followerDeploy = wpilib.Solenoid(1, 6)
 rotationPID.min, rotationPID.max = -1, 1
 
@@ -192,6 +193,10 @@ end
 
 function undeployFollower()
     followerDeploy:Set(false)
+end
+
+function setFrontSkid(deploy)
+    frontSkid:Set(deploy)
 end
 
 function isFollowerStopped()
