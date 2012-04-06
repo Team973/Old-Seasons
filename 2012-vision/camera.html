@@ -22,10 +22,19 @@
         padding: 0;
         -moz-transform: rotate(-90deg);
         -webkit-transform: rotate(-90deg);
+    } 
+
+    #intakeFeed {
+        position: absolute;
+        top: 160;
+        left: 0;
+        margin: 0;
+        padding: 0;
     }
 </style>
 <img id="feed" src="http://10.9.73.20/mjpg/video.mjpg" width="160" height="120">
 <canvas id="overlay" width="160" height="120"></canvas>
+<img id="intakeFeed" src="http://10.9.73.19/mjpg/video.mjpg" width="120">
 <script type="text/javascript">
     var w = 160;
     var h = 120;
