@@ -279,41 +279,71 @@ function keyShotWithCoOpBridge(t)
 end
 
 local driveStopped = false
+local bridgeTimer = nil
 
 function keyShotWithCoOpBridgeFar(t)
+    local CLOSE_BRIDGE_DISTANCE = -8
+
     local posx, posy = drive.getFollowerPosition()
+
     autodrivePIDX:update(posx)
     autodrivePIDY:update(posy)
     dashboard:PutDouble("Follower X", posx)
     dashboard:PutDouble("Follower Y", posy)
-    if t < Delay_1 - 2 then
-        turret.setFlywheelTargetSpeed(0)
-        stopFire()
-        drive.run({x=0, y=0}, 0, 1)
-        intake.setIntake(0.0)
-    elseif t < Delay_1 then
-        turret.setFlywheelTargetSpeed(KEY_RPM)
-        stopFire()
-        drive.run({x=0, y=0}, 0, 1)
-        intake.setIntake(0.0)
-    else
-        if fireCount < 2 then
-            fireCount = fireCount + fire()
-            intake.setIntake(1.0)
-            intake.setLowered(true)
-            autodrivePIDX.target = 0.0
-            autodrivePIDY.target = -8.0
-            turret.setTargetAngle(calculateTurretTarget(posx, 12 - posy, drive.normalizeAngle(-drive.getGyroAngle())))
+    drive.deployFollower()
+    turret.setFlywheelTargetSpeed(KEY_RPM)
+    turret.setHoodTarget(KEY_HOOD_TARGET)
 
-        elseif not driveStopped then
-            if drive.isFollowerStopped() then
-                driveStopped = true
-            else
-            end
-        elseif t < Delay_2 then
-            stopFire()
-        else
+    if t < Delay_1 - 2 then
+        drive.run({x=0, y=0}, 0, 1)
+        turret.setFlywheelTargetSpeed(0)
+        intake.setIntake(0.0)
+        stopFire()
+        drive.setFrontSkid(false)
+    elseif t < Delay_1 then
+        drive.run({x=0, y=0}, 0, 1)
+        turret.setFlywheelTargetSpeed(KEY_RPM)
+        intake.setIntake(0.0)
+        stopFire()
+        drive.setFrontSkid(false)
+    elseif fireCount < 2 then
+        -- After Delay_1, Fire two balls
+        drive.run({x=0, y=0}, 0, 1)
+        turret.setFlywheelTargetSpeed(KEY_RPM)
+        intake.setIntake(0.0)
+        fireCount = fireCount + fire()
+        drive.setFrontSkid(false)
+    elseif not driveStopped then
+        -- After firing two balls
+        autodrivePIDX.target = 0.0
+        autodrivePIDY.target = CLOSE_BRIDGE_DISTANCE
+        setDriveAxis("y")
+        drive.run({x=autodrivePIDX.output, y=autodrivePIDY.output}, 0, 1)
+        stopFire()
+
+        intake.setIntake(1)
+        drive.setFrontSkid(true)
+        turret.setTargetAngle(calculateTurretTarget(posx, 12 - posy, drive.normalizeAngle(-drive.getGyroAngle())))
+        if posy/CLOSE_BRIDGE_DISTANCE > .5 and drive.isFollowerStopped() then
+            driveStopped = true
+            bridgeTimer = wpilib.Timer() 
+            bridgeTimer:Start()
+        end
+    else 
+        if bridgeTimer:Get() > 2 then
+            autodrivePIDX.target = 0.0
+            autodrivePIDY.target = 0.0
+            drive.run({x=autodrivePIDX.output, y=autodrivePIDY.output}, 0, 1)
+        else 
+            drive.run({x=0, y=0}, 0, 1)
+        end
+
+        if t > Delay_2 then
+            -- Fire continuous
             fireCount = fireCount + fire()
+            turret.setTargetAngle(calculateTurretTarget(posx, 12 - posy, drive.normalizeAngle(-drive.getGyroAngle())))
+        else 
+            stopFire()
         end
     end
 end
