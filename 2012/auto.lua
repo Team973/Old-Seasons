@@ -283,7 +283,8 @@ local bridgeTimer = nil
 local DISTANCE_TO_HOOP = 15
 
 function keyShotWithCoOpBridgeFar(t)
-    local CLOSE_BRIDGE_DISTANCE = -6
+    local CLOSE_BRIDGE_DISTANCE = -9
+    local RPM_FUDGE = 100
 
     local posx, posy = drive.getFollowerPosition()
 
@@ -292,7 +293,7 @@ function keyShotWithCoOpBridgeFar(t)
     dashboard:PutDouble("Follower X", posx)
     dashboard:PutDouble("Follower Y", posy)
     drive.deployFollower()
-    turret.setFlywheelTargetSpeed(KEY_RPM)
+    turret.setFlywheelTargetSpeed(KEY_RPM + RPM_FUDGE)
     turret.setHoodTarget(KEY_HOOD_TARGET)
 
     if t < Delay_1 - 2 then
@@ -303,14 +304,14 @@ function keyShotWithCoOpBridgeFar(t)
         drive.setFrontSkid(false)
     elseif t < Delay_1 then
         drive.run({x=0, y=0}, 0, 1)
-        turret.setFlywheelTargetSpeed(KEY_RPM)
+        turret.setFlywheelTargetSpeed(KEY_RPM + RPM_FUDGE)
         intake.setIntake(0.0)
         stopFire()
         drive.setFrontSkid(false)
     elseif fireCount < 2 then
         -- After Delay_1, Fire two balls
         drive.run({x=0, y=0}, 0, 1)
-        turret.setFlywheelTargetSpeed(KEY_RPM)
+        turret.setFlywheelTargetSpeed(KEY_RPM + RPM_FUDGE)
         intake.setIntake(0.0)
         fireCount = fireCount + fire()
         drive.setFrontSkid(false)
