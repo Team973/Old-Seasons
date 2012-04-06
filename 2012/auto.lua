@@ -74,6 +74,7 @@ function run(extraUpdate)
     turret.fullStop()
     intake.fullStop()
     drive.undeployFollower()
+    drive.setFrontSkid(true)
 end
 
 function calculateTurretTarget(x,y,gyro)
@@ -125,6 +126,7 @@ end
 2. Flywheel Speed
 3. Intake speed
 4. Fire/stopFire
+5. Skid
 --]]
 
 function sittingKeyshot(t)
@@ -237,18 +239,21 @@ function keyShotWithCoOpBridge(t)
     dashboard:PutDouble("Follower X", posx)
     dashboard:PutDouble("Follower Y", posy)
     drive.deployFollower()
+    turret.setHoodTarget(KEY_HOOD_TARGET)
     if t < Delay_1 - 2 then
+        drive.setFrontSkid(false)
         turret.setFlywheelTargetSpeed(0)
         stopFire()
         drive.run({x=0, y=0}, 0, 1)
         intake.setIntake(0.0)
     elseif t < Delay_1 then
+        drive.setFrontSkid(false)
         turret.setFlywheelTargetSpeed(KEY_RPM)
         stopFire()
         drive.run({x=0, y=0}, 0, 1)
         intake.setIntake(0.0)
     elseif t < Delay_2 then
-        --TODO: Lower mantis
+        drive.setFrontSkid(true)
         turret.setFlywheelTargetSpeed(KEY_RPM)
         if fireCount < 2 then
             fireCount = fireCount + fire()
@@ -262,6 +267,7 @@ function keyShotWithCoOpBridge(t)
         end
         intake.setIntake(1.0)
     else
+        drive.setFrontSkid(true)
         turret.setFlywheelTargetSpeed(BRIDGE_RPM)
         if not drive.isFollowerStopped() then
             drive.run({x=autodrivePIDX.output, y=autodrivePIDY.output}, 0, 1)
