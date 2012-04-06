@@ -280,9 +280,10 @@ end
 
 local driveStopped = false
 local bridgeTimer = nil
+local DISTANCE_TO_HOOP = 15
 
 function keyShotWithCoOpBridgeFar(t)
-    local CLOSE_BRIDGE_DISTANCE = -8
+    local CLOSE_BRIDGE_DISTANCE = -6
 
     local posx, posy = drive.getFollowerPosition()
 
@@ -323,7 +324,7 @@ function keyShotWithCoOpBridgeFar(t)
 
         intake.setIntake(1)
         drive.setFrontSkid(true)
-        turret.setTargetAngle(calculateTurretTarget(posx, 12 - posy, drive.normalizeAngle(-drive.getGyroAngle())))
+        turret.setTargetAngle(calculateTurretTarget(posx, DISTANCE_TO_HOOP - posy, drive.normalizeAngle(-drive.getGyroAngle())))
         if posy/CLOSE_BRIDGE_DISTANCE > .5 and drive.isFollowerStopped() then
             driveStopped = true
             bridgeTimer = wpilib.Timer() 
@@ -341,7 +342,7 @@ function keyShotWithCoOpBridgeFar(t)
         if t > Delay_2 then
             -- Fire continuous
             fireCount = fireCount + fire()
-            turret.setTargetAngle(calculateTurretTarget(posx, 12 - posy, drive.normalizeAngle(-drive.getGyroAngle())))
+            turret.setTargetAngle(calculateTurretTarget(posx, DISTANCE_TO_HOOP - posy, drive.normalizeAngle(-drive.getGyroAngle())))
         else 
             stopFire()
         end
@@ -385,7 +386,7 @@ function foo(t)
         drive.run({x=autodrivePIDX.output, y=autodrivePIDY.output}, 0, 1)
         fireCount = fireCount + fire()
         intake.setIntake(1.0)
-        turret.setTargetAngle(calculateTurretTarget(posx, 12 - posy, drive.normalizeAngle(-drive.getGyroAngle())))
+        turret.setTargetAngle(calculateTurretTarget(posx, DISTANCE_TO_HOOP - posy, drive.normalizeAngle(-drive.getGyroAngle())))
     end
 end
 
