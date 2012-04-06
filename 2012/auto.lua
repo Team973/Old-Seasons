@@ -283,7 +283,7 @@ local bridgeTimer = nil
 local DISTANCE_TO_HOOP = 15
 
 function keyShotWithCoOpBridgeFar(t)
-    local CLOSE_BRIDGE_DISTANCE = -9
+    local CLOSE_BRIDGE_DISTANCE = -11
     local RPM_FUDGE = 100
 
     local posx, posy = drive.getFollowerPosition()
