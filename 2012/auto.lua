@@ -2,15 +2,16 @@
 
 local drive = require("drive")
 local intake = require("intake")
+local math = require("math")
 local pid = require("pid")
 local turret = require("turret")
 local wpilib = require("wpilib")
+
+module(...)
+
 local KEY_RPM = 6300
 local KEY_HOOD_TARGET = 1100
-
-
-local math = require("math")
-module(...)
+local BRIDGE_RPM = 7000
 
 local dashboard = wpilib.SmartDashboard_GetInstance()
 
@@ -231,8 +232,6 @@ function sittingKeyshotWithDropPass(t)
 end
 
 function keyShotWithCoOpBridge(t)
-    local BRIDGE_RPM = 7000
-    
     local posx, posy = drive.getFollowerPosition()
     autodrivePIDX:update(posx)
     autodrivePIDY:update(posy)
@@ -282,8 +281,6 @@ end
 local driveStopped = false
 
 function keyShotWithCoOpBridgeFar(t)
-    local BRIDGE_RPM = 7000
-    
     local posx, posy = drive.getFollowerPosition()
     autodrivePIDX:update(posx)
     autodrivePIDY:update(posy)
@@ -322,8 +319,6 @@ function keyShotWithCoOpBridgeFar(t)
 end
 
 function foo(t)
-    local BRIDGE_RPM = 7000
-    
     local posx, posy = drive.getFollowerPosition()
     autodrivePIDX:update(posx)
     autodrivePIDY:update(posy)
