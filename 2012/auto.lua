@@ -25,9 +25,9 @@ autodrivePIDX.min, autodrivePIDX.max = -1, 1
 local autodrivePIDY = pid.new()
 autodrivePIDY.min, autodrivePIDY.max = -1, 1
 
-Delay_1 = 0
-Delay_2 = 0
-Delay_3 = 0
+Delay_1 = 3
+Delay_2 = 6
+Delay_3 = 10
 
 local function setDriveAxis(axis)
     if axis == "x" then
