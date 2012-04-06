@@ -24,6 +24,10 @@ autodrivePIDX.min, autodrivePIDX.max = -1, 1
 local autodrivePIDY = pid.new()
 autodrivePIDY.min, autodrivePIDY.max = -1, 1
 
+Delay_1 = 0
+Delay_2 = 0
+Delay_3 = 0
+
 local function setDriveAxis(axis)
     if axis == "x" then
         autodrivePIDX.p = driveGains.p
@@ -122,7 +126,7 @@ end
 4. Fire/stopFire
 --]]
 
-function sittingKeyshot(t, Delay_1, Delay_2, Delay_3)
+function sittingKeyshot(t)
     turret.setHoodTarget(KEY_HOOD_TARGET)
     if t < Delay_1 - 2 then
         turret.setFlywheelTargetSpeed(0)
@@ -141,7 +145,7 @@ function sittingKeyshot(t, Delay_1, Delay_2, Delay_3)
     end
 end
 
-function keyShotWithCoOpBridge(t, Delay_1, Delay_2, Delay_3)
+function keyShotWithCoOpBridge(t)
     local BRIDGE_RPM = 7000
     
     local posx, posy = drive.getFollowerPosition()
@@ -185,7 +189,7 @@ function keyShotWithCoOpBridge(t, Delay_1, Delay_2, Delay_3)
     end
 end
 
-function foo(t, Delay_1, Delay_2, Delay_3)
+function foo(t)
     local BRIDGE_RPM = 7000
     
     local posx, posy = drive.getFollowerPosition()
@@ -228,7 +232,7 @@ function foo(t, Delay_1, Delay_2, Delay_3)
     end
 end
 
-function lshape(t, Delay_1, Delay_2, Delay_3)
+function lshape(t)
     local posx, posy = drive.getFollowerPosition()
     autodrivePIDX:update(posx)
     autodrivePIDY:update(posy)
