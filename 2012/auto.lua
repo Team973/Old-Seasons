@@ -339,7 +339,7 @@ function keyShotWithCoOpBridgeFar(t)
             drive.run({x=0, y=0}, 0, 1)
         end
 
-        if t > Delay_2 then
+        if t > Delay_3 then
             -- Fire continuous
             fireCount = fireCount + fire()
             turret.setTargetAngle(calculateTurretTarget(posx, DISTANCE_TO_HOOP - posy, drive.normalizeAngle(-drive.getGyroAngle())))
