@@ -331,7 +331,7 @@ function update()
     flywheelSpeedTable:add(speedSample)
     flywheelSpeedFilter:add(speedSample)
 
-    if flywheelSpeedTable:average() - flywheelSpeedFilter:average() > 300 then
+    if flywheelSpeedTable:average() - flywheelSpeedFilter:average() > 250 then
         flywheelFired = true
     end
     dashboard:PutBoolean("Flywheel Fired", flywheelFired)
