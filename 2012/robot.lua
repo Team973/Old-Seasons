@@ -25,12 +25,11 @@ local feedWatchdog, enableWatchdog, disableWatchdog
 
 local disabledIdle, hellautonomous, teleop, updateCompressor
 local controlMap, fudgeControlMap, strafe, rotation
-local deploySkid, deployStinger
+local deployStinger
 local zeroMode, possessionTimer
 local fudgeMode, fudgeWheel, fudgeMovement
 
 local compressor, pressureSwitch, stinger
-local frontSkid
 local squishMeter
 local driveMode = 0
 
@@ -172,8 +171,6 @@ function teleop()
         -- Pneumatics
         updateCompressor()
 
-        frontSkid:Set(deploySkid)
-
         intake.update(true)
 
         dashboard:PutDouble("Flywheel Speed", turret.getFlywheelSpeed())
@@ -231,7 +228,6 @@ end
 -- Don't forget to add to declarations at the top!
 compressor = wpilib.Relay(1, 1, wpilib.Relay_kForwardOnly)
 pressureSwitch = wpilib.DigitalInput(1, 14)
-frontSkid = wpilib.Solenoid(3)
 stinger = wpilib.Solenoid(7)
 squishMeter = wpilib.AnalogChannel(5)
 -- End Inputs/Outputs
@@ -361,7 +357,7 @@ controlMap =
         [1] = function() presetValues(3300,20,0) end, -- Fender
         [2] = function() presetValues(4500,200,0) end, -- Side
         [3] = function() presetValues(6300,1100,0) end, -- Key
-        [4] = {tick=function(held) deploySkid = held end},
+        [4] = {tick=drive.setFrontSkid},
         [5] = {tick=function(held) intake.setLowered(held) end},   
         [6] = {
             down=turret.clearFlywheelFired,
