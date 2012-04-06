@@ -16,6 +16,7 @@ local gyroOkay = true
 local rotationPID = pid.new(0.01, 0, 0)
 local rotationHoldTimer
 local gearSwitch = wpilib.Solenoid(1, 1)
+local followerDeploy = wpilib.Solenoid(1, 6)
 rotationPID.min, rotationPID.max = -1, 1
 
 function initGyro()
@@ -177,6 +178,14 @@ end
 function resetFollowerPosition()
     followerEncoderX:Reset()
     followerEncoderY:Reset()
+end
+
+function deployFollower()
+    followerDeploy:Set(true)
+end
+
+function undeployFollower()
+    followerDeploy:Set(false)
 end
 
 function isFollowerStopped()
