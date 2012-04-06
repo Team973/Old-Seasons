@@ -13,6 +13,7 @@ local dashboard = wpilib.SmartDashboard_GetInstance()
 
 local gyro = nil
 local gyroOkay = true
+local ignoreGyro = false 
 local rotationPID = pid.new(0.01, 0, 0)
 local rotationHoldTimer
 local gearSwitch = wpilib.Solenoid(1, 1)
@@ -32,10 +33,15 @@ function resetGyro()
     if rotationPID.target then
         rotationPID.target = 0
     end
+    ignoreGyro = false 
+end
+
+function effTheGyro()
+    ignoreGyro = true
 end
 
 function getGyroAngle()
-    if not gyroOkay then
+    if not gyroOkay or ignoreGyro then
         return 0
     end
     return gyro:GetAngle()
@@ -257,10 +263,7 @@ function run(strafe, rotation, driveMode)
         dashboard:PutString(wheel.shortName .. ".turnEncoder", wheel.turnEncoder:GetDistance())
     end
 
-    local gyroAngle = normalizeAngle(-gyro:GetAngle())
-    if not gyroOkay then
-        gyroAngle = 0
-    end
+    local gyroAngle = normalizeAngle(-getGyroAngle())
     dashboard:PutInt("Gyro Angle", gyroAngle)
 
     local appliedGyro = gyroAngle

@@ -295,6 +295,8 @@ controlMap =
         ["rx"] = function(axis) rotation = deadband(axis, 0.15) end,
         [1] = {tick=function(held) deployStinger = held end},
         [2] = drive.resetGyro,
+        [4] = function() drive.effTheGyro()
+        end,
         [5] = {tick=function(held)
             if held then
                 drive.setGear("low")
