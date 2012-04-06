@@ -14,7 +14,7 @@ module(...)
 
 local dashboard = wpilib.SmartDashboard_GetInstance()
 
-local autoMode
+autoMode = nil
 local fireCount = 0
 
 local driveGains = {p=0.5, i=0, d=0.01}
@@ -60,7 +60,7 @@ function run(extraUpdate)
     t:Start()
 
     while wpilib.IsAutonomous() and wpilib.IsEnabled() do
-        autoMode(t:Get(),3,10,0) 
+        autoMode(t:Get()) 
 
         intake.update(true)
         turret.update()
@@ -73,6 +73,7 @@ function run(extraUpdate)
 
     turret.fullStop()
     intake.fullStop()
+    drive.undeployFollower()
 end
 
 function calculateTurretTarget(x,y,gyro)
@@ -153,6 +154,7 @@ function keyShotWithCoOpBridge(t)
     autodrivePIDY:update(posy)
     dashboard:PutDouble("Follower X", posx)
     dashboard:PutDouble("Follower Y", posy)
+    drive.deployFollower()
     if t < Delay_1 - 2 then
         turret.setFlywheelTargetSpeed(0)
         stopFire()
