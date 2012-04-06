@@ -13,7 +13,12 @@ local wpilib = require("wpilib")
 module(...)
 
 local flywheelSpeedTable = {
-    numSamples=100,
+    numSamples=25,
+}
+local flywheelSpeedFilter = {
+    prev=0,
+    curr=0,
+    weight=0.2,
 }
 local flywheelFired = false
 
@@ -206,7 +211,15 @@ function flywheelSpeedTable:average()
 end
 
 function getFlywheelFilterSpeed()
-    return X_hat[2][1] / (2*math.pi) * 60
+    return flywheelSpeedFilter:average()
+end
+
+function flywheelSpeedFilter:add(val)
+    self.prev, self.curr = self:average(), val
+end
+
+function flywheelSpeedFilter:average()
+    return (1 - self.weight) * self.prev + self.weight * self.curr
 end
 
 function clearFlywheelFired()
@@ -314,13 +327,16 @@ function update()
     end
 
     -- Add flywheel velocity sample
-    local speedSample = X_hat[2][1] / (2*math.pi) * 60
+    local speedSample = 60.0 / (flywheelCounter:GetPeriod() * flywheelTicksPerRevolution) / 2
     flywheelSpeedTable:add(speedSample)
+    flywheelSpeedFilter:add(speedSample)
 
-    if flywheelTargetSpeed - speedSample > 200 then
+    if flywheelSpeedTable:average() - flywheelSpeedFilter:average() > 300 then
         flywheelFired = true
     end
     dashboard:PutBoolean("Flywheel Fired", flywheelFired)
+    dashboard:PutInt("Flywheel Speed(Int)", getFlywheelSpeed())
+    dashboard:PutInt("Flywheel Speed(Filter Int)", getFlywheelFilterSpeed())
 
     local e1 = -readVexEncoder(hoodEncoder1)
     local e2 = readVexEncoder(hoodEncoder2)

@@ -5,6 +5,9 @@ local intake = require("intake")
 local pid = require("pid")
 local turret = require("turret")
 local wpilib = require("wpilib")
+local KEY_RPM = 6300
+local KEY_HOOD_TARGET = 1100
+
 
 local math = require("math")
 module(...)
@@ -120,17 +123,15 @@ end
 --]]
 
 function sittingKeyshot(t, Delay_1, Delay_2, Delay_3)
-    local RPM = 6400
-    local HOOD_TARGET = 950
-    turret.setHoodTarget(HOOD_TARGET)
+    turret.setHoodTarget(KEY_HOOD_TARGET)
     if t < Delay_1 - 2 then
         turret.setFlywheelTargetSpeed(0)
         stopFire()
     elseif t < Delay_1 then
-        turret.setFlywheelTargetSpeed(RPM)
+        turret.setFlywheelTargetSpeed(KEY_RPM)
         stopFire()
     else
-        turret.setFlywheelTargetSpeed(RPM)
+        turret.setFlywheelTargetSpeed(KEY_RPM)
         if fireCount < 2 then
             fireCount = fireCount + fire()
         else
@@ -142,8 +143,6 @@ end
 
 function keyShotWithCoOpBridge(t, Delay_1, Delay_2, Delay_3)
     local BRIDGE_RPM = 7000
-    local HOOD_TARGET = 950
-    local KEY_RPM = 6400
     
     local posx, posy = drive.getFollowerPosition()
     autodrivePIDX:update(posx)
@@ -188,8 +187,6 @@ end
 
 function foo(t, Delay_1, Delay_2, Delay_3)
     local BRIDGE_RPM = 7000
-    local HOOD_TARGET = 950
-    local KEY_RPM = 6400
     
     local posx, posy = drive.getFollowerPosition()
     autodrivePIDX:update(posx)

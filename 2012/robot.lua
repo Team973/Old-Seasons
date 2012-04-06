@@ -115,8 +115,6 @@ function teleop()
         intake.update(true)
 
         dashboard:PutDouble("Flywheel Speed", turret.getFlywheelSpeed())
-        dashboard:PutInt("Flywheel Speed(Int)", turret.getFlywheelSpeed())
-        dashboard:PutInt("Flywheel Speed(Filter Int)", turret.getFlywheelFilterSpeed())
         dashboard:PutDouble("Flywheel Target Speed", turret.getFlywheelTargetSpeed())
         dashboard:PutDouble("Squish Meter", squishMeter:GetVoltage())
 
@@ -298,7 +296,7 @@ controlMap =
         end,
         [1] = function() presetValues(3300,20,0) end, -- Fender
         [2] = function() presetValues(4500,200,0) end, -- Side
-        [3] = function() presetValues(6400,950,0) end, -- Key
+        [3] = function() presetValues(6300,1100,0) end, -- Key
         [4] = {tick=function(held) deploySkid = held end},
         [5] = {tick=function(held) intake.setLowered(held) end},   
         [6] = {
