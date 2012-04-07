@@ -332,12 +332,13 @@ function keyShotWithCoOpBridgeFar(t)
             bridgeTimer:Start()
         end
     else 
-        intake.setLowered(true)
         if bridgeTimer:Get() > 2 then
+            intake.setLowered(true)
             autodrivePIDX.target = 0.0
             autodrivePIDY.target = 0.0
             drive.run({x=autodrivePIDX.output, y=autodrivePIDY.output}, 0, 1)
         else 
+            intake.setLowered(false)
             drive.run({x=0, y=0}, 0, 1)
         end
 
