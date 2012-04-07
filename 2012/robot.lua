@@ -297,10 +297,13 @@ controlMap =
         ["x"] = function(axis) strafe.x = deadband(axis, 0.15) end,
         ["y"] = function(axis) strafe.y = deadband(-axis, 0.15) end,
         ["rx"] = function(axis) rotation = deadband(axis, 0.15) end,
+        ["hatx"] = function(axis)
+            if deadband(axis, 0.15) > 0.5 then
+                turret.hoodOkay = false
+            end
+        end,
         [1] = {tick=function(held) deployStinger = held end},
         [2] = drive.resetGyro,
-        [3] = function() turret.hoodOkay = false
-        end,
         [4] = function() drive.effTheGyro()
         end,
         [5] = {tick=function(held)

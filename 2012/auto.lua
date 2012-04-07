@@ -9,7 +9,7 @@ local wpilib = require("wpilib")
 
 module(...)
 
-local KEY_RPM = 6300
+local KEY_RPM = 6200
 local KEY_HOOD_TARGET = 1100
 local BRIDGE_RPM = 7000
 
@@ -27,7 +27,7 @@ autodrivePIDY.min, autodrivePIDY.max = -1, 1
 
 Delay_1 = 3
 Delay_2 = 6
-Delay_3 = 12
+Delay_3 = 6
 
 local function setDriveAxis(axis)
     if axis == "x" then
@@ -202,9 +202,7 @@ function sittingKeyshotWithDropPass(t)
 end
 
 function sittingKeyshotWithDropPass(t)
-    local RPM = 640
     local SLAP_INTERVAL = 1.5
-    local HOOD_TARGET = 950
     turret.setHoodTarget(KEY_HOOD_TARGET)
     if t < Delay_1 - 2 then
         turret.setFlywheelTargetSpeed(0)
