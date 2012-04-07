@@ -117,7 +117,7 @@ wpilib.UINT8array_setitem(vexMagic, 2, string.byte("X"))
 
 local I2C_DELAY = 0.1
 local I2C_SIDECAR = 2
-local hoodOkay
+hoodOkay = nil
 
 local function initVexEncoder(address, num, terminated)
     local mod = wpilib.DigitalModule_GetInstance(I2C_SIDECAR)
