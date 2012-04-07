@@ -362,7 +362,7 @@ controlMap =
             end
             prevOperatorDpad = axis
         end,
-        [1] = function() presetValues(3300,20,0) end, -- Fender
+        [1] = function() presetValues(3200,20,0) end, -- Fender
         [2] = function() presetValues(4500,200,0) end, -- Side
         [3] = function() presetValues(6300,1100,0) end, -- Key
         [4] = {tick=drive.setFrontSkid},
