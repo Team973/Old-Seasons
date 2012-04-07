@@ -84,7 +84,7 @@ function disabledIdle()
             func=auto.keyShotWithCoOpBridge,
         },
     }
-    local modeNum = 1
+    local modeNum = 3
 
     local initAngle = drive.getGyroAngle()
     while wpilib.IsDisabled() do
@@ -299,6 +299,8 @@ controlMap =
         ["rx"] = function(axis) rotation = deadband(axis, 0.15) end,
         [1] = {tick=function(held) deployStinger = held end},
         [2] = drive.resetGyro,
+        [3] = function() turret.hoodOkay = false
+        end,
         [4] = function() drive.effTheGyro()
         end,
         [5] = {tick=function(held)
