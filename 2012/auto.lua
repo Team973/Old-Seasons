@@ -202,7 +202,7 @@ function sittingKeyshotWithDropPass(t)
 end
 
 function sittingKeyshotWithDropPass(t)
-    local SLAP_INTERVAL = 1.5
+    local SLAP_INTERVAL = 20
     turret.setHoodTarget(KEY_HOOD_TARGET)
     if t < Delay_1 - 2 then
         turret.setFlywheelTargetSpeed(0)
@@ -220,12 +220,12 @@ function sittingKeyshotWithDropPass(t)
         intake.setIntake(1.0)
         turret.setFlywheelTargetSpeed(KEY_RPM)
         stopFire()
-        intake.setLowered(math.floor((t-Delay_2)/SLAP_INTERVAL)%2 == 0)
+        intake.setLowered(true)
     else
         turret.setFlywheelTargetSpeed(KEY_RPM)
         fireCount = fireCount + fire()
         intake.setIntake(1.0)
-        intake.setLowered(math.floor((t-Delay_2)/SLAP_INTERVAL)%2 == 0)
+        intake.setLowered(true)
     end
 end
 
