@@ -84,6 +84,10 @@ function disabledIdle()
             func=auto.sittingKeyshotWithDropPass,
         },
         {
+            name="Sitting Keyshot w/ Slap Pass",
+            func=auto.sittingKeyshotWithSlapPass,
+        },
+        {
             name="Key Shot w/ Co-op Bridge",
             func=auto.keyShotWithCoOpBridge,
         },
