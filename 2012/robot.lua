@@ -80,11 +80,15 @@ function disabledIdle()
             func=auto.sittingKeyshotWithPass,
         },
         {
+            name="Sitting Keyshot w/ Drop Pass",
+            func=auto.sittingKeyshotWithDropPass,
+        },
+        {
             name="Key Shot w/ Co-op Bridge",
             func=auto.keyShotWithCoOpBridge,
         },
     }
-    local modeNum = 3
+    local modeNum = 4
 
     local initAngle = drive.getGyroAngle()
     while wpilib.IsDisabled() do
