@@ -32,6 +32,7 @@ local fudgeMode, fudgeWheel, fudgeMovement
 local compressor, pressureSwitch, stinger
 local squishMeter
 local driveMode = 0
+local lastPeak = 0
 
 -- End Declarations
 
@@ -247,6 +248,16 @@ pressureSwitch = wpilib.DigitalInput(1, 14)
 stinger = wpilib.Solenoid(7)
 squishMeter = wpilib.AnalogChannel(5)
 -- End Inputs/Outputs
+
+function squishMeterOutput() 
+lastPeak = 0
+local voltage = squishMeter:GetVoltage() 
+    if voltage > lastPeak then
+        lastPeak = voltage
+    elseif voltage < lastPeak * .25 then
+        lastPeak = voltage
+    end
+end
 
 -- Controls
 strafe = {x=0, y=0}
