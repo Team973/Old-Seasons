@@ -24,6 +24,8 @@ local frontIntake = wpilib.Victor(2,2)
 local intakeSolenoid = wpilib.Solenoid(2)
 local verticalConveyerEncoder = wpilib.Encoder(2,7,2,8)
 local conveyerPID = pid.new(0, 0, 0) 
+local loadBallTimer =  wpilib.Timer()
+squishMeter = wpilib.AnalogChannel(5)
 
 verticalConveyerEncoder:Start()
 
@@ -43,6 +45,8 @@ function setLowered(val)
     lowered = val
 end
 
+local isLoadingBall = false
+
 function update(turretReady)
     local dashboard = wpilib.SmartDashboard_GetInstance()
 
@@ -59,12 +63,40 @@ function update(turretReady)
         cheaterRoller:Set(verticalSpeed)
     end
     
+    if isLoadingBall then 
+        verticalConveyer:Set(1) 
+        loadBallTimer:Start()
+        if loadBallTimer:Get() > 3 or squishMeterOutput() > squishMeterOutput() * .9 then
+            isLoadingBall = false
+        end
+    else 
+        verticalConveyer:Set(verticalSpeed)
+    end
+
     verticalConveyer:Set(verticalSpeed)
     dashboard:PutDouble("Vertical Speed", verticalSpeed)
     dashboard:PutDouble("Cheater Speed", cheaterRoller:Get())
+    dashboard:PutDouble("Squish Meter", squishMeter:GetVoltage())
     --conveyerPID:update(verticalConveyerEncoder:Get())
     --verticalConveyer:Set(conveyerPID.output)
 end
+
+function loadBall()
+    if not isLoadingBall then 
+        loadBallTimer:Reset()
+        isLoadingBall = true
+    end
+end
+
+local lastPeak = 0 
+function squishMeterOutput() 
+    local voltage = squishMeter:GetVoltage() 
+    if voltage > lastPeak then
+        lastPeak = voltage
+    elseif voltage < lastPeak * .25 then
+        lastPeak = voltage
+    end
+end 
 
 function ConveyerUp()
     conveyerPID.target = conveyerPID.target + 12

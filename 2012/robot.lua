@@ -30,7 +30,6 @@ local zeroMode, possessionTimer
 local fudgeMode, fudgeWheel, fudgeMovement
 
 local compressor, pressureSwitch, stinger
-local squishMeter
 local driveMode = 0
 local lastPeak = 0
 
@@ -192,7 +191,6 @@ function teleop()
 
         dashboard:PutDouble("Flywheel Speed", turret.getFlywheelSpeed())
         dashboard:PutDouble("Flywheel Target Speed", turret.getFlywheelTargetSpeed())
-        dashboard:PutDouble("Squish Meter", squishMeter:GetVoltage())
 
         local followerX, followerY = drive.getFollowerPosition()
         dashboard:PutDouble("Follower X", followerX)
@@ -246,18 +244,7 @@ end
 compressor = wpilib.Relay(1, 1, wpilib.Relay_kForwardOnly)
 pressureSwitch = wpilib.DigitalInput(1, 14)
 stinger = wpilib.Solenoid(7)
-squishMeter = wpilib.AnalogChannel(5)
 -- End Inputs/Outputs
-
-function squishMeterOutput() 
-lastPeak = 0
-local voltage = squishMeter:GetVoltage() 
-    if voltage > lastPeak then
-        lastPeak = voltage
-    elseif voltage < lastPeak * .25 then
-        lastPeak = voltage
-    end
-end
 
 -- Controls
 strafe = {x=0, y=0}
@@ -391,17 +378,7 @@ controlMap =
         [3] = function() presetValues(6300,1100,0) end, -- Key
         [4] = {tick=drive.setFrontSkid},
         [5] = {tick=function(held) intake.setLowered(held) end},   
-        [6] = {
-            down=turret.clearFlywheelFired,
-            tick=function(held)
-                if not held then return end
-                if not turret.getFlywheelFired() then
-                    intake.setVerticalSpeed(1.0)
-                else
-                    intake.setVerticalSpeed(-0.2)
-                end
-            end,
-        },
+        [6] = function() intake.loadBall() end, 
         [7] = function()
             rpmPreset = rpmPreset - 100
         end,
