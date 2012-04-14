@@ -27,6 +27,12 @@ local conveyerPID = pid.new(0, 0, 0)
 local loadBallTimer =  wpilib.Timer()
 squishMeter = wpilib.AnalogChannel(5)
 
+local loadBallState = 0
+local peak1, peak2, peak3
+local lastSquishThresh
+
+local SQUISH_THRESHOLD = 2
+
 verticalConveyerEncoder:Start()
 
 function setVerticalSpeed(speed)
@@ -45,7 +51,27 @@ function setLowered(val)
     lowered = val
 end
 
-local isLoadingBall = false
+local loadBallPeaks
+local loadBallStateTable = {
+    {0.5, true, nil},
+    {0.5, false, 1},
+    {-0.5, true, nil},
+    {-0.5, false, 2},
+    {0.5, true, nil},
+    {0.5, false, 3},
+}
+
+local function runLoadBallState(speed, rising, peak)
+    local voltage = squishMeter:GetVoltage()
+    local thresh = voltage > SQUISH_THRESHOLD
+    verticalConveyer:Set(speed)
+    if peak then
+        peak = math.max(peak, voltage)
+    end
+    local shouldAdvance = (rising and not lastSquishThresh and thresh) or (not rising and lastSquishThresh and not thresh)
+    lastSquishThresh = thresh
+    return shouldAdvance, peak
+end
 
 function update(turretReady)
     local dashboard = wpilib.SmartDashboard_GetInstance()
@@ -63,40 +89,49 @@ function update(turretReady)
         cheaterRoller:Set(verticalSpeed)
     end
     
-    if isLoadingBall then 
-        verticalConveyer:Set(1) 
-        loadBallTimer:Start()
-        if loadBallTimer:Get() > 3 or squishMeterOutput() > squishMeterOutput() * .9 then
-            isLoadingBall = false
+    if loadBallState > 0 then 
+        if loadBallTimer:Get() > 3 then
+            -- Cutoff
+            loadBallState = 0
+            loadBallTimer:Stop()
+        else
+            -- Normal state
+            local state = loadBallStateTable[loadBallState]
+            local nextState
+            if state[3] then
+                nextState, loadBallPeaks[state[3]] = runLoadBallState(state[1], state[2], loadBallPeaks[state[3]])
+            else
+                nextState = runLoadBallState(state[1], state[2])
+            end
+            if nextState then
+                loadBallState = loadBallState + 1
+                if loadBallState > #loadBallStateTable then
+                    loadBallState = 0
+                    loadBallTimer:Stop()
+                end
+            end
         end
     else 
         verticalConveyer:Set(verticalSpeed)
     end
 
-    verticalConveyer:Set(verticalSpeed)
     dashboard:PutDouble("Vertical Speed", verticalSpeed)
     dashboard:PutDouble("Cheater Speed", cheaterRoller:Get())
     dashboard:PutDouble("Squish Meter", squishMeter:GetVoltage())
+    dashboard:PutInt("Load Ball State", loadBallState)
     --conveyerPID:update(verticalConveyerEncoder:Get())
     --verticalConveyer:Set(conveyerPID.output)
 end
 
 function loadBall()
-    if not isLoadingBall then 
+    if loadBallState <= 0 then 
+        loadBallTimer:Start()
         loadBallTimer:Reset()
-        isLoadingBall = true
+        loadBallState = 1
+        loadBallPeaks = {0, 0, 0}
+        lastSquishThresh = squishMeter:GetVoltage() > SQUISH_THRESHOLD
     end
 end
-
-local lastPeak = 0 
-function squishMeterOutput() 
-    local voltage = squishMeter:GetVoltage() 
-    if voltage > lastPeak then
-        lastPeak = voltage
-    elseif voltage < lastPeak * .25 then
-        lastPeak = voltage
-    end
-end 
 
 function ConveyerUp()
     conveyerPID.target = conveyerPID.target + 12
