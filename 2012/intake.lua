@@ -5,10 +5,13 @@
 --codriver intake up down
 --fire cheaterroller + verticalintake up at slow speed
 
+local ipairs = ipairs
+
 local io = require("io")
 local math = require("math")
 local linearize = require("linearize")
 local pid = require("pid")
+local string = require("string")
 local wpilib = require("wpilib")
 
 module(...)
@@ -60,6 +63,16 @@ local loadBallStateTable = {
     {0.75, false, 2},
 }
 
+local fireCount = 0
+local ballLog = io.open("ball-log.csv", "a")
+-- Mode,Time,FireCount,Peak1,Peak2...
+ballLog:write("on,0,0")
+for i = 1, #loadBallPeaks do
+    ballLog:write(",0")
+end
+ballLog:write("\r\n")
+local ballTimer = wpilib.Timer()
+
 local function runLoadBallState(speed, rising, peak)
     local voltage = squishMeter:GetVoltage()
     local thresh = voltage > SQUISH_THRESHOLD
@@ -73,6 +86,8 @@ local function runLoadBallState(speed, rising, peak)
 end
 
 function update(turretReady)
+    ballTimer:Start()
+
     local dashboard = wpilib.SmartDashboard_GetInstance()
 
     sideIntake:Set(sideSpeed)
@@ -107,6 +122,21 @@ function update(turretReady)
                 if loadBallState > #loadBallStateTable then
                     loadBallState = 0
                     loadBallTimer:Stop()
+                    fireCount = fireCount + 1
+
+                    if wpilib.IsAutonomous() then
+                        ballLog:write("auto,")
+                    elseif wpilib.IsOperatorControl() then
+                        ballLog:write("teleop,")
+                    else
+                        ballLog:write(",")
+                    end
+                    ballLog:write(string.format("%.1f,%d", ballTimer:Get(), fireCount))
+                    for _, peak in ipairs(loadBallPeaks) do
+                        ballLog:write(string.format(",%.5f", peak))
+                    end
+                    ballLog:write("\r\n")
+                    ballLog:flush()
                 end
             end
         end
