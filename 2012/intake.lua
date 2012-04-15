@@ -5,7 +5,9 @@
 --codriver intake up down
 --fire cheaterroller + verticalintake up at slow speed
 
+local io = require("io")
 local math = require("math")
+local linearize = require("linearize")
 local pid = require("pid")
 local wpilib = require("wpilib")
 
@@ -17,7 +19,7 @@ local sideSpeed = 0 -- side intake roller
 local verticalSpeed = 0
 local repack = false
 
-local verticalConveyer = wpilib.Victor(2,4)
+local verticalConveyer = linearize.wrap(wpilib.Victor(2,4))
 local cheaterRoller = wpilib.Victor(2,5)
 local sideIntake = wpilib.Victor(2,1)
 local frontIntake = wpilib.Victor(2,2)
@@ -28,10 +30,9 @@ local loadBallTimer =  wpilib.Timer()
 squishMeter = wpilib.AnalogChannel(5)
 
 local loadBallState = 0
-local peak1, peak2, peak3
 local lastSquishThresh
 
-local SQUISH_THRESHOLD = 2
+local SQUISH_THRESHOLD = 3.0
 
 verticalConveyerEncoder:Start()
 
@@ -51,14 +52,12 @@ function setLowered(val)
     lowered = val
 end
 
-local loadBallPeaks
+local loadBallPeaks = {0, 0}
 local loadBallStateTable = {
-    {0.5, true, nil},
-    {0.5, false, 1},
-    {-0.5, true, nil},
-    {-0.5, false, 2},
-    {0.5, true, nil},
-    {0.5, false, 3},
+    {1.0, true, nil},
+    {-0.75, false, 1},
+    {0.75, true, nil},
+    {0.75, false, 2},
 }
 
 local function runLoadBallState(speed, rising, peak)
@@ -128,7 +127,9 @@ function loadBall()
         loadBallTimer:Start()
         loadBallTimer:Reset()
         loadBallState = 1
-        loadBallPeaks = {0, 0, 0}
+        for i = 1, #loadBallPeaks do
+            loadBallPeaks[i] = 0
+        end
         lastSquishThresh = squishMeter:GetVoltage() > SQUISH_THRESHOLD
     end
 end
