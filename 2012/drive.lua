@@ -311,7 +311,16 @@ function run(strafe, rotation, driveMode)
         local currentTurn = wheel.turnEncoder:GetDistance()
 
         if strafe.x ~= 0 or strafe.y ~= 0 or rotation ~= 0 then
-            wheel.turnPID.target = normalizeAngle(value.angleDeg)
+            if driveMode ~= 2 then
+                wheel.turnPID.target = normalizeAngle(value.angleDeg)
+            else
+                -- Keep wheels straight in wide mode (for bridge)
+                if normalizeAngle(value.angleDeg) > 0 then
+                    wheel.turnPID.target = 90
+                else
+                    wheel.turnPID.target = -90
+                end
+            end
             local driveScale = driveScale(calculateTurn(currentTurn, wheel.turnPID.target))
             wheel.driveMotor:Set(value.speed * driveScale)
         else
