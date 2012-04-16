@@ -76,7 +76,7 @@ end
 
 function update(turretReady)
     local dashboard = wpilib.SmartDashboard_GetInstance()
-    local autoRepack = verticalSpeed ~= 0 and frontSpeed ~= 0 and squishMeter:GetVoltage() > SQUISH_THRESHOLD and loadBallState == 0 and (repackTimer or repackTimer:Get() < .5)
+    local autoRepack = verticalSpeed ~= 0 and frontSpeed ~= 0 and squishMeter:GetVoltage() > SQUISH_THRESHOLD and loadBallState == 0 and (not repackTimer or repackTimer:Get() < .5)
 
     sideIntake:Set(sideSpeed)
     frontIntake:Set(frontSpeed)
