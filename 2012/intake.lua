@@ -16,6 +16,7 @@ local frontSpeed = 0 -- front intake roller
 local sideSpeed = 0 -- side intake roller
 local verticalSpeed = 0
 local repack = false
+local repackTimer = nil
 
 local verticalConveyer = wpilib.Victor(2,4)
 local cheaterRoller = wpilib.Victor(2,5)
@@ -75,18 +76,28 @@ end
 
 function update(turretReady)
     local dashboard = wpilib.SmartDashboard_GetInstance()
+    local autoRepack = verticalSpeed ~= 0 and frontSpeed ~= 0 and squishMeter:GetVoltage() > SQUISH_THRESHOLD and loadBallState == 0 and (repackTimer or repackTimer:Get() < .5)
 
     sideIntake:Set(sideSpeed)
     frontIntake:Set(frontSpeed)
 
     intakeSolenoid:Set(lowered)
-    if repack then
+
+    if repack or autoRepack then
         verticalSpeed = -1
         cheaterRoller:Set(1)
+
+        if autoRepack and not repackTimer then
+            repackTimer = wpilib.Timer()
+            repackTimer:Start()
+        end
     elseif math.abs(frontSpeed) > math.abs(verticalSpeed) then
         cheaterRoller:Set(frontSpeed)
     else
         cheaterRoller:Set(verticalSpeed)
+    end
+    if not autoRepack then
+        repackTimer = nil
     end
     
     if loadBallState > 0 then 
@@ -113,7 +124,7 @@ function update(turretReady)
         end
     else 
         verticalConveyer:Set(verticalSpeed)
-    end
+    end	  
 
     dashboard:PutDouble("Vertical Speed", verticalSpeed)
     dashboard:PutDouble("Cheater Speed", cheaterRoller:Get())
