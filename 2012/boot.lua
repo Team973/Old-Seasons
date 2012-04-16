@@ -14,11 +14,11 @@ This file is public domain.
     You could put all of your core logic into the boot.lua file, but we
     recommend writing a bootloader: very reliable code that runs the rest of
     your robot.
-    
+
     This file is one such example.
-    
+
     Features:
-    
+
     First of all, the robot code will automatically be re-run if an error
     occurs.  Don't want a frozen robot in a match, eh? Second, any errors will
     be written to a file called boot-error.txt, complete with a stack trace.
@@ -41,7 +41,7 @@ function restartRobot()
     error(restartError, 2)
 end
 
--- Add your package to this table if you don't want it to be unloaded 
+-- Add your package to this table if you don't want it to be unloaded
 local keepPackage =
 {
     ["_G"] = true,
@@ -80,13 +80,13 @@ repeat
             return debug.traceback(msg, 2)
         end
     end
-    
+
     -- Run the robot code in protected mode
     local successful, err = xpcall(function()
         local robot = require("robot")
         robot.run()
     end, handleError)
-    
+
     -- Handle any errors
     if not successful then
         if err == restartError then

@@ -103,29 +103,29 @@ function PID:update(actual, time)
             error("no timer provided")
         end
     end
-    
+
     if time <= 0 then time = 0.001 end
-    
+
     -- Calculate error
     local e = self.errFunc(actual, self.target)
-    
+
     -- Calculate integral
     self.integral = self.integral + e * time
-    
+
     -- Calculate derivative
     local derivative = self.derivFunc(e, self.previousError, time)
-    
+
     -- Compute output
     self.output = (self.p * e) + (self.i * self.integral) + (self.d * derivative)
     self.previousError = e
-    
+
     if self.max and self.output > self.max then
         self.output = self.max
     end
     if self.min and self.output < self.min then
         self.output = self.min
     end
-    
+
     return self.output
 end
 

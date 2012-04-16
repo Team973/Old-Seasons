@@ -24,7 +24,7 @@ local sideIntake = wpilib.Victor(2,1)
 local frontIntake = wpilib.Victor(2,2)
 local intakeSolenoid = wpilib.Solenoid(2)
 local verticalConveyerEncoder = wpilib.Encoder(2,7,2,8)
-local conveyerPID = pid.new(0, 0, 0) 
+local conveyerPID = pid.new(0, 0, 0)
 local loadBallTimer =  wpilib.Timer()
 squishMeter = wpilib.AnalogChannel(5)
 
@@ -99,8 +99,8 @@ function update(turretReady)
     if not autoRepack then
         repackTimer = nil
     end
-    
-    if loadBallState > 0 then 
+
+    if loadBallState > 0 then
         if loadBallTimer:Get() > 3 then
             -- Cutoff
             loadBallState = 0
@@ -122,9 +122,9 @@ function update(turretReady)
                 end
             end
         end
-    else 
+    else
         verticalConveyer:Set(verticalSpeed)
-    end	  
+    end
 
     dashboard:PutDouble("Vertical Speed", verticalSpeed)
     dashboard:PutDouble("Cheater Speed", cheaterRoller:Get())
@@ -135,7 +135,7 @@ function update(turretReady)
 end
 
 function loadBall()
-    if loadBallState <= 0 then 
+    if loadBallState <= 0 then
         loadBallTimer:Start()
         loadBallTimer:Reset()
         loadBallState = 1
@@ -147,16 +147,16 @@ end
 function ConveyerUp()
     conveyerPID.target = conveyerPID.target + 12
 end
-    
+
 
 function setIntake(speed)
-	frontSpeed = speed
-	sideSpeed = speed
+    frontSpeed = speed
+    sideSpeed = speed
 end
 
 function intakeStop()
-	frontSpeed = 0
-	sideSpeed = 0
+    frontSpeed = 0
+    sideSpeed = 0
     verticalSpeed = 0
     cheaterSpeed = 0
 end
