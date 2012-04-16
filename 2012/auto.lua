@@ -61,7 +61,7 @@ function run(extraUpdate)
     t:Start()
 
     while wpilib.IsAutonomous() and wpilib.IsEnabled() do
-        autoMode(t:Get()) 
+        autoMode(t:Get())
 
         intake.update(true)
         turret.update()
@@ -91,8 +91,8 @@ function fire()
     if fireTimer == nil then
         -- Ready to fire
         intake.setVerticalSpeed(1)
-        if turret.getFlywheelFired() then 
-            fireTimer = wpilib.Timer() 
+        if turret.getFlywheelFired() then
+            fireTimer = wpilib.Timer()
             fireTimer:Start()
             fireCount = 1
         end
@@ -256,7 +256,7 @@ function keyShotWithCoOpBridge(t)
             fireCount = fireCount + fire()
             drive.run({x=0, y=0}, 0, 1)
         else
-            stopFire() 
+            stopFire()
             autodrivePIDX.target = 0.0
             autodrivePIDY.target = -4.0
             setDriveAxis("y")
@@ -326,16 +326,16 @@ function keyShotWithCoOpBridgeFar(t)
         turret.setTargetAngle(calculateTurretTarget(posx, DISTANCE_TO_HOOP - posy, drive.normalizeAngle(-drive.getGyroAngle())))
         if posy/CLOSE_BRIDGE_DISTANCE > .5 and drive.isFollowerStopped() then
             driveStopped = true
-            bridgeTimer = wpilib.Timer() 
+            bridgeTimer = wpilib.Timer()
             bridgeTimer:Start()
         end
-    else 
+    else
         if bridgeTimer:Get() > 2 then
             intake.setLowered(true)
             autodrivePIDX.target = 0.0
             autodrivePIDY.target = 0.0
             drive.run({x=autodrivePIDX.output, y=autodrivePIDY.output}, 0, 1)
-        else 
+        else
             intake.setLowered(false)
             drive.run({x=0, y=0}, 0, 1)
         end
@@ -344,7 +344,7 @@ function keyShotWithCoOpBridgeFar(t)
             -- Fire continuous
             fireCount = fireCount + fire()
             turret.setTargetAngle(calculateTurretTarget(posx, DISTANCE_TO_HOOP - posy, drive.normalizeAngle(-drive.getGyroAngle())))
-        else 
+        else
             stopFire()
         end
     end
@@ -373,7 +373,7 @@ function foo(t)
             fireCount = fireCount + fire()
             drive.run({x=0, y=0}, 0, 1)
         else
-            stopFire() 
+            stopFire()
             autodrivePIDX.target = 0.0
             autodrivePIDY.target = -4.0
             setDriveAxis("y")

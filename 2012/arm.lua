@@ -75,11 +75,11 @@ function limitRate(curr, target, t)
     local rate = (target - curr)/t
     if (curr > 0 and target < 0) or (curr < 0 and target > 0) then
         return 0.0
-    elseif rate > maxMotorRate then 
+    elseif rate > maxMotorRate then
         return curr + maxMotorRate/t
-    elseif rate < -maxMotorRate then 
+    elseif rate < -maxMotorRate then
         return curr - maxMotorRate/t
-    else 
+    else
         return target
     end
 end

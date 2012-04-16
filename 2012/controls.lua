@@ -77,7 +77,7 @@ function update(map)
         if stickMap.rx then stickMap.rx(stick:GetRawAxis(4)) end
         if stickMap.ry then stickMap.ry(stick:GetRawAxis(5)) end
         if stickMap.hatx then stickMap.hatx(stick:GetRawAxis(6)) end
-    
+
         -- Update button events
         for button = 1, numButtons do
             local currValue = stick:GetRawButton(button)

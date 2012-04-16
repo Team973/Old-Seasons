@@ -36,8 +36,8 @@ local flywheelTicksPerRevolution = 6.0
 flywheelCounter:Start()
 
 local hoodEncoder1, hoodEncoder2
-local hoodMotor1= wpilib.Victor(2,7) 
-local hoodMotor2= wpilib.Victor(2,8) 
+local hoodMotor1= wpilib.Victor(2,7)
+local hoodMotor2= wpilib.Victor(2,8)
 hoodPID1 = pid.new(0.01, 0, 0)
 hoodPID1:start()
 hoodPID2 = pid.new(0.01, 0, 0)
@@ -78,8 +78,8 @@ end
 
 encoder = wpilib.Encoder(2, 2, 2, 3, true, wpilib.CounterBase_k1X)
 encoder:Start()
-motor = wpilib.Jaguar(2, 3) 
-turnPID = pid.new(0.05, 0, 0) 
+motor = wpilib.Jaguar(2, 3)
+turnPID = pid.new(0.05, 0, 0)
 
 allowRotate = false
 
@@ -365,7 +365,7 @@ function calculateTarget(turretAngle, desiredAngle)
         desiredAngle = desiredAngle - 360
     end
     while desiredAngle - turretAngle < -180 do
-        desiredAngle = desiredAngle + 360 
+        desiredAngle = desiredAngle + 360
     end
 
     --make sure the turret doesn't crash

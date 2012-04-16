@@ -109,33 +109,33 @@ function disabledIdle()
             {
                 [2] = function() modeNum = modeNum + 1
                     if modeNum > #modes then
-                        modeNum = 1 
+                        modeNum = 1
                     end
                     -- TODO... etc...
                 end,
-                
+
                 [1] = function() modeNum = modeNum - 1
                     if modeNum < 1 then
                         modeNum = #modes
                     end
                 end,
 
-                [4] = function() auto.Delay_1 = auto.Delay_1 + 1 
+                [4] = function() auto.Delay_1 = auto.Delay_1 + 1
                 end,
 
                 [3] = function() auto.Delay_1 = auto.Delay_1 - 1
                 end,
 
-                [6] = function() auto.Delay_2 = auto.Delay_2 + 1 
+                [6] = function() auto.Delay_2 = auto.Delay_2 + 1
                 end,
 
                 [5] = function() auto.Delay_2 = auto.Delay_2 - 1
                 end,
 
-                [8] = function() auto.Delay_3 = auto.Delay_3 + 1 
+                [8] = function() auto.Delay_3 = auto.Delay_3 + 1
                 end,
 
-                [7] = function() auto.Delay_3 = auto.Delay_3 - 1 
+                [7] = function() auto.Delay_3 = auto.Delay_3 - 1
                 end,
 
             },
@@ -249,7 +249,7 @@ stinger = wpilib.Solenoid(7)
 -- Controls
 strafe = {x=0, y=0}
 rotation = 0
-turretDirection = {x=0, y=0} 
+turretDirection = {x=0, y=0}
 
 zeroMode = false
 fudgeMode = false
@@ -330,7 +330,7 @@ controlMap =
                 end
             end
         end},
-                                
+
         ["update"] = function(stick)
             if controls.isLeftTriggerHeld(stick) then
                 strafe.x = 0
@@ -348,11 +348,11 @@ controlMap =
     {
         ["x"] = function(axis)
             turretDirection.x = deadband(axis, 0.2)
-            turret.setFromJoy(turretDirection.x, turretDirection.y) 
+            turret.setFromJoy(turretDirection.x, turretDirection.y)
         end,
-        
-        ["y"] = function(axis) 
-            turretDirection.y = deadband(-axis, 0.2) 
+
+        ["y"] = function(axis)
+            turretDirection.y = deadband(-axis, 0.2)
             turret.setFromJoy(turretDirection.x, turretDirection.y)
         end,
         ["rx"] = function(axis)
@@ -377,15 +377,15 @@ controlMap =
         [2] = function() presetValues(4500,200,0) end, -- Side
         [3] = function() presetValues(6300,1100,0) end, -- Key
         [4] = {tick=drive.setFrontSkid},
-        [5] = {tick=function(held) intake.setLowered(held) end},   
-        [6] = function() intake.loadBall() end, 
+        [5] = {tick=function(held) intake.setLowered(held) end},
+        [6] = function() intake.loadBall() end,
         [7] = function()
             rpmPreset = rpmPreset - 100
         end,
         [8] = function()
             rpmPreset = rpmPreset + 100
         end,
-        [9] = {tick=function(held) turret.allowRotate = held end},   
+        [9] = {tick=function(held) turret.allowRotate = held end},
         [10] = {tick=intake.setRepack},
         ["ltrigger"] = {tick=function(held)
             if held then
