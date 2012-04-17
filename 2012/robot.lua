@@ -391,6 +391,7 @@ controlMap =
             if held then
                 intake.setIntake(1.0)
             end
+            intake.setAllowAutoRepack(held)
         end},
         ["rtrigger"] = {
             tick=function(held)
