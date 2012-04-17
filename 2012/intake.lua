@@ -17,6 +17,7 @@ local sideSpeed = 0 -- side intake roller
 local verticalSpeed = 0
 local repack = false
 local repackTimer = nil
+local allowAutoRepack = false
 
 local verticalConveyer = wpilib.Victor(2,4)
 local cheaterRoller = wpilib.Victor(2,5)
@@ -74,9 +75,13 @@ local function runLoadBallState(speed, rising, peak)
     return shouldAdvance, peak
 end
 
+function setAllowAutoRepack(allow)
+    allowAutoRepack = allow
+end
+
 function update(turretReady)
     local dashboard = wpilib.SmartDashboard_GetInstance()
-    local autoRepack = verticalSpeed ~= 0 and frontSpeed ~= 0 and squishMeter:GetVoltage() > SQUISH_THRESHOLD and loadBallState == 0 and (not repackTimer or repackTimer:Get() < .5)
+    local autoRepack = verticalSpeed ~= 0 and frontSpeed ~= 0 and loadBallState == 0 and ((squishMeter:GetVoltage() > SQUISH_THRESHOLD and not repackTimer) or (repackTimer and repackTimer:Get() < .5)) and allowAutoRepack
 
     sideIntake:Set(sideSpeed)
     frontIntake:Set(frontSpeed)
