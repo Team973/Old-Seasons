@@ -1,6 +1,6 @@
 -- linearize.lua
 
-local setmetatable = setmetatable 
+local setmetatable = setmetatable
 
 module(...)
 
@@ -28,15 +28,15 @@ function linearize(goalSpeed)
     local victorFitE1 = 0.437239
     local victorFitC1 = -1.56847
     local victorFitA1 = -(125.0 * victorFitE1 + 125.0 * victorFitC1 - 116.0) / 125.0
-    
+
     local answer5thOrder = (victorFitA1 * goalSpeed5 + victorFitC1 * goalSpeed3 + victorFitE1 * goalSpeed)
 
     -- Constants for the 7th order polynomial
-	local victorFitC2 = -5.46889
-	local victorFitE2 = 2.24214
-	local victorFitG2 = -0.042375
-	local victorFitA2 = -(125.0 * (victorFitC2 + victorFitE2 + victorFitG2) - 116.0) / 125.0
-	local answer7thOrder = victorFitA2 * goalSpeed7 + victorFitC2 * goalSpeed5 + victorFitE2 * goalSpeed3 + victorFitG2 * goalSpeed
+    local victorFitC2 = -5.46889
+    local victorFitE2 = 2.24214
+    local victorFitG2 = -0.042375
+    local victorFitA2 = -(125.0 * (victorFitC2 + victorFitE2 + victorFitG2) - 116.0) / 125.0
+    local answer7thOrder = victorFitA2 * goalSpeed7 + victorFitC2 * goalSpeed5 + victorFitE2 * goalSpeed3 + victorFitG2 * goalSpeed
 
     -- Average the 5th and 7th order polynomials
     local answer = 0.85 * 0.5 * (answer7thOrder + answer5thOrder) + .15 * goalSpeed * (1.0 - deadbandValue)
@@ -46,7 +46,7 @@ function linearize(goalSpeed)
     elseif answer < -0.001 then
         answer = answer - deadbandValue
     end
-    
+
     return answer
 end
 
