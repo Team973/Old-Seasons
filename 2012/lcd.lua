@@ -21,7 +21,7 @@ if enableLcd then
     function print(line, format, ...)
         lcd:PrintLine(lineConstants[line], string.format(format, ...))
     end
-    
+
     function update()
         lcd:UpdateLCD()
     end

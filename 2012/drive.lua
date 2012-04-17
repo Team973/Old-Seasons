@@ -13,7 +13,7 @@ local dashboard = wpilib.SmartDashboard_GetInstance()
 
 local gyro = nil
 local gyroOkay = true
-local ignoreGyro = false 
+local ignoreGyro = false
 local rotationPID = pid.new(0.01, 0, 0)
 local rotationHoldTimer
 local gearSwitch = wpilib.Solenoid(1, 1)
@@ -34,7 +34,7 @@ function resetGyro()
     if rotationPID.target then
         rotationPID.target = 0
     end
-    ignoreGyro = false 
+    ignoreGyro = false
 end
 
 function effTheGyro()
@@ -277,7 +277,7 @@ function run(strafe, rotation, driveMode)
     if driveMode ~= 0 then
         appliedGyro = 0
     end
-    
+
     -- Keep rotation steady in deadband
     if rotation == 0 then
         if rotationPID.target == nil then
@@ -298,7 +298,7 @@ function run(strafe, rotation, driveMode)
         rotationPID.target = nil
         rotationPID:stop()
     end
-    
+
     local wheelValues = calculate(
         strafe.x, strafe.y, appliedRotation, appliedGyro,
         31.5,     -- wheel base (in inches)
@@ -328,7 +328,7 @@ function run(strafe, rotation, driveMode)
             if driveMode == 1 then
                 wheel.turnPID.target = 0
             elseif driveMode == 2 then
-                wheel.turnPID.target = 90 
+                wheel.turnPID.target = 90
             else
                 if wheelName == "leftFront" or wheelName == "rightBack" then
                     wheel.turnPID.target = 45

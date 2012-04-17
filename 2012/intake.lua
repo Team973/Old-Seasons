@@ -21,6 +21,8 @@ local frontSpeed = 0 -- front intake roller
 local sideSpeed = 0 -- side intake roller
 local verticalSpeed = 0
 local repack = false
+local repackTimer = nil
+local allowAutoRepack = false
 
 local verticalConveyer = linearize.wrap(wpilib.Victor(2,4))
 local cheaterRoller = wpilib.Victor(2,5)
@@ -28,7 +30,7 @@ local sideIntake = wpilib.Victor(2,1)
 local frontIntake = wpilib.Victor(2,2)
 local intakeSolenoid = wpilib.Solenoid(2)
 local verticalConveyerEncoder = wpilib.Encoder(2,7,2,8)
-local conveyerPID = pid.new(0, 0, 0) 
+local conveyerPID = pid.new(0, 0, 0)
 local loadBallTimer =  wpilib.Timer()
 squishMeter = wpilib.AnalogChannel(5)
 
@@ -85,25 +87,39 @@ local function runLoadBallState(speed, rising, peak)
     return shouldAdvance, peak
 end
 
+function setAllowAutoRepack(allow)
+    allowAutoRepack = allow
+end
+
 function update(turretReady)
     ballTimer:Start()
 
     local dashboard = wpilib.SmartDashboard_GetInstance()
+    local autoRepack = verticalSpeed ~= 0 and frontSpeed ~= 0 and loadBallState == 0 and ((squishMeter:GetVoltage() > SQUISH_THRESHOLD and not repackTimer) or (repackTimer and repackTimer:Get() < .5)) and allowAutoRepack
 
     sideIntake:Set(sideSpeed)
     frontIntake:Set(frontSpeed)
 
     intakeSolenoid:Set(lowered)
-    if repack then
+
+    if repack or autoRepack then
         verticalSpeed = -1
         cheaterRoller:Set(1)
+
+        if autoRepack and not repackTimer then
+            repackTimer = wpilib.Timer()
+            repackTimer:Start()
+        end
     elseif math.abs(frontSpeed) > math.abs(verticalSpeed) then
         cheaterRoller:Set(frontSpeed)
     else
         cheaterRoller:Set(verticalSpeed)
     end
-    
-    if loadBallState > 0 then 
+    if not autoRepack then
+        repackTimer = nil
+    end
+
+    if loadBallState > 0 then
         if loadBallTimer:Get() > 3 then
             -- Cutoff
             loadBallState = 0
@@ -140,7 +156,7 @@ function update(turretReady)
                 end
             end
         end
-    else 
+    else
         verticalConveyer:Set(verticalSpeed)
     end
 
@@ -153,7 +169,7 @@ function update(turretReady)
 end
 
 function loadBall()
-    if loadBallState <= 0 then 
+    if loadBallState <= 0 then
         loadBallTimer:Start()
         loadBallTimer:Reset()
         loadBallState = 1
@@ -167,16 +183,16 @@ end
 function ConveyerUp()
     conveyerPID.target = conveyerPID.target + 12
 end
-    
+
 
 function setIntake(speed)
-	frontSpeed = speed
-	sideSpeed = speed
+    frontSpeed = speed
+    sideSpeed = speed
 end
 
 function intakeStop()
-	frontSpeed = 0
-	sideSpeed = 0
+    frontSpeed = 0
+    sideSpeed = 0
     verticalSpeed = 0
     cheaterSpeed = 0
 end
