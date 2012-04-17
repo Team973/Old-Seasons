@@ -6,6 +6,7 @@
 --fire cheaterroller + verticalintake up at slow speed
 
 local ipairs = ipairs
+local type = type
 
 local io = require("io")
 local math = require("math")
@@ -35,9 +36,10 @@ local loadBallTimer =  wpilib.Timer()
 squishMeter = wpilib.AnalogChannel(5)
 
 local loadBallState = 0
-local lastSquishThresh
+local lastSquishVoltage = 0
 
-local SQUISH_THRESHOLD = 3.0
+local SQUISH_RISE_THRESHOLD = 2.0
+local SQUISH_FALL_THRESHOLD = 2.75
 
 verticalConveyerEncoder:Start()
 
@@ -59,10 +61,10 @@ end
 
 local loadBallPeaks = {0, 0}
 local loadBallStateTable = {
-    {1.0, true, nil},
-    {-0.75, false, 1},
-    {0.75, true, nil},
-    {0.75, false, 2},
+    {1.0, true, SQUISH_RISE_THRESHOLD, nil},
+    {-0.75, false, SQUISH_FALL_THRESHOLD, 1},
+    {0.75, true, SQUISH_RISE_THRESHOLD, nil},
+    {0.75, false, function() return loadBallPeaks[1] * 0.9 end, 2},
 }
 
 local fireCount = 0
@@ -75,15 +77,15 @@ end
 ballLog:write("\r\n")
 local ballTimer = wpilib.Timer()
 
-local function runLoadBallState(speed, rising, peak)
+local function runLoadBallState(speed, rising, threshold, peak)
     local voltage = squishMeter:GetVoltage()
-    local thresh = voltage > SQUISH_THRESHOLD
+    local lastThresh = lastSquishVoltage > threshold
+    local thresh = voltage > threshold
     verticalConveyer:Set(speed)
     if peak then
         peak = math.max(peak, voltage)
     end
-    local shouldAdvance = (rising and not lastSquishThresh and thresh) or (not rising and lastSquishThresh and not thresh)
-    lastSquishThresh = thresh
+    local shouldAdvance = (rising and not lastThresh and thresh) or (not rising and lastThresh and not thresh)
     return shouldAdvance, peak
 end
 
@@ -92,10 +94,11 @@ function setAllowAutoRepack(allow)
 end
 
 function update(turretReady)
+    local squishVoltage = squishMeter:GetVoltage()
     ballTimer:Start()
 
     local dashboard = wpilib.SmartDashboard_GetInstance()
-    local autoRepack = verticalSpeed ~= 0 and frontSpeed ~= 0 and loadBallState == 0 and ((squishMeter:GetVoltage() > SQUISH_THRESHOLD and not repackTimer) or (repackTimer and repackTimer:Get() < .5)) and allowAutoRepack
+    local autoRepack = verticalSpeed ~= 0 and frontSpeed ~= 0 and loadBallState == 0 and ((squishVoltage > SQUISH_RISE_THRESHOLD and not repackTimer) or (repackTimer and repackTimer:Get() < .5)) and allowAutoRepack
 
     sideIntake:Set(sideSpeed)
     frontIntake:Set(frontSpeed)
@@ -128,10 +131,14 @@ function update(turretReady)
             -- Normal state
             local state = loadBallStateTable[loadBallState]
             local nextState
-            if state[3] then
-                nextState, loadBallPeaks[state[3]] = runLoadBallState(state[1], state[2], loadBallPeaks[state[3]])
+            local threshold = state[3]
+            if type(threshold) == "function" then
+                threshold = threshold()
+            end
+            if state[4] then
+                nextState, loadBallPeaks[state[4]] = runLoadBallState(state[1], state[2], threshold, loadBallPeaks[state[4]])
             else
-                nextState = runLoadBallState(state[1], state[2])
+                nextState = runLoadBallState(state[1], state[2], threshold)
             end
             if nextState then
                 loadBallState = loadBallState + 1
@@ -162,10 +169,12 @@ function update(turretReady)
 
     dashboard:PutDouble("Vertical Speed", verticalSpeed)
     dashboard:PutDouble("Cheater Speed", cheaterRoller:Get())
-    dashboard:PutDouble("Squish Meter", squishMeter:GetVoltage())
+    dashboard:PutDouble("Squish Meter", squishVoltage)
     dashboard:PutInt("Load Ball State", loadBallState)
     --conveyerPID:update(verticalConveyerEncoder:Get())
     --verticalConveyer:Set(conveyerPID.output)
+
+    lastSquishVoltage = squishVoltage
 end
 
 function loadBall()
@@ -176,7 +185,6 @@ function loadBall()
         for i = 1, #loadBallPeaks do
             loadBallPeaks[i] = 0
         end
-        lastSquishThresh = squishMeter:GetVoltage() > SQUISH_THRESHOLD
     end
 end
 
