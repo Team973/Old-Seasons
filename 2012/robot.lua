@@ -31,7 +31,6 @@ local fudgeMode, fudgeWheel, fudgeMovement
 
 local compressor, pressureSwitch, stinger
 local driveMode = 0
-local lastPeak = 0
 
 -- End Declarations
 
@@ -160,13 +159,10 @@ end
 
 function teleop()
     turret.turnPID:start()
-    local loop_time = wpilib.Timer_GetFPGATimestamp() + TELEOP_LOOP_LAG
 
     while wpilib.IsOperatorControl() and wpilib.IsEnabled() do
         enableWatchdog()
         feedWatchdog()
-
-        turret.update()
 
         if not fudgeMode then
             dashboard:PutString("mode", "Running")
@@ -188,8 +184,13 @@ function teleop()
         updateCompressor()
 
         intake.update(true)
+        turret.update()
 
+        dashboard:PutDouble("Flywheel P", turret.flywheelPID.p)
+        dashboard:PutDouble("Flywheel D", turret.flywheelPID.d)
         dashboard:PutDouble("Flywheel Speed", turret.getFlywheelSpeed())
+        dashboard:PutInt("Flywheel Speed(Int)", turret.getFlywheelSpeed())
+        dashboard:PutInt("Flywheel Speed(Filter Int)", turret.getFlywheelFilterSpeed())
         dashboard:PutDouble("Flywheel Target Speed", turret.getFlywheelTargetSpeed())
 
         local followerX, followerY = drive.getFollowerPosition()
@@ -221,11 +222,7 @@ function teleop()
 
         -- Iteration cleanup
         feedWatchdog()
-        while wpilib.Timer_GetFPGATimestamp() < loop_time do
-            -- Shooter!
-            turret.update()
-        end
-        loop_time = loop_time + TELEOP_LOOP_LAG
+        wpilib.Wait(TELEOP_LOOP_LAG)
         feedWatchdog()
     end
 end
@@ -243,6 +240,7 @@ end
 -- Don't forget to add to declarations at the top!
 compressor = wpilib.Relay(1, 1, wpilib.Relay_kForwardOnly)
 pressureSwitch = wpilib.DigitalInput(1, 14)
+frontSkid = wpilib.Solenoid(3)
 stinger = wpilib.Solenoid(7)
 -- End Inputs/Outputs
 
@@ -350,7 +348,6 @@ controlMap =
             turretDirection.x = deadband(axis, 0.2)
             turret.setFromJoy(turretDirection.x, turretDirection.y)
         end,
-
         ["y"] = function(axis)
             turretDirection.y = deadband(-axis, 0.2)
             turret.setFromJoy(turretDirection.x, turretDirection.y)
@@ -394,6 +391,9 @@ controlMap =
             intake.setAllowAutoRepack(held)
         end},
         ["rtrigger"] = {
+            down=function()
+                turret.resetFlywheel()
+            end,
             tick=function(held)
                 if held then
                     turret.setFlywheelTargetSpeed(rpmPreset)
