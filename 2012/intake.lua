@@ -31,7 +31,6 @@ local sideIntake = wpilib.Victor(2,1)
 local frontIntake = wpilib.Victor(2,2)
 local intakeSolenoid = wpilib.Solenoid(2)
 local verticalConveyerEncoder = wpilib.Encoder(2,7,2,8)
-local conveyerPID = pid.new(0, 0, 0)
 local loadBallTimer =  wpilib.Timer()
 squishMeter = wpilib.AnalogChannel(5)
 
@@ -172,8 +171,6 @@ function update(turretReady)
     dashboard:PutDouble("Cheater Speed", cheaterRoller:Get())
     dashboard:PutDouble("Squish Meter", squishVoltage)
     dashboard:PutInt("Load Ball State", loadBallState)
-    --conveyerPID:update(verticalConveyerEncoder:Get())
-    --verticalConveyer:Set(conveyerPID.output)
 
     lastSquishVoltage = squishVoltage
 end
@@ -188,11 +185,6 @@ function loadBall()
         end
     end
 end
-
-function ConveyerUp()
-    conveyerPID.target = conveyerPID.target + 12
-end
-
 
 function setIntake(speed)
     frontSpeed = speed
