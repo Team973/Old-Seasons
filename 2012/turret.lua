@@ -25,6 +25,12 @@ flywheelPID = pid.new(0.05, 0.0, -0.0007,
     function()
         return flywheelSpeedFilter:average()
     end)
+local flywheelPIDGains = {
+    {0, p=0.05, d=-0.0007},
+    {3200, p=0.05, d=-0.0007},
+    {4500, p=0.05, d=-0.0007},
+    {6300, p=0.05, d=-0.0007},
+}
 
 local dashboard = wpilib.SmartDashboard_GetInstance()
 
@@ -217,6 +223,18 @@ function getFlywheelFired()
     return flywheelFired
 end
 
+local function tableStep(t, x)
+    if x < t[1][1] then
+        return t[1]
+    end
+    for i = 2, #t do
+        if x >= t[i - 1][1] and x < t[i][1] then
+            return t[i - 1]
+        end
+    end
+    return t[#t]
+end
+
 -- Retrieve the target flywheel speed
 function getFlywheelTargetSpeed(speed)
     return flywheelTargetSpeed
@@ -225,6 +243,10 @@ end
 -- Change the target flywheel speed
 function setFlywheelTargetSpeed(speed)
     flywheelTargetSpeed = speed
+    local gain = tableStep(flywheelPIDGains, speed)
+    if gain.p then flywheelPID.p = gain.p else flywheelPID.p = 0 end
+    if gain.i then flywheelPID.i = gain.i else flywheelPID.i = 0 end
+    if gain.d then flywheelPID.d = gain.d else flywheelPID.d = 0 end
 end
 
 function resetFlywheel()
