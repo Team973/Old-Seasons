@@ -288,10 +288,9 @@ end
 
 local rpmPreset = 3300.0
 local prevOperatorDpad = 0.0
-local function presetValues (flywheelRPM, hoodAngle, turretAngle)
-    rpmPreset = flywheelRPM
-    turret.setHoodTarget(hoodAngle)
-    turret.setTargetAngle(turretAngle)
+local function presetValues(name)
+    rpmPreset = turret.PRESETS[name].flywheelRPM
+    turret.setPreset(name)
 end
 
 controlMap =
@@ -370,9 +369,9 @@ controlMap =
             end
             prevOperatorDpad = axis
         end,
-        [1] = function() presetValues(3200,20,0) end, -- Fender
-        [2] = function() presetValues(4500,200,0) end, -- Side
-        [3] = function() presetValues(6300,1100,0) end, -- Key
+        [1] = function() presetValues("fender") end, -- Fender
+        [2] = function() presetValues("side") end, -- Side
+        [3] = function() presetValues("key") end, -- Key
         [4] = {tick=drive.setFrontSkid},
         [5] = {tick=function(held) intake.setLowered(held) end},
         [6] = function() intake.loadBall() end,
