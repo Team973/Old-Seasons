@@ -32,6 +32,14 @@ local flywheelPIDGains = {
     {6300, p=0.05, d=-0.0007},
 }
 
+PRESETS = {
+    fender={flywheelRPM=3200, hoodAngle=20, targetAngle=0},
+    side={flywheelRPM=4500, hoodAngle=200, targetAngle=0},
+    key={flywheelRPM=6300, hoodAngle=1100, targetAngle=0},
+    autoKey={flywheelRPM=6200, hoodAngle=1100},
+    bridge={flywheelRPM=7000},
+}
+
 local dashboard = wpilib.SmartDashboard_GetInstance()
 
 local flywheelTargetSpeed = 0.0
@@ -331,6 +339,17 @@ function fullStop()
     flywheelMotor:Set(0.0)
     hoodMotor1:Set(0.0)
     hoodMotor2:Set(0.0)
+end
+
+function setPreset(name)
+    local p = PRESETS[name]
+    -- flywheelRPM purposefully ignored
+    if p.hoodAngle then
+        setHoodTarget(p.hoodAngle)
+    end
+    if p.targetAngle then
+        setTargetAngle(p.targetAngle)
+    end
 end
 
 -- vim: ft=lua et ts=4 sts=4 sw=4
