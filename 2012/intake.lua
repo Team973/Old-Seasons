@@ -75,6 +75,7 @@ for i = 1, #loadBallPeaks do
     ballLog:write(",0")
 end
 ballLog:write("\r\n")
+ballLog:flush()
 local ballTimer = wpilib.Timer()
 
 local function runLoadBallState(speed, rising, threshold, peak)
