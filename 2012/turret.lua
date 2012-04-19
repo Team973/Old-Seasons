@@ -20,7 +20,7 @@ local flywheelSpeedFilter = {
     weight=0.2,
 }
 local flywheelFired = false
-flywheelPID = pid.new(0.001, 0.0, -0.001,
+flywheelPID = pid.new(0.05, 0.0, -0.0007,
     nil,
     function()
         return flywheelSpeedFilter:average()
