@@ -160,6 +160,8 @@ function update(turretReady)
                     end
                     ballLog:write("\r\n")
                     ballLog:flush()
+
+                    dashboard:PutDouble("Stored Squish Value", (loadBallPeaks[1] + loadBallPeaks[2]) / 2)
                 end
             end
         end
