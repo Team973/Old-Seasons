@@ -1,0 +1,47 @@
+<style type="text/css">
+    html, body {
+        margin: 0;
+        padding: 0;
+    }
+
+    #feed {
+        position: absolute;
+        top: 0;
+        left: 0;
+        margin: 0;
+        padding: 0;
+        -moz-transform: rotate(-90deg);
+        -webkit-transform: rotate(-90deg);
+    }
+
+    #overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        margin: 0;
+        padding: 0;
+        -moz-transform: rotate(-90deg);
+        -webkit-transform: rotate(-90deg);
+    } 
+
+    #intakeFeed {
+        position: absolute;
+        top: 160;
+        left: 0;
+        margin: 0;
+        padding: 0;
+    }
+</style>
+<img id="feed" src="http://10.9.73.20/mjpg/video.mjpg" width="160" height="120">
+<canvas id="overlay" width="160" height="120"></canvas>
+<img id="intakeFeed" src="http://10.9.73.19/mjpg/video.mjpg" width="120">
+<script type="text/javascript">
+    var w = 160;
+    var h = 120;
+    var context = document.getElementById("overlay").getContext("2d");
+    context.lineWidth = 2;
+    context.strokeStyle = "red";
+    context.moveTo(0, h / 2);
+    context.lineTo(w, h / 2);
+    context.stroke();
+</script>
