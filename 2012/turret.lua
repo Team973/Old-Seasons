@@ -3,6 +3,7 @@
 local ipairs = ipairs
 
 local bit = require("bit")
+local intake = require("intake")
 local pid = require("pid")
 local linearize = require("linearize")
 local math = require("math")
@@ -32,8 +33,9 @@ local flywheelPIDGains = {
     {6300, p=0.05, d=-0.0007},
 }
 
+local currPresetName = nil
 PRESETS = {
-    fender={flywheelRPM=3200, hoodAngle=20, targetAngle=0},
+    fender={flywheelRPM=3200, hoodAngle=20, targetAngle=0, softFlywheelRPM=3200},
     side={flywheelRPM=4500, hoodAngle=200, targetAngle=0},
     key={flywheelRPM=6300, hoodAngle=1100, targetAngle=0},
     autoKey={flywheelRPM=6200, hoodAngle=1100},
@@ -42,7 +44,8 @@ PRESETS = {
 
 local dashboard = wpilib.SmartDashboard_GetInstance()
 
-local flywheelTargetSpeed = 0.0
+local flywheelTargetSpeed = PRESETS.fender.flywheelRPM
+local flywheelOn = false
 local flywheelFeedforward = math.huge
 local in4 = wpilib.DigitalInput(2, 4)
 local in5 = wpilib.DigitalInput(2, 5)
@@ -165,6 +168,26 @@ function initI2C()
     hoodOkay = hood1Okay and hood2Okay
 end
 
+local function calculateTarget(turretAngle, desiredAngle)
+    --calculates shortest desired angle
+    while desiredAngle - turretAngle > 180 do
+        desiredAngle = desiredAngle - 360
+    end
+    while desiredAngle - turretAngle < -180 do
+        desiredAngle = desiredAngle + 360
+    end
+
+    --make sure the turret doesn't crash
+    if desiredAngle > HARD_LIMIT then
+        desiredAngle = HARD_LIMIT
+    end
+    if desiredAngle < -HARD_LIMIT then
+        desiredAngle = -HARD_LIMIT
+    end
+
+    return desiredAngle
+end
+
 function getTargetAngle()
     return turnPID.target
 end
@@ -262,6 +285,16 @@ function resetFlywheel()
     flywheelPID.target = 0
 end
 
+function runFlywheel(on, speed)
+    if not flywheelOn and on then
+        resetFlywheel()
+    end
+    flywheelOn = on
+    if speed then
+        setFlywheelTargetSpeed(speed)
+    end
+end
+
 function update()
     -- Turret rotation
     dashboard:PutBoolean("Input 4", in4:Get())
@@ -271,6 +304,11 @@ function update()
     dashboard:PutInt("TURN.ANGLE", encoder:Get()/25)
     turnPID:update(encoder:Get()/25)
     motor:Set(turnPID.output)
+
+    -- Update flywheel target speed from intake's squish meter
+    if currPresetName and intake.loadBallPeaks.complete then
+        -- TODO
+    end
 
     -- Add flywheel velocity sample
     local speedSample = 60.0 / (flywheelCounter:GetPeriod() * flywheelTicksPerRevolution)
@@ -289,16 +327,38 @@ function update()
     flywheelPID.timer:Reset()
 
     -- Update flywheel PID
-    flywheelPID.target = flywheelPID.target + flywheelTargetSpeed * dt
-    local extraTerm = flywheelTargetSpeed * (1/flywheelFeedforward - flywheelPID.d)
-    flywheelPID.target = math.min(pos - (1 - flywheelPID.d - extraTerm) / flywheelPID.p, flywheelPID.target)
-    local flywheelOutput = flywheelPID:update(pos, dt) + extraTerm
-    if flywheelOutput > 0.0 then
-        flywheelMotor:Set(flywheelOutput)
-    else
-        flywheelMotor:Set(0.0)
+    do
+        local speed = flywheelTargetSpeed
+        if not flywheelOn then
+            speed = 0
+        end
+
+        flywheelPID.target = flywheelPID.target + speed * dt
+        local extraTerm = speed * (1/flywheelFeedforward - flywheelPID.d)
+        flywheelPID.target = math.min(pos - (1 - flywheelPID.d - extraTerm) / flywheelPID.p, flywheelPID.target)
+        local flywheelOutput = flywheelPID:update(pos, dt) + extraTerm
+        if flywheelOutput > 0.0 then
+            flywheelMotor:Set(flywheelOutput)
+        else
+            flywheelMotor:Set(0.0)
+        end
     end
 
+    -- Print flywheel diagnostics
+    dashboard:PutDouble("Flywheel P", flywheelPID.p)
+    dashboard:PutDouble("Flywheel D", flywheelPID.d)
+    dashboard:PutDouble("Flywheel Speed", getFlywheelSpeed())
+    dashboard:PutInt("Flywheel Speed(Int)", getFlywheelSpeed())
+    dashboard:PutInt("Flywheel Speed(Filter Int)", getFlywheelFilterSpeed())
+    dashboard:PutDouble("Flywheel Target Speed", getFlywheelTargetSpeed())
+    dashboard:PutBoolean("Flywheel On", flywheelOn)
+    if currPresetName then
+        dashboard:PutString("Turret Preset", currPresetName)
+    else
+        dashboard:PutString("Turret Preset", "<MANUAL>")
+    end
+
+    -- Update hood
     local e1 = -readVexEncoder(hoodEncoder1)
     local e2 = readVexEncoder(hoodEncoder2)
     dashboard:PutDouble("Hood 1", e1)
@@ -314,26 +374,6 @@ function update()
     end
 end
 
-function calculateTarget(turretAngle, desiredAngle)
-    --calculates shortest desired angle
-    while desiredAngle - turretAngle > 180 do
-        desiredAngle = desiredAngle - 360
-    end
-    while desiredAngle - turretAngle < -180 do
-        desiredAngle = desiredAngle + 360
-    end
-
-    --make sure the turret doesn't crash
-    if desiredAngle > HARD_LIMIT then
-        desiredAngle = HARD_LIMIT
-    end
-    if desiredAngle < -HARD_LIMIT then
-        desiredAngle = -HARD_LIMIT
-    end
-
-    return desiredAngle
-end
-
 function fullStop()
     motor:Set(0.0)
     flywheelMotor:Set(0.0)
@@ -342,8 +382,13 @@ function fullStop()
 end
 
 function setPreset(name)
+    currPresetName = name
     local p = PRESETS[name]
-    -- flywheelRPM purposefully ignored
+    if not p then return end
+
+    if p.flywheelRPM then
+        setFlywheelTargetSpeed(p.flywheelRPM)
+    end
     if p.hoodAngle then
         setHoodTarget(p.hoodAngle)
     end
