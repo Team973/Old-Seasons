@@ -37,8 +37,8 @@ squishMeter = wpilib.AnalogChannel(5)
 local loadBallState = 0
 local lastSquishVoltage = 0
 
-local SQUISH_RISE_THRESHOLD = 2.0
-local SQUISH_FALL_THRESHOLD = 2.75
+local SQUISH_RISE_THRESHOLD = 2.5
+local SQUISH_FALL_THRESHOLD = 2.5
 
 verticalConveyerEncoder:Start()
 
@@ -58,12 +58,12 @@ function setLowered(val)
     lowered = val
 end
 
-local loadBallPeaks = {0, 0}
+loadBallPeaks = {complete=false, 0, 0}
 local loadBallStateTable = {
-    {1.0, true, SQUISH_RISE_THRESHOLD, nil},
-    {-0.75, false, SQUISH_FALL_THRESHOLD, 1},
     {0.75, true, SQUISH_RISE_THRESHOLD, nil},
-    {0.75, false, function() return loadBallPeaks[1] * 0.9 end, 2},
+    {-0.5, false, SQUISH_FALL_THRESHOLD, 1},
+    {0.65, true, SQUISH_RISE_THRESHOLD, nil},
+    {0.65, false, function() return loadBallPeaks[1] * 0.9 end, 2},
 }
 
 local fireCount = 0
@@ -146,6 +146,7 @@ function update(turretReady)
                     loadBallState = 0
                     loadBallTimer:Stop()
                     fireCount = fireCount + 1
+                    loadBallPeaks.complete = true
 
                     if wpilib.IsAutonomous() then
                         ballLog:write("auto,")
@@ -182,6 +183,7 @@ function loadBall()
         loadBallTimer:Start()
         loadBallTimer:Reset()
         loadBallState = 1
+        loadBallPeaks.complete = false
         for i = 1, #loadBallPeaks do
             loadBallPeaks[i] = 0
         end
