@@ -57,6 +57,7 @@ local flywheelTicksPerRevolution = 6.0
 flywheelCounter:Start()
 
 local hoodEncoder1, hoodEncoder2
+local HOOD_ENCODER_RATIO = 627.2 / 392.0
 local hoodMotor1= wpilib.Victor(2,7)
 local hoodMotor2= wpilib.Victor(2,8)
 hoodPID1 = pid.new(0.01, 0, 0)
@@ -359,15 +360,15 @@ function update()
     end
 
     -- Update hood
-    local e1 = -readVexEncoder(hoodEncoder1)
-    local e2 = readVexEncoder(hoodEncoder2)
+    local e1 = readVexEncoder(hoodEncoder1) * HOOD_ENCODER_RATIO
+    local e2 = -readVexEncoder(hoodEncoder2) * HOOD_ENCODER_RATIO
     dashboard:PutDouble("Hood 1", e1)
     dashboard:PutDouble("Hood 2", e2)
     hoodPID1:update(e1)
     hoodPID2:update(e2)
     if hoodOkay then
-        hoodMotor1:Set(-hoodPID1.output)
-        hoodMotor2:Set(hoodPID2.output)
+        hoodMotor1:Set(hoodPID1.output)
+        hoodMotor2:Set(-hoodPID2.output)
     else
         hoodMotor1:Set(0)
         hoodMotor2:Set(0)
