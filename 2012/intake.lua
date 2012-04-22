@@ -39,6 +39,7 @@ local lastSquishVoltage = 0
 
 local SQUISH_RISE_THRESHOLD = 2.5
 local SQUISH_FALL_THRESHOLD = 2.5
+local SOFTNESS_THRESHOLD = 3.68
 
 verticalConveyerEncoder:Start()
 
@@ -58,7 +59,7 @@ function setLowered(val)
     lowered = val
 end
 
-loadBallPeaks = {complete=false, 0, 0}
+local loadBallPeaks = {complete=false, 0, 0}
 local loadBallStateTable = {
     {0.75, true, SQUISH_RISE_THRESHOLD, nil},
     {-0.5, false, SQUISH_FALL_THRESHOLD, 1},
@@ -91,6 +92,14 @@ end
 
 function setAllowAutoRepack(allow)
     allowAutoRepack = allow
+end
+
+-- Returns true for soft, false for hard, and nil for insufficient data.
+function getLastBallSoftness()
+    if not loadBallPeaks.complete then
+        return nil
+    end
+    return loadBallPeaks:average() < SOFTNESS_THRESHOLD
 end
 
 function update(turretReady)
@@ -175,7 +184,26 @@ function update(turretReady)
     dashboard:PutDouble("Squish Meter", squishVoltage)
     dashboard:PutInt("Load Ball State", loadBallState)
 
+    do
+        local soft = getLastBallSoftness()
+        if soft == true then
+            dashboard:PutString("Last Ball Squish", "Soft")
+        elseif soft == false then
+            dashboard:PutString("Last Ball Squish", "Hard")
+        else
+            dashboard:PutString("Last Ball Squish", "N/A")
+        end
+    end
+
     lastSquishVoltage = squishVoltage
+end
+
+function loadBallPeaks:average()
+    local sum = 0
+    for _, peak in ipairs(self) do
+        sum = sum + peak
+    end
+    return sum / #self
 end
 
 function loadBall()

@@ -307,8 +307,13 @@ function update()
     motor:Set(turnPID.output)
 
     -- Update flywheel target speed from intake's squish meter
-    if currPresetName and intake.loadBallPeaks.complete then
-        -- TODO
+    local isSoft = intake.getLastBallSoftness()
+    if currPresetName and isSoft ~= nil then
+        if isSoft then
+            setFlywheelTargetSpeed(PRESETS[currPresetName].softFlywheelRPM)
+        else
+            setFlywheelTargetSpeed(PRESETS[currPresetName].flywheelRPM)
+        end
     end
 
     -- Add flywheel velocity sample
