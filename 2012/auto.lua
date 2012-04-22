@@ -127,71 +127,71 @@ end
 --]]
 
 function sittingKeyshot(t)
-    turret.setHoodTarget(turret.PRESETS.autoKey.hoodAngle)
+    turret.setPreset("autoKey")
     if t < Delay_1 - 2 then
-        turret.setFlywheelTargetSpeed(0)
+        turret.runFlywheel(false)
         stopFire()
     elseif t < Delay_1 then
-        turret.setFlywheelTargetSpeed(turret.PRESETS.autoKey.flywheelRPM)
+        turret.runFlywheel(true)
         stopFire()
     else
-        turret.setFlywheelTargetSpeed(turret.PRESETS.autoKey.flywheelRPM)
         if fireCount < 2 then
             fireCount = fireCount + fire()
+            turret.runFlywheel(true)
         else
             stopFire()
-            turret.setFlywheelTargetSpeed(0)
+            turret.runFlywheel(false)
         end
     end
 
 end
 
 function sittingKeyshotWithPass(t)
-    turret.setHoodTarget(turret.PRESETS.autoKey.hoodAngle)
+    turret.setPreset("autoKey")
     if t < Delay_1 - 2 then
-        turret.setFlywheelTargetSpeed(0)
+        turret.runFlywheel(false)
         stopFire()
         intake.setIntake(0.0)
     elseif t < Delay_1 then
-        turret.setFlywheelTargetSpeed(turret.PRESETS.autoKey.flywheelRPM)
+        turret.runFlywheel(true)
         stopFire()
         intake.setIntake(0.0)
     elseif t < Delay_2 then
-        turret.setFlywheelTargetSpeed(turret.PRESETS.autoKey.flywheelRPM)
+        turret.runFlywheel(true)
         fireCount = fireCount + fire()
         intake.setIntake(0.0)
     elseif t < Delay_3 then
         intake.setIntake(1.0)
-        turret.setFlywheelTargetSpeed(turret.PRESETS.autoKey.flywheelRPM)
+        turret.runFlywheel(true)
         stopFire()
     else
-        turret.setFlywheelTargetSpeed(turret.PRESETS.autoKey.flywheelRPM)
+        turret.runFlywheel(true)
         fireCount = fireCount + fire()
         intake.setIntake(1.0)
     end
 end
 
 function sittingKeyshotWithDropPass(t)
-    turret.setHoodTarget(turret.PRESETS.autoKey.hoodAngle)
+    turret.setPreset("autoKey")
     if t < Delay_1 - 2 then
-        turret.setFlywheelTargetSpeed(0)
+        turret.runFlywheel(false)
         stopFire()
         intake.setIntake(0.0)
     elseif t < Delay_1 then
-        turret.setFlywheelTargetSpeed(turret.PRESETS.autoKey.flywheelRPM)
+        turret.runFlywheel(true)
         stopFire()
         intake.setIntake(0.0)
     elseif t < Delay_2 then
-        turret.setFlywheelTargetSpeed(turret.PRESETS.autoKey.flywheelRPM)
+        turret.runFlywheel(true)
         fireCount = fireCount + fire()
         intake.setIntake(0.0)
     elseif t < Delay_3 then
         intake.setIntake(1.0)
-        turret.setFlywheelTargetSpeed(turret.PRESETS.autoKey.flywheelRPM)
+        turret.runFlywheel(true)
         stopFire()
         intake.setLowered(true)
     else
-        turret.setFlywheelTargetSpeed(turret.PRESETS.autoKey.flywheelRPM)
+        turret.runFlywheel(true)
         fireCount = fireCount + fire()
         intake.setIntake(1.0)
         intake.setLowered(true)
@@ -200,22 +200,22 @@ end
 
 function sittingKeyshotWithSlapPass(t)
     local SLAP_INTERVAL = 20
-    turret.setHoodTarget(turret.PRESETS.autoKey.hoodAngle)
+    turret.setPreset("autoKey")
     if t < Delay_1 - 2 then
-        turret.setFlywheelTargetSpeed(0)
+        turret.runFlywheel(false)
         stopFire()
         intake.setIntake(0.0)
     elseif t < Delay_1 then
-        turret.setFlywheelTargetSpeed(turret.PRESETS.autoKey.flywheelRPM)
+        turret.runFlywheel(true)
         stopFire()
         intake.setIntake(0.0)
     elseif t < Delay_2 then
-        turret.setFlywheelTargetSpeed(turret.PRESETS.autoKey.flywheelRPM)
+        turret.runFlywheel(true)
         fireCount = fireCount + fire()
         intake.setIntake(0.0)
     else
         intake.setIntake(1.0)
-        turret.setFlywheelTargetSpeed(turret.PRESETS.autoKey.flywheelRPM)
+        turret.runFlywheel(true)
         if t < Delay_3 then
             stopFire()
         else
@@ -232,22 +232,22 @@ function keyShotWithCoOpBridge(t)
     dashboard:PutDouble("Follower X", posx)
     dashboard:PutDouble("Follower Y", posy)
     drive.deployFollower()
-    turret.setHoodTarget(turret.PRESETS.autoKey.hoodAngle)
+    turret.setPreset("autoKey")
     if t < Delay_1 - 2 then
         drive.setFrontSkid(false)
-        turret.setFlywheelTargetSpeed(turret.PRESETS.autoKey.flywheelRPM)
+        turret.runFlywheel(true)
         stopFire()
         drive.run({x=0, y=0}, 0, 1)
         intake.setIntake(0.0)
     elseif t < Delay_1 then
         drive.setFrontSkid(false)
-        turret.setFlywheelTargetSpeed(turret.PRESETS.autoKey.flywheelRPM)
+        turret.runFlywheel(true)
         stopFire()
         drive.run({x=0, y=0}, 0, 1)
         intake.setIntake(0.0)
     elseif t < Delay_2 then
         drive.setFrontSkid(true)
-        turret.setFlywheelTargetSpeed(turret.PRESETS.autoKey.flywheelRPM)
+        turret.runFlywheel(true)
         if fireCount < 2 then
             fireCount = fireCount + fire()
             drive.run({x=0, y=0}, 0, 1)
@@ -261,7 +261,7 @@ function keyShotWithCoOpBridge(t)
         intake.setIntake(1.0)
     else
         drive.setFrontSkid(true)
-        turret.setFlywheelTargetSpeed(turret.PRESETS.autoKey.flywheelRPM)
+        turret.runFlywheel(true)
         if not drive.isFollowerStopped() then
             drive.run({x=autodrivePIDX.output, y=autodrivePIDY.output}, 0, 1)
         else
@@ -287,25 +287,24 @@ function keyShotWithCoOpBridgeFar(t)
     dashboard:PutDouble("Follower X", posx)
     dashboard:PutDouble("Follower Y", posy)
     drive.deployFollower()
-    turret.setFlywheelTargetSpeed(turret.PRESETS.autoKey.flywheelRPM + RPM_FUDGE)
-    turret.setHoodTarget(turret.PRESETS.autoKey.hoodAngle)
+    turret.setPreset("autoKey")
 
     if t < Delay_1 - 2 then
         drive.run({x=0, y=0}, 0, 1)
-        turret.setFlywheelTargetSpeed(0)
+        turret.runFlywheel(false)
         intake.setIntake(0.0)
         stopFire()
         drive.setFrontSkid(false)
     elseif t < Delay_1 then
         drive.run({x=0, y=0}, 0, 1)
-        turret.setFlywheelTargetSpeed(turret.PRESETS.autoKey.flywheelRPM + RPM_FUDGE)
+        turret.runFlywheel(true)
         intake.setIntake(0.0)
         stopFire()
         drive.setFrontSkid(false)
     elseif fireCount < 2 then
         -- After Delay_1, Fire two balls
         drive.run({x=0, y=0}, 0, 1)
-        turret.setFlywheelTargetSpeed(turret.PRESETS.autoKey.flywheelRPM + RPM_FUDGE)
+        turret.runFlywheel(true)
         intake.setIntake(0.0)
         fireCount = fireCount + fire()
         drive.setFrontSkid(false)
@@ -353,18 +352,18 @@ function foo(t)
     dashboard:PutDouble("Follower X", posx)
     dashboard:PutDouble("Follower Y", posy)
     if t < Delay_1 - 2 then
-        turret.setFlywheelTargetSpeed(0)
+        turret.runFlywheel(false)
         stopFire()
         drive.run({x=0, y=0}, 0, 1)
         intake.setIntake(0.0)
     elseif t < Delay_1 then
-        turret.setFlywheelTargetSpeed(turret.PRESETS.autoKey.flywheelRPM)
+        turret.runFlywheel(true)
         stopFire()
         drive.run({x=0, y=0}, 0, 1)
         intake.setIntake(0.0)
     elseif t < Delay_2 then
         --TODO: Lower mantis
-        turret.setFlywheelTargetSpeed(turret.PRESETS.autoKey.flywheelRPM)
+        turret.runFlywheel(true)
         if fireCount < 2 then
             fireCount = fireCount + fire()
             drive.run({x=0, y=0}, 0, 1)
@@ -377,7 +376,7 @@ function foo(t)
         end
         intake.setIntake(1.0)
     else
-        turret.setFlywheelTargetSpeed(turret.PRESETS.autoKey.flywheelRPM)
+        turret.runFlywheel(true)
         autodrivePIDX.target = 0.0
         autodrivePIDY.target = 0.0
         drive.run({x=autodrivePIDX.output, y=autodrivePIDY.output}, 0, 1)
@@ -395,7 +394,7 @@ function lshape(t)
     dashboard:PutDouble("Follower Y", posy)
 
     intake.setIntake(0.0)
-    turret.setFlywheelTargetSpeed(0)
+    turret.runFlywheel(false)
     stopFire()
 
     if t < Delay_1 then
