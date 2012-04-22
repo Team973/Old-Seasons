@@ -309,10 +309,16 @@ function update()
     -- Update flywheel target speed from intake's squish meter
     local isSoft = intake.getLastBallSoftness()
     if currPresetName and isSoft ~= nil then
-        if isSoft then
-            setFlywheelTargetSpeed(PRESETS[currPresetName].softFlywheelRPM)
+        local p = PRESETS[currPresetName]
+        if isSoft and p.softFlywheelRPM then
+            setFlywheelTargetSpeed(p.softFlywheelRPM)
         else
-            setFlywheelTargetSpeed(PRESETS[currPresetName].flywheelRPM)
+            setFlywheelTargetSpeed(p.flywheelRPM)
+        end
+        if isSoft and p.softHoodAngle then
+            setHoodTarget(p.softHoodAngle)
+        else
+            setHoodTarget(p.hoodAngle)
         end
     end
 
