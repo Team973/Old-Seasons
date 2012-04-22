@@ -186,13 +186,6 @@ function teleop()
         intake.update(true)
         turret.update()
 
-        dashboard:PutDouble("Flywheel P", turret.flywheelPID.p)
-        dashboard:PutDouble("Flywheel D", turret.flywheelPID.d)
-        dashboard:PutDouble("Flywheel Speed", turret.getFlywheelSpeed())
-        dashboard:PutInt("Flywheel Speed(Int)", turret.getFlywheelSpeed())
-        dashboard:PutInt("Flywheel Speed(Filter Int)", turret.getFlywheelFilterSpeed())
-        dashboard:PutDouble("Flywheel Target Speed", turret.getFlywheelTargetSpeed())
-
         local followerX, followerY = drive.getFollowerPosition()
         dashboard:PutDouble("Follower X", followerX)
         dashboard:PutDouble("Follower Y", followerY)
@@ -286,17 +279,11 @@ local function deadband(axis, threshold)
     end
 end
 
-local rpmPreset = 3300.0
 local prevOperatorDpad = 0.0
-local function presetValues (flywheelRPM, hoodAngle, turretAngle)
-    rpmPreset = flywheelRPM
-    turret.setHoodTarget(hoodAngle)
-    turret.setTargetAngle(turretAngle)
-end
 
 controlMap =
 {
-    -- Joystick 1
+    -- Joystick 1 (Brian)
     {
         ["x"] = function(axis) strafe.x = deadband(axis, 0.15) end,
         ["y"] = function(axis) strafe.y = deadband(-axis, 0.15) end,
@@ -342,7 +329,7 @@ controlMap =
             end
         end
     },
-    -- Joystick 2
+    -- Joystick 2 (Allen)
     {
         ["x"] = function(axis)
             turretDirection.x = deadband(axis, 0.2)
@@ -370,17 +357,19 @@ controlMap =
             end
             prevOperatorDpad = axis
         end,
-        [1] = function() presetValues(3200,20,0) end, -- Fender
-        [2] = function() presetValues(4500,200,0) end, -- Side
-        [3] = function() presetValues(6300,1100,0) end, -- Key
+        [1] = function() turret.setPreset("fender") end,
+        [2] = function() turret.setPreset("side") end,
+        [3] = function() turret.setPreset("key") end,
         [4] = {tick=drive.setFrontSkid},
-        [5] = {tick=function(held) intake.setLowered(held) end},
-        [6] = function() intake.loadBall() end,
+        [5] = {tick=intake.setLowered},
+        [6] = intake.loadBall,
         [7] = function()
-            rpmPreset = rpmPreset - 100
+            turret.setPreset(nil)
+            turret.setFlywheelTargetSpeed(turret.getFlywheelTargetSpeed() - 100)
         end,
         [8] = function()
-            rpmPreset = rpmPreset + 100
+            turret.setPreset(nil)
+            turret.setFlywheelTargetSpeed(turret.getFlywheelTargetSpeed() + 100)
         end,
         [9] = {tick=function(held) turret.allowRotate = held end},
         [10] = {tick=intake.setRepack},
@@ -390,18 +379,7 @@ controlMap =
             end
             intake.setAllowAutoRepack(held)
         end},
-        ["rtrigger"] = {
-            down=function()
-                turret.resetFlywheel()
-            end,
-            tick=function(held)
-                if held then
-                    turret.setFlywheelTargetSpeed(rpmPreset)
-                else
-                    turret.setFlywheelTargetSpeed(0.0)
-                end
-            end,
-        },
+        ["rtrigger"] = {tick=turret.runFlywheel},
     },
     -- Joystick 3
     {
