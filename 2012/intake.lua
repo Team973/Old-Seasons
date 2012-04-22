@@ -102,6 +102,13 @@ function getLastBallSoftness()
     return loadBallPeaks:average() < SOFTNESS_THRESHOLD
 end
 
+local function evalStateParam(val, ...)
+    if type(val) == "function" then
+        return val(...)
+    end
+    return val
+end
+
 function update(turretReady)
     local squishVoltage = squishMeter:GetVoltage()
     ballTimer:Start()
@@ -140,14 +147,10 @@ function update(turretReady)
             -- Normal state
             local state = loadBallStateTable[loadBallState]
             local nextState
-            local threshold = state[3]
-            if type(threshold) == "function" then
-                threshold = threshold()
-            end
             if state[4] then
-                nextState, loadBallPeaks[state[4]] = runLoadBallState(state[1], state[2], threshold, loadBallPeaks[state[4]])
+                nextState, loadBallPeaks[state[4]] = runLoadBallState(evalStateParam(state[1]), state[2], evalStateParam(state[3]), loadBallPeaks[state[4]])
             else
-                nextState = runLoadBallState(state[1], state[2], threshold)
+                nextState = runLoadBallState(evalStateParam(state[1]), state[2], evalStateParam(state[3]))
             end
             if nextState then
                 loadBallState = loadBallState + 1
