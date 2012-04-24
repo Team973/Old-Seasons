@@ -13,6 +13,7 @@ local dashboard = wpilib.SmartDashboard_GetInstance()
 
 autoMode = nil
 local fireCount = 0
+local startedFiring = false
 
 local driveGains = {p=0.5, i=0, d=0.01}
 local stableGains = {p=0.1, i=0, d=0}
@@ -50,6 +51,7 @@ local REPACK_COOLDOWN = 0.5
 
 function run(extraUpdate)
     fireCount = 0
+    startedFiring = false
     drive.resetFollowerPosition()
     drive.resetGyro()
 
@@ -82,15 +84,18 @@ function fire()
     local fireCount = 0
     if fireTimer and fireTimer:Get() > FIRE_COOLDOWN then
         fireTimer = nil
+        startedFiring = false
     end
 
     if fireTimer == nil then
         -- Ready to fire
-        intake.setVerticalSpeed(1)
-        if turret.getFlywheelFired() then
+        if intake.getLastBallSoftness() and startedFiring then
             fireTimer = wpilib.Timer()
             fireTimer:Start()
             fireCount = 1
+        else
+            intake.loadBall()
+            startedFiring = true
         end
     else
         -- Cooldown
@@ -107,6 +112,7 @@ end
 function stopFire()
     if fireTimer and fireTimer:Get() > FIRE_COOLDOWN then
         fireTimer = nil
+        startedFiring = false
     end
 
     if fireTimer and fireTimer:Get() < REPACK_COOLDOWN then
