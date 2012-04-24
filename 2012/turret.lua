@@ -30,14 +30,15 @@ local flywheelPIDGains = {
     {0, p=0.05, d=-0.0007},
     {3200, p=0.05, d=-0.0007},
     {4500, p=0.05, d=-0.0007},
-    {6300, p=0.05, d=-0.0007},
+    {6000, p=0.01, d=-0.0007},
+    {7600, p=0.0095, d = -.0007}
 }
 
 local currPresetName = nil
 PRESETS = {
     fender={flywheelRPM=3200, hoodAngle=20, targetAngle=0},
-    side={flywheelRPM=4500, hoodAngle=200, targetAngle=0},
-    key={flywheelRPM=6400, hoodAngle=1000, targetAngle=0, softFlywheelRPM=8000, softHoodAngle=1000},
+    side={flywheelRPM=3600, hoodAngle=0, targetAngle=-30, softFlywheelRPM=3700, softHoodAngle=0},
+    key={flywheelRPM=6400, hoodAngle=900, targetAngle=0, softFlywheelRPM=8200, softHoodAngle=750},
     autoKey={flywheelRPM=6200, hoodAngle=1100},
     bridge={flywheelRPM=7000},
 }
