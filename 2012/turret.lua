@@ -33,7 +33,7 @@ local flywheelPIDGains = {
     {6000, p=0.01, d=-0.0007},
     {7600, p=0.0095, d = -.0007}
 }
-local TURRET_ANGLE_OFFSET = 25
+local TURRET_ANGLE_OFFSET = -25
 
 local currPresetName = nil
 PRESETS = {
