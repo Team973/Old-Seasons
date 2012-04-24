@@ -32,13 +32,14 @@ local flywheelPIDGains = {
     {4500, p=0.05, d=-0.0007},
     {6300, p=0.05, d=-0.0007},
 }
+local TURRET_ANGLE_OFFSET = 25
 
 local currPresetName = nil
 PRESETS = {
     fender={flywheelRPM=3200, hoodAngle=20, targetAngle=0},
     side={flywheelRPM=4500, hoodAngle=200, targetAngle=0},
     key={flywheelRPM=6400, hoodAngle=1000, targetAngle=0, softFlywheelRPM=8000, softHoodAngle=1000},
-    autoKey={flywheelRPM=6200, hoodAngle=1100},
+    autoKey={flywheelRPM=6200, hoodAngle=1100, targetAngle=-TURRET_ANGLE_OFFSET},
     bridge={flywheelRPM=7000},
 }
 
@@ -194,7 +195,7 @@ function getTargetAngle()
 end
 
 function setTargetAngle(angle)
-    turnPID.target = calculateTarget(encoder:Get()/25, angle)
+    turnPID.target = calculateTarget(encoder:Get()/25 + TURRET_ANGLE_OFFSET, angle)
 end
 
 function setFromJoy(x,y)
@@ -207,7 +208,7 @@ function setFromJoy(x,y)
             angle = 0
         end
         angle = angle*180/math.pi
-        turnPID.target = calculateTarget(encoder:Get()/25, angle)
+        turnPID.target = calculateTarget(encoder:Get()/25 + TURRET_ANGLE_OFFSET, angle)
     end
 end
 
@@ -302,8 +303,8 @@ function update()
     dashboard:PutBoolean("Input 5", in5:Get())
     dashboard:PutBoolean("Input 6", in6:Get())
     dashboard:PutInt("TURN.TARGET", turnPID.target)
-    dashboard:PutInt("TURN.ANGLE", encoder:Get()/25)
-    turnPID:update(encoder:Get()/25)
+    dashboard:PutInt("TURN.ANGLE", encoder:Get()/25 + TURRET_ANGLE_OFFSET)
+    turnPID:update(encoder:Get()/25 + TURRET_ANGLE_OFFSET)
     motor:Set(turnPID.output)
 
     -- Update flywheel target speed from intake's squish meter
