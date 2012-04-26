@@ -416,4 +416,48 @@ function lshape(t)
     end
 end
 
+function sittingKeyshotSafety(t)
+    turret.setPreset("autoKey")
+    if t < Delay_1 - 2 then
+        turret.runFlywheel(false)
+        intake.setVerticalConveyer(0)
+    elseif t < Delay_1 then
+        turret.runFlywheel(true)
+        intake.setVerticalConveyer(0)
+    else
+        if fireCount < 2 then
+            intake.setVerticalConveyer(1)
+            turret.runFlywheel(true)
+        else
+            intake.setVerticalConveyer(0)
+            turret.runFlywheel(false)
+        end
+    end
+end
+
+function sittingKeyshotWithPassSafety(t)
+    turret.setPreset("autoKey")
+    if t < Delay_1 - 2 then
+        turret.runFlywheel(false)
+        intake.setVerticalConveyer(0)
+        intake.setIntake(0.0)
+    elseif t < Delay_1 then
+        turret.runFlywheel(true)
+        intake.setVerticalConveyer(0)
+        intake.setIntake(0.0)
+    elseif t < Delay_2 then
+        turret.runFlywheel(true)
+        intake.setVerticalConveyer(1)
+        intake.setIntake(0.0)
+    elseif t < Delay_3 then
+        intake.setIntake(1.0)
+        turret.runFlywheel(true)
+        intake.setVerticalConveyer(0)
+    else
+        turret.runFlywheel(true)
+        intake.setVerticalConveyer(1)
+        intake.setIntake(1.0)
+    end
+end
+
 autoMode = sittingKeyshot

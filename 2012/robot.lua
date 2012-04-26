@@ -90,6 +90,14 @@ function disabledIdle()
             name="Key Shot w/ Co-op Bridge",
             func=auto.keyShotWithCoOpBridge,
         },
+        {
+            name="Sitting Keyshot [Safe Mode]",
+            func=auto.sittingKeyshotSafety,
+        },
+        {
+            name= "Sitting Keyshot w/ Pass [Safe Mode]",
+            func=auto.sittingKeyshotWithPassSafety,
+        },
     }
     local modeNum = 4
 
