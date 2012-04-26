@@ -164,7 +164,7 @@ function driveScale(err, flip)
     return scale
 end
 
-local followerEncoderX = wpilib.Encoder(2, 13, 2, 14, true, wpilib.CounterBase_k1X)
+local followerEncoderX = wpilib.Encoder(2, 13, 2, 14, false, wpilib.CounterBase_k1X)
 local followerEncoderY = wpilib.Encoder(2, 11, 2, 12, false, wpilib.CounterBase_k1X)
 
 followerEncoderX:Start()
