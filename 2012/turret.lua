@@ -39,7 +39,7 @@ local currPresetName = nil
 PRESETS = {
     fender={flywheelRPM=3200, hoodAngle=20, targetAngle=0},
     side={flywheelRPM=3600, hoodAngle=0, targetAngle=-30, softFlywheelRPM=3700, softHoodAngle=0},
-    key={flywheelRPM=6400, hoodAngle=900, targetAngle=0, softFlywheelRPM=8200, softHoodAngle=750},
+    key={flywheelRPM=6900, hoodAngle=900, targetAngle=0},
     autoKey={flywheelRPM=6200, hoodAngle=1100, targetAngle=-TURRET_ANGLE_OFFSET},
     bridge={flywheelRPM=7000},
 }
@@ -62,9 +62,9 @@ local hoodEncoder1, hoodEncoder2
 local HOOD_ENCODER_RATIO = 627.2 / 392.0
 local hoodMotor1= wpilib.Victor(2,7)
 local hoodMotor2= wpilib.Victor(2,8)
-hoodPID1 = pid.new(0.01, 0, 0)
+hoodPID1 = pid.new(0.006, 0, 0)
 hoodPID1:start()
-hoodPID2 = pid.new(0.01, 0, 0)
+hoodPID2 = pid.new(0.006, 0, 0)
 hoodPID2:start()
 runHood = 0
 
