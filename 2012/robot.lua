@@ -370,17 +370,7 @@ controlMap =
         [3] = function() turret.setPreset("key") end,
         [4] = {tick=drive.setFrontSkid},
         [5] = {tick=intake.setLowered},
-        [6] = {
-            down=turret.clearFlywheelFired,
-            tick=function(held)
-                if not held then return end
-                if not turret.getFlywheelFired() then
-                    intake.setVerticalSpeed(1.0)
-                else
-                    intake.setVerticalSpeed(-0.2)
-                end
-            end,
-        },
+        [6] = intake.loadBall,
         [7] = function()
             turret.setPreset(nil)
             turret.setFlywheelTargetSpeed(turret.getFlywheelTargetSpeed() - 100)

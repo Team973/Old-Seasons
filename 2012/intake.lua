@@ -30,11 +30,14 @@ local cheaterRoller = wpilib.Victor(2,5)
 local sideIntake = wpilib.Victor(2,1)
 local frontIntake = wpilib.Victor(2,2)
 local intakeSolenoid = wpilib.Solenoid(2)
-local verticalConveyerEncoder = wpilib.Encoder(2,7,2,8)
+local verticalConveyerEncoder = wpilib.Encoder(2, 7, 2, 8, true, wpilib.CounterBase_k1X)
 local loadBallTimer =  wpilib.Timer()
 squishMeter = wpilib.AnalogChannel(5)
+local conveyerPID = pid.new(0.1)
+conveyerPID.min, conveyerPID.max = -0.75, 0.5
 
 local loadBallState = 0
+local runLoadBallState
 local lastSquishVoltage = 0
 
 local SQUISH_RISE_THRESHOLD = 2.5
@@ -59,12 +62,25 @@ function setLowered(val)
     lowered = val
 end
 
-local loadBallPeaks = {complete=false, 0, 0}
+local loadBallPeaks = {complete=false, 0}
 local loadBallStateTable = {
-    {0.75, true, SQUISH_RISE_THRESHOLD, nil},
-    {-0.5, false, SQUISH_FALL_THRESHOLD, 1},
-    {0.65, true, SQUISH_RISE_THRESHOLD, nil},
-    {0.65, false, function() return loadBallPeaks[1] * 0.9 end, 2},
+    {
+        func=function()
+            local THRESHOLD = 2.5
+            local voltage = squishMeter:GetVoltage()
+            verticalConveyer:Set(1.0)
+
+            local shouldAdvance = lastSquishVoltage < THRESHOLD and voltage > THRESHOLD
+            if shouldAdvance then
+                verticalConveyerEncoder:Reset()
+            end
+            return shouldAdvance
+        end,
+    },
+    {
+        peak=1,
+        func=function(peak) return runLoadBallState(2, peak) end,
+    },
 }
 
 local fireCount = 0
@@ -78,16 +94,20 @@ ballLog:write("\r\n")
 ballLog:flush()
 local ballTimer = wpilib.Timer()
 
-local function runLoadBallState(speed, rising, threshold, peak)
-    local voltage = squishMeter:GetVoltage()
-    local lastThresh = lastSquishVoltage > threshold
-    local thresh = voltage > threshold
-    verticalConveyer:Set(speed)
+local CONVEYER_ENCODER_SCALE = 1/360 / 6 * 2 * math.pi
+
+function runLoadBallState(targetPosition, peak)
+    local SPEED_THRESHOLD = 0.1
+    local POSITION_THRESHOLD = 1
+
+    local position = verticalConveyerEncoder:Get() * CONVEYER_ENCODER_SCALE
+    conveyerPID.target = targetPosition
+    verticalConveyer:Set(conveyerPID:update(position))
     if peak then
-        peak = math.max(peak, voltage)
+        peak = math.max(peak, squishMeter:GetVoltage())
     end
-    local shouldAdvance = (rising and not lastThresh and thresh) or (not rising and lastThresh and not thresh)
-    return shouldAdvance, peak
+
+    return (math.abs(position - targetPosition) < POSITION_THRESHOLD and 1 / verticalConveyerEncoder:GetPeriod() < SPEED_THRESHOLD), peak
 end
 
 function setAllowAutoRepack(allow)
@@ -147,10 +167,10 @@ function update(turretReady)
             -- Normal state
             local state = loadBallStateTable[loadBallState]
             local nextState
-            if state[4] then
-                nextState, loadBallPeaks[state[4]] = runLoadBallState(evalStateParam(state[1]), state[2], evalStateParam(state[3]), loadBallPeaks[state[4]])
+            if state.peak then
+                nextState, loadBallPeaks[state.peak] = state.func(loadBallPeaks[state.peak])
             else
-                nextState = runLoadBallState(evalStateParam(state[1]), state[2], evalStateParam(state[3]))
+                nextState = state.func()
             end
             if nextState then
                 loadBallState = loadBallState + 1
@@ -174,7 +194,7 @@ function update(turretReady)
                     ballLog:write("\r\n")
                     ballLog:flush()
 
-                    dashboard:PutDouble("Stored Squish Value", (loadBallPeaks[1] + loadBallPeaks[2]) / 2)
+                    dashboard:PutDouble("Stored Squish Value", loadBallPeaks:average())
                 end
             end
         end
@@ -185,6 +205,7 @@ function update(turretReady)
     dashboard:PutDouble("Vertical Speed", verticalSpeed)
     dashboard:PutDouble("Cheater Speed", cheaterRoller:Get())
     dashboard:PutDouble("Squish Meter", squishVoltage)
+    dashboard:PutDouble("Vertical Conveyer", verticalConveyerEncoder:Get() * CONVEYER_ENCODER_SCALE)
     dashboard:PutInt("Load Ball State", loadBallState)
 
     do
