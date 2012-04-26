@@ -52,7 +52,7 @@ local flywheelFeedforward = math.huge
 local in4 = wpilib.DigitalInput(2, 4)
 local in5 = wpilib.DigitalInput(2, 5)
 local in6 = wpilib.DigitalInput(2, 6)
-local flywheelCounter = wpilib.Counter(in5)
+local flywheelCounter = wpilib.Counter(in4)
 local flywheelMotor = linearize.wrap(wpilib.Victor(2, 6))
 local flywheelTicksPerRevolution = 6.0
 
