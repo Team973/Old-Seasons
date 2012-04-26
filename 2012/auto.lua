@@ -133,7 +133,7 @@ end
 --]]
 
 function sittingKeyshot(t)
-    turret.setPreset("autoKey")
+    turret.setPreset("key")
     if t < Delay_1 - 2 then
         turret.runFlywheel(false)
         stopFire()
@@ -153,7 +153,7 @@ function sittingKeyshot(t)
 end
 
 function sittingKeyshotWithPass(t)
-    turret.setPreset("autoKey")
+    turret.setPreset("key")
     if t < Delay_1 - 2 then
         turret.runFlywheel(false)
         stopFire()
@@ -178,7 +178,7 @@ function sittingKeyshotWithPass(t)
 end
 
 function sittingKeyshotWithDropPass(t)
-    turret.setPreset("autoKey")
+    turret.setPreset("key")
     if t < Delay_1 - 2 then
         turret.runFlywheel(false)
         stopFire()
@@ -206,7 +206,7 @@ end
 
 function sittingKeyshotWithSlapPass(t)
     local SLAP_INTERVAL = 20
-    turret.setPreset("autoKey")
+    turret.setPreset("key")
     if t < Delay_1 - 2 then
         turret.runFlywheel(false)
         stopFire()
@@ -238,7 +238,7 @@ function keyShotWithCoOpBridge(t)
     dashboard:PutDouble("Follower X", posx)
     dashboard:PutDouble("Follower Y", posy)
     drive.deployFollower()
-    turret.setPreset("autoKey")
+    turret.setPreset("key")
     if t < Delay_1 - 2 then
         drive.setFrontSkid(false)
         turret.runFlywheel(true)
@@ -293,7 +293,7 @@ function keyShotWithCoOpBridgeFar(t)
     dashboard:PutDouble("Follower X", posx)
     dashboard:PutDouble("Follower Y", posy)
     drive.deployFollower()
-    turret.setPreset("autoKey")
+    turret.setPreset("key")
 
     if t < Delay_1 - 2 then
         drive.run({x=0, y=0}, 0, 1)
@@ -417,7 +417,7 @@ function lshape(t)
 end
 
 function sittingKeyshotSafety(t)
-    turret.setPreset("autoKey")
+    turret.setPreset("key")
     if t < Delay_1 - 2 then
         turret.runFlywheel(false)
         intake.setVerticalSpeed(0)
@@ -436,7 +436,7 @@ function sittingKeyshotSafety(t)
 end
 
 function sittingKeyshotWithPassSafety(t)
-    turret.setPreset("autoKey")
+    turret.setPreset("key")
     if t < Delay_1 - 2 then
         turret.runFlywheel(false)
         intake.setVerticalSpeed(0)
