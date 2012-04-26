@@ -99,7 +99,7 @@ function disabledIdle()
             func=auto.sittingKeyshotWithPassSafety,
         },
     }
-    local modeNum = 4
+    local modeNum = 8
 
     local initAngle = drive.getGyroAngle()
     while wpilib.IsDisabled() do
