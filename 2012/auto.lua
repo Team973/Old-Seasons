@@ -99,11 +99,7 @@ function fire()
         end
     else
         -- Cooldown
-        if fireTimer:Get() < REPACK_COOLDOWN then
-            intake.setVerticalSpeed(-0.2)
-        else
-            intake.setVerticalSpeed(0.0)
-        end
+        intake.setVerticalSpeed(0.0)
     end
     turret.clearFlywheelFired()
     return fireCount
@@ -115,11 +111,7 @@ function stopFire()
         startedFiring = false
     end
 
-    if fireTimer and fireTimer:Get() < REPACK_COOLDOWN then
-        intake.setVerticalSpeed(-0.2)
-    else
-        intake.setVerticalSpeed(0)
-    end
+    intake.setVerticalSpeed(0)
     turret.clearFlywheelFired()
 end
 
