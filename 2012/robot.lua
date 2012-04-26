@@ -103,6 +103,9 @@ function disabledIdle()
 
     local initAngle = drive.getGyroAngle()
     while wpilib.IsDisabled() do
+        local gyroAngle = drive.normalizeAngle(-drive.getGyroAngle())
+        dashboard:PutInt("Gyro Angle", gyroAngle)
+
         if gyroTimer and gyroTimer:Get() > 1 then
             if math.abs(drive.getGyroAngle() - initAngle) > 10 then
                 drive.disableGyro()
@@ -301,7 +304,6 @@ controlMap =
                 turret.hoodOkay = false
             end
         end,
-        [1] = {tick=function(held) deployStinger = held end},
         [2] = drive.resetGyro,
         [4] = function() drive.effTheGyro()
         end,
@@ -379,7 +381,7 @@ controlMap =
             turret.setPreset(nil)
             turret.setFlywheelTargetSpeed(turret.getFlywheelTargetSpeed() + 100)
         end,
-        [9] = {tick=function(held) turret.allowRotate = held end},
+        [9] = {tick=function(held) deployStinger = held end},
         [10] = {tick=intake.setRepack},
         ["ltrigger"] = {tick=function(held)
             if held then
