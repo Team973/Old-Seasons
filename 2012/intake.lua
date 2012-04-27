@@ -34,7 +34,7 @@ local verticalConveyerEncoder = wpilib.Encoder(2, 7, 2, 8, true, wpilib.CounterB
 local loadBallTimer =  wpilib.Timer()
 squishMeter = wpilib.AnalogChannel(5)
 local conveyerPID = pid.new(0.1)
-conveyerPID.min, conveyerPID.max = -0.75, 0
+conveyerPID.min, conveyerPID.max = -0.75, 0.0
 
 local loadBallState = 0
 local runLoadBallState
@@ -80,7 +80,7 @@ local loadBallStateTable = {
     },
     {
         peak=1,
-        func=function(peak) return runLoadBallState(2, peak) end,
+        func=function(peak) return runLoadBallState(3, peak) end,
     },
 }
 
