@@ -133,13 +133,8 @@ function sittingKeyshot(t)
         turret.runFlywheel(true)
         stopFire()
     else
-        if fireCount < 2 then
-            fireCount = fireCount + fire()
-            turret.runFlywheel(true)
-        else
-            stopFire()
-            turret.runFlywheel(false)
-        end
+        fireCount = fireCount + fire()
+        turret.runFlywheel(true)
     end
 
 end
@@ -343,47 +338,6 @@ function keyShotWithCoOpBridgeFar(t)
     end
 end
 
-function foo(t)
-    local posx, posy = drive.getFollowerPosition()
-    autodrivePIDX:update(posx)
-    autodrivePIDY:update(posy)
-    dashboard:PutDouble("Follower X", posx)
-    dashboard:PutDouble("Follower Y", posy)
-    if t < Delay_1 - 2 then
-        turret.runFlywheel(false)
-        stopFire()
-        drive.run({x=0, y=0}, 0, 1)
-        intake.setIntake(0.0)
-    elseif t < Delay_1 then
-        turret.runFlywheel(true)
-        stopFire()
-        drive.run({x=0, y=0}, 0, 1)
-        intake.setIntake(0.0)
-    elseif t < Delay_2 then
-        --TODO: Lower mantis
-        turret.runFlywheel(true)
-        if fireCount < 2 then
-            fireCount = fireCount + fire()
-            drive.run({x=0, y=0}, 0, 1)
-        else
-            stopFire()
-            autodrivePIDX.target = 0.0
-            autodrivePIDY.target = -4.0
-            setDriveAxis("y")
-            drive.run({x=autodrivePIDX.output, y=autodrivePIDY.output}, 0, 1)
-        end
-        intake.setIntake(1.0)
-    else
-        turret.runFlywheel(true)
-        autodrivePIDX.target = 0.0
-        autodrivePIDY.target = 0.0
-        drive.run({x=autodrivePIDX.output, y=autodrivePIDY.output}, 0, 1)
-        fireCount = fireCount + fire()
-        intake.setIntake(1.0)
-        turret.setTargetAngle(calculateTurretTarget(posx, DISTANCE_TO_HOOP - posy, drive.normalizeAngle(-drive.getGyroAngle())))
-    end
-end
-
 function lshape(t)
     local posx, posy = drive.getFollowerPosition()
     autodrivePIDX:update(posx)
@@ -417,13 +371,8 @@ function sittingKeyshotSafety(t)
         turret.runFlywheel(true)
         intake.setVerticalSpeed(0)
     else
-        if fireCount < 2 then
-            intake.setVerticalSpeed(1)
-            turret.runFlywheel(true)
-        else
-            intake.setVerticalSpeed(0)
-            turret.runFlywheel(false)
-        end
+        intake.setVerticalSpeed(1)
+        turret.runFlywheel(true)
     end
 end
 
