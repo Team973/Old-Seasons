@@ -39,7 +39,7 @@ local currPresetName = nil
 PRESETS = {
     cornerFender={flywheelRPM=3150, hoodAngle=0, targetAngle=-84},
     sideFender={flywheelRPM=3500, hoodAngle=0, targetAngle=-22},
-    key={flywheelRPM=6900, hoodAngle=900, superSoftHoodAngle=750, targetAngle=0, hardFlywheelRPM=6400},
+    key={flywheelRPM=6900, hoodAngle=900, superSoftHoodAngle=750, targetAngle=0, hardFlywheelRPM=6400, superHardFlywheelRPM=6200},
     autoKey={flywheelRPM=6200, hoodAngle=1100, targetAngle=-TURRET_ANGLE_OFFSET},
     bridge={flywheelRPM=7000},
 }
@@ -316,6 +316,8 @@ function update()
             setFlywheelTargetSpeed(p.hardFlywheelRPM)
         elseif softnessValue == -1 and p.superSoftFlywheelRPM then
             setFlywheelTargetSpeed(p.superSoftFlywheelRPM)
+        elseif softnessValue == 2 and p.superHardFlywheelRPM then
+            setFlywheelTargetSpeed(p.superHardFlywheelRPM)
         else
             setFlywheelTargetSpeed(p.flywheelRPM)
         end
@@ -323,6 +325,8 @@ function update()
             setHoodTarget(p.hardHoodAngle)
         elseif softnessValue == -1 and p.superSoftHoodAngle then
             setHoodTarget(p.superSoftHoodAngle)
+        elseif softnessValue == 2 and p.superHardHoodAngle then
+            setHoodTarget(p.superHardHoodAngle)
         else
             setHoodTarget(p.hoodAngle)
         end
