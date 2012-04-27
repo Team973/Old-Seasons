@@ -367,8 +367,8 @@ controlMap =
             end
             prevOperatorDpad = axis
         end,
-        [1] = function() turret.setPreset("fender") end,
-        [2] = function() turret.setPreset("side") end,
+        [1] = function() turret.setPreset("sideFender") end,
+        [2] = function() turret.setPreset("cornerFender") end,
         [3] = function() turret.setPreset("key") end,
         [4] = {tick=drive.setFrontSkid},
         [5] = {tick=intake.setLowered},
