@@ -36,11 +36,9 @@ local flywheelPIDGains = {
 local TURRET_ANGLE_OFFSET = 0
 
 local currPresetName = nil
--- new 3500, 0, -22 (side)
--- new 3200, 0, -84 (next to fender)
 PRESETS = {
-    fender={flywheelRPM=3200, hoodAngle=20, targetAngle=0},
-    side={flywheelRPM=3700, hoodAngle=0, targetAngle=-30, hardFlywheelRPM=3600},
+    cornerFender={flywheelRPM=3150, hoodAngle=0, targetAngle=-84},
+    sideFender={flywheelRPM=3500, hoodAngle=0, targetAngle=-22},
     key={flywheelRPM=6800, hoodAngle=900, superSoftHoodAngle=750, targetAngle=0, hardFlywheelRPM=6400},
     autoKey={flywheelRPM=6200, hoodAngle=1100, targetAngle=-TURRET_ANGLE_OFFSET},
     bridge={flywheelRPM=7000},
@@ -48,7 +46,7 @@ PRESETS = {
 
 local dashboard = wpilib.SmartDashboard_GetInstance()
 
-local flywheelTargetSpeed = PRESETS.fender.flywheelRPM
+local flywheelTargetSpeed = PRESETS.key.flywheelRPM
 local flywheelOn = false
 local flywheelFeedforward = math.huge
 local in4 = wpilib.DigitalInput(2, 4)
