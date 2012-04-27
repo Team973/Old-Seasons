@@ -55,6 +55,7 @@ local in6 = wpilib.DigitalInput(2, 6)
 local flywheelCounter = wpilib.Counter(in4)
 local flywheelMotor = linearize.wrap(wpilib.Victor(2, 6))
 local flywheelTicksPerRevolution = 6.0
+local turretEnabled = true
 
 flywheelCounter:Start()
 
@@ -75,6 +76,10 @@ end
 function setHoodTarget(target)
     hoodPID1.target = target
     hoodPID2.target = target
+end
+
+function setTurretEnabled(x)
+    turretEnabled = x
 end
 
 encoder = wpilib.Encoder(2, 2, 2, 3, true, wpilib.CounterBase_k1X)
@@ -306,7 +311,11 @@ function update()
     dashboard:PutInt("TURN.TARGET", turnPID.target)
     dashboard:PutInt("TURN.ANGLE", encoder:Get()/25 + TURRET_ANGLE_OFFSET)
     turnPID:update(encoder:Get()/25 + TURRET_ANGLE_OFFSET)
-    motor:Set(turnPID.output)
+    if turretEnabled then
+        motor:Set(turnPID.output)
+    else
+        motor:Set(0)
+    end
 
     -- Update flywheel target speed from intake's squish meter
     local softnessValue = intake.getLastBallSoftness()

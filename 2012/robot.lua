@@ -169,6 +169,7 @@ function disabledIdle()
 end
 
 function teleop()
+    turret.setTurretEnabled(true)
     turret.turnPID:start()
 
     while wpilib.IsOperatorControl() and wpilib.IsEnabled() do
