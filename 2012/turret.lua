@@ -36,10 +36,12 @@ local flywheelPIDGains = {
 local TURRET_ANGLE_OFFSET = 0
 
 local currPresetName = nil
+-- new 3500, 0, -22 (side)
+-- new 3200, 0, -84 (next to fender)
 PRESETS = {
     fender={flywheelRPM=3200, hoodAngle=20, targetAngle=0},
     side={flywheelRPM=3700, hoodAngle=0, targetAngle=-30, hardFlywheelRPM=3600},
-    key={flywheelRPM=6800, hoodAngle=900, targetAngle=0},
+    key={flywheelRPM=6800, hoodAngle=900, superSoftHoodAngle=750, targetAngle=0, hardFlywheelRPM=6400},
     autoKey={flywheelRPM=6200, hoodAngle=1100, targetAngle=-TURRET_ANGLE_OFFSET},
     bridge={flywheelRPM=7000},
 }
@@ -309,16 +311,20 @@ function update()
     motor:Set(turnPID.output)
 
     -- Update flywheel target speed from intake's squish meter
-    local isSoft = intake.getLastBallSoftness()
-    if currPresetName and isSoft ~= nil then
+    local softnessValue = intake.getLastBallSoftness()
+    if currPresetName and softnessValue ~= nil then
         local p = PRESETS[currPresetName]
-        if not isSoft and p.hardFlywheelRPM then
+        if softnessValue == 1 and p.hardFlywheelRPM then
             setFlywheelTargetSpeed(p.hardFlywheelRPM)
+        elseif softnessValue == -1 and p.superSoftFlywheelRPM then
+            setFlywheelTargetSpeed(p.superSoftFlywheelRPM)
         else
             setFlywheelTargetSpeed(p.flywheelRPM)
         end
-        if not isSoft and p.hardHoodAngle then
+        if softnessValue == 1 and p.hardHoodAngle then
             setHoodTarget(p.hardHoodAngle)
+        elseif softnessValue == -1 and p.superSoftHoodAngle then
+            setHoodTarget(p.superSoftHoodAngle)
         else
             setHoodTarget(p.hoodAngle)
         end
