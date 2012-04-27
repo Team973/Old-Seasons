@@ -38,7 +38,7 @@ local TURRET_ANGLE_OFFSET = 0
 local currPresetName = nil
 PRESETS = {
     fender={flywheelRPM=3200, hoodAngle=20, targetAngle=0},
-    side={flywheelRPM=3600, hoodAngle=0, targetAngle=-30, softFlywheelRPM=3700, softHoodAngle=0},
+    side={flywheelRPM=3700, hoodAngle=0, targetAngle=-30, hardFlywheelRPM=3600},
     key={flywheelRPM=6800, hoodAngle=900, targetAngle=0},
     autoKey={flywheelRPM=6200, hoodAngle=1100, targetAngle=-TURRET_ANGLE_OFFSET},
     bridge={flywheelRPM=7000},
@@ -312,13 +312,13 @@ function update()
     local isSoft = intake.getLastBallSoftness()
     if currPresetName and isSoft ~= nil then
         local p = PRESETS[currPresetName]
-        if isSoft and p.softFlywheelRPM then
-            setFlywheelTargetSpeed(p.softFlywheelRPM)
+        if not isSoft and p.hardFlywheelRPM then
+            setFlywheelTargetSpeed(p.hardFlywheelRPM)
         else
             setFlywheelTargetSpeed(p.flywheelRPM)
         end
-        if isSoft and p.softHoodAngle then
-            setHoodTarget(p.softHoodAngle)
+        if not isSoft and p.hardHoodAngle then
+            setHoodTarget(p.hardHoodAngle)
         else
             setHoodTarget(p.hoodAngle)
         end
