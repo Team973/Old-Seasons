@@ -54,6 +54,7 @@ function run(extraUpdate)
     startedFiring = false
     drive.resetFollowerPosition()
     drive.resetGyro()
+    turret.encoder:Reset()
 
     local t = wpilib.Timer()
     t:Start()
