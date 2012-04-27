@@ -65,7 +65,8 @@ end
 local loadBallPeaks = {complete=false, 0}
 local loadBallStateTable = {
     {
-        func=function()
+        peak=1,
+        func=function(peak)
             local THRESHOLD = 2.5
             local voltage = squishMeter:GetVoltage()
             verticalConveyer:Set(1.0)
@@ -73,8 +74,9 @@ local loadBallStateTable = {
             local shouldAdvance = lastSquishVoltage < THRESHOLD and voltage > THRESHOLD
             if shouldAdvance then
                 verticalConveyerEncoder:Reset()
+                peak = voltage
             end
-            return shouldAdvance
+            return shouldAdvance, peak
         end,
     },
     {
