@@ -54,7 +54,6 @@ function run(extraUpdate)
     startedFiring = false
     drive.resetFollowerPosition()
     drive.resetGyro()
-    turret.encoder:Reset()
 
     local t = wpilib.Timer()
     t:Start()
@@ -126,6 +125,7 @@ end
 --]]
 
 function sittingKeyshot(t)
+    turret.setTurretEnabled(false)
     turret.setPreset("key")
     if t < Delay_1 - 2 then
         turret.runFlywheel(false)
@@ -141,6 +141,7 @@ function sittingKeyshot(t)
 end
 
 function sittingKeyshotWithPass(t)
+    turret.setTurretEnabled(false)
     turret.setPreset("key")
     if t < Delay_1 - 2 then
         turret.runFlywheel(false)
@@ -166,6 +167,7 @@ function sittingKeyshotWithPass(t)
 end
 
 function sittingKeyshotWithDropPass(t)
+    turret.setTurretEnabled(false)
     turret.setPreset("key")
     if t < Delay_1 - 2 then
         turret.runFlywheel(false)
@@ -194,6 +196,7 @@ end
 
 function sittingKeyshotWithSlapPass(t)
     local SLAP_INTERVAL = 20
+    turret.setTurretEnabled(false)
     turret.setPreset("key")
     if t < Delay_1 - 2 then
         turret.runFlywheel(false)
@@ -221,6 +224,7 @@ end
 
 function keyShotWithCoOpBridge(t)
     local posx, posy = drive.getFollowerPosition()
+    turret.setTurretEnabled(false)
     autodrivePIDX:update(posx)
     autodrivePIDY:update(posy)
     dashboard:PutDouble("Follower X", posx)
@@ -276,6 +280,7 @@ function keyShotWithCoOpBridgeFar(t)
 
     local posx, posy = drive.getFollowerPosition()
 
+    turret.setTurretEnabled(true)
     autodrivePIDX:update(posx)
     autodrivePIDY:update(posy)
     dashboard:PutDouble("Follower X", posx)
@@ -365,6 +370,7 @@ end
 
 function sittingKeyshotSafety(t)
     turret.setPreset("key")
+    turret.setTurretEnabled(false)
     if t < Delay_1 - 2 then
         turret.runFlywheel(false)
         intake.setVerticalSpeed(0)
@@ -379,6 +385,7 @@ end
 
 function sittingKeyshotWithPassSafety(t)
     turret.setPreset("key")
+    turret.setTurretEnabled(false)
     if t < Delay_1 - 2 then
         turret.runFlywheel(false)
         intake.setVerticalSpeed(0)
