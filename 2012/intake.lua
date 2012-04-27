@@ -40,9 +40,9 @@ local loadBallState = 0
 local runLoadBallState
 local lastSquishVoltage = 0
 
-local SQUISH_RISE_THRESHOLD = 2.5
-local SQUISH_FALL_THRESHOLD = 2.5
-local SOFTNESS_THRESHOLD = 3.68
+local SQUISH_THRESHOLD = 2.5
+local SOFTNESS_THRESHOLD = 3.6
+local SUPER_SOFTNESS_THRESHOLD = 3.05
 
 verticalConveyerEncoder:Start()
 
@@ -67,11 +67,10 @@ local loadBallStateTable = {
     {
         peak=1,
         func=function(peak)
-            local THRESHOLD = 2.5
             local voltage = squishMeter:GetVoltage()
             verticalConveyer:Set(1.0)
 
-            local shouldAdvance = lastSquishVoltage < THRESHOLD and voltage > THRESHOLD
+            local shouldAdvance = lastSquishVoltage < SQUISH_THRESHOLD and voltage > SQUISH_THRESHOLD
             if shouldAdvance then
                 verticalConveyerEncoder:Reset()
                 peak = voltage
@@ -121,7 +120,14 @@ function getLastBallSoftness()
     if not loadBallPeaks.complete then
         return nil
     end
-    return loadBallPeaks:average() < SOFTNESS_THRESHOLD
+    local peak = loadBallPeaks:average()
+    if peak < SUPER_SOFTNESS_THRESHOLD then
+        return -1
+    elseif peak < SOFTNESS_THRESHOLD then
+        return 0
+    else
+        return 1
+    end
 end
 
 local function evalStateParam(val, ...)
@@ -136,7 +142,7 @@ function update(turretReady)
     ballTimer:Start()
 
     local dashboard = wpilib.SmartDashboard_GetInstance()
-    local autoRepack = verticalSpeed ~= 0 and frontSpeed ~= 0 and loadBallState == 0 and ((squishVoltage > SQUISH_RISE_THRESHOLD and not repackTimer) or (repackTimer and repackTimer:Get() < .5)) and allowAutoRepack
+    local autoRepack = verticalSpeed ~= 0 and frontSpeed ~= 0 and loadBallState == 0 and ((squishVoltage > SQUISH_THRESHOLD and not repackTimer) or (repackTimer and repackTimer:Get() < .5)) and allowAutoRepack
 
     sideIntake:Set(sideSpeed)
     frontIntake:Set(frontSpeed)
@@ -212,10 +218,12 @@ function update(turretReady)
 
     do
         local soft = getLastBallSoftness()
-        if soft == true then
+        if soft == 0 then
             dashboard:PutString("Last Ball Squish", "Soft")
-        elseif soft == false then
+        elseif soft == 1 then
             dashboard:PutString("Last Ball Squish", "Hard")
+        elseif soft == -1 then
+            dashboard:PutString("Last Ball Squish", "Super-Soft")
         else
             dashboard:PutString("Last Ball Squish", "N/A")
         end
