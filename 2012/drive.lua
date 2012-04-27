@@ -23,7 +23,7 @@ rotationPID.min, rotationPID.max = -1, 1
 
 function initGyro()
     gyro = wpilib.Gyro(1, 1)
-    gyro:SetSensitivity(0.002*2940/1800)
+    gyro:SetSensitivity(0.00703)
     gyro:Reset()
     gyroOkay = true
     dashboard:PutBoolean("Gyro Okay", true)
@@ -45,7 +45,7 @@ function getGyroAngle()
     if not gyroOkay or ignoreGyro then
         return 0
     end
-    return gyro:GetAngle()
+    return -gyro:GetAngle()
 end
 
 function disableGyro()
