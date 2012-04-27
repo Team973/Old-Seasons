@@ -43,6 +43,7 @@ local lastSquishVoltage = 0
 local SQUISH_THRESHOLD = 2.5
 local SOFTNESS_THRESHOLD = 3.5
 local SUPER_SOFTNESS_THRESHOLD = 3.05
+local SUPER_HARDNESS_THRESHOLD = 4.30
 
 verticalConveyerEncoder:Start()
 
@@ -125,8 +126,10 @@ function getLastBallSoftness()
         return -1
     elseif peak < SOFTNESS_THRESHOLD then
         return 0
-    else
+    elseif peak < SUPER_HARDNESS_THRESHOLD then
         return 1
+    else
+        return 2
     end
 end
 
@@ -224,6 +227,8 @@ function update(turretReady)
             dashboard:PutString("Last Ball Squish", "Hard")
         elseif soft == -1 then
             dashboard:PutString("Last Ball Squish", "Super-Soft")
+        elseif soft == 2 then
+            dashboard:PutString("Last Ball Squish", "Super-Hard")
         else
             dashboard:PutString("Last Ball Squish", "N/A")
         end
