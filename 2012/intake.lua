@@ -41,7 +41,7 @@ local runLoadBallState
 local lastSquishVoltage = 0
 
 local SQUISH_THRESHOLD = 2.5
-local SOFTNESS_THRESHOLD = 3.6
+local SOFTNESS_THRESHOLD = 3.5
 local SUPER_SOFTNESS_THRESHOLD = 3.05
 
 verticalConveyerEncoder:Start()
