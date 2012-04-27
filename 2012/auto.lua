@@ -14,8 +14,10 @@ local dashboard = wpilib.SmartDashboard_GetInstance()
 autoMode = nil
 local fireCount = 0
 local startedFiring = false
+local driveStopped = false
+local bridgeTimer = nil
 
-local driveGains = {p=0.5, i=0, d=0.01}
+local driveGains = {p=0.5, i=0, d=0.00}
 local stableGains = {p=0.1, i=0, d=0}
 local autodrivePIDX = pid.new()
 autodrivePIDX.min, autodrivePIDX.max = -1, 1
@@ -54,6 +56,8 @@ function run(extraUpdate)
     startedFiring = false
     drive.resetFollowerPosition()
     drive.resetGyro()
+    driveStopped = false
+    bridgeTimer = nil
 
     local t = wpilib.Timer()
     t:Start()
@@ -270,8 +274,6 @@ function keyShotWithCoOpBridge(t)
     end
 end
 
-local driveStopped = false
-local bridgeTimer = nil
 local DISTANCE_TO_HOOP = 15
 
 function keyShotWithCoOpBridgeFar(t)
@@ -311,6 +313,7 @@ function keyShotWithCoOpBridgeFar(t)
         -- After firing two balls
         autodrivePIDX.target = 0.0
         autodrivePIDY.target = CLOSE_BRIDGE_DISTANCE
+        --autodrivePIDY.min, autodrivePIDY.max = -0.7, 0.7
         setDriveAxis("y")
         drive.run({x=autodrivePIDX.output, y=autodrivePIDY.output}, 0, 1)
         stopFire()
@@ -318,7 +321,7 @@ function keyShotWithCoOpBridgeFar(t)
         intake.setIntake(1)
         drive.setFrontSkid(true)
         turret.setTargetAngle(calculateTurretTarget(posx, DISTANCE_TO_HOOP - posy, drive.normalizeAngle(-drive.getGyroAngle())))
-        if posy/CLOSE_BRIDGE_DISTANCE > .5 and drive.isFollowerStopped() then
+        if posy/CLOSE_BRIDGE_DISTANCE > .9 and drive.isFollowerStopped() then
             driveStopped = true
             bridgeTimer = wpilib.Timer()
             bridgeTimer:Start()
@@ -328,6 +331,7 @@ function keyShotWithCoOpBridgeFar(t)
             intake.setLowered(true)
             autodrivePIDX.target = 0.0
             autodrivePIDY.target = 0.0
+            autodrivePIDY.min, autodrivePIDY.max = -1.0, 1.0
             drive.run({x=autodrivePIDX.output, y=autodrivePIDY.output}, 0, 1)
         else
             intake.setLowered(false)
