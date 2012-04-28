@@ -39,7 +39,7 @@ local currPresetName = nil
 PRESETS = {
     cornerFender={flywheelRPM=3150, hoodAngle=0, targetAngle=-84},
     sideFender={flywheelRPM=3500, hoodAngle=0, targetAngle=-22},
-    key={flywheelRPM=6900, hoodAngle=900, superSoftHoodAngle=750, targetAngle=0, hardFlywheelRPM=6200, superHardFlywheelRPM=6000},
+    key={flywheelRPM=6700, hoodAngle=900, superSoftHoodAngle=750, targetAngle=0, hardFlywheelRPM=6000, superHardFlywheelRPM=5800},
     autoKey={flywheelRPM=6200, hoodAngle=1100, targetAngle=-TURRET_ANGLE_OFFSET},
     bridge={flywheelRPM=7000},
 }

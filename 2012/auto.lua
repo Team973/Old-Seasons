@@ -277,7 +277,7 @@ end
 local DISTANCE_TO_HOOP = 15
 
 function keyShotWithCoOpBridgeFar(t)
-    local CLOSE_BRIDGE_DISTANCE = -11
+    local CLOSE_BRIDGE_DISTANCE = -13
     local RPM_FUDGE = 100
 
     local posx, posy = drive.getFollowerPosition()
@@ -313,7 +313,7 @@ function keyShotWithCoOpBridgeFar(t)
         -- After firing two balls
         autodrivePIDX.target = 0.0
         autodrivePIDY.target = CLOSE_BRIDGE_DISTANCE
-        --autodrivePIDY.min, autodrivePIDY.max = -0.7, 0.7
+        autodrivePIDY.min, autodrivePIDY.max = -0.9, 0.9
         setDriveAxis("y")
         drive.run({x=autodrivePIDX.output, y=autodrivePIDY.output}, 0, 1)
         stopFire()

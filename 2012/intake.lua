@@ -170,7 +170,7 @@ function update(turretReady)
     end
 
     if loadBallState > 0 then
-        if loadBallTimer:Get() > 3 then
+        if loadBallTimer:Get() > 1.5 then
             -- Cutoff
             loadBallState = 0
             loadBallTimer:Stop()
