@@ -189,12 +189,11 @@ end
 -- Don't forget to add to declarations at the top!
 compressor = wpilib.Relay(1, 1, wpilib.Relay_kForwardOnly)
 pressureSwitch = wpilib.DigitalInput(1, 14)
-frontSkid = wpilib.Solenoid(3)
 stinger = wpilib.Solenoid(7)
 -- End Inputs/Outputs
 
 -- Controls
---TODO
+driveControl = {x=0, y=0}
 
 local function incConstant(tbl, name, pid, delta)
     return function()
@@ -219,19 +218,12 @@ local prevOperatorDpad = 0.0
 
 controlMap =
 {
-    -- Joystick 1 (Brian)
+    -- Joystick 1 (Driver)
     {
-        ["x"] = function(axis) strafe.x = deadband(axis, 0.15) end,
-        ["y"] = function(axis) strafe.y = deadband(-axis, 0.15) end,
-        ["rx"] = function(axis) rotation = deadband(axis, 0.15) end,
-        ["hatx"] = function(axis)
-            if deadband(axis, 0.15) > 0.5 then
-                turret.hoodOkay = false
-            end
-        end,
+        ["x"] = function(axis) driveControl.x = deadband(axis, 0.15) end,
+        ["y"] = function(axis) driveControl.y = deadband(-axis, 0.15) end,
         [2] = drive.resetGyro,
-        [4] = function() drive.effTheGyro()
-        end,
+        [4] = drive.effTheGyro,
         [5] = {tick=function(held)
             if held then
                 drive.setGear("low")
@@ -239,63 +231,18 @@ controlMap =
                 drive.setGear("high")
             end
         end},
-        [7] = function() fudgeMode = true end,
-        [8] = function() drive.calibrateAll() end,
-        [10] = {tick=function(held)
-            if held then
-                if drive.getGear() == "low" then
-                    rotation = rotation * 0.5
-                elseif drive.getGear() == "high" then
-                    rotation = rotation * 0.5
-                end
-            end
-        end},
-
-        ["update"] = function(stick)
-            if controls.isLeftTriggerHeld(stick) then
-                strafe.x = 0
-                driveMode = 1
-            elseif controls.isRightTriggerHeld(stick) then
-                strafe.x = strafe.y
-                strafe.y = 0
-                driveMode = 2
-            else
-                driveMode = 0
-            end
-        end
     },
-    -- Joystick 2 (Allen)
+    -- Joystick 2 (Co-Driver)
     {
-        ["x"] = function(axis)
-            turretDirection.x = deadband(axis, 0.2)
-            turret.setFromJoy(turretDirection.x, turretDirection.y)
-        end,
-        ["y"] = function(axis)
-            turretDirection.y = deadband(-axis, 0.2)
-            turret.setFromJoy(turretDirection.x, turretDirection.y)
-        end,
         ["rx"] = function(axis)
             intake.setIntake(deadband(axis, 0.2))
         end,
         ["ry"] = function(axis)
             intake.setVerticalSpeed(deadband(-axis, 0.2))
         end,
-        ["hatx"] = function(axis)
-            local increment = 1
-            if axis > 0.5 and prevOperatorDpad <= 0.5 then
-                -- Dpad right
-                turret.setTargetAngle(turret.getTargetAngle() + 1)
-            end
-            if axis < -0.5 and prevOperatorDpad >= -0.5 then
-                -- Dpad left
-                turret.setTargetAngle(turret.getTargetAngle() - 1)
-            end
-            prevOperatorDpad = axis
-        end,
         [1] = function() turret.setPreset("rightKey") end,
         [2] = function() turret.setPreset("Feeder") end,
         [3] = function() turret.setPreset("key") end,
-        [4] = {tick=drive.setFrontSkid},
         [5] = {tick=intake.setLowered},
         [6] = intake.loadBall,
         [7] = function()

@@ -36,8 +36,6 @@ function setLowered(val)
 end
 
 function update(turretReady)
-    ballTimer:Start()
-
     local dashboard = wpilib.SmartDashboard_GetInstance()
 
     sideIntake:Set(sideSpeed)

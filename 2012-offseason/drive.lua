@@ -15,8 +15,6 @@ local gyro = nil
 local gyroOkay = true
 local ignoreGyro = false
 local gearSwitch = wpilib.Solenoid(1, 1)
-local frontSkid = wpilib.Solenoid(3)
-local followerDeploy = wpilib.Solenoid(1, 6)
 
 function initGyro()
     gyro = wpilib.Gyro(1, 1)
@@ -75,11 +73,6 @@ function normalizeAngle(theta)
         theta = theta + 360
     end
     return theta
-end
-
-function angleError(current, target)
-    local err, flip = calculateTurn(current, target)
-    return err
 end
 
 local function LinearVictor(...)
