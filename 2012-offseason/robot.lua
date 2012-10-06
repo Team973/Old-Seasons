@@ -5,7 +5,6 @@ local wpilib = require("wpilib")
 -- Inject WPILib timer object into PID
 pid.PID.timerNew = wpilib.Timer
 
-local auto = require("auto")
 local controls = require("controls")
 local drive = require("drive")
 local intake = require("intake")
@@ -24,13 +23,9 @@ local watchdogEnabled = false
 local feedWatchdog, enableWatchdog, disableWatchdog
 
 local disabledIdle, hellautonomous, teleop, updateCompressor
-local controlMap, fudgeControlMap, strafe, rotation
+local controlMap
 local deployStinger
-local zeroMode, possessionTimer
-local fudgeMode, fudgeWheel, fudgeMovement
-
 local compressor, pressureSwitch, stinger
-local driveMode = 0
 
 -- End Declarations
 
@@ -42,13 +37,13 @@ function run()
     -- Main loop
     while true do
         if wpilib.IsDisabled() then
-            disabledIdle()
+            --disabledIdle()
             disableWatchdog()
             repeat wpilib.Wait(0.01) until not wpilib.IsDisabled()
             enableWatchdog()
         elseif wpilib.IsAutonomous() then
             disableWatchdog()
-            auto.run(updateCompressor)
+	    --TODO autonomous
             disableWatchdog()
             repeat wpilib.Wait(0.01) until not wpilib.IsAutonomous() or not wpilib.IsEnabled()
             enableWatchdog()
@@ -60,7 +55,7 @@ function run()
         end
     end
 end
-
+--[[
 function disabledIdle()
     local gyroTimer = wpilib.Timer()
 
@@ -138,7 +133,7 @@ function disabledIdle()
         wpilib.Wait(TELEOP_LOOP_LAG)
     end
 end
-
+--]]
 function teleop()
     while wpilib.IsOperatorControl() and wpilib.IsEnabled() do
         enableWatchdog()
