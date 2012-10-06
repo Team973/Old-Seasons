@@ -18,7 +18,7 @@ local flywheelSpeedTable = {
 local flywheelSpeedFilter = {
     prev=0,
     curr=0,
-    weight=0.2,
+    weight=.2,
 }
 local flywheelFired = false
 flywheelPID = pid.new(0.05, 0.0, -0.0007,
@@ -27,19 +27,19 @@ flywheelPID = pid.new(0.05, 0.0, -0.0007,
         return flywheelSpeedFilter:average()
     end)
 local flywheelPIDGains = {
-    {0, p=0.05, d=-0.0007},
-    {3200, p=0.05, d=-0.0007},
-    {4500, p=0.05, d=-0.0007},
-    {6000, p=0.01, d=-0.0007},
-    {7600, p=0.0095, d = -.0007}
+    {0, p=0.025, d=-0.005},
+    {2800, p=0.025,d=-0.005},
+    {3273, p=0.025, d=-0.005},
+    {3275, p=0.025, d=-0.005},
+    {3277, p=0.025, d = -.005}
 }
 local TURRET_ANGLE_OFFSET = 0
 
 local currPresetName = nil
 PRESETS = {
-    cornerFender={flywheelRPM=3150, hoodAngle=0, targetAngle=-84},
-    sideFender={flywheelRPM=3500, hoodAngle=0, targetAngle=-22},
-    key={flywheelRPM=6700, hoodAngle=900, superSoftHoodAngle=750, targetAngle=0, hardFlywheelRPM=6000, superHardFlywheelRPM=5800},
+    Feeder={flywheelRPM=3000, hoodAngle=1100, targetAngle=0},
+    rightKey={flywheelRPM=2150, hoodAngle=450, targetAngle=-15},
+    key={flywheelRPM=2100, hoodAngle=450, superSoftHoodAngle=450, targetAngle=0, superHardHoodAngle = 450, hardHoodAngle =450},
     autoKey={flywheelRPM=6200, hoodAngle=1100, targetAngle=-TURRET_ANGLE_OFFSET},
     bridge={flywheelRPM=7000},
 }
@@ -52,9 +52,9 @@ local flywheelFeedforward = math.huge
 local in4 = wpilib.DigitalInput(2, 4)
 local in5 = wpilib.DigitalInput(2, 5)
 local in6 = wpilib.DigitalInput(2, 6)
-local flywheelCounter = wpilib.Counter(in4)
+local flywheelCounter = wpilib.Counter(in6)
 local flywheelMotor = linearize.wrap(wpilib.Victor(2, 6))
-local flywheelTicksPerRevolution = 6.0
+local flywheelTicksPerRevolution = 4.0
 local turretEnabled = true
 
 flywheelCounter:Start()
@@ -63,9 +63,9 @@ local hoodEncoder1, hoodEncoder2
 local HOOD_ENCODER_RATIO = 627.2 / 392.0
 local hoodMotor1= wpilib.Victor(2,7)
 local hoodMotor2= wpilib.Victor(2,8)
-hoodPID1 = pid.new(0.006, 0, 0)
+hoodPID1 = pid.new(0.01, 0, 0.0001)
 hoodPID1:start()
-hoodPID2 = pid.new(0.006, 0, 0)
+hoodPID2 = pid.new(0.01, 0, 0.0001)
 hoodPID2:start()
 runHood = 0
 
@@ -305,10 +305,10 @@ end
 
 function update()
     -- Turret rotation
-    dashboard:PutBoolean("Input 4", in4:Get())
-    dashboard:PutBoolean("Input 5", in5:Get())
-    dashboard:PutBoolean("Input 6", in6:Get())
-    dashboard:PutInt("TURN.TARGET", turnPID.target)
+    --dashboard:PutBoolean("Input 4", in4:Get())
+    --dashboard:PutBoolean("Input 5", in5:Get())
+    --dashboard:PutBoolean("Input 6", in6:Get())
+    --dashboard:PutInt("TURN.TARGET", turnPID.target)
     dashboard:PutInt("TURN.ANGLE", encoder:Get()/25 + TURRET_ANGLE_OFFSET)
     turnPID:update(encoder:Get()/25 + TURRET_ANGLE_OFFSET)
     if turretEnabled then
@@ -349,7 +349,7 @@ function update()
     if flywheelSpeedTable:average() - flywheelSpeedFilter:average() > 300 then
         flywheelFired = true
     end
-    dashboard:PutBoolean("Flywheel Fired", flywheelFired)
+    --dashboard:PutBoolean("Flywheel Fired", flywheelFired)
 
     -- Get flywheel position and time
     flywheelPID.timer:Start()
@@ -376,17 +376,17 @@ function update()
     end
 
     -- Print flywheel diagnostics
-    dashboard:PutDouble("Flywheel P", flywheelPID.p)
-    dashboard:PutDouble("Flywheel D", flywheelPID.d)
+    --dashboard:PutDouble("Flywheel P", flywheelPID.p)
+    --dashboard:PutDouble("Flywheel D", flywheelPID.d)
     dashboard:PutDouble("Flywheel Speed", getFlywheelSpeed())
     dashboard:PutInt("Flywheel Speed(Int)", getFlywheelSpeed())
-    dashboard:PutInt("Flywheel Speed(Filter Int)", getFlywheelFilterSpeed())
+    --dashboard:PutInt("Flywheel Speed(Filter Int)", getFlywheelFilterSpeed())
     dashboard:PutDouble("Flywheel Target Speed", getFlywheelTargetSpeed())
-    dashboard:PutBoolean("Flywheel On", flywheelOn)
+    --dashboard:PutBoolean("Flywheel On", flywheelOn)
     if currPresetName then
-        dashboard:PutString("Turret Preset", currPresetName)
+        --dashboard:PutString("Turret Preset", currPresetName)
     else
-        dashboard:PutString("Turret Preset", "<MANUAL>")
+        --dashboard:PutString("Turret Preset", "<MANUAL>")
     end
 
     -- Update hood

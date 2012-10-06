@@ -131,7 +131,7 @@ end
 function sittingKeyshot(t)
     turret.setTurretEnabled(false)
     turret.setPreset("key")
-    if t < Delay_1 - 2 then
+    if t < Delay_1 - 10 then
         turret.runFlywheel(false)
         stopFire()
     elseif t < Delay_1 then
@@ -147,7 +147,7 @@ end
 function sittingKeyshotWithPass(t)
     turret.setTurretEnabled(false)
     turret.setPreset("key")
-    if t < Delay_1 - 2 then
+    if t < Delay_1 - 10 then
         turret.runFlywheel(false)
         stopFire()
         intake.setIntake(0.0)
@@ -173,7 +173,7 @@ end
 function sittingKeyshotWithDropPass(t)
     turret.setTurretEnabled(false)
     turret.setPreset("key")
-    if t < Delay_1 - 2 then
+    if t < Delay_1 - 10 then
         turret.runFlywheel(false)
         stopFire()
         intake.setIntake(0.0)
@@ -202,7 +202,7 @@ function sittingKeyshotWithSlapPass(t)
     local SLAP_INTERVAL = 20
     turret.setTurretEnabled(false)
     turret.setPreset("key")
-    if t < Delay_1 - 2 then
+    if t < Delay_1 - 10 then
         turret.runFlywheel(false)
         stopFire()
         intake.setIntake(0.0)
@@ -235,7 +235,7 @@ function keyShotWithCoOpBridge(t)
     dashboard:PutDouble("Follower Y", posy)
     drive.deployFollower()
     turret.setPreset("key")
-    if t < Delay_1 - 2 then
+    if t < Delay_1 - 10 then
         drive.setFrontSkid(false)
         turret.runFlywheel(true)
         stopFire()

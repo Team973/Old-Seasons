@@ -41,9 +41,9 @@ local runLoadBallState
 local lastSquishVoltage = 0
 
 local SQUISH_THRESHOLD = 2.5
-local SOFTNESS_THRESHOLD = 3.5
-local SUPER_SOFTNESS_THRESHOLD = 3.05
-local SUPER_HARDNESS_THRESHOLD = 4.30
+local SOFTNESS_THRESHOLD = 3.9
+local SUPER_SOFTNESS_THRESHOLD = 3.65
+local SUPER_HARDNESS_THRESHOLD = 100
 
 verticalConveyerEncoder:Start()
 
@@ -213,11 +213,11 @@ function update(turretReady)
         verticalConveyer:Set(verticalSpeed)
     end
 
-    dashboard:PutDouble("Vertical Speed", verticalSpeed)
-    dashboard:PutDouble("Cheater Speed", cheaterRoller:Get())
-    dashboard:PutDouble("Squish Meter", squishVoltage)
-    dashboard:PutDouble("Vertical Conveyer", verticalConveyerEncoder:Get() * CONVEYER_ENCODER_SCALE)
-    dashboard:PutInt("Load Ball State", loadBallState)
+    --dashboard:PutDouble("Vertical Speed", verticalSpeed)
+    --dashboard:PutDouble("Cheater Speed", cheaterRoller:Get())
+    --dashboard:PutDouble("Squish Meter", squishVoltage)
+    --dashboard:PutDouble("Vertical Conveyer", verticalConveyerEncoder:Get() * CONVEYER_ENCODER_SCALE)
+    --dashboard:PutInt("Load Ball State", loadBallState)
 
     do
         local soft = getLastBallSoftness()

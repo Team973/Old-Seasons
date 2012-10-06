@@ -265,7 +265,7 @@ function run(strafe, rotation, driveMode)
     driveMode = driveMode or 0
 
     for _, wheel in pairs(wheels) do
-        dashboard:PutString(wheel.shortName .. ".turnEncoder", wheel.turnEncoder:GetDistance())
+        --dashboard:PutString(wheel.shortName .. ".turnEncoder", wheel.turnEncoder:GetDistance())
     end
 
     local gyroAngle = normalizeAngle(-getGyroAngle())

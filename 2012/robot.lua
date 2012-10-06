@@ -199,8 +199,8 @@ function teleop()
         turret.update()
 
         local followerX, followerY = drive.getFollowerPosition()
-        dashboard:PutDouble("Follower X", followerX)
-        dashboard:PutDouble("Follower Y", followerY)
+        --dashboard:PutDouble("Follower X", followerX)
+        --dashboard:PutDouble("Follower Y", followerY)
 
         -- Drive
         if zeroMode then
@@ -233,7 +233,7 @@ function teleop()
 end
 
 function updateCompressor()
-    dashboard:PutBoolean("pressure", pressureSwitch:Get())
+    --dashboard:PutBoolean("pressure", pressureSwitch:Get())
     if pressureSwitch:Get() then
         compressor:Set(wpilib.Relay_kOff)
     else
@@ -368,19 +368,19 @@ controlMap =
             end
             prevOperatorDpad = axis
         end,
-        [1] = function() turret.setPreset("sideFender") end,
-        [2] = function() turret.setPreset("cornerFender") end,
+        [1] = function() turret.setPreset("rightKey") end,
+        [2] = function() turret.setPreset("Feeder") end,
         [3] = function() turret.setPreset("key") end,
         [4] = {tick=drive.setFrontSkid},
         [5] = {tick=intake.setLowered},
         [6] = intake.loadBall,
         [7] = function()
             turret.setPreset(nil)
-            turret.setFlywheelTargetSpeed(turret.getFlywheelTargetSpeed() - 100)
+            turret.setFlywheelTargetSpeed(turret.getFlywheelTargetSpeed() - 50)
         end,
         [8] = function()
             turret.setPreset(nil)
-            turret.setFlywheelTargetSpeed(turret.getFlywheelTargetSpeed() + 100)
+            turret.setFlywheelTargetSpeed(turret.getFlywheelTargetSpeed() + 50)
         end,
         [9] = {tick=function(held) deployStinger = held end},
         [10] = {tick=intake.setRepack},
