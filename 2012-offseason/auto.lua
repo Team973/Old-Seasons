@@ -12,10 +12,8 @@ module(...)
 local dashboard = wpilib.SmartDashboard_GetInstance()
 
 autoMode = nil
-local fireCount = 0
 local startedFiring = false
 local driveStopped = false
-local bridgeTimer = nil
 
 local driveGains = {p=0.5, i=0, d=0.00}
 local stableGains = {p=0.1, i=0, d=0}
@@ -49,14 +47,11 @@ setDriveAxis("y")
 
 local fireTimer = nil
 local FIRE_COOLDOWN = 0.5
-local REPACK_COOLDOWN = 0.25
 
 function run(extraUpdate)
-    fireCount = 0
     startedFiring = false
     drive.resetGyro()
     driveStopped = false
-    bridgeTimer = nil
 
     local t = wpilib.Timer()
     t:Start()
@@ -77,12 +72,7 @@ function run(extraUpdate)
     intake.fullStop()
 end
 
-function calculateTurretTarget(x,y,gyro)
-    return math.deg(-math.atan2(x,y)) - gyro
-end
-
 function fire()
-    local fireCount = 0
     if fireTimer and fireTimer:Get() > FIRE_COOLDOWN then
         fireTimer = nil
         startedFiring = false
@@ -90,20 +80,11 @@ function fire()
 
     if fireTimer == nil then
         -- Ready to fire
-        if intake.getLastBallSoftness() and startedFiring then
-            fireTimer = wpilib.Timer()
-            fireTimer:Start()
-            fireCount = 1
-        else
-            intake.loadBall()
-            startedFiring = true
-        end
     else
         -- Cooldown
         intake.setVerticalSpeed(0.0)
     end
     turret.clearFlywheelFired()
-    return fireCount
 end
 
 function stopFire()
