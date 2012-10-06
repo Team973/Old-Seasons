@@ -167,7 +167,7 @@ function teleop()
         turret.update()
 
         -- Drive
-	--TODO
+        -- TODO
 
         -- Iteration cleanup
         feedWatchdog()

@@ -159,7 +159,6 @@ function update()
     if flywheelSpeedTable:average() - flywheelSpeedFilter:average() > 300 then
         flywheelFired = true
     end
-    --dashboard:PutBoolean("Flywheel Fired", flywheelFired)
 
     -- Get flywheel position and time
     flywheelPID.timer:Start()
@@ -186,18 +185,9 @@ function update()
     end
 
     -- Print flywheel diagnostics
-    --dashboard:PutDouble("Flywheel P", flywheelPID.p)
-    --dashboard:PutDouble("Flywheel D", flywheelPID.d)
     dashboard:PutDouble("Flywheel Speed", getFlywheelSpeed())
     dashboard:PutInt("Flywheel Speed(Int)", getFlywheelSpeed())
-    --dashboard:PutInt("Flywheel Speed(Filter Int)", getFlywheelFilterSpeed())
     dashboard:PutDouble("Flywheel Target Speed", getFlywheelTargetSpeed())
-    --dashboard:PutBoolean("Flywheel On", flywheelOn)
-    if currPresetName then
-        --dashboard:PutString("Turret Preset", currPresetName)
-    else
-        --dashboard:PutString("Turret Preset", "<MANUAL>")
-    end
 end
 
 function fullStop()
