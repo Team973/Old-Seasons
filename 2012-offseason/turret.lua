@@ -149,7 +149,8 @@ end
 
 function update()
     -- Update flywheel target speed from intake's squish meter
-            setFlywheelTargetSpeed(p.flywheelRPM)
+    setFlywheelTargetSpeed(PRESETS[currPresetName].flywheelRPM)
+
     -- Add flywheel velocity sample
     local speedSample = 60.0 / (flywheelCounter:GetPeriod() * flywheelTicksPerRevolution)
     flywheelSpeedTable:add(speedSample)
