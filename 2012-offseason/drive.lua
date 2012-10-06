@@ -14,12 +14,9 @@ local dashboard = wpilib.SmartDashboard_GetInstance()
 local gyro = nil
 local gyroOkay = true
 local ignoreGyro = false
-local rotationPID = pid.new(0.01, 0, 0)
-local rotationHoldTimer
 local gearSwitch = wpilib.Solenoid(1, 1)
 local frontSkid = wpilib.Solenoid(3)
 local followerDeploy = wpilib.Solenoid(1, 6)
-rotationPID.min, rotationPID.max = -1, 1
 
 function initGyro()
     gyro = wpilib.Gyro(1, 1)
@@ -31,9 +28,6 @@ end
 
 function resetGyro()
     gyro:Reset()
-    if rotationPID.target then
-        rotationPID.target = 0
-    end
     ignoreGyro = false
 end
 
@@ -72,19 +66,6 @@ function setGear(g)
     end
 end
 
---[[
-    calculate computes the wheel angles and speeds.
-
-    x and y are the strafe inputs from the operator, w is the rotation speed
-    about the z-axis.
-
-    gyroDeg is the field-centric shift (in degrees).
-
-    The units for wheelBase and trackWidth are irrelevant as long as they are
-    consistent.
-
-    (Consult Adam for the math.)
---]]
 -- Wraps an angle (in degrees) to (-180, 180].
 function normalizeAngle(theta)
     while theta > 180 do
@@ -96,23 +77,9 @@ function normalizeAngle(theta)
     return theta
 end
 
-
 function angleError(current, target)
     local err, flip = calculateTurn(current, target)
     return err
-end
-
-function driveScale(err, flip)
-    local scale
-    if math.abs(err) < 45 then
-        scale = math.cos(math.rad(err))
-    else
-        scale = 0
-    end
-    if flip then
-        scale = -scale
-    end
-    return scale
 end
 
 local function LinearVictor(...)

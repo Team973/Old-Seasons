@@ -59,41 +59,8 @@ local turretEnabled = true
 
 flywheelCounter:Start()
 
-local hoodEncoder1, hoodEncoder2
-local HOOD_ENCODER_RATIO = 627.2 / 392.0
-local hoodMotor1= wpilib.Victor(2,7)
-local hoodMotor2= wpilib.Victor(2,8)
-hoodPID1 = pid.new(0.01, 0, 0.0001)
-hoodPID1:start()
-hoodPID2 = pid.new(0.01, 0, 0.0001)
-hoodPID2:start()
-runHood = 0
-
-encoder = wpilib.Encoder(2, 2, 2, 3, true, wpilib.CounterBase_k1X)
-encoder:Start()
-motor = wpilib.Jaguar(2, 3)
-turnPID = pid.new(0.05, 0, 0)
 
 local HARD_LIMIT = 90
-
-function initI2C()
-    dashboard:PutString("mode", "I2C Init")
-
-    -- Reset encoder addresses
-    local i2c = wpilib.DigitalModule_GetInstance(I2C_SIDECAR):GetI2C(0x00)
-    i2c:SetCompatibilityMode(true)
-    -- ORDER IS SIGNIFICANT HERE
-    i2c:Write(0x4f, 0x03)
-    wpilib.Wait(I2C_DELAY)
-    i2c:Write(0x4e, 0xca)
-    wpilib.Wait(I2C_DELAY)
-
-    local hood1Okay
-    local hood2Okay
-    hoodEncoder1, hood1Okay = initVexEncoder(0x20, "1", false)
-    hoodEncoder2, hood2Okay = initVexEncoder(0x22, "2", true)
-    hoodOkay = hood1Okay and hood2Okay
-end
 
 -- Calculate the current flywheel speed (in RPM).
 function getFlywheelSpeed()
@@ -181,43 +148,8 @@ function runFlywheel(on, speed)
 end
 
 function update()
-    -- Turret rotation
-    --dashboard:PutBoolean("Input 4", in4:Get())
-    --dashboard:PutBoolean("Input 5", in5:Get())
-    --dashboard:PutBoolean("Input 6", in6:Get())
-    --dashboard:PutInt("TURN.TARGET", turnPID.target)
-    dashboard:PutInt("TURN.ANGLE", encoder:Get()/25 + TURRET_ANGLE_OFFSET)
-    turnPID:update(encoder:Get()/25 + TURRET_ANGLE_OFFSET)
-    if turretEnabled then
-        motor:Set(turnPID.output)
-    else
-        motor:Set(0)
-    end
-
     -- Update flywheel target speed from intake's squish meter
-    local softnessValue = intake.getLastBallSoftness()
-    if currPresetName and softnessValue ~= nil then
-        local p = PRESETS[currPresetName]
-        if softnessValue == 1 and p.hardFlywheelRPM then
-            setFlywheelTargetSpeed(p.hardFlywheelRPM)
-        elseif softnessValue == -1 and p.superSoftFlywheelRPM then
-            setFlywheelTargetSpeed(p.superSoftFlywheelRPM)
-        elseif softnessValue == 2 and p.superHardFlywheelRPM then
-            setFlywheelTargetSpeed(p.superHardFlywheelRPM)
-        else
             setFlywheelTargetSpeed(p.flywheelRPM)
-        end
-        if softnessValue == 1 and p.hardHoodAngle then
-            setHoodTarget(p.hardHoodAngle)
-        elseif softnessValue == -1 and p.superSoftHoodAngle then
-            setHoodTarget(p.superSoftHoodAngle)
-        elseif softnessValue == 2 and p.superHardHoodAngle then
-            setHoodTarget(p.superHardHoodAngle)
-        else
-            setHoodTarget(p.hoodAngle)
-        end
-    end
-
     -- Add flywheel velocity sample
     local speedSample = 60.0 / (flywheelCounter:GetPeriod() * flywheelTicksPerRevolution)
     flywheelSpeedTable:add(speedSample)
@@ -265,28 +197,10 @@ function update()
     else
         --dashboard:PutString("Turret Preset", "<MANUAL>")
     end
-
-    -- Update hood
-    local e1 = readVexEncoder(hoodEncoder1) * HOOD_ENCODER_RATIO
-    local e2 = -readVexEncoder(hoodEncoder2) * HOOD_ENCODER_RATIO
-    dashboard:PutDouble("Hood 1", e1)
-    dashboard:PutDouble("Hood 2", e2)
-    hoodPID1:update(e1)
-    hoodPID2:update(e2)
-    if hoodOkay then
-        hoodMotor1:Set(hoodPID1.output)
-        hoodMotor2:Set(-hoodPID2.output)
-    else
-        hoodMotor1:Set(0)
-        hoodMotor2:Set(0)
-    end
 end
 
 function fullStop()
-    motor:Set(0.0)
     flywheelMotor:Set(0.0)
-    hoodMotor1:Set(0.0)
-    hoodMotor2:Set(0.0)
 end
 
 function setPreset(name)
@@ -296,12 +210,6 @@ function setPreset(name)
 
     if p.flywheelRPM then
         setFlywheelTargetSpeed(p.flywheelRPM)
-    end
-    if p.hoodAngle then
-        setHoodTarget(p.hoodAngle)
-    end
-    if p.targetAngle then
-        setTargetAngle(p.targetAngle)
     end
 end
 
