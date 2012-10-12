@@ -16,6 +16,39 @@ local gyroOkay = true
 local ignoreGyro = false
 local gearSwitch = wpilib.Solenoid(1, 1)
 
+local function limit(x)
+    if x > 1 then
+        return 1
+    elseif x < -1 then
+        return -1
+    else
+        return x
+    end
+end
+
+local function signSquare(x)
+    if x < 0 then return -x*x end
+    return x*x
+end
+
+local function arcade(move, rotate)
+    move = signSquare(limit(move))
+    rotate = signSquare(limit(rotate))
+    if move > 0 then
+        if rotate > 0 then
+            return move - rotate, math.max(move, rotate)
+        else
+            return math.max(move, -rotate), move + rotate
+        end
+    else
+        if rotate > 0 then
+            return -math.max(-move, rotate), move + rotate
+        else
+            return move - rotate, -math.max(-move, -rotate)
+        end
+    end
+end
+
 function initGyro()
     gyro = wpilib.Gyro(1, 1)
     gyro:SetSensitivity(0.00703)
