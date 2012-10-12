@@ -139,18 +139,10 @@ function teleop()
         enableWatchdog()
         feedWatchdog()
 
-        if not fudgeMode then
-            dashboard:PutString("mode", "Running")
-        else
-            dashboard:PutString("mode", "Fudge Mode")
-        end
+        dashboard:PutString("mode", "Running")
 
         -- Read controls
-        if fudgeMode then
-            controls.update(fudgeControlMap)
-        else
-            controls.update(controlMap)
-        end
+        controls.update(controlMap)
         feedWatchdog()
 
         stinger:Set(deployStinger)
