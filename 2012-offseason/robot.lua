@@ -162,7 +162,7 @@ function teleop()
         turret.update()
 
         -- Drive
-	drive.update(driveX, driveY)
+        drive.update(driveX, driveY)
 
         -- Iteration cleanup
         feedWatchdog()
@@ -252,7 +252,6 @@ controlMap =
             if held then
                 intake.setIntake(1.0)
             end
-            intake.setAllowAutoRepack(held)
         end},
         ["rtrigger"] = {tick=turret.runFlywheel},
     },
@@ -297,5 +296,6 @@ end
 
 -- Only create the gyro at the end, because it blocks the entire thread.
 dashboard:PutString("mode", "Waiting for Gyro...")
-drive.initGyro()
+--TODO(rlight): Add this back in when we have gyro
+--drive.initGyro()
 -- vim: ft=lua et ts=4 sts=4 sw=4

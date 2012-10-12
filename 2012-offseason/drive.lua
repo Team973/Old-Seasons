@@ -117,10 +117,8 @@ end
 
 function update(driveX,driveY)
 	local leftSpeed, rightSpeed = arcade(driveY, driveX)
-	leftDriveMotor:Set(leftspeed)
+	leftDriveMotor:Set(leftSpeed)
 	rightDriveMotor:Set(rightSpeed)
-	
-	
 end
 
 --[[
