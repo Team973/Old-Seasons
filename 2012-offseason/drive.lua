@@ -80,8 +80,8 @@ end
 
 local gear = "high"
 
-local leftDriveMotor = wpilib.Victor(2) --victor numbers
-local rightDriveMotor = wpilib.Victor(1)
+local leftDriveMotor = wpilib.Victor(1)
+local rightDriveMotor = wpilib.Victor(2)
 
 function getGear()
     return gear
@@ -117,7 +117,7 @@ end
 
 function update(driveX,driveY)
 	local leftSpeed, rightSpeed = arcade(driveY, driveX)
-	leftDriveMotor:Set(leftSpeed)
+	leftDriveMotor:Set(-leftSpeed)
 	rightDriveMotor:Set(rightSpeed)
 end
 
