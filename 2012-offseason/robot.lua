@@ -26,7 +26,7 @@ local disabledIdle, hellautonomous, teleop, updateCompressor
 local controlMap
 local deployStinger
 local compressor, pressureSwitch, stinger
-
+local driveX, driveY = 0,0
 -- End Declarations
 
 local dashboard = wpilib.SmartDashboard_GetInstance()
@@ -162,7 +162,7 @@ function teleop()
         turret.update()
 
         -- Drive
-        -- TODO
+	drive.update(driveX, driveY)
 
         -- Iteration cleanup
         feedWatchdog()
@@ -188,8 +188,6 @@ stinger = wpilib.Solenoid(7)
 -- End Inputs/Outputs
 
 -- Controls
-driveControl = {x=0, y=0}
-
 local function incConstant(tbl, name, pid, delta)
     return function()
         local target = pid.target
@@ -215,8 +213,8 @@ controlMap =
 {
     -- Joystick 1 (Driver)
     {
-        ["x"] = function(axis) driveControl.x = deadband(axis, 0.15) end,
-        ["y"] = function(axis) driveControl.y = deadband(-axis, 0.15) end,
+        ["y"] = function(axis) driveY = axis end,
+	["rx"] = function(axis) driveX = axis end,
         [2] = drive.resetGyro,
         [4] = drive.effTheGyro,
         [5] = {tick=function(held)
@@ -300,5 +298,4 @@ end
 -- Only create the gyro at the end, because it blocks the entire thread.
 dashboard:PutString("mode", "Waiting for Gyro...")
 drive.initGyro()
-
 -- vim: ft=lua et ts=4 sts=4 sw=4

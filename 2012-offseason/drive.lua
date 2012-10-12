@@ -80,6 +80,9 @@ end
 
 local gear = "high"
 
+local leftDriveMotor = wpilib.Victor(2) --victor numbers
+local rightDriveMotor = wpilib.Victor(1)
+
 function getGear()
     return gear
 end
@@ -111,4 +114,29 @@ end
 local function LinearVictor(...)
     return linearize.wrap(wpilib.Victor(...))
 end
+
+function update(driveX,driveY)
+	local leftSpeed, rightSpeed = arcade(driveY, driveX)
+	leftDriveMotor:Set(leftspeed)
+	rightDriveMotor:Set(rightSpeed)
+	
+	
+end
+
+--[[
+drive victors:
+left 2,
+right 1,
+Intake victors:
+3
+shooter:
+4
+Cheater:
+5
+Vertical:
+6
+SENSORS:
+pressure switch:
+2
+--]]
 -- vim: ft=lua et ts=4 sts=4 sw=4
