@@ -48,8 +48,8 @@ local dashboard = wpilib.SmartDashboard_GetInstance()
 
 local flywheelTargetSpeed = PRESETS.key.flywheelRPM
 --TODO
---reset flywheelOn to false when flywheel is fixed
-local flywheelOn = true
+--reset flywheelOn to false after it is fixed
+local flywheelOn = on
 local flywheelFeedforward = math.huge
 local flywheelCounter = wpilib.Counter(wpilib.DigitalInput(3))
 local flywheelMotor = linearize.wrap(wpilib.Victor(4))
