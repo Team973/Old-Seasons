@@ -229,7 +229,6 @@ controlMap =
         [2] = function() turret.setPreset("Feeder") end,
         [3] = function() turret.setPreset("key") end,
         [5] = {tick=intake.setLowered},
-        [6] = intake.loadBall,
         [7] = function()
             turret.setPreset(nil)
             turret.setFlywheelTargetSpeed(turret.getFlywheelTargetSpeed() - 50)
