@@ -229,7 +229,6 @@ controlMap =
         [2] = function() turret.setPreset("Feeder") end,
         [3] = function() turret.setPreset("key") end,
         [5] = {tick=intake.setLowered},
-	[6] = {tick=turret.runFlywheel},
         [7] = function()
             turret.setPreset(nil)
             turret.setFlywheelTargetSpeed(turret.getFlywheelTargetSpeed() - 50)
@@ -245,7 +244,7 @@ controlMap =
                 intake.setIntake(1.0)
             end
         end},
-        --["rtrigger"] = {tick=turret.runFlywheel},
+        ["rtrigger"] = {tick=turret.runFlywheel},
     },
     -- Joystick 3
     {
