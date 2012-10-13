@@ -50,7 +50,7 @@ local flywheelTargetSpeed = PRESETS.key.flywheelRPM
 local flywheelOn = false
 local flywheelFeedforward = math.huge
 local flywheelCounter = wpilib.Counter(wpilib.DigitalInput(3))
-local flywheelMotor = linearize.wrap(wpilib.Victor(4))
+local flywheelMotor = linearize.wrap(wpilib.Victor(7))
 local flywheelTicksPerRevolution = 1.0
 local turretEnabled = true
 
