@@ -51,7 +51,7 @@ local flywheelOn = false
 local flywheelFeedforward = math.huge
 local flywheelCounter = wpilib.Counter(wpilib.DigitalInput(3))
 local flywheelMotor = linearize.wrap(wpilib.Victor(4))
-local flywheelTicksPerRevolution = 4.0
+local flywheelTicksPerRevolution = 1.0
 local turretEnabled = true
 
 flywheelCounter:Start()
@@ -177,7 +177,7 @@ function update()
         flywheelPID.target = math.min(pos - (1 - flywheelPID.d - extraTerm) / flywheelPID.p, flywheelPID.target)
         local flywheelOutput = flywheelPID:update(pos, dt) + extraTerm
         if flywheelOutput > 0.0 then
-            flywheelMotor:Set(flywheelOutput)
+            flywheelMotor:Set(-flywheelOutput)
         else
             flywheelMotor:Set(0.0)
         end
