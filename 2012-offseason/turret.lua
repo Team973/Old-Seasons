@@ -49,11 +49,8 @@ local dashboard = wpilib.SmartDashboard_GetInstance()
 local flywheelTargetSpeed = PRESETS.key.flywheelRPM
 local flywheelOn = false
 local flywheelFeedforward = math.huge
-local in4 = wpilib.DigitalInput(2, 4)
-local in5 = wpilib.DigitalInput(2, 5)
-local in6 = wpilib.DigitalInput(2, 6)
-local flywheelCounter = wpilib.Counter(in6)
-local flywheelMotor = linearize.wrap(wpilib.Victor(2, 6))
+local flywheelCounter = wpilib.Counter(wpilib.DigitalInput(3))
+local flywheelMotor = linearize.wrap(wpilib.Victor(4))
 local flywheelTicksPerRevolution = 4.0
 local turretEnabled = true
 

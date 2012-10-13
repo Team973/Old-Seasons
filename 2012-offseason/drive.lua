@@ -14,7 +14,7 @@ local dashboard = wpilib.SmartDashboard_GetInstance()
 local gyro = nil
 local gyroOkay = true
 local ignoreGyro = false
-local gearSwitch = wpilib.Solenoid(1, 1)
+local gearSwitch = wpilib.Solenoid(1)
 
 local function limit(x)
     if x > 1 then
@@ -138,5 +138,14 @@ Vertical:
 SENSORS:
 pressure switch:
 2
+banner sensor:
+3
+Pneumatics:
+drive:
+1
+intake:
+2
+stinger:
+3
 --]]
 -- vim: ft=lua et ts=4 sts=4 sw=4

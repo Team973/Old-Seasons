@@ -182,9 +182,9 @@ end
 
 -- Inputs/Outputs
 -- Don't forget to add to declarations at the top!
-compressor = wpilib.Relay(1, 1, wpilib.Relay_kForwardOnly)
-pressureSwitch = wpilib.DigitalInput(1, 14)
-stinger = wpilib.Solenoid(7)
+compressor = wpilib.Relay(1, wpilib.Relay_kForwardOnly)
+pressureSwitch = wpilib.DigitalInput(2)
+stinger = wpilib.Solenoid(3)
 -- End Inputs/Outputs
 
 -- Controls
