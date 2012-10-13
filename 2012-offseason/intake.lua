@@ -12,14 +12,19 @@ local wpilib = require("wpilib")
 
 module(...)
 
---local lowered = false
+local lowered = false
 local frontSpeed = 0 -- front intake roller
 local verticalSpeed = 0
+local repack = false
 
 local verticalConveyer = linearize.wrap(wpilib.Victor(6))
 local cheaterRoller = wpilib.Victor(5)
 local frontIntake = wpilib.Victor(3)
 local intakeSolenoid = wpilib.Solenoid(2)
+
+function setRepack(val)
+    repack = val
+end
 
 function setVerticalSpeed(speed)
     verticalSpeed = speed
@@ -39,7 +44,10 @@ function update(turretReady)
     frontIntake:Set(frontSpeed)
 
     intakeSolenoid:Set(lowered)
-    if math.abs(frontSpeed) > math.abs(verticalSpeed) then
+    if repack then
+        verticalSpeed = -1
+        cheaterRoller:Set(1)
+    elseif math.abs(frontSpeed) > math.abs(verticalSpeed) then
         cheaterRoller:Set(frontSpeed)
     else
         cheaterRoller:Set(verticalSpeed)
