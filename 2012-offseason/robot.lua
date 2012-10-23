@@ -227,6 +227,9 @@ controlMap =
         ["ry"] = function(axis)
             intake.setVerticalSpeed(deadband(-axis, 0.2))
         end,
+	["rx"] = function(axis)
+	    intake.setCheaterSpeed(deadband(axis, 0.2))
+	end,
         [1] = function() turret.setPreset("rightKey") end,
         [2] = function() turret.setPreset("Feeder") end,
         [3] = function() turret.setPreset("key") end,

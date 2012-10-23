@@ -47,10 +47,11 @@ function update(turretReady)
     if repack then
         verticalSpeed = -1
         cheaterRoller:Set(1)
-    elseif math.abs(frontSpeed) > math.abs(verticalSpeed) then
+--[[    elseif math.abs(frontSpeed) > math.abs(verticalSpeed) then
         cheaterRoller:Set(frontSpeed)
     else
         cheaterRoller:Set(verticalSpeed)
+--]]
     end
 
     verticalConveyer:Set(verticalSpeed)
