@@ -239,7 +239,7 @@ controlMap =
             down=turret.clearFlywheelFired,
             tick=function(held)
                 if held and not turret.getFlywheelFired() then
-                    intake.setVerticalSpeed(1.0)
+                    intake.setVerticalSpeed(0.95)
                 end
             end,
         },
