@@ -14,7 +14,6 @@ module(...)
 local lowered = false
 local frontSpeed = 0 -- front intake roller
 local verticalSpeed = 0
-local cheaterSpeed = 0
 local repack = false
 
 local verticalConveyer = linearize.wrap(wpilib.Victor(6))
@@ -28,10 +27,6 @@ end
 
 function setVerticalSpeed(speed)
     verticalSpeed = speed
-end
-
-function setCheaterSpeed(speed)
-    cheaterSpeed = speed
 end
 
 function toggleRaise()
@@ -51,8 +46,10 @@ function update(turretReady)
     if repack then
         verticalSpeed = -1
         cheaterRoller:Set(1)
+    elseif math.abs(frontSpeed) > math.abs(verticalSpeed) then
+        cheaterRoller:Set(frontSpeed)
     else
-        cheaterRoller:Set(cheaterSpeed)
+        cheaterRoller:Set(verticalSpeed)
     end
 
     verticalConveyer:Set(verticalSpeed)
