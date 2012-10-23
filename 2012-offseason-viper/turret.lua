@@ -178,7 +178,7 @@ function update()
         flywheelPID.target = math.min(pos - (1 - flywheelPID.d - extraTerm) / flywheelPID.p, flywheelPID.target)
         local flywheelOutput = flywheelPID:update(pos, dt) + extraTerm
         if flywheelOutput > 0.0 then
-            flywheelMotor:Set(-flywheelOutput)
+            flywheelMotor:Set(flywheelOutput)
         else
             flywheelMotor:Set(0.0)
         end
