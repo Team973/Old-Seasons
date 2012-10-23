@@ -54,6 +54,7 @@ local flywheelCounter = wpilib.Counter(wpilib.DigitalInput(3))
 local flywheelMotor = linearize.wrap(wpilib.Victor(4))
 local flywheelTicksPerRevolution = 1.0
 local turretEnabled = true
+local flywheelLights = wpilib.Relay(1, 7, wpilib.Relay_kForward)
 
 flywheelCounter:Start()
 
@@ -183,6 +184,13 @@ function update()
             flywheelMotor:Set(0.0)
         end
     end
+
+    if getFlywheelSpeed() >= getFlywheelTargetSpeed() - 100 then
+	flywheelLights:Set(wpilib.Relay_kOn)
+    else
+	flywheelLights:Set(wpilib.Relay_kOff)
+    end
+
 
     -- Print flywheel diagnostics
     dashboard:PutDouble("Flywheel Speed", getFlywheelSpeed())

@@ -21,6 +21,8 @@ local verticalConveyer = linearize.wrap(wpilib.Victor(6))
 local cheaterRoller = wpilib.Victor(5)
 local frontIntake = wpilib.Victor(3)
 local intakeSolenoid = wpilib.Solenoid(2)
+local intakeLights = wpilib.Relay(1, 7, wpilib.Relay_kReverse)
+local ballChecker = wpilib.DigitalInput(4)
 
 function setRepack(val)
     repack = val
@@ -56,6 +58,13 @@ function update(turretReady)
     end
 
     verticalConveyer:Set(verticalSpeed)
+
+    if ballChecker:Get() then
+	intakeLights:Set(wpilib.Relay_kOn)
+    else
+	intakeLights:Set(wpilib.Relay_kOff)
+    end
+
 end
 
 function setIntake(speed)
