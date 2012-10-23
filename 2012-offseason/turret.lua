@@ -156,7 +156,7 @@ function update()
     flywheelSpeedTable:add(speedSample)
     flywheelSpeedFilter:add(speedSample)
 
-    if flywheelSpeedTable:average() - flywheelSpeedFilter:average() > 300 then
+    if flywheelSpeedTable:average() - flywheelSpeedFilter:average() > 25 then
         flywheelFired = true
     end
 
