@@ -206,7 +206,7 @@ controlMap =
     -- Joystick 1 (Driver)
     {
         ["y"] = function(axis) driveY = axis end,
-	["rx"] = function(axis) driveX = axis end,
+        ["rx"] = function(axis) driveX = axis end,
         [2] = drive.resetGyro,
         [4] = drive.effTheGyro,
         [5] = {tick=function(held)
@@ -217,19 +217,20 @@ controlMap =
             end
         end},
         [6] = {tick=function(held) deployStinger = held end},
-         ["ltrigger"] = {tick=function(held) intake.setLowered(held) end},
+        ["ltrigger"] = function() intake.setLowered(true) end,
+        ["rtrigger"] = function() intake.setLowered(false) end,
     },
     -- Joystick 2 (Co-Driver)
     {
         ["x"] = function(axis)
             intake.setIntake(deadband(axis, 0.2))
         end,
-        ["ry"] = function(axis)
+        ["hatx"] = function(axis)
             intake.setVerticalSpeed(deadband(-axis, 0.2))
         end,
-	["rx"] = function(axis)
-	    intake.setCheaterSpeed(deadband(axis, 0.2))
-	end,
+        ["rx"] = function(axis)
+            intake.setCheaterSpeed(deadband(axis, 0.2))
+        end,
         [1] = function() turret.setPreset("rightKey") end,
         [2] = function() turret.setPreset("Feeder") end,
         [3] = function() turret.setPreset("key") end,
