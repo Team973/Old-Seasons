@@ -235,7 +235,14 @@ controlMap =
         [2] = function() turret.setPreset("Feeder") end,
         [3] = function() turret.setPreset("key") end,
         [5] = {tick=intake.setRepack},
-        --[6]
+        [6] = {
+            down=turret.clearFlywheelFired,
+            tick=function(held)
+                if held and not turret.getFlywheelFired() then
+                    intake.setVerticalSpeed(0.95)
+                end
+            end,
+        },
         [7] = function()
             turret.setPreset(nil)
             turret.setFlywheelTargetSpeed(turret.getFlywheelTargetSpeed() - 50)
@@ -244,8 +251,6 @@ controlMap =
             turret.setPreset(nil)
             turret.setFlywheelTargetSpeed(turret.getFlywheelTargetSpeed() + 50)
         end,
-        --[9] = {tick=function(held) deployStinger = held end},
-        --[10] = {tick=intake.setRepack},
         ["ltrigger"] = {tick=function(held)
             if held then
                 intake.setIntake(1.0)
@@ -262,12 +267,6 @@ controlMap =
     -- Cypress Module
     cypress={},
 }
---[[
-[5] = leftbumper
-[7] = back
-[8] = start
-[
---]]
 -- End Controls
 
 -- Watchdog shortcuts
