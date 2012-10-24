@@ -55,6 +55,8 @@ local flywheelMotor = linearize.wrap(wpilib.Victor(4))
 local flywheelTicksPerRevolution = 1.0
 local turretEnabled = true
 local flywheelLights = wpilib.Relay(1, 7, wpilib.Relay_kForward)
+local lightTimer = wpilib.Timer
+local lightFlashOn = true
 
 flywheelCounter:Start()
 
@@ -190,6 +192,18 @@ function update()
     else
 	flywheelLights:Set(wpilib.Relay_kOff)
     end
+
+    lightTimer:Start()
+--this is only to flash the lights you need to set when it activates.
+    if lightTimer:HasPeriodPassed(1) then
+        lightFlashOn = not lightFlashOn
+    end
+
+    if getFlywheelSpeed() >= 300 and getFlywheelSpeed() < getFlywheelTargetSpeed() then
+
+
+
+
 
 
     -- Print flywheel diagnostics
