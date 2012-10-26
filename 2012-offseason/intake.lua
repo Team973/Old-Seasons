@@ -9,6 +9,8 @@ local pid = require("pid")
 local string = require("string")
 local wpilib = require("wpilib")
 
+local ROBOTNAME = ROBOTNAME
+
 module(...)
 
 local lowered = false
@@ -44,7 +46,11 @@ function update(turretReady)
 
     frontIntake:Set(frontSpeed)
 
-    intakeSolenoid:Set(lowered)
+    if ROBOTNAME == "viper" then
+        intakeSolenoid:Set(not lowered)
+    else
+        intakeSolenoid:Set(lowered)
+    end
     if repack then
         verticalSpeed = -1
         cheaterRoller:Set(1)
