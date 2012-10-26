@@ -17,6 +17,8 @@ local intake = require("intake")
 local math = require("math")
 local turret = require("turret")
 
+local ROBOTNAME = ROBOTNAME
+
 local pairs = pairs
 local tostring = tostring
 
@@ -211,7 +213,13 @@ controlMap =
 {
     -- Joystick 1 (Driver)
     {
-        ["y"] = function(axis) driveY = axis end,
+        ["y"] = function(axis) 
+            if ROBOTNAME == "viper" then
+                driveY = -axis
+            else
+                driveY = axis
+            end
+        end,
         ["rx"] = function(axis) driveX = axis end,
         [2] = drive.resetGyro,
         [4] = drive.effTheGyro,
@@ -243,6 +251,9 @@ controlMap =
             tick=function(held)
                 if held and not turret.getFlywheelFired() then
                     intake.setVerticalSpeed(0.95)
+                    if ROBOTNAME == "viper" then
+                        intake.setIntake(.5)
+                    end
                 end
             end,
         },
