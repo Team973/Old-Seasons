@@ -48,7 +48,6 @@ PRESETS = {
 }
 
 local dashboard = wpilib.SmartDashboard_GetInstance()
-
 local flywheelTargetSpeed = PRESETS.key.flywheelRPM
 local flywheelOn = false
 local flywheelFeedforward = math.huge
@@ -60,10 +59,16 @@ if ROBOTNAME == "viper" then
 else
     flywheelTicksPerRevolution = 1.0
 end
-local turretEnabled = true
+
 local flywheelLights = wpilib.Relay(1, 7, wpilib.Relay_kForward)
 local lightTimer = wpilib.Timer()
 local lightFlashOn = true
+
+local ballFlap
+local ballFlapOpen = false
+if ROBOTNAME == "viper" then
+    ballFlap = wpilib.Solenoid(1)
+end
 
 flywheelCounter:Start()
 
@@ -155,6 +160,14 @@ function runFlywheel(on, speed)
     end
 end
 
+function openBallFlap()
+    ballFlapOpen = true
+end
+
+function closeBallFlap()
+    ballFlapOpen = false
+end
+
 function update()
     -- Update flywheel target speed from intake's squish meter
     if currPresetName then
@@ -206,6 +219,11 @@ function update()
         flywheelLights:Set(wpilib.Relay_kOn)
     else
         flywheelLights:Set(wpilib.Relay_kOff)
+    end
+
+    -- Ball Flap
+    if ballFlap then
+        ballFlap:Set(ballFlapOpen)
     end
 
     -- Print flywheel diagnostics

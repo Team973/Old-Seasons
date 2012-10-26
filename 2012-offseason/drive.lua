@@ -7,6 +7,8 @@ local wpilib = require("wpilib")
 
 local pairs = pairs
 
+local ROBOTNAME = ROBOTNAME
+
 module(...)
 
 local dashboard = wpilib.SmartDashboard_GetInstance()
@@ -14,7 +16,10 @@ local dashboard = wpilib.SmartDashboard_GetInstance()
 local gyro = nil
 local gyroOkay = true
 local ignoreGyro = false
-local gearSwitch = wpilib.Solenoid(1)
+local gearSwitch
+if ROBOTNAME == "hodgepodge" then
+    gearSwitch = wpilib.Solenoid(1)
+end
 
 local function limit(x)
     if x > 1 then
@@ -89,6 +94,10 @@ end
 
 function setGear(g)
     gear = g
+    if not gearSwitch then
+        return
+    end
+
     if gear == "low" then
         gearSwitch:Set(true)
     elseif gear == "high" then

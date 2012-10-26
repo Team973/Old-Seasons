@@ -265,12 +265,17 @@ controlMap =
             turret.setPreset(nil)
             turret.setFlywheelTargetSpeed(turret.getFlywheelTargetSpeed() + 50)
         end,
-        ["ltrigger"] = {tick=function(held)
-            if held then
-                intake.setIntake(1.0)
-            end
-        end},
-        ["rtrigger"] = {tick=turret.runFlywheel},
+        ["ltrigger"] = {
+            down=turret.openBallFlap,
+            tick=function(held)
+                if held then
+                    intake.setIntake(1.0)
+                end
+            end},
+        ["rtrigger"] = {
+            down=turret.closeBallFlap,
+            tick=turret.runFlywheel
+        },
     },
     -- Joystick 3
     {
