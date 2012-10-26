@@ -56,9 +56,9 @@ local flywheelCounter = wpilib.Counter(wpilib.DigitalInput(3))
 local flywheelMotor = linearize.wrap(wpilib.Victor(4))
 local flywheelTicksPerRevolution
 if ROBOTNAME == "viper" then
-    flywheelTicksPerRevolution = 1.0
-else
     flywheelTicksPerRevolution = 4.0
+else
+    flywheelTicksPerRevolution = 1.0
 end
 local turretEnabled = true
 local flywheelLights = wpilib.Relay(1, 7, wpilib.Relay_kForward)
