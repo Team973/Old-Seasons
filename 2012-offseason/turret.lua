@@ -10,6 +10,8 @@ local math = require("math")
 local string = require("string")
 local wpilib = require("wpilib")
 
+local ROBOTNAME = ROBOTNAME
+
 module(...)
 
 local flywheelSpeedTable = {
@@ -52,7 +54,12 @@ local flywheelOn = false
 local flywheelFeedforward = math.huge
 local flywheelCounter = wpilib.Counter(wpilib.DigitalInput(3))
 local flywheelMotor = linearize.wrap(wpilib.Victor(4))
-local flywheelTicksPerRevolution = 1.0
+local flywheelTicksPerRevolution
+if ROBOTNAME == "viper" then
+    flywheelTicksPerRevolution = 1.0
+else
+    flywheelTicksPerRevolution = 4.0
+end
 local turretEnabled = true
 local flywheelLights = wpilib.Relay(1, 7, wpilib.Relay_kForward)
 
@@ -179,6 +186,9 @@ function update()
         flywheelPID.target = math.min(pos - (1 - flywheelPID.d - extraTerm) / flywheelPID.p, flywheelPID.target)
         local flywheelOutput = flywheelPID:update(pos, dt) + extraTerm
         if flywheelOutput > 0.0 then
+            if ROBOTNAME == "viper" then
+                flywheelOutput = -flywheelOutput
+            end
             flywheelMotor:Set(-flywheelOutput)
         else
             flywheelMotor:Set(0.0)

@@ -1,5 +1,11 @@
 -- robot.lua
 
+-- MUST BE FIRST:
+-- Load a file named robotname.lua to obtain the global variable ROBOTNAME.
+ROBOTNAME = "hodgepodge"
+pcall(dofile, "lua/robotname.lua")
+-- END ROBOTNAME
+
 local pid = require("pid")
 local wpilib = require("wpilib")
 -- Inject WPILib timer object into PID
