@@ -44,11 +44,8 @@ end
 function update(turretReady)
     frontIntake:Set(frontSpeed)
 
-    if ROBOTNAME == "viper" then
-        intakeSolenoid:Set(lowered)
-    else
-        intakeSolenoid:Set(lowered)
-    end
+    intakeSolenoid:Set(lowered)
+
     if repack then
         verticalSpeed = -1
         cheaterRoller:Set(1)
