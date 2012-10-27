@@ -42,8 +42,6 @@ function setLowered(val)
 end
 
 function update(turretReady)
-    local dashboard = wpilib.SmartDashboard_GetInstance()
-
     frontIntake:Set(frontSpeed)
 
     if ROBOTNAME == "viper" then
