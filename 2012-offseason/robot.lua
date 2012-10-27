@@ -25,6 +25,7 @@ local tostring = tostring
 module(..., package.seeall)
 
 local TELEOP_LOOP_LAG = 0.005
+local AUTO_LOOP_LAG = 0.005 * 1.50
 
 -- Declarations
 local watchdogEnabled = false
@@ -68,6 +69,8 @@ function autonomous()
     local autoTimer = wpilib.Timer()
     autoTimer:Start()
     while wpilib.IsAutonomous() and wpilib.IsEnabled() do
+        feedWatchdog()
+
         turret.setPreset("key")
         turret.runFlywheel(true)
         if autoTimer:Get() >= 3 then
@@ -84,6 +87,10 @@ function autonomous()
         turret.update()
         updateCompressor()
         drive.update(0, 0)
+
+        feedWatchdog()
+        wpilib.Wait(AUTO_LOOP_LAG)
+        feedWatchdog()
     end
 end 
 
