@@ -166,7 +166,7 @@ controlMap =
             end
         end,
         ["rx"] = function(axis) driveX = axis end,
-        [2] = drive.resetGyro,
+        [2] = drive.toggleBrakes,
         [4] = drive.effTheGyro,
         [5] = {tick=function(held)
             if held then

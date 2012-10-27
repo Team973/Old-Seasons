@@ -20,6 +20,12 @@ local gearSwitch
 if ROBOTNAME == "hodgepodge" then
     gearSwitch = wpilib.Solenoid(1)
 end
+local brake1, brake2
+if ROBOTNAME == "hodgepodge" then
+    brake1 = wpilib.Solenoid(4)
+    brake2 = wpilib.Solenoid(5)
+end
+local brakesFired = false
 
 local function limit(x)
     if x > 1 then
@@ -120,6 +126,10 @@ function normalizeAngle(theta)
     return theta
 end
 
+function toggleBrakes()
+    brakesFired = not brakesFired
+end
+
 local function LinearVictor(...)
     return linearize.wrap(wpilib.Victor(...))
 end
@@ -128,6 +138,10 @@ function update(driveX,driveY)
 	local leftSpeed, rightSpeed = arcade(driveY, driveX)
 	leftDriveMotor:Set(-leftSpeed)
 	rightDriveMotor:Set(rightSpeed)
+        if brake1 and brake2 then
+            brake1:Set(brakesFired)
+            brake2:Set(not brakesFired)
+        end
 end
 
 --[[
