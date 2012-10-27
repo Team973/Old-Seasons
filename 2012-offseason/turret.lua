@@ -23,18 +23,11 @@ local flywheelSpeedFilter = {
     weight=.2,
 }
 local flywheelFired = false
-flywheelPID = pid.new(0.05, 0.0, -0.0007,
+flywheelPID = pid.new(0.025, 0.0, -0.005,
     nil,
     function()
         return flywheelSpeedFilter:average()
     end)
-local flywheelPIDGains = {
-    {0, p=0.025, d=-0.005},
-    {2800, p=0.025,d=-0.005},
-    {3273, p=0.025, d=-0.005},
-    {3275, p=0.025, d=-0.005},
-    {3277, p=0.025, d = -.005}
-}
 local TURRET_ANGLE_OFFSET = 0
 
 local currPresetName = nil
@@ -46,6 +39,9 @@ PRESETS = {
     autoKey={flywheelRPM=6200, hoodAngle=1100, targetAngle=-TURRET_ANGLE_OFFSET},
     bridge={flywheelRPM=7000},
 }
+if ROBOTNAME == "viper" then
+    PRESETS.key.flywheelRPM = 2250
+end
 
 local dashboard = wpilib.SmartDashboard_GetInstance()
 local flywheelTargetSpeed = PRESETS.key.flywheelRPM
@@ -139,10 +135,6 @@ end
 -- Change the target flywheel speed
 function setFlywheelTargetSpeed(speed)
     flywheelTargetSpeed = speed
-    local gain = tableStep(flywheelPIDGains, speed)
-    if gain.p then flywheelPID.p = gain.p else flywheelPID.p = 0 end
-    if gain.i then flywheelPID.i = gain.i else flywheelPID.i = 0 end
-    if gain.d then flywheelPID.d = gain.d else flywheelPID.d = 0 end
 end
 
 function resetFlywheel()
