@@ -39,6 +39,9 @@ PRESETS = {
     autoKey={flywheelRPM=6200, hoodAngle=1100, targetAngle=-TURRET_ANGLE_OFFSET},
     bridge={flywheelRPM=7000},
 }
+if ROBOTNAME == "viper" then
+    PRESETS.key.flywheelRPM = 2250
+end
 
 local dashboard = wpilib.SmartDashboard_GetInstance()
 local flywheelTargetSpeed = PRESETS.key.flywheelRPM
