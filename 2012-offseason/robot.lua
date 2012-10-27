@@ -30,7 +30,7 @@ local TELEOP_LOOP_LAG = 0.005
 local watchdogEnabled = false
 local feedWatchdog, enableWatchdog, disableWatchdog
 
-local disabledIdle, hellautonomous, teleop, updateCompressor
+local disabledIdle, autonomous, teleop, updateCompressor
 local controlMap
 local deployStinger
 local compressor, pressureSwitch, stinger
@@ -51,7 +51,7 @@ function run()
             enableWatchdog()
         elseif wpilib.IsAutonomous() then
             disableWatchdog()
-	    --TODO autonomous
+	    autonomous()
             disableWatchdog()
             repeat wpilib.Wait(0.01) until not wpilib.IsAutonomous() or not wpilib.IsEnabled()
             enableWatchdog()
@@ -63,85 +63,30 @@ function run()
         end
     end
 end
---[[
-function disabledIdle()
-    local gyroTimer = wpilib.Timer()
 
-    local modes = {
-        {
-            name="Sitting Keyshot",
-            func=auto.sittingKeyshot,
-        },
-    }
-    local modeNum = 3
-
-    local initAngle = drive.getGyroAngle()
-    while wpilib.IsDisabled() do
-        local gyroAngle = drive.normalizeAngle(-drive.getGyroAngle())
-        dashboard:PutInt("Gyro Angle", gyroAngle)
-
-        if gyroTimer and gyroTimer:Get() > 1 then
-            if math.abs(drive.getGyroAngle() - initAngle) > 10 then
-                drive.disableGyro()
+function autonomous()
+    local autoTimer = wpilib.Timer()
+    autoTimer:Start()
+    while wpilib.IsAutonomous() and wpilib.IsEnabled() do
+        turret.setPreset("key")
+        turret.runFlywheel(true)
+        if autoTimer:Get() >= 3 then
+            intake.setVerticalSpeed(1)
+            if ROBOTNAME == "viper" then
+                intake.setIntake(.5)
             end
-            gyroTimer:Stop()
-            gyroTimer = nil
+        else
+            intake.setVerticalSpeed(0)
+            intake.setIntake(0)
         end
-
-        controls.update({
-            -- Joystick 1
-            {
-                [2] = function() modeNum = modeNum + 1
-                    if modeNum > #modes then
-                        modeNum = 1
-                    end
-                    -- TODO... etc...
-                end,
-
-                [1] = function() modeNum = modeNum - 1
-                    if modeNum < 1 then
-                        modeNum = #modes
-                    end
-                end,
-
-                [4] = function() auto.Delay_1 = auto.Delay_1 + 1
-                end,
-
-                [3] = function() auto.Delay_1 = auto.Delay_1 - 1
-                end,
-
-                [6] = function() auto.Delay_2 = auto.Delay_2 + 1
-                end,
-
-                [5] = function() auto.Delay_2 = auto.Delay_2 - 1
-                end,
-
-                [8] = function() auto.Delay_3 = auto.Delay_3 + 1
-                end,
-
-                [7] = function() auto.Delay_3 = auto.Delay_3 - 1
-                end,
-
-            },
-            -- Joystick 2
-            {},
-            -- Joystick 3
-            {},
-            -- Joystick 4
-            {},
-        })
-
-        dashboard:PutString("Auto Mode", modes[modeNum].name)
-        dashboard:PutInt("Delay_1", auto.Delay_1)
-        dashboard:PutInt("Delay_2", auto.Delay_2)
-        dashboard:PutInt("Delay_3", auto.Delay_3)
-        auto.autoMode = modes[modeNum].func
-
-
-        wpilib.Wait(TELEOP_LOOP_LAG)
+        
+        intake.update(true)
+        turret.update()
+        updateCompressor()
+        drive.update(0, 0)
     end
-end
---]]
+end 
+
 function teleop()
     while wpilib.IsOperatorControl() and wpilib.IsEnabled() do
         enableWatchdog()
