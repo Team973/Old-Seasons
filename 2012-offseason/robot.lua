@@ -68,6 +68,10 @@ end
 function autonomous()
     local autoTimer = wpilib.Timer()
     autoTimer:Start()
+
+    local startDriveTime = 8
+    local endDriveTime = startDriveTime + 2.5
+
     while wpilib.IsAutonomous() and wpilib.IsEnabled() do
         feedWatchdog()
 
@@ -83,10 +87,16 @@ function autonomous()
             intake.setIntake(0)
         end
         
+        intake.setLowered(autoTimer:Get() >= startDriveTime)
+        if autoTimer:Get() >= startDriveTime and autoTimer:Get() <= endDriveTime then
+            drive.update(0, -0.5)
+        else
+            drive.update(0, 0)
+        end
+
         intake.update(true)
         turret.update()
         updateCompressor()
-        drive.update(0, 0)
 
         feedWatchdog()
         wpilib.Wait(AUTO_LOOP_LAG)
