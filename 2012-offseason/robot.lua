@@ -173,8 +173,8 @@ controlMap =
             end
         end,
         ["rx"] = function(axis) driveX = axis end,
-        [2] = drive.toggleBrakes,
-        [4] = drive.effTheGyro,
+        [2] = function() drive.setBrakesFired(true) end,
+        [4] = function() drive.setBrakesFired(false) end,
         [5] = {tick=function(held)
             if held then
                 drive.setGear("low")
