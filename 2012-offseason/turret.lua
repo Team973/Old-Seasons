@@ -41,7 +41,7 @@ PRESETS = {
 }
 if ROBOTNAME == "viper" then
     PRESETS.key.flywheelRPM = 2250
-    PRESETS.autoKey.flywheelRPM = 2450
+    PRESETS.autoKey.flywheelRPM = 2250
 end
 
 local dashboard = wpilib.SmartDashboard_GetInstance()

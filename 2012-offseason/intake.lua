@@ -45,7 +45,7 @@ function update(turretReady)
     frontIntake:Set(frontSpeed)
 
     if ROBOTNAME == "viper" then
-        intakeSolenoid:Set(not lowered)
+        intakeSolenoid:Set(lowered)
     else
         intakeSolenoid:Set(lowered)
     end
