@@ -75,7 +75,7 @@ function autonomous()
     while wpilib.IsAutonomous() and wpilib.IsEnabled() do
         feedWatchdog()
 
-        turret.setPreset("key")
+        turret.setPreset("autoKey")
         turret.runFlywheel(true)
         if autoTimer:Get() >= 3 then
             intake.setVerticalSpeed(1)
@@ -105,6 +105,8 @@ function autonomous()
 end 
 
 function teleop()
+    turret.setPreset("key")
+
     while wpilib.IsOperatorControl() and wpilib.IsEnabled() do
         enableWatchdog()
         feedWatchdog()

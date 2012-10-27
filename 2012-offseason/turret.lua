@@ -36,11 +36,12 @@ PRESETS = {
     Feeder={flywheelRPM=3000, hoodAngle=1100, targetAngle=0},
     rightKey={flywheelRPM=2150, hoodAngle=450, targetAngle=-15},
     key={flywheelRPM=2650, hoodAngle=450, superSoftHoodAngle=450, targetAngle=0, superHardHoodAngle = 450, hardHoodAngle =450},
-    autoKey={flywheelRPM=6200, hoodAngle=1100, targetAngle=-TURRET_ANGLE_OFFSET},
+    autoKey={flywheelRPM=2650, hoodAngle=1100, targetAngle=-TURRET_ANGLE_OFFSET},
     bridge={flywheelRPM=7000},
 }
 if ROBOTNAME == "viper" then
     PRESETS.key.flywheelRPM = 2250
+    PRESETS.autoKey.flywheelRPM = 2450
 end
 
 local dashboard = wpilib.SmartDashboard_GetInstance()
