@@ -126,8 +126,8 @@ function normalizeAngle(theta)
     return theta
 end
 
-function toggleBrakes()
-    brakesFired = not brakesFired
+function setBrakesFired(val)
+    brakesFired = val
 end
 
 local function LinearVictor(...)
