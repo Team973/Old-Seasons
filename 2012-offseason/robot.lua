@@ -86,12 +86,18 @@ function autonomous()
             intake.setVerticalSpeed(0)
             intake.setIntake(0)
         end
-        
-        intake.setLowered(autoTimer:Get() >= startDriveTime)
-        if autoTimer:Get() >= startDriveTime and autoTimer:Get() <= endDriveTime then
-            drive.update(0, -0.5)
+
+
+        if ROBOTNAME == "hodgepodge" then
+            intake.setLowered(autoTimer:Get() >= startDriveTime)
+            if autoTimer:Get() >= startDriveTime and autoTimer:Get() <= endDriveTime then
+                drive.update(0, -0.5)
+            else
+                drive.update(0, 0)
+            end
         else
             drive.update(0, 0)
+            intake.setLowered(false)
         end
 
         intake.update(true)
@@ -102,7 +108,8 @@ function autonomous()
         wpilib.Wait(AUTO_LOOP_LAG)
         feedWatchdog()
     end
-end 
+end
+
 
 function teleop()
     turret.setPreset("key")
