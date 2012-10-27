@@ -139,8 +139,8 @@ function update(driveX,driveY)
 	leftDriveMotor:Set(-leftSpeed)
 	rightDriveMotor:Set(rightSpeed)
         if brake1 and brake2 then
-            brake1:Set(brakesFired)
-            brake2:Set(not brakesFired)
+            brake1:Set(not brakesFired)
+            brake2:Set(brakesFired)
         end
 end
 
