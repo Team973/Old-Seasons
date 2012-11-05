@@ -145,6 +145,132 @@ function update(driveX,driveY)
 end
 
 --[[
+Team 254's drive code. (read as: Austin magic).
+
+throttle : number
+wheel : number
+highGear : boolean
+quickTurn : boolean
+
+returns: leftSpeed, rightSpeed
+--]]
+local oldWheel = 0.0
+local negInertiaAccumulator = 0.0
+local quickStopAccumulator = 0.0
+local accum
+function cheesyDrive(throttle, wheel, highGear, quickTurn)
+    -- constants, feel free to tune
+    local turnNonlinHigh = 0.9
+    local turnNonlinLow = 0.8
+    local negInertiaHigh = 0.5
+    local senseHigh = 1.2
+    local senseLow = 1.1
+    local senseCutoff = 0.1
+    local negInertiaLowMore = 2.5
+    local negInertiaLowLessExt = 5.0
+    local negInertiaLowLess = 3.0
+    local negInertiaWheelExtThreshold = 0.65
+    local quickStopTimeConstant = 0.1
+    local quickStopLinearPowerThreshold = 0.2
+    local quickStopStickScalar = 5.0
+    -- /constants
+
+    -- shortcuts
+    local sin = math.sin
+    local pi_2 = math.pi / 2.0
+    local fabs = math.abs
+    -- /shortcuts
+
+    local wheelNonLinearity
+    local negInertia = wheel - oldWheel
+    oldWheel = wheel
+
+    if highGear then
+        wheelNonLinearity = turnNonlinHigh
+        -- Apply a sin function that's scaled to make it feel better
+        wheel = sin(pi_2 * wheelNonLinearity * wheel) / sin(pi_2 * wheelNonLinearity)
+        wheel = sin(pi_2 * wheelNonLinearity * wheel) / sin(pi_2 * wheelNonLinearity)
+    else
+        wheelNonLinearity = turnNonlinLow
+        -- Apply a sin function that's scaled to make it feel better
+        wheel = sin(pi_2 * wheelNonLinearity * wheel) / sin(pi_2 * wheelNonLinearity)
+        wheel = sin(pi_2 * wheelNonLinearity * wheel) / sin(pi_2 * wheelNonLinearity)
+        wheel = sin(pi_2 * wheelNonLinearity * wheel) / sin(pi_2 * wheelNonLinearity)
+    end
+
+    local sensitivity
+    local negInertiaScalar
+    if highGear then
+        negInertiaScalar = negInertiaHigh
+        sensitivity = senseHigh
+    else
+        if wheel * negInertia > 0 then
+            negInertiaScalar = negInertiaLowMore
+        elseif fabs(wheel) > negInertiaWheelExtThreshold then
+            negInertiaScalar = negInertiaLowLessExt
+        else
+            negInertiaScalar = negInertiaLowLess
+        end
+        sensitivity = senseLow
+        if fabs(throttle) > senseCutoff then
+            sensitivity = 1 - (1 - sensitivity) / fabs(throttle)
+        end
+    end
+
+    local negInertiaPower = negInertia * negInertiaScalar
+    negInertiaAccumulator = negInertiaAccumulator + negInertiaPower
+
+    wheel = wheel + negInertiaAccumulator
+    negInertiaAccumulator = accum(negInertiaAccumulator)
+
+    local linearPower = throttle
+
+    -- Quickturn!
+    local overPower
+    local angularPower
+    if quickTurn then
+        if fabs(linearPower) < quickStopLinearPowerThreshold then
+            quickStopAccumulator = (1 - quickStopTimeConstant) * quickStopAccumulator + quickStopTimeConstant * limit(wheel) * quickStopStickScalar
+        end
+        overPower = 1.0
+        sensitivity = 1.0
+        angularPower = wheel
+    else
+        overPower = 0.0
+        angularPower = fabs(throttle) * wheel * sensitivity - quickStopAccumulator
+        quickStopAccumulator = accum(quickStopAccumulator)
+    end
+
+    -- Compute left/right speeds
+    local leftPwm = linearPower + angularPower
+    local rightPwm = linearPower - angularPower
+
+    if leftPwm > 1.0 then
+        rightPwm = rightPwm - (overPower * (leftPwm - 1))
+        leftPwm = 1.0
+    elseif rightPwm > 1.0 then
+        leftPwm = leftPwm - (overPower * (rightPwm - 1))
+        rightPwm = 1.0
+    elseif leftPwm < -1.0 then
+        rightPwm = rightPwm + (overPower * (-1 - leftPwm))
+        leftPwm = -1.0
+    elseif rightPwm < -1.0 then
+        leftPwm = leftPwm + (overPower * (-1 - rightPwm))
+        rightPwm = -1.0
+    end
+    return leftPwm, rightPwm
+end
+function accum(val)
+    if val > 1 then
+        return val - 1
+    elseif val < -1 then
+        return val + 1
+    else
+        return 0
+    end
+end
+
+--[[
 drive victors:
 left 2,
 right 1,
