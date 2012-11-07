@@ -57,7 +57,7 @@ else
     flywheelTicksPerRevolution = 1.0
 end
 
-local flywheelLights = wpilib.Relay(1, 7, wpilib.Relay_kForward)
+local flywheelLights = wpilib.Relay(1, 7, wpilib.Relay_kReverse)
 local lightTimer = wpilib.Timer()
 local lightFlashOn = true
 
