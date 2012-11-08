@@ -33,11 +33,11 @@ local TURRET_ANGLE_OFFSET = 0
 local currPresetName = nil
 --Fender preset is 2100
 PRESETS = {
-    Feeder={flywheelRPM=3000, hoodAngle=1100, targetAngle=0},
-    rightKey={flywheelRPM=2150, hoodAngle=450, targetAngle=-15},
-    key={flywheelRPM=2650, hoodAngle=450, superSoftHoodAngle=450, targetAngle=0, superHardHoodAngle = 450, hardHoodAngle =450},
-    autoKey={flywheelRPM=2650, hoodAngle=1100, targetAngle=-TURRET_ANGLE_OFFSET},
-    bridge={flywheelRPM=7000},
+    Feeder={flywheelRPM=2200, hoodAngle=1100, targetAngle=0},
+    rightKey={flywheelRPM=2200, hoodAngle=450, targetAngle=-15},
+    key={flywheelRPM=2200, hoodAngle=450, superSoftHoodAngle=450, targetAngle=0, superHardHoodAngle = 450, hardHoodAngle =450},
+    autoKey={flywheelRPM=2200, hoodAngle=1100, targetAngle=-TURRET_ANGLE_OFFSET},
+    bridge={flywheelRPM=2200},
 }
 if ROBOTNAME == "viper" then
     PRESETS.key.flywheelRPM = 2250
