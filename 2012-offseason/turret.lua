@@ -57,7 +57,7 @@ else
     flywheelTicksPerRevolution = 1.0
 end
 
-local flywheelLights = wpilib.Relay(1, 7, wpilib.Relay_kReverse)
+local flywheelLights = wpilib.Relay(1, 7, wpilib.Relay_kForwardOnly)
 local lightTimer = wpilib.Timer()
 local lightFlashOn = true
 
@@ -208,7 +208,7 @@ function update()
     if lightTimer:HasPeriodPassed(1) then
         lightFlashOn = not lightFlashOn
     end
-    if (flywheelOn and lightFlashOn) or getFlywheelSpeed() >= getFlywheelTargetSpeed() - 100 then
+    if getFlywheelSpeed() >= getFlywheelTargetSpeed() - 100 then
         flywheelLights:Set(wpilib.Relay_kOn)
     else
         flywheelLights:Set(wpilib.Relay_kOff)
