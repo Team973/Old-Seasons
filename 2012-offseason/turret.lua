@@ -208,7 +208,7 @@ function update()
     if lightTimer:HasPeriodPassed(1) then
         lightFlashOn = not lightFlashOn
     end
-    if getFlywheelSpeed() >= getFlywheelTargetSpeed() - 100 then
+    if flywheelOn and math.abs(flywheelSpeedTable:average() - flywheelSpeedFilter:average()) < 10 then
         flywheelLights:Set(wpilib.Relay_kOn)
     else
         flywheelLights:Set(wpilib.Relay_kOff)
