@@ -28,7 +28,7 @@ local ballChecker
 if ROBOTNAME == "viper" then
     ballChecker = wpilib.Counter(wpilib.DigitalInput(4))
     ballChecker:Start()
-    ballChecker:SetMaxPeriod(1.0)
+    ballChecker:SetMaxPeriod(0.1)
 else
     ballChecker = wpilib.DigitalInput(4)
 end
