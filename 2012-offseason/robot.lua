@@ -88,17 +88,8 @@ function autonomous()
         end
 
 
-        if ROBOTNAME == "hodgepodge" then
-            intake.setLowered(autoTimer:Get() >= startDriveTime)
-            if autoTimer:Get() >= startDriveTime and autoTimer:Get() <= endDriveTime then
-                drive.update(0, -0.8)
-            else
-                drive.update(0, 0)
-            end
-        else
-            drive.update(0, 0)
-            intake.setLowered(false)
-        end
+        drive.update(0, 0)
+        intake.setLowered(false)
 
         intake.update(true)
         turret.update()
