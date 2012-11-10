@@ -70,7 +70,7 @@ function autonomous()
     autoTimer:Start()
 
     local startDriveTime = 8
-    local endDriveTime = startDriveTime + 2.5
+    local endDriveTime = startDriveTime + 1.5
 
     while wpilib.IsAutonomous() and wpilib.IsEnabled() do
         feedWatchdog()
