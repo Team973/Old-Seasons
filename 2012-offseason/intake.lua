@@ -23,7 +23,14 @@ local cheaterRoller = linearize.wrap(wpilib.Victor(5))
 local frontIntake = linearize.wrap(wpilib.Victor(3))
 local intakeSolenoid = wpilib.Solenoid(2)
 local intakeLights = wpilib.Relay(1, 7, wpilib.Relay_kReverseOnly)
-local ballChecker = wpilib.DigitalInput(4)
+
+if ROBOTNAME == "viper" then
+    local ballChecker = wpilib.Counter(wpilib.DigitalInput(4))
+    ballChecker:Start()
+    ballChecker:SetMaxPeriod(1 / 300)
+else
+    ballChecker = wpilib.DigitalInput(4)
+end
 
 function setRepack(val)
     repack = val
@@ -57,7 +64,7 @@ function update(turretReady)
 
     verticalConveyer:Set(verticalSpeed)
 
-    if not ballChecker:Get() then
+    if ballChecker:GetStopped() then
 	intakeLights:Set(wpilib.Relay_kOn)
     else
 	intakeLights:Set(wpilib.Relay_kOff)
