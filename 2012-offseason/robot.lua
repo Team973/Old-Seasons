@@ -192,6 +192,8 @@ controlMap =
             end
         end,
         ["rx"] = function(axis) driveX = axis end,
+        [1] = function() drive.setBridgeMode(true) end,
+        [3] = function() drive.setBridgeMode(false) end,
         [2] = function() drive.setBrakesFired(true) end,
         [4] = function() drive.setBrakesFired(false) end,
         [5] = {tick=function(held)

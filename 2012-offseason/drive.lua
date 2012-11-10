@@ -21,8 +21,8 @@ if ROBOTNAME == "hodgepodge" then
     gearSwitch = wpilib.Solenoid(1)
 end
 local brake1, brake2
-    brake1 = wpilib.Solenoid(4)
-    brake2 = wpilib.Solenoid(5)
+brake1 = wpilib.Solenoid(4)
+brake2 = wpilib.Solenoid(5)
 
 local brakesFired = false
 
@@ -133,14 +133,26 @@ local function LinearVictor(...)
     return linearize.wrap(wpilib.Victor(...))
 end
 
+function setBridgeMode(val)
+    isBridgeMode = val
+end
+
+
+local function brakesUpdate(fire)
+    brake1:Set(fire)
+    brake2:Set(not fire)
+end
+
 function update(driveX,driveY)
 	local leftSpeed, rightSpeed = arcade(driveY, driveX)
 	leftDriveMotor:Set(-leftSpeed)
 	rightDriveMotor:Set(rightSpeed)
-        if brake1 and brake2 then
-            brake1:Set(brakesFired)
-            brake2:Set(not brakesFired)
-        end
+        local distance = driveY * driveY + driveX * driveX
+
+        local deadband = 0.1
+        deadband = deadband * deadband
+
+        brakesUpdate(brakesFired or (isBridgeMode and distance < deadband))
 end
 
 --[[
