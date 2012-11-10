@@ -34,7 +34,7 @@ local feedWatchdog, enableWatchdog, disableWatchdog
 local disabledIdle, autonomous, teleop, updateCompressor
 local controlMap
 local deployStinger
-local compressor, pressureSwitch, stinger
+local compressor, pressureSwitch, autoDriveSwitch, stinger
 local driveX, driveY = 0,0
 -- End Declarations
 
@@ -46,7 +46,7 @@ function run()
     -- Main loop
     while true do
         if wpilib.IsDisabled() then
-            --disabledIdle()
+            disabledIdle()
             disableWatchdog()
             repeat wpilib.Wait(0.01) until not wpilib.IsDisabled()
             enableWatchdog()
@@ -62,6 +62,18 @@ function run()
             repeat wpilib.Wait(0.01) until not wpilib.IsOperatorControl() or not wpilib.IsEnabled()
             enableWatchdog()
         end
+    end
+end
+
+function disabledIdle()
+    while wpilib.IsDisabled() do
+        feedWatchdog()
+
+        dashboard:PutBoolean("Auto Drive", autoDriveSwitch:Get())
+
+        feedWatchdog()
+        wpilib.Wait(AUTO_LOOP_LAG)
+        feedWatchdog()
     end
 end
 
@@ -96,8 +108,17 @@ function autonomous()
             intake.setIntake(0)
         end
 
-        drive.update(0, 0)
-        intake.setLowered(false)
+        if ROBOTNAME == "hodgepodge" and autoDriveSwitch:Get() then
+            intake.setLowered(autoTimer:Get() >= startDriveTime)
+            if autoTimer:Get() >= startDriveTime and autoTimer:Get() <= endDriveTime then
+                drive.update(0, -0.8)
+            else
+                drive.update(0, 0)
+            end
+        else
+            drive.update(0, 0)
+            intake.setLowered(false)
+        end
 
         intake.update(true)
         turret.update()
@@ -154,6 +175,7 @@ end
 -- Don't forget to add to declarations at the top!
 compressor = wpilib.Relay(1, 1, wpilib.Relay_kForwardOnly)
 pressureSwitch = wpilib.DigitalInput(2)
+autoDriveSwitch = wpilib.DigitalInput(10)
 stinger = wpilib.Solenoid(3)
 -- End Inputs/Outputs
 
