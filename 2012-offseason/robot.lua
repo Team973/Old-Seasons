@@ -80,6 +80,7 @@ end
 function autonomous()
     local autoTimer = wpilib.Timer()
     autoTimer:Start()
+    local fireTimer = nil
 
     local startDriveTime = 8
     local endDriveTime = startDriveTime + 1.5
@@ -98,9 +99,24 @@ function autonomous()
         turret.setPreset("autoKey")
         turret.runFlywheel(true)
         if autoTimer:Get() >= startVerticalTime then
-            intake.setVerticalSpeed(1)
+            if ROBOTNAME == "hodgepodge" then
+                if fireTimer == nil then
+                    intake.setVerticalSpeed(1)
+                    if turret.getFlywheelFired() then
+                        fireTimer =wpilib.Timer()
+                        fireTimer:Start()
+                    end
+                elseif fireTimer:Get() < 2 then
+                    intake.setVerticalSpeed(0)
+                else
+                    intake.setVerticalSpeed(1)
+                end
+            else
+                intake.setVerticalSpeed(1)
+            end
         else
             intake.setVerticalSpeed(0)
+            turret.clearFlywheelFired()
         end
         if ROBOTNAME == "viper" and autoTimer:Get() >= startIntakeTime then
             intake.setIntake(.5)
