@@ -75,6 +75,10 @@ function autonomous()
     if ROBOTNAME == "hodgepodge" then
         startVerticalTime = 4
     end
+    local startIntakeTime = startVerticalTime 
+    if ROBOTNAME == "viper" then
+        startIntakeTime = startIntakeTime + 1
+    end
 
     while wpilib.IsAutonomous() and wpilib.IsEnabled() do
         feedWatchdog()
@@ -83,14 +87,14 @@ function autonomous()
         turret.runFlywheel(true)
         if autoTimer:Get() >= startVerticalTime then
             intake.setVerticalSpeed(1)
-            if ROBOTNAME == "viper" then
-                intake.setIntake(.5)
-            end
         else
             intake.setVerticalSpeed(0)
+        end
+        if ROBOTNAME == "viper" and autoTimer:Get() >= startIntakeTime then
+            intake.setIntake(.5)
+        else
             intake.setIntake(0)
         end
-
 
         drive.update(0, 0)
         intake.setLowered(false)
