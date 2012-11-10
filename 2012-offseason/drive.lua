@@ -25,6 +25,7 @@ brake1 = wpilib.Solenoid(4)
 brake2 = wpilib.Solenoid(5)
 
 local brakesFired = false
+local isBridgeMode = false
 
 local function limit(x)
     if x > 1 then
@@ -147,12 +148,12 @@ function update(driveX,driveY)
 	local leftSpeed, rightSpeed = arcade(driveY, driveX)
 	leftDriveMotor:Set(-leftSpeed)
 	rightDriveMotor:Set(rightSpeed)
-        local distance = driveY * driveY + driveX * driveX
+    local distance = driveY * driveY + driveX * driveX
 
-        local deadband = 0.1
-        deadband = deadband * deadband
+    local deadband = 0.1
+    deadband = deadband * deadband
 
-        brakesUpdate(brakesFired or (isBridgeMode and distance < deadband))
+    brakesUpdate(brakesFired or (isBridgeMode and distance < deadband))
 end
 
 --[[
