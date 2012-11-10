@@ -97,10 +97,12 @@ function autonomous()
         feedWatchdog()
 
         turret.setPreset("autoKey")
-        turret.runFlywheel(true)
+        turret.runFlywheel(ROBOTNAME ~= "hodgepodge" or not autoDriveSwitch:Get() or autoTimer:Get() < startDriveTime)
         if autoTimer:Get() >= startVerticalTime then
             if ROBOTNAME == "hodgepodge" then
-                if fireTimer == nil then
+                if autoDriveSwitch:Get() and autoTimer:Get() >= startDriveTime then
+                    intake.setVerticalSpeed(0)
+                elseif fireTimer == nil then
                     intake.setVerticalSpeed(1)
                     if turret.getFlywheelFired() then
                         fireTimer =wpilib.Timer()
@@ -118,7 +120,7 @@ function autonomous()
             intake.setVerticalSpeed(0)
             turret.clearFlywheelFired()
         end
-        if ROBOTNAME == "viper" and autoTimer:Get() >= startIntakeTime then
+        if (ROBOTNAME == "viper" and autoTimer:Get() >= startIntakeTime) or (ROBOTNAME == "hodgepodge" and autoDriveSwitch:Get() and autoTimer:Get() >= startDriveTime) then
             intake.setIntake(.5)
         else
             intake.setIntake(0)
