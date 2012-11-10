@@ -100,19 +100,6 @@ end
 
 function setGear(g)
     gear = g
-    if not gearSwitch then
-        return
-    end
-
-    if gear == "low" then
-        gearSwitch:Set(true)
-    elseif gear == "high" then
-        gearSwitch:Set(false)
-    else
-        -- Unrecognized state, default to low gear
-        -- TODO: log error
-        gearSwitch:Set(false)
-    end
 end
 
 -- Wraps an angle (in degrees) to (-180, 180].
@@ -148,11 +135,24 @@ function update(driveX,driveY)
 	local leftSpeed, rightSpeed = arcade(driveY, driveX)
 	leftDriveMotor:Set(-leftSpeed)
 	rightDriveMotor:Set(rightSpeed)
-    local distance = driveY * driveY + driveX * driveX
 
+    -- Gear switch
+    if not gearSwitch then
+        -- do nothing
+    elseif gear == "low" or isBridgeMode then
+        gearSwitch:Set(true)
+    elseif gear == "high" then
+        gearSwitch:Set(false)
+    else
+        -- Unrecognized state, default to low gear
+        -- TODO: log error
+        gearSwitch:Set(true)
+    end
+
+    -- Brakes
+    local distance = driveY * driveY + driveX * driveX
     local deadband = 0.1
     deadband = deadband * deadband
-
     brakesUpdate(brakesFired or (isBridgeMode and distance < deadband))
 end
 
