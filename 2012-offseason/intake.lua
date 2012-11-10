@@ -28,7 +28,7 @@ local ballChecker
 if ROBOTNAME == "viper" then
     ballChecker = wpilib.Counter(wpilib.DigitalInput(4))
     ballChecker:Start()
-    ballChecker:SetMaxPeriod(1 / 300)
+    ballChecker:SetMaxPeriod(1.0)
 else
     ballChecker = wpilib.DigitalInput(4)
 end
@@ -67,7 +67,7 @@ function update(turretReady)
 
     local lightsOn = false
     if ROBOTNAME == "viper" then
-        lightsOn = ballChecker:GetStopped()
+        lightsOn = frontSpeed > 0.0 and ballChecker:GetStopped()
     else
         lightsOn = not ballChecker:Get()
     end
