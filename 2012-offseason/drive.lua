@@ -21,10 +21,9 @@ if ROBOTNAME == "hodgepodge" then
     gearSwitch = wpilib.Solenoid(1)
 end
 local brake1, brake2
-if ROBOTNAME == "hodgepodge" then
     brake1 = wpilib.Solenoid(4)
     brake2 = wpilib.Solenoid(5)
-end
+
 local brakesFired = false
 
 local function limit(x)
