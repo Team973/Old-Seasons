@@ -191,7 +191,13 @@ controlMap =
                 driveY = axis
             end
         end,
-        ["rx"] = function(axis) driveX = axis end,
+        ["rx"] = function(axis)
+            if ROBOTNAME == "viper" then
+                driveX = -axis
+            else
+                driveX = axis
+            end
+        end,
         [1] = function() drive.setBridgeMode(true) end,
         [3] = function() drive.setBridgeMode(false) end,
         [2] = function() drive.setBrakesFired(true) end,
