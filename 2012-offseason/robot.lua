@@ -77,7 +77,7 @@ function autonomous()
 
         turret.setPreset("autoKey")
         turret.runFlywheel(true)
-        if autoTimer:Get() >= 3 then
+        if autoTimer:Get() >= 4 then
             intake.setVerticalSpeed(1)
             if ROBOTNAME == "viper" then
                 intake.setIntake(.5)
