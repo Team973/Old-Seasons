@@ -35,7 +35,8 @@ local disabledIdle, autonomous, teleop, updateCompressor
 local controlMap
 local deployStinger
 local compressor, pressureSwitch, autoDriveSwitch, stinger
-local driveX, driveY = 0,0
+local colinGyro, colinGyroTicksPerRevolution
+local driveX, driveY = 0, 0
 -- End Declarations
 
 local dashboard = wpilib.SmartDashboard_GetInstance()
@@ -157,6 +158,7 @@ function teleop()
         feedWatchdog()
 
         dashboard:PutString("mode", "Running")
+        dashboard:PutDouble("Colin Gyro (Degrees)", colinGyro:Get() / colinGyroTicksPerRevolution * 360.0)
 
         -- Read controls
         controls.update(controlMap)
@@ -195,6 +197,9 @@ compressor = wpilib.Relay(1, 1, wpilib.Relay_kForwardOnly)
 pressureSwitch = wpilib.DigitalInput(2)
 autoDriveSwitch = wpilib.DigitalInput(10)
 stinger = wpilib.Solenoid(3)
+colinGyroTicksPerRevolution = 512
+colinGyro = wpilib.Encoder(11, 12)
+colinGyro:Start()
 -- End Inputs/Outputs
 
 -- Controls
