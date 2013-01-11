@@ -6,16 +6,19 @@ import (
 	"fmt"
 	"math"
 	"os"
-	"runtime"
 	"sort"
 	"time"
 )
 
 func main() {
+	go run()
+	cv.Main()
+}
+
+func run() {
 	imageName := flag.String("image", "", "Use a static image instead of loading from a webcam")
 	flag.Parse()
 
-	runtime.LockOSThread()
 	cv.NamedWindow(windowName, cv.WINDOW_AUTOSIZE)
 
 	if *imageName != "" {
@@ -56,6 +59,7 @@ func main() {
 
 		capture.Release()
 	}
+	os.Exit(0)
 }
 
 const windowName = "Rectangle Detection"
