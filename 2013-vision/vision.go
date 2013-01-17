@@ -2,7 +2,12 @@ package main
 
 import (
 	"bitbucket.org/zombiezen/gocv/cv"
+	"flag"
 	"fmt"
+	"io"
+	"io/ioutil"
+	"mime/multipart"
+	"net/http"
 	"os"
 	"time"
 )
@@ -15,7 +20,18 @@ const (
 	valWindowName = "Value"
 )
 
+var (
+	axisHost string
+	axisUsername string
+	axisPassword string
+)
+
 func main() {
+	flag.StringVar(&axisHost, "axishost", "", "Axis camera host")
+	flag.StringVar(&axisUsername, "axisuser", "", "Axis camera username")
+	flag.StringVar(&axisPassword, "axispass", "", "Axis camera password")
+	flag.Parse()
+
 	go run()
 	cv.Main()
 }
@@ -26,7 +42,7 @@ func run() {
 	cv.NamedWindow(outputWindowName, cv.WINDOW_AUTOSIZE)
 
 	// Set up camera
-	capture, err := cv.CaptureFromCAM(0)
+	capture, err := NewAxisCamera(axisHost, axisUsername, axisPassword)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "failed to start capture")
 		os.Exit(1)
@@ -117,4 +133,84 @@ func drawRectangles(windowName string, img *cv.IplImage, rects []Rect) {
 	}
 
 	cv.ShowImage(windowName, cpy)
+}
+
+type AxisCamera struct {
+	closer io.Closer
+	mr     *multipart.Reader
+
+	tmpFile   *os.File
+	lastImage *cv.IplImage
+}
+
+func NewAxisCamera(host string, username, password string) (*AxisCamera, error) {
+	// Open temp file for frames
+	f, err := ioutil.TempFile("", "camera_mjpg")
+	if err != nil {
+		return nil, err
+	}
+
+	const path = "/mjpg/video.mjpg"
+	req, err := http.NewRequest("GET", "http://"+host+path, nil)
+	if err != nil {
+		os.Remove(f.Name())
+		f.Close()
+		return nil, err
+	}
+	// TODO: may need stronger authentication
+	req.SetBasicAuth(username, password)
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		os.Remove(f.Name())
+		f.Close()
+		return nil, err
+	}
+
+	// TODO: parse this out from Content-Type
+	const boundary = "myboundary"
+	r := multipart.NewReader(resp.Body, boundary)
+
+	return &AxisCamera{
+		closer:  resp.Body,
+		mr:      r,
+		tmpFile: f,
+	}, nil
+}
+
+func (cam *AxisCamera) Close() error {
+	name := cam.tmpFile.Name()
+	err1 := cam.tmpFile.Close()
+	err2 := os.Remove(name)
+	err3 := cam.closer.Close()
+	if err1 != nil {
+		return err1
+	} else if err2 != nil {
+		return err2
+	} else if err3 != nil {
+		return err3
+	}
+	return nil
+}
+
+func (cam *AxisCamera) QueryFrame() (*cv.IplImage, error) {
+	if cam.lastImage != nil {
+		cam.lastImage.Release()
+		cam.lastImage = nil
+	}
+
+	part, err := cam.mr.NextPart()
+	if err != nil {
+		return nil, err
+	}
+	if _, err := cam.tmpFile.Seek(0, 0); err != nil {
+		return nil, err
+	}
+	if err := cam.tmpFile.Truncate(0); err != nil {
+		return nil, err
+	}
+	if _, err := io.Copy(cam.tmpFile, part); err != nil {
+		return nil, err
+	}
+	cam.lastImage, err = cv.LoadImage(cam.tmpFile.Name(), cv.LOAD_IMAGE_COLOR)
+	return cam.lastImage, err
 }
