@@ -15,7 +15,7 @@ local controls = require("controls")
 local drive = require("drive")
 local intake = require("intake")
 local math = require("math")
-local turret = require("turret")
+local shooter = require("shooter")
 
 local ROBOTNAME = ROBOTNAME
 
@@ -97,15 +97,15 @@ function autonomous()
     while wpilib.IsAutonomous() and wpilib.IsEnabled() do
         feedWatchdog()
 
-        turret.setPreset("autoKey")
-        turret.runFlywheel(ROBOTNAME ~= "hodgepodge" or not autoDriveSwitch:Get() or autoTimer:Get() < startDriveTime)
+        shooter.setPreset("autoKey")
+        shooter.runFlywheel(ROBOTNAME ~= "hodgepodge" or not autoDriveSwitch:Get() or autoTimer:Get() < startDriveTime)
         if autoTimer:Get() >= startVerticalTime then
             if ROBOTNAME == "hodgepodge" then
                 if autoDriveSwitch:Get() and autoTimer:Get() >= startDriveTime then
                     intake.setVerticalSpeed(0)
                 elseif fireTimer == nil then
                     intake.setVerticalSpeed(1)
-                    if turret.getFlywheelFired() then
+                    if shooter.getFlywheelFired() then
                         fireTimer =wpilib.Timer()
                         fireTimer:Start()
                     end
@@ -119,7 +119,7 @@ function autonomous()
             end
         else
             intake.setVerticalSpeed(0)
-            turret.clearFlywheelFired()
+            shooter.clearFlywheelFired()
         end
         if (ROBOTNAME == "viper" and autoTimer:Get() >= startIntakeTime) or (ROBOTNAME == "hodgepodge" and autoDriveSwitch:Get() and autoTimer:Get() >= startDriveTime) then
             intake.setIntake(.5)
@@ -139,8 +139,8 @@ function autonomous()
             intake.setLowered(false)
         end
 
-        intake.update(true)
-        turret.update()
+        intake.update()
+        shooter.update()
         updateCompressor()
 
         feedWatchdog()
@@ -151,7 +151,7 @@ end
 
 
 function teleop()
-    turret.setPreset("key")
+    shooter.setPreset("key")
 
     while wpilib.IsOperatorControl() and wpilib.IsEnabled() do
         enableWatchdog()
@@ -170,7 +170,7 @@ function teleop()
         updateCompressor()
 
         intake.update(true)
-        turret.update()
+        shooter.update()
 
         -- Drive
         drive.update(driveX, driveY)
@@ -265,14 +265,14 @@ controlMap =
         ["ry"] = function(axis)
             intake.setVerticalSpeed(deadband(-axis, 0.2))
         end,
-        [1] = function() turret.setPreset("rightKey") end,
-        [2] = function() turret.setPreset("Feeder") end,
-        [3] = function() turret.setPreset("key") end,
+        [1] = function() shooter.setPreset("rightKey") end,
+        [2] = function() shooter.setPreset("Feeder") end,
+        [3] = function() shooter.setPreset("key") end,
         [5] = {tick=intake.setRepack},
         [6] = {
-            down=turret.clearFlywheelFired,
+            down=shooter.clearFlywheelFired,
             tick=function(held)
-                if held and not turret.getFlywheelFired() then
+                if held and not shooter.getFlywheelFired() then
                     intake.setVerticalSpeed(0.95)
                     if ROBOTNAME == "viper" then
                         intake.setIntake(.5)
@@ -281,23 +281,23 @@ controlMap =
             end,
         },
         [7] = function()
-            turret.setPreset(nil)
-            turret.setFlywheelTargetSpeed(turret.getFlywheelTargetSpeed() - 50)
+            shooter.setPreset(nil)
+            shooter.setFlywheelTargetSpeed(shooter.getFlywheelTargetSpeed() - 50)
         end,
         [8] = function()
-            turret.setPreset(nil)
-            turret.setFlywheelTargetSpeed(turret.getFlywheelTargetSpeed() + 50)
+            shooter.setPreset(nil)
+            shooter.setFlywheelTargetSpeed(shooter.getFlywheelTargetSpeed() + 50)
         end,
         ["ltrigger"] = {
-            down=turret.openBallFlap,
+            down=shooter.openBallFlap,
             tick=function(held)
                 if held then
                     intake.setIntake(1.0)
                 end
             end},
         ["rtrigger"] = {
-            down=turret.closeBallFlap,
-            tick=turret.runFlywheel
+            down=shooter.closeBallFlap,
+            tick=shooter.runFlywheel
         },
     },
     -- Joystick 3
