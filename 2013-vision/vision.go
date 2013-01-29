@@ -42,7 +42,7 @@ func run() {
 	cv.NamedWindow(outputWindowName, cv.WINDOW_AUTOSIZE)
 
 	// Set up camera
-	capture, err := NewAxisCamera(axisHost, axisUsername, axisPassword)
+	capture, err := cv.CaptureFromCAM(0)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "failed to start capture")
 		os.Exit(1)

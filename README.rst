@@ -10,19 +10,25 @@ Lua`_, with the exception of ``2010-boss``.
 Subdirectories
 ================
 
+``2013``
+   The 2013 season code
+``2013-vision``
+   The 2013 season code for vision (run on the driver station)
+``2012-offseason``
+   The 2012 off-season code (Hodgepodge and Viper)
 ``2012``
-   The 2012 season code for Encore
+   The 2012 season code (Encore)
 ``2012-testbed``
    The code for system testing and rapid prototyping Encore
 ``2011-ek``
-   Latest off-season code for Emperor Krab
+   The 2011 off-season code (Emperor Krab)
 ``2011-crapoffseason``
    The name says it all: off-season crap bot code.  A good starting point for
    understanding the more complicated robots.
 ``2011-titan``
-   The world-championship-winning code for Titan in the 2011 season
+   The world-championship-winning code in the 2011 season (Titan)
 ``2010-boss``
-   The 2010 season code.  This one is written in C++; Greyhound Lua was not
-   created until after the 2010 season.
+   The 2010 season code (Boss). This one is written in C++; Greyhound Lua was
+   not created until after the 2010 season.
 
 .. vim: ft=rst et ts=8 sts=3 sw=3 tw=80
