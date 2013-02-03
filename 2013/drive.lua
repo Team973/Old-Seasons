@@ -7,8 +7,6 @@ local wpilib = require("wpilib")
 
 local pairs = pairs
 
-local ROBOTNAME = ROBOTNAME
-
 module(...)
 
 local dashboard = wpilib.SmartDashboard_GetInstance()
@@ -16,16 +14,6 @@ local dashboard = wpilib.SmartDashboard_GetInstance()
 local gyro = nil
 local gyroOkay = true
 local ignoreGyro = false
-local gearSwitch
-if ROBOTNAME == "hodgepodge" then
-    gearSwitch = wpilib.Solenoid(1)
-end
-local brake1, brake2
-brake1 = wpilib.Solenoid(4)
-brake2 = wpilib.Solenoid(5)
-
-local brakesFired = false
-local isBridgeMode = false
 
 local function limit(x)
     if x > 1 then
@@ -89,18 +77,9 @@ function disableGyro()
     dashboard:PutBoolean("Gyro Okay", false)
 end
 
-local gear = "high"
 
 local leftDriveMotor = wpilib.Victor(1)
 local rightDriveMotor = wpilib.Victor(2)
-
-function getGear()
-    return gear
-end
-
-function setGear(g)
-    gear = g
-end
 
 -- Wraps an angle (in degrees) to (-180, 180].
 function normalizeAngle(theta)
@@ -113,47 +92,14 @@ function normalizeAngle(theta)
     return theta
 end
 
-function setBrakesFired(val)
-    brakesFired = val
-end
-
 local function LinearVictor(...)
     return linearize.wrap(wpilib.Victor(...))
-end
-
-function setBridgeMode(val)
-    isBridgeMode = val
-end
-
-
-local function brakesUpdate(fire)
-    brake1:Set(fire)
-    brake2:Set(not fire)
 end
 
 function update(driveX,driveY)
 	local leftSpeed, rightSpeed = arcade(driveY, driveX)
 	leftDriveMotor:Set(-leftSpeed)
 	rightDriveMotor:Set(rightSpeed)
-
-    -- Gear switch
-    if not gearSwitch then
-        -- do nothing
-    elseif gear == "low" or isBridgeMode then
-        gearSwitch:Set(true)
-    elseif gear == "high" then
-        gearSwitch:Set(false)
-    else
-        -- Unrecognized state, default to low gear
-        -- TODO: log error
-        gearSwitch:Set(true)
-    end
-
-    -- Brakes
-    local distance = driveY * driveY + driveX * driveX
-    local deadband = 0.1
-    deadband = deadband * deadband
-    brakesUpdate(brakesFired or (isBridgeMode and distance < deadband))
 end
 
 --[[
@@ -282,29 +228,4 @@ function accum(val)
     end
 end
 
---[[
-drive victors:
-left 2,
-right 1,
-Intake victors:
-3
-shooter:
-4
-Cheater:
-5
-Vertical:
-6
-SENSORS:
-pressure switch:
-2
-banner sensor:
-3
-Pneumatics:
-drive:
-1
-intake:
-2
-stinger:
-3
---]]
 -- vim: ft=lua et ts=4 sts=4 sw=4

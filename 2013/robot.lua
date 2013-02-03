@@ -1,11 +1,5 @@
 -- robot.lua
 
--- MUST BE FIRST:
--- Load a file named robotname.lua to obtain the global variable ROBOTNAME.
-ROBOTNAME = "hodgepodge"
-pcall(dofile, "lua/robotname.lua")
--- END ROBOTNAME
-
 local pid = require("pid")
 local wpilib = require("wpilib")
 -- Inject WPILib timer object into PID
@@ -16,8 +10,6 @@ local drive = require("drive")
 local intake = require("intake")
 local math = require("math")
 local shooter = require("shooter")
-
-local ROBOTNAME = ROBOTNAME
 
 local pairs = pairs
 local tostring = tostring
@@ -79,74 +71,7 @@ function disabledIdle()
 end
 
 function autonomous()
-    local autoTimer = wpilib.Timer()
-    autoTimer:Start()
-    local fireTimer = nil
-
-    local startDriveTime = 8
-    local endDriveTime = startDriveTime + 1.5
-    local startVerticalTime = 3
-    if ROBOTNAME == "hodgepodge" then
-        startVerticalTime = 4
-    end
-    local startIntakeTime = startVerticalTime 
-    if ROBOTNAME == "viper" then
-        startIntakeTime = startIntakeTime + 1
-    end
-
-    while wpilib.IsAutonomous() and wpilib.IsEnabled() do
-        feedWatchdog()
-
-        shooter.setPreset("autoKey")
-        shooter.runFlywheel(ROBOTNAME ~= "hodgepodge" or not autoDriveSwitch:Get() or autoTimer:Get() < startDriveTime)
-        if autoTimer:Get() >= startVerticalTime then
-            if ROBOTNAME == "hodgepodge" then
-                if autoDriveSwitch:Get() and autoTimer:Get() >= startDriveTime then
-                    intake.setVerticalSpeed(0)
-                elseif fireTimer == nil then
-                    intake.setVerticalSpeed(1)
-                    if shooter.getFlywheelFired() then
-                        fireTimer =wpilib.Timer()
-                        fireTimer:Start()
-                    end
-                elseif fireTimer:Get() < 2 then
-                    intake.setVerticalSpeed(0)
-                else
-                    intake.setVerticalSpeed(1)
-                end
-            else
-                intake.setVerticalSpeed(1)
-            end
-        else
-            intake.setVerticalSpeed(0)
-            shooter.clearFlywheelFired()
-        end
-        if (ROBOTNAME == "viper" and autoTimer:Get() >= startIntakeTime) or (ROBOTNAME == "hodgepodge" and autoDriveSwitch:Get() and autoTimer:Get() >= startDriveTime) then
-            intake.setIntake(.5)
-        else
-            intake.setIntake(0)
-        end
-
-        if ROBOTNAME == "hodgepodge" and autoDriveSwitch:Get() then
-            intake.setLowered(autoTimer:Get() >= startDriveTime)
-            if autoTimer:Get() >= startDriveTime and autoTimer:Get() <= endDriveTime then
-                drive.update(0, -0.8)
-            else
-                drive.update(0, 0)
-            end
-        else
-            drive.update(0, 0)
-            intake.setLowered(false)
-        end
-
-        intake.update()
-        shooter.update()
-        updateCompressor()
-
-        feedWatchdog()
-        wpilib.Wait(AUTO_LOOP_LAG)
-        feedWatchdog()
-    end
+    --TODO
 end
 
 
@@ -163,8 +88,6 @@ function teleop()
         -- Read controls
         controls.update(controlMap)
         feedWatchdog()
-
-        stinger:Set(deployStinger)
 
         -- Pneumatics
         updateCompressor()
@@ -196,7 +119,6 @@ end
 compressor = wpilib.Relay(1, 1, wpilib.Relay_kForwardOnly)
 pressureSwitch = wpilib.DigitalInput(2)
 autoDriveSwitch = wpilib.DigitalInput(10)
-stinger = wpilib.Solenoid(3)
 colinGyroTicksPerRevolution = 512
 colinGyro = wpilib.Encoder(11, 12)
 colinGyro:Start()
@@ -227,33 +149,14 @@ local prevOperatorDpad = 0.0
 controlMap =
 {
     -- Joystick 1 (Driver)
+    -- TODO Add controls back in (some should still be there but you will have to check)
     {
         ["y"] = function(axis) 
-            if ROBOTNAME == "viper" then
-                driveY = -axis
-            else
-                driveY = axis
-            end
+            driveY = axis
         end,
         ["rx"] = function(axis)
-            if ROBOTNAME == "viper" then
-                driveX = -axis
-            else
-                driveX = axis
-            end
+            driveX = axis
         end,
-        [1] = function() drive.setBridgeMode(true) end,
-        [3] = function() drive.setBridgeMode(false) end,
-        [2] = function() drive.setBrakesFired(true) end,
-        [4] = function() drive.setBrakesFired(false) end,
-        [5] = {tick=function(held)
-            if held then
-                drive.setGear("low")
-            else
-                drive.setGear("high")
-            end
-        end},
-        [6] = {tick=function(held) deployStinger = held end},
         ["ltrigger"] = function() intake.setLowered(true) end,
         ["rtrigger"] = function() intake.setLowered(false) end,
     },
@@ -265,21 +168,7 @@ controlMap =
         ["ry"] = function(axis)
             intake.setVerticalSpeed(deadband(-axis, 0.2))
         end,
-        [1] = function() shooter.setPreset("rightKey") end,
-        [2] = function() shooter.setPreset("Feeder") end,
-        [3] = function() shooter.setPreset("key") end,
-        [5] = {tick=intake.setRepack},
-        [6] = {
-            down=shooter.clearFlywheelFired,
-            tick=function(held)
-                if held and not shooter.getFlywheelFired() then
-                    intake.setVerticalSpeed(0.95)
-                    if ROBOTNAME == "viper" then
-                        intake.setIntake(.5)
-                    end
-                end
-            end,
-        },
+
         [7] = function()
             shooter.setPreset(nil)
             shooter.setFlywheelTargetSpeed(shooter.getFlywheelTargetSpeed() - 50)
@@ -288,15 +177,8 @@ controlMap =
             shooter.setPreset(nil)
             shooter.setFlywheelTargetSpeed(shooter.getFlywheelTargetSpeed() + 50)
         end,
-        ["ltrigger"] = {
-            down=shooter.openBallFlap,
-            tick=function(held)
-                if held then
-                    intake.setIntake(1.0)
-                end
-            end},
+
         ["rtrigger"] = {
-            down=shooter.closeBallFlap,
             tick=shooter.runFlywheel
         },
     },
