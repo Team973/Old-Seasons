@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"mime/multipart"
 	"net/http"
 	"os"
@@ -21,7 +22,7 @@ const (
 )
 
 var (
-	axisHost string
+	axisHost     string
 	axisUsername string
 	axisPassword string
 )
@@ -141,6 +142,9 @@ type AxisCamera struct {
 
 	tmpFile   *os.File
 	lastImage *cv.IplImage
+
+	frames chan *cv.IplImage
+	quit   chan struct{}
 }
 
 func NewAxisCamera(host string, username, password string) (*AxisCamera, error) {
@@ -157,8 +161,10 @@ func NewAxisCamera(host string, username, password string) (*AxisCamera, error) 
 		f.Close()
 		return nil, err
 	}
-	// TODO: may need stronger authentication
-	req.SetBasicAuth(username, password)
+	if username != "" || password != "" {
+		// TODO: may need stronger authentication
+		req.SetBasicAuth(username, password)
+	}
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		os.Remove(f.Name())
@@ -170,34 +176,46 @@ func NewAxisCamera(host string, username, password string) (*AxisCamera, error) 
 	const boundary = "myboundary"
 	r := multipart.NewReader(resp.Body, boundary)
 
-	return &AxisCamera{
+	cam := &AxisCamera{
 		closer:  resp.Body,
 		mr:      r,
 		tmpFile: f,
-	}, nil
+		frames:  make(chan *cv.IplImage),
+		quit:    make(chan struct{}),
+	}
+	go cam.fetchFrames()
+	return cam, nil
 }
 
-func (cam *AxisCamera) Close() error {
-	name := cam.tmpFile.Name()
-	err1 := cam.tmpFile.Close()
-	err2 := os.Remove(name)
-	err3 := cam.closer.Close()
-	if err1 != nil {
-		return err1
-	} else if err2 != nil {
-		return err2
-	} else if err3 != nil {
-		return err3
+func (cam *AxisCamera) fetchFrames() {
+	defer close(cam.frames)
+	for {
+		select {
+		case <-cam.quit:
+			return
+		default:
+			// don't block
+		}
+
+		image, err := cam.frame()
+		if err != nil {
+			log.Println("axis camera error:", err)
+			continue
+		}
+
+		select {
+		case <-cam.quit:
+			return
+		case cam.frames <- image:
+			// frame sent, receiver controls memory
+		default:
+			// receiver is not ready, skip the frame and move on
+			image.Release()
+		}
 	}
-	return nil
 }
 
-func (cam *AxisCamera) QueryFrame() (*cv.IplImage, error) {
-	if cam.lastImage != nil {
-		cam.lastImage.Release()
-		cam.lastImage = nil
-	}
-
+func (cam *AxisCamera) frame() (*cv.IplImage, error) {
 	part, err := cam.mr.NextPart()
 	if err != nil {
 		return nil, err
@@ -211,6 +229,41 @@ func (cam *AxisCamera) QueryFrame() (*cv.IplImage, error) {
 	if _, err := io.Copy(cam.tmpFile, part); err != nil {
 		return nil, err
 	}
-	cam.lastImage, err = cv.LoadImage(cam.tmpFile.Name(), cv.LOAD_IMAGE_COLOR)
-	return cam.lastImage, err
+	return cv.LoadImage(cam.tmpFile.Name(), cv.LOAD_IMAGE_COLOR)
+}
+
+func (cam *AxisCamera) QueryFrame() (*cv.IplImage, error) {
+	if cam.lastImage != nil {
+		cam.lastImage.Release()
+		cam.lastImage = nil
+	}
+	cam.lastImage = <-cam.frames
+	return cam.lastImage, nil
+}
+
+func (cam *AxisCamera) Close() error {
+	// Wait for fetchFrames to finish
+	cam.quit <- struct{}{}
+	close(cam.quit)
+
+	// Remove temp file and close up connection
+	name := cam.tmpFile.Name()
+	err1 := cam.tmpFile.Close()
+	err2 := os.Remove(name)
+	err3 := cam.closer.Close()
+	if err1 != nil {
+		return err1
+	} else if err2 != nil {
+		return err2
+	} else if err3 != nil {
+		return err3
+	}
+
+	// Release last image
+	if cam.lastImage != nil {
+		cam.lastImage.Release()
+		cam.lastImage = nil
+	}
+
+	return nil
 }
