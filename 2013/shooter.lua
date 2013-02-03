@@ -12,6 +12,13 @@ local wpilib = require("wpilib")
 
 module(...)
 
+local conveyerSpeed = 0
+local rollerSpeed = 0
+
+--TODO Find out the real victor numbers from Alan
+local Conveyer = wpilib.Victor(6)
+local Roller = wpilib.Victor(7) 
+
 local flywheelSpeedTable = {
     numSamples=25,
 }
@@ -134,6 +141,14 @@ function runFlywheel(on, speed)
     end
 end
 
+function setConveyerSpeed(speed)
+    conveyerSpeed = speed
+end
+
+function setRollerSpeed(speed)
+    rollerSpeed = speed
+end
+
 function update()
     -- Update flywheel target speed from intake's squish meter
     if currPresetName then
@@ -183,6 +198,10 @@ function update()
     else
         flywheelLights:Set(wpilib.Relay_kOff)
     end
+
+    --Conveyer/Roller
+    Conveyer:Set(conveyerSpeed)
+    Roller:Set(rollerSpeed)
 
     -- Print flywheel diagnostics
     dashboard:PutDouble("Flywheel Speed", getFlywheelSpeed())
