@@ -10,8 +10,6 @@ local math = require("math")
 local string = require("string")
 local wpilib = require("wpilib")
 
-local ROBOTNAME = ROBOTNAME
-
 module(...)
 
 local flywheelSpeedTable = {
@@ -30,7 +28,7 @@ flywheelPID = pid.new(0.025, 0.0, -0.005,
     end)
 
 local currPresetName = nil
---Fender preset is 2100
+
 PRESETS = {
     Feeder={flywheelRPM=2150, hoodAngle=1100, targetAngle=0},
     rightKey={flywheelRPM=2150, hoodAngle=450, targetAngle=-15},
@@ -38,10 +36,6 @@ PRESETS = {
     autoKey={flywheelRPM=2150, hoodAngle=1100, targetAngle=0},
     bridge={flywheelRPM=2150},
 }
-if ROBOTNAME == "viper" then
-    PRESETS.key.flywheelRPM = 2350
-    PRESETS.autoKey.flywheelRPM = 2350
-end
 
 local dashboard = wpilib.SmartDashboard_GetInstance()
 local flywheelTargetSpeed = PRESETS.key.flywheelRPM
@@ -50,24 +44,12 @@ local flywheelFeedforward = math.huge
 local flywheelCounter = wpilib.Counter(wpilib.DigitalInput(3))
 local flywheelMotor = linearize.wrap(wpilib.Victor(4))
 local flywheelTicksPerRevolution
-if ROBOTNAME == "viper" then
-    flywheelTicksPerRevolution = 4.0
-else
-    flywheelTicksPerRevolution = 1.0
-end
 
 local flywheelLights = wpilib.Relay(1, 7, wpilib.Relay_kForwardOnly)
 local lightTimer = wpilib.Timer()
 local lightFlashOn = true
 
-local ballFlap
-local ballFlapOpen = false
-if ROBOTNAME == "viper" then
-    ballFlap = wpilib.Solenoid(1)
-end
-
 flywheelCounter:Start()
-
 
 local HARD_LIMIT = 90
 
@@ -152,14 +134,6 @@ function runFlywheel(on, speed)
     end
 end
 
-function openBallFlap()
-    ballFlapOpen = true
-end
-
-function closeBallFlap()
-    ballFlapOpen = false
-end
-
 function update()
     -- Update flywheel target speed from intake's squish meter
     if currPresetName then
@@ -193,9 +167,6 @@ function update()
         flywheelPID.target = math.min(pos - (1 - flywheelPID.d - extraTerm) / flywheelPID.p, flywheelPID.target)
         local flywheelOutput = flywheelPID:update(pos, dt) + extraTerm
         if flywheelOutput > 0.0 then
-            if ROBOTNAME == "viper" then
-                flywheelOutput = -flywheelOutput
-            end
             flywheelMotor:Set(-flywheelOutput)
         else
             flywheelMotor:Set(0.0)
@@ -211,11 +182,6 @@ function update()
         flywheelLights:Set(wpilib.Relay_kOn)
     else
         flywheelLights:Set(wpilib.Relay_kOff)
-    end
-
-    -- Ball Flap
-    if ballFlap then
-        ballFlap:Set(ballFlapOpen)
     end
 
     -- Print flywheel diagnostics
