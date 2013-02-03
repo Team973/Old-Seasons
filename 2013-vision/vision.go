@@ -4,8 +4,8 @@ import (
 	"bitbucket.org/zombiezen/gocv/cv"
 	"flag"
 	"fmt"
+	"image/jpeg"
 	"io"
-	"io/ioutil"
 	"log"
 	"mime/multipart"
 	"net/http"
@@ -43,7 +43,7 @@ func run() {
 	cv.NamedWindow(outputWindowName, cv.WINDOW_AUTOSIZE)
 
 	// Set up camera
-	capture, err := cv.CaptureFromCAM(0)
+	capture, err := NewAxisCamera(axisHost, axisUsername, axisPassword)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "failed to start capture")
 		os.Exit(1)
@@ -140,7 +140,6 @@ type AxisCamera struct {
 	closer io.Closer
 	mr     *multipart.Reader
 
-	tmpFile   *os.File
 	lastImage *cv.IplImage
 
 	frames chan *cv.IplImage
@@ -148,17 +147,9 @@ type AxisCamera struct {
 }
 
 func NewAxisCamera(host string, username, password string) (*AxisCamera, error) {
-	// Open temp file for frames
-	f, err := ioutil.TempFile("", "camera_mjpg")
-	if err != nil {
-		return nil, err
-	}
-
 	const path = "/mjpg/video.mjpg"
 	req, err := http.NewRequest("GET", "http://"+host+path, nil)
 	if err != nil {
-		os.Remove(f.Name())
-		f.Close()
 		return nil, err
 	}
 	if username != "" || password != "" {
@@ -167,8 +158,6 @@ func NewAxisCamera(host string, username, password string) (*AxisCamera, error) 
 	}
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		os.Remove(f.Name())
-		f.Close()
 		return nil, err
 	}
 
@@ -177,11 +166,10 @@ func NewAxisCamera(host string, username, password string) (*AxisCamera, error) 
 	r := multipart.NewReader(resp.Body, boundary)
 
 	cam := &AxisCamera{
-		closer:  resp.Body,
-		mr:      r,
-		tmpFile: f,
-		frames:  make(chan *cv.IplImage),
-		quit:    make(chan struct{}),
+		closer: resp.Body,
+		mr:     r,
+		frames: make(chan *cv.IplImage),
+		quit:   make(chan struct{}),
 	}
 	go cam.fetchFrames()
 	return cam, nil
@@ -220,16 +208,11 @@ func (cam *AxisCamera) frame() (*cv.IplImage, error) {
 	if err != nil {
 		return nil, err
 	}
-	if _, err := cam.tmpFile.Seek(0, 0); err != nil {
+	jp, err := jpeg.Decode(part)
+	if err != nil {
 		return nil, err
 	}
-	if err := cam.tmpFile.Truncate(0); err != nil {
-		return nil, err
-	}
-	if _, err := io.Copy(cam.tmpFile, part); err != nil {
-		return nil, err
-	}
-	return cv.LoadImage(cam.tmpFile.Name(), cv.LOAD_IMAGE_COLOR)
+	return cv.ConvertImage(jp), nil
 }
 
 func (cam *AxisCamera) QueryFrame() (*cv.IplImage, error) {
@@ -246,17 +229,9 @@ func (cam *AxisCamera) Close() error {
 	cam.quit <- struct{}{}
 	close(cam.quit)
 
-	// Remove temp file and close up connection
-	name := cam.tmpFile.Name()
-	err1 := cam.tmpFile.Close()
-	err2 := os.Remove(name)
-	err3 := cam.closer.Close()
-	if err1 != nil {
-		return err1
-	} else if err2 != nil {
-		return err2
-	} else if err3 != nil {
-		return err3
+	// Close up connection
+	if err := cam.closer.Close(); err != nil {
+		return err
 	}
 
 	// Release last image
