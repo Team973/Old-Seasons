@@ -15,7 +15,7 @@ module(...)
 local conveyerSpeed = 0
 local rollerSpeed = 0
 
---TODO Find out the real victor numbers from Alan
+--TODO Find out the real victor numbers from Allen
 local Conveyer = wpilib.Victor(6)
 local Roller = wpilib.Victor(7) 
 
