@@ -82,7 +82,7 @@ function teleop()
         feedWatchdog()
 
         wpilib.SmartDashboard_PutString("mode", "Running")
-        wpilib.SmartDashboard_Number("Colin Gyro (Degrees)", colinGyro:Get() / colinGyroTicksPerRevolution * 360.0)
+        wpilib.SmartDashboard_PutNumber("Colin Gyro (Degrees)", colinGyro:Get() / colinGyroTicksPerRevolution * 360.0)
 
         -- Read controls
         controls.update(controlMap)

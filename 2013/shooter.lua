@@ -204,9 +204,9 @@ function update()
     Roller:Set(rollerSpeed)
 
     -- Print flywheel diagnostics
-    wpilib.SmartDashboard_Number("Flywheel Speed", getFlywheelSpeed())
-    wpilib.SmartDashboard_Number("Flywheel Speed(Int)", getFlywheelSpeed())
-    wpilib.SmartDashboard_Number("Flywheel Target Speed", getFlywheelTargetSpeed())
+    wpilib.SmartDashboard_PutNumber("Flywheel Speed", getFlywheelSpeed())
+    wpilib.SmartDashboard_PutNumber("Flywheel Speed(Int)", getFlywheelSpeed())
+    wpilib.SmartDashboard_PutNumber("Flywheel Target Speed", getFlywheelTargetSpeed())
 end
 
 function fullStop()
