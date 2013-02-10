@@ -48,6 +48,11 @@ function run()
             disableWatchdog()
             repeat wpilib.Wait(0.01) until not wpilib.IsAutonomous() or not wpilib.IsEnabled()
             enableWatchdog()
+        elseif wpilib.IsTest() then
+            disableWatchdog()
+            wpilib.LiveWindow_GetInstance():SetEnabled(true)
+            repeat wpilib.Wait(0.01) until not wpilib.IsTest() or not wpilib.IsEnabled()
+            wpilib.LiveWindow_GetInstance():SetEnabled(false)
         else
             teleop()
             disableWatchdog()
