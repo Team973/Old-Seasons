@@ -51,7 +51,7 @@ local flywheelOn = false
 local flywheelFeedforward = math.huge
 local flywheelCounter = wpilib.Counter(wpilib.DigitalInput(3))
 local flywheelMotor = linearize.wrap(wpilib.Talon(7))
-local flywheelTicksPerRevolution
+local flywheelTicksPerRevolution = 1
 
 local flywheelLights = wpilib.Relay(1, 7, wpilib.Relay_kForwardOnly)
 local lightTimer = wpilib.Timer()
