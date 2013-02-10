@@ -35,6 +35,8 @@ local driveX, driveY = 0, 0
 function run()
     wpilib.SmartDashboard_PutString("mode", "Ready")
 
+    local lw = wpilib.LiveWindow_GetInstance()
+
     -- Main loop
     while true do
         if wpilib.IsDisabled() then
@@ -50,9 +52,9 @@ function run()
             enableWatchdog()
         elseif wpilib.IsTest() then
             disableWatchdog()
-            wpilib.LiveWindow_GetInstance():SetEnabled(true)
+            lw:SetEnabled(true)
             repeat wpilib.Wait(0.01) until not wpilib.IsTest() or not wpilib.IsEnabled()
-            wpilib.LiveWindow_GetInstance():SetEnabled(false)
+            lw:SetEnabled(false)
         else
             teleop()
             disableWatchdog()
