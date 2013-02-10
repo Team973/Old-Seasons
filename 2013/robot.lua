@@ -169,9 +169,6 @@ controlMap =
         ["x"] = function(axis)
             intake.setIntake(deadband(axis, 0.2))
         end,
-        ["ry"] = function(axis)
-            intake.setVerticalSpeed(deadband(-axis, 0.2))
-        end,
 
         [7] = function()
             shooter.setPreset(nil)
