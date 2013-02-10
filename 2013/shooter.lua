@@ -150,7 +150,6 @@ function setRollerSpeed(speed)
 end
 
 function update()
-    -- Update flywheel target speed from intake's squish meter
     if currPresetName then
         setFlywheelTargetSpeed(PRESETS[currPresetName].flywheelRPM)
     end
