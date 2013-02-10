@@ -2,6 +2,7 @@
 
 local ipairs = ipairs
 
+local arm = require("arm")
 local bit = require("bit")
 local intake = require("intake")
 local pid = require("pid")
@@ -14,8 +15,6 @@ module(...)
 
 local conveyerSpeed = 0
 local rollerSpeed = 0
-
---The arm Talon will be 8
 
 --TODO Find out the real victor numbers from Allen
 local Conveyer = wpilib.Victor(5)
