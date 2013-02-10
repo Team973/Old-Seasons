@@ -15,9 +15,11 @@ module(...)
 local conveyerSpeed = 0
 local rollerSpeed = 0
 
+--The arm Talon will be 8
+
 --TODO Find out the real victor numbers from Allen
-local Conveyer = wpilib.Victor(6)
-local Roller = wpilib.Victor(7) 
+local Conveyer = wpilib.Victor(5)
+local Roller = wpilib.Talon(6) 
 
 local flywheelSpeedTable = {
     numSamples=25,
@@ -49,7 +51,7 @@ local flywheelTargetSpeed = PRESETS.key.flywheelRPM
 local flywheelOn = false
 local flywheelFeedforward = math.huge
 local flywheelCounter = wpilib.Counter(wpilib.DigitalInput(3))
-local flywheelMotor = linearize.wrap(wpilib.Victor(4))
+local flywheelMotor = linearize.wrap(wpilib.Talon(7))
 local flywheelTicksPerRevolution
 
 local flywheelLights = wpilib.Relay(1, 7, wpilib.Relay_kForwardOnly)

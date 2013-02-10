@@ -15,6 +15,7 @@ local lowered = false
 local frontSpeed = 0 -- front intake roller
 
 local frontIntake = linearize.wrap(wpilib.Victor(3))
+local otherIntake = linearize.wrap(wpilib.Victor(4))
 local intakeSolenoid = wpilib.Solenoid(2)
 
 function toggleRaise()
