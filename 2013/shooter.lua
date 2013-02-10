@@ -46,7 +46,6 @@ PRESETS = {
     bridge={flywheelRPM=2150},
 }
 
-local dashboard = wpilib.SmartDashboard_GetInstance()
 local flywheelTargetSpeed = PRESETS.key.flywheelRPM
 local flywheelOn = false
 local flywheelFeedforward = math.huge
@@ -205,9 +204,9 @@ function update()
     Roller:Set(rollerSpeed)
 
     -- Print flywheel diagnostics
-    dashboard:PutDouble("Flywheel Speed", getFlywheelSpeed())
-    dashboard:PutInt("Flywheel Speed(Int)", getFlywheelSpeed())
-    dashboard:PutDouble("Flywheel Target Speed", getFlywheelTargetSpeed())
+    wpilib.SmartDashboard_Number("Flywheel Speed", getFlywheelSpeed())
+    wpilib.SmartDashboard_Number("Flywheel Speed(Int)", getFlywheelSpeed())
+    wpilib.SmartDashboard_Number("Flywheel Target Speed", getFlywheelTargetSpeed())
 end
 
 function fullStop()
