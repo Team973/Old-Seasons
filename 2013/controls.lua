@@ -74,9 +74,10 @@ function update(map)
         -- Update axes
         if stickMap.x then stickMap.x(stick:GetX()) end
         if stickMap.y then stickMap.y(stick:GetY()) end
-        if stickMap.rx then stickMap.rx(stick:GetRawAxis(4)) end
-        if stickMap.ry then stickMap.ry(stick:GetRawAxis(5)) end
-        if stickMap.hatx then stickMap.hatx(stick:GetRawAxis(6)) end
+        if stickMap.rx then stickMap.rx(stick:GetRawAxis(3)) end
+        if stickMap.ry then stickMap.ry(stick:GetRawAxis(4)) end
+        if stickMap.hatx then stickMap.hatx(stick:GetRawAxis(5)) end
+        if stickMap.haty then stickMap.haty(stick:GetRawAxis(6)) end
 
         -- Update button events
         for button = 1, numButtons do
@@ -88,12 +89,11 @@ function update(map)
         end
 
         -- Update trigger
-        local triggerAxis = stick:GetRawAxis(3)
         if stickMap.ltrigger then
-            handleButton(stickMap.ltrigger, previousState[i].trigger > TRIGGER_THRESHOLD, triggerAxis > TRIGGER_THRESHOLD)
+            handleButton(stickMap.ltrigger, previousState[i][7], stick:GetRawButton(7))
         end
         if stickMap.rtrigger then
-            handleButton(stickMap.rtrigger, previousState[i].trigger < -TRIGGER_THRESHOLD, triggerAxis < -TRIGGER_THRESHOLD)
+            handleButton(stickMap.rtrigger, previousState[i][8], stick:GetRawButton(8))
         end
 
         -- Call update
