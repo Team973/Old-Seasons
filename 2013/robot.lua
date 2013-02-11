@@ -30,7 +30,7 @@ local controlMap
 local deployStinger
 local compressor, pressureSwitch, autoDriveSwitch, stinger
 local colinGyro, colinGyroTicksPerRevolution
-local driveX, driveY = 0, 0
+local driveX, driveY, armControl = 0, 0, 0
 -- End Declarations
 
 function run()
@@ -117,6 +117,7 @@ function teleop()
         drive.update(driveX, driveY)
 
         wpilib.SmartDashboard_PutNumber("Arm Encoder", arm.encoder:Get())
+        arm.motor:Set(armControl)
 
         -- Iteration cleanup
         feedWatchdog()
@@ -177,27 +178,12 @@ controlMap =
         ["rx"] = function(axis)
             driveX = axis
         end,
-        ["ltrigger"] = function() intake.setLowered(true) end,
-        ["rtrigger"] = function() intake.setLowered(false) end,
     },
     -- Joystick 2 (Co-Driver)
     {
-        ["x"] = function(axis)
-            intake.setIntake(deadband(axis, 0.2))
+        ["y"] = function(axis)
+            armControl = axis
         end,
-
-        [7] = function()
-            shooter.setPreset(nil)
-            shooter.setFlywheelTargetSpeed(shooter.getFlywheelTargetSpeed() - 50)
-        end,
-        [8] = function()
-            shooter.setPreset(nil)
-            shooter.setFlywheelTargetSpeed(shooter.getFlywheelTargetSpeed() + 50)
-        end,
-
-        ["rtrigger"] = {
-            tick=shooter.runFlywheel
-        },
     },
     -- Joystick 3
     {
