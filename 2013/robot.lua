@@ -115,6 +115,8 @@ function teleop()
         -- Drive
         drive.update(driveX, driveY)
 
+        wpilib.SmartDashboard_PutNumber("Arm Encoder", arm.encoder:Get())
+
         -- Iteration cleanup
         feedWatchdog()
         wpilib.Wait(TELEOP_LOOP_LAG)
