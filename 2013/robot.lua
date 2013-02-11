@@ -36,29 +36,40 @@ function run()
     wpilib.SmartDashboard_PutString("mode", "Ready")
 
     local lw = wpilib.LiveWindow_GetInstance()
+    lw:SetEnabled(false)
+
+    local ds = wpilib.DriverStation_GetInstance()
 
     -- Main loop
     while true do
         if wpilib.IsDisabled() then
+            ds:InDisabled(true)
             disabledIdle()
+            ds:InDisabled(false)
             disableWatchdog()
-            repeat wpilib.Wait(0.01) until not wpilib.IsDisabled()
+            repeat ds:WaitForData() until not wpilib.IsDisabled()
             enableWatchdog()
         elseif wpilib.IsAutonomous() then
             disableWatchdog()
+            ds:InAutonomous(true)
             autonomous()
+            ds:InAutonomous(false)
             disableWatchdog()
-            repeat wpilib.Wait(0.01) until not wpilib.IsAutonomous() or not wpilib.IsEnabled()
+            repeat ds:WaitForData() until not wpilib.IsAutonomous() or not wpilib.IsEnabled()
             enableWatchdog()
         elseif wpilib.IsTest() then
             disableWatchdog()
             lw:SetEnabled(true)
-            repeat wpilib.Wait(0.01) until not wpilib.IsTest() or not wpilib.IsEnabled()
+            --ds:InTest(true)
+            repeat ds:WaitForData() until not wpilib.IsTest() or not wpilib.IsEnabled()
+            --ds:InTest(false)
             lw:SetEnabled(false)
         else
+            ds:InOperatorControl(true)
             teleop()
+            ds:InOperatorControl(false)
             disableWatchdog()
-            repeat wpilib.Wait(0.01) until not wpilib.IsOperatorControl() or not wpilib.IsEnabled()
+            repeat ds:WaitForData() until not wpilib.IsOperatorControl() or not wpilib.IsEnabled()
             enableWatchdog()
         end
     end
