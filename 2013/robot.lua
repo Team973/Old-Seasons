@@ -6,6 +6,7 @@ local wpilib = require("wpilib")
 pid.PID.timerNew = wpilib.Timer
 wpilib.SmartDashboard_init()
 
+local arm = require("arm")
 local controls = require("controls")
 local drive = require("drive")
 local intake = require("intake")

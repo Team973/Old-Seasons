@@ -2,7 +2,6 @@
 
 local ipairs = ipairs
 
-local arm = require("arm")
 local bit = require("bit")
 local intake = require("intake")
 local pid = require("pid")
