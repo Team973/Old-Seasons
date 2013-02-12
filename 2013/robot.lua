@@ -94,8 +94,6 @@ end
 
 
 function teleop()
-    shooter.setPreset("key")
-
     while wpilib.IsOperatorControl() and wpilib.IsEnabled() do
         enableWatchdog()
         feedWatchdog()
@@ -188,19 +186,19 @@ controlMap =
         [6] = {
             tick=function(held)
                 if held then
-                    shooter.setConveyerSpeed(.5)
-                    shooter.setRollerSpeed(.5)
+                    shooter.setConveyerSpeed(-1)
+                    shooter.setRollerSpeed(1)
                 else
                     shooter.setConveyerSpeed(0.0)
                     shooter.setRollerSpeed(0.0)
                 end
             end,
-        }
+        },
 
         [8]= {
             tick=function(held)
                 if held then
-                    shooter.setFlywheelSpeed(1)
+                    shooter.setFlywheelSpeed(-1)
                 else
                     shooter.setFlywheelSpeed(0.0)
                 end
