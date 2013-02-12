@@ -184,6 +184,28 @@ controlMap =
         ["y"] = function(axis)
             armControl = axis
         end,
+
+        [6] = {
+            tick=function(held)
+                if held then
+                    shooter.setConveyerSpeed(.5)
+                    shooter.setRollerSpeed(.5)
+                else
+                    shooter.setConveyerSpeed(0.0)
+                    shooter.setRollerSpeed(0.0)
+                end
+            end,
+        }
+
+        [8]= {
+            tick=function(held)
+                if held then
+                    shooter.setFlywheelSpeed(1)
+                else
+                    shooter.setFlywheelSpeed(0.0)
+                end
+            end,
+        },
     },
     -- Joystick 3
     {
