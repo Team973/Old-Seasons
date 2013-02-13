@@ -115,7 +115,9 @@ function teleop()
         drive.update(driveX, driveY)
 
         wpilib.SmartDashboard_PutNumber("Arm Encoder", arm.encoder:Get())
-        arm.motor:Set(armControl)
+        wpilib.SmartDashboard_PutNumber("Arm Motor", arm.motor:Get())
+        --TODO remove this entirely when we get armPID working
+        --arm.motor:Set(armControl)
 
         -- Iteration cleanup
         feedWatchdog()
@@ -182,6 +184,9 @@ controlMap =
         ["y"] = function(axis)
             armControl = axis
         end,
+
+        [1] = function() arm.setArmTarget(10) end, 
+        [2] = function() arm.setArmTarget(50) end, 
 
         [6] = {
             tick=function(held)
