@@ -185,8 +185,8 @@ controlMap =
             armControl = axis
         end,
 
-        [1] = function() arm.setArmTarget(10) end, 
-        [2] = function() arm.setArmTarget(50) end, 
+        [1] = function() arm.setPreset("Arm1") end, 
+        [2] = function() arm.setPreset("Arm2") end, 
 
         [6] = {
             tick=function(held)
