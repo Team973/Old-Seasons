@@ -5,28 +5,24 @@ local pid = require("pid")
 
 module(...)
 
-encoder = wpilib.Encoder(1, 2)
-motor = wpilib.Talon(8)
+local encoder = wpilib.Encoder(1, 2)
+local motor = wpilib.Talon(8)
 
-armPID = pid.new(1000, 0, 0)
+local armPID = pid.new(0.001, 0, 0)
+armPID.min, armPID.max = -0.3, 0.3
 armPID:start()
 
 encoder:Start()
 
 PRESETS = {
-    Arm1 = { armAngle = 10 },
-    Arm2 = { armAngle = 50 },
+    Arm1 = { armAngle = 10 }, 
+    Arm2 = { armAngle = 30 }, 
 }
 
 function setPreset(name)
     local p = PRESETS[name]
-
-    if p.Arm1 then
-        setArmTarget(p.Arm1)
-    end
-
-    if p.Arm2 then
-        setArmTarget(p.Arm2)
+    if p then
+        setArmTarget(p.armAngle)
     end
 end
 
@@ -34,16 +30,10 @@ function setArmTarget(target)
     armPID.target = target
 end
 
---armPID.min = -.3
---armPID.max = .3
-
-
 function update()
+    local angle = -encoder:Get() / 50 * 3
+    motor:Set(armPID:update(angle))
 
-    armPID:update(encoder:Get()/3 * 50)
-    -- divide by 50 and * 3
-
-    motor:Set(armPID.output)
-
-    wpilib.SmartDashboard_PutNumber("Arm PID", armPID.output)
+    wpilib.SmartDashboard_PutNumber("Arm Angle", angle)
+    wpilib.SmartDashboard_PutNumber("Arm PID Output", armPID.output)
 end
