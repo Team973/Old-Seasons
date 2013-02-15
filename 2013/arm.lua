@@ -5,7 +5,7 @@ local pid = require("pid")
 
 module(...)
 
-local encoder = wpilib.Encoder(1, 2)
+local encoder = wpilib.Encoder(1, 2, true)
 local motor = wpilib.Talon(8)
 
 local armPID = pid.new(0.001, 0, 0)
