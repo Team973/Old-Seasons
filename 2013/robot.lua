@@ -171,10 +171,10 @@ controlMap =
     -- TODO Add controls back in (some should still be there but you will have to check)
     {
         ["y"] = function(axis) 
-            driveY = axis
+            driveY = -deadband(axis, 0.1)
         end,
         ["rx"] = function(axis)
-            driveX = axis
+            driveX = deadband(axis, 0.1)
         end,
     },
     -- Joystick 2 (Co-Driver)

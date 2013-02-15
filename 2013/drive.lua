@@ -31,17 +31,17 @@ end
 local function arcade(move, rotate)
     move = signSquare(limit(move))
     rotate = signSquare(limit(rotate))
-    if move > 0 then
+    if move < 0 then
         if rotate > 0 then
-            return move - rotate, math.max(move, rotate)
+            return -move - rotate, math.max(-move, rotate)
         else
-            return math.max(move, -rotate), move + rotate
+            return math.max(-move, -rotate), -move + rotate
         end
     else
         if rotate > 0 then
-            return -math.max(-move, rotate), move + rotate
+            return -math.max(move, rotate), -move + rotate
         else
-            return move - rotate, -math.max(-move, -rotate)
+            return -move - rotate, -math.max(move, -rotate)
         end
     end
 end
@@ -94,7 +94,7 @@ local function LinearVictor(...)
     return linearize.wrap(wpilib.Victor(...))
 end
 
-function update(driveX,driveY)
+function update(driveX, driveY)
 	local leftSpeed, rightSpeed = arcade(driveY, driveX)
 	leftDriveMotor:Set(-leftSpeed)
 	rightDriveMotor:Set(rightSpeed)
