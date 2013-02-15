@@ -114,10 +114,8 @@ function teleop()
         -- Drive
         drive.update(driveX, driveY)
 
-        wpilib.SmartDashboard_PutNumber("Arm Encoder", arm.encoder:Get())
-        wpilib.SmartDashboard_PutNumber("Arm Motor", arm.motor:Get())
-        --TODO remove this entirely when we get armPID working
-        --arm.motor:Set(armControl)
+        -- Arm
+        arm.update()
 
         -- Iteration cleanup
         feedWatchdog()
@@ -191,7 +189,7 @@ controlMap =
         [6] = {
             tick=function(held)
                 if held then
-                    shooter.setConveyerSpeed(-1)
+                    shooter.setConveyerSpeed(-.7)
                     shooter.setRollerSpeed(1)
                 else
                     shooter.setConveyerSpeed(0.0)
