@@ -30,7 +30,7 @@ local controlMap
 local deployStinger
 local compressor, pressureSwitch, autoDriveSwitch, stinger
 local colinGyro, colinGyroTicksPerRevolution
-local driveX, driveY = 0, 0
+local driveX, driveY, quickTurn = 0, 0, false
 -- End Declarations
 
 function run()
@@ -112,7 +112,7 @@ function teleop()
         shooter.update()
 
         -- Drive
-        drive.update(driveX, driveY)
+        drive.update(driveX, driveY, quickTurn)
 
         -- Arm
         arm.update()
@@ -176,11 +176,14 @@ controlMap =
         ["rx"] = function(axis)
             driveX = deadband(axis, 0.1)
         end,
+        [6] = {tick=function(held)
+            quickTurn = held
+        end},
     },
     -- Joystick 2 (Co-Driver)
     {
-        [1] = function() arm.setPreset("Arm1") end, 
-        [2] = function() arm.setPreset("Arm2") end, 
+        [2] = function() arm.setPreset("Arm1") end,
+        [3] = function() arm.setPreset("Arm2") end,
 
         [6] = {
             tick=function(held)

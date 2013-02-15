@@ -94,8 +94,8 @@ local function LinearVictor(...)
     return linearize.wrap(wpilib.Victor(...))
 end
 
-function update(driveX, driveY)
-	local leftSpeed, rightSpeed = arcade(driveY, driveX)
+function update(driveX, driveY, quickTurn)
+	local leftSpeed, rightSpeed = cheesyDrive(driveY, driveX, true, quickTurn)
 	leftDriveMotor:Set(-leftSpeed)
 	rightDriveMotor:Set(rightSpeed)
 end
@@ -214,7 +214,7 @@ function cheesyDrive(throttle, wheel, highGear, quickTurn)
         leftPwm = leftPwm + (overPower * (-1 - rightPwm))
         rightPwm = -1.0
     end
-    return leftPwm, rightPwm
+    return -leftPwm, -rightPwm
 end
 function accum(val)
     if val > 1 then
