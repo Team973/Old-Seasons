@@ -30,7 +30,7 @@ local controlMap
 local deployStinger
 local compressor, pressureSwitch, autoDriveSwitch, stinger
 local colinGyro, colinGyroTicksPerRevolution
-local driveX, driveY, armControl = 0, 0, 0
+local driveX, driveY = 0, 0
 -- End Declarations
 
 function run()
@@ -179,10 +179,6 @@ controlMap =
     },
     -- Joystick 2 (Co-Driver)
     {
-        ["y"] = function(axis)
-            armControl = axis
-        end,
-
         [1] = function() arm.setPreset("Arm1") end, 
         [2] = function() arm.setPreset("Arm2") end, 
 
