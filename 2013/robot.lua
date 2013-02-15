@@ -182,27 +182,9 @@ controlMap =
         [1] = function() arm.setPreset("Arm1") end, 
         [2] = function() arm.setPreset("Arm2") end, 
 
-        [6] = {
-            tick=function(held)
-                if held then
-                    shooter.setConveyerSpeed(-.7)
-                    shooter.setRollerSpeed(1)
-                else
-                    shooter.setConveyerSpeed(0.0)
-                    shooter.setRollerSpeed(0.0)
-                end
-            end,
-        },
+        [6] = {tick=shooter.feed},
 
-        [8]= {
-            tick=function(held)
-                if held then
-                    shooter.setFlywheelSpeed(-1)
-                else
-                    shooter.setFlywheelSpeed(0.0)
-                end
-            end,
-        },
+        [8] = {tick=shooter.fire},
     },
     -- Joystick 3
     {

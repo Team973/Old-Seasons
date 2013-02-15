@@ -16,35 +16,38 @@ local conveyerSpeed = 0
 local rollerSpeed = 0
 local flywheelSpeed = 0
 
-local Conveyer = wpilib.Victor(5)
-local Roller = wpilib.Talon(6) 
+local conveyer = wpilib.Victor(5)
+local roller = wpilib.Talon(6)
 local flywheelMotor = wpilib.Talon(7)
 
 local flywheelLights = wpilib.Relay(1, 7, wpilib.Relay_kForwardOnly)
 local lightTimer = wpilib.Timer()
 local lightFlashOn = true
+local feeding = false
+local firing = false
 
-function setConveyerSpeed(speed)
-    conveyerSpeed = speed
+function fire(bool)
+    firing = bool
 end
 
-function setRollerSpeed(speed)
-    rollerSpeed = speed
-end
-
-function setFlywheelSpeed(speed)
-    flywheelSpeed = speed
+function feed(bool)
+    feeding = bool
 end
 
 function update()
+    if firing then
+        flywheelMotor:Set(-1)
+    else
+        flywheelMotor:Set(0)
+    end
 
-    --Flywheel nonPID setup
-    flywheelMotor:Set(flywheelSpeed)
-
-
-    --Conveyer/Roller
-    Conveyer:Set(conveyerSpeed)
-    Roller:Set(rollerSpeed)
+    if feeding then
+        conveyer:Set(-0.7)
+        roller:Set(1)
+    else
+        conveyer:Set(0)
+        roller:Set(0)
+    end
 end
 
 function fullStop()
