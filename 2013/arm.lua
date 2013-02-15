@@ -8,8 +8,8 @@ module(...)
 local encoder = wpilib.Encoder(1, 2, true)
 local motor = wpilib.Talon(8)
 
-local armPID = pid.new(0.001, 0, 0)
-armPID.min, armPID.max = -0.3, 0.3
+local armPID = pid.new(0.05, 0, 0)
+armPID.min, armPID.max = -1.0, 1.0
 armPID:start()
 
 encoder:Start()
@@ -31,8 +31,8 @@ function setArmTarget(target)
 end
 
 function update()
-    local angle = -encoder:Get() / 50 * 3
-    motor:Set(armPID:update(angle))
+    local angle = encoder:Get() / 50 * 3
+    motor:Set(-armPID:update(angle))
 
     wpilib.SmartDashboard_PutNumber("Arm Angle", angle)
     wpilib.SmartDashboard_PutNumber("Arm PID Output", armPID.output)
