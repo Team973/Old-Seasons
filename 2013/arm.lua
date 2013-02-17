@@ -20,6 +20,12 @@ PRESETS = {
     Arm2 = { armAngle = 30 }, 
 }
 
+local function pot2deg(volts)
+    local gain = (138.360 - 0.00) / (4.66 - 0.73)
+    local potBottom = 0.73
+    return (volts - potBottom) * gain
+end
+
 function setPreset(name)
     local p = PRESETS[name]
     if p then
@@ -38,4 +44,5 @@ function update()
     wpilib.SmartDashboard_PutNumber("Arm Angle", angle)
     wpilib.SmartDashboard_PutNumber("Arm PID Output", armPID.output)
     wpilib.SmartDashboard_PutNumber("Potentiometer Output", absoluteEncoder:GetVoltage())
+    wpilib.SmartDashboard_PutNumber("pot2deg", pot2deg(absoluteEncoder:GetVoltage()))
 end
