@@ -34,6 +34,18 @@ function feed(bool)
     feeding = bool
 end
 
+function humanLoad(bool)
+    loading = bool
+end
+
+function setConveyerManual(speed)
+    conveyerSpeed = speed
+end
+
+function setRollerManual(speed)
+    rollerSpeed = speed
+end
+
 function update()
     if firing then
         flywheelMotor:Set(-1)
@@ -41,13 +53,22 @@ function update()
         flywheelMotor:Set(0)
     end
 
-    if feeding then
-        conveyer:Set(-0.7)
-        roller:Set(1)
+    if conveyerSpeed == 0 and rollerSpeed == 0 then
+         if feeding then
+            conveyer:Set(-0.7)
+            roller:Set(1)
+        elseif loading then
+            conveyer:Set(-0.5)
+            roller:Set(0.0)
+        else
+            conveyer:Set(0)
+            roller:Set(0)
+        end
     else
-        conveyer:Set(0)
-        roller:Set(0)
+        conveyer:Set(conveyerSpeed)
+        roller:Set(rollerSpeed)
     end
+
 end
 
 function fullStop()
