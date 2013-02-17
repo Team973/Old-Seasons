@@ -182,9 +182,16 @@ controlMap =
     },
     -- Joystick 2 (Co-Driver)
     {
+        ["y"] = function(axis)
+            shooter.setConveyerManual(-deadband(axis, 0.1))
+        end,
+        ["ry"] = function(axis)
+            shooter.setRollerManual(-deadband(axis, 0.1))
+        end,
         [2] = function() arm.setPreset("Arm1") end,
         [3] = function() arm.setPreset("Arm2") end,
 
+        [5] = {tick=shooter.humanLoad},
         [6] = {tick=shooter.feed},
 
         [8] = {tick=shooter.fire},
