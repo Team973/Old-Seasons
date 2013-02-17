@@ -17,7 +17,7 @@ encoder:Start()
 
 PRESETS = {
     Arm1 = { armAngle = 10 }, 
-    Arm2 = { armAngle = 30 }, 
+    Shooting = { armAngle = 37.1 }, 
 }
 
 local function pot2deg(volts)
