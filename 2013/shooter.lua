@@ -55,7 +55,7 @@ function update()
 
     if conveyerSpeed == 0 and rollerSpeed == 0 then
          if feeding then
-            conveyer:Set(-0.7)
+            conveyer:Set(-0.25)
             roller:Set(1)
         elseif loading then
             conveyer:Set(-0.5)
