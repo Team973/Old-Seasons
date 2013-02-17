@@ -65,7 +65,7 @@ function update()
             roller:Set(0)
         end
     else
-        conveyer:Set(conveyerSpeed)
+        conveyer:Set(-conveyerSpeed)
         roller:Set(rollerSpeed)
     end
 
