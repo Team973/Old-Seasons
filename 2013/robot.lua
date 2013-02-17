@@ -189,7 +189,7 @@ controlMap =
             shooter.setRollerManual(-deadband(axis, 0.1))
         end,
         [2] = function() arm.setPreset("Arm1") end,
-        [3] = function() arm.setPreset("Arm2") end,
+        [3] = function() arm.setPreset("Shooting") end,
 
         [5] = {tick=shooter.humanLoad},
         [6] = {tick=shooter.feed},
