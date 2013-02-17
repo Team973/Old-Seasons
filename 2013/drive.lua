@@ -9,6 +9,8 @@ local pairs = pairs
 
 module(...)
 
+local arcade, cheesyDrive
+
 local gyro = nil
 local gyroOkay = true
 local ignoreGyro = false
