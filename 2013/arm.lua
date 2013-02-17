@@ -20,15 +20,15 @@ PRESETS = {
     Arm2 = { armAngle = 30 }, 
 }
 
+function setArmTarget(target)
+    armPID.target = target
+end
+
 function setPreset(name)
     local p = PRESETS[name]
     if p then
         setArmTarget(p.armAngle)
     end
-end
-
-function setArmTarget(target)
-    armPID.target = target
 end
 
 function update()
