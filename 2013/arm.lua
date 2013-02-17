@@ -9,6 +9,8 @@ local encoder = wpilib.Encoder(1, 2, true)
 local motor = wpilib.Talon(8)
 local absoluteEncoder = wpilib.AnalogChannel(1)
 
+local angleOffset = 0
+
 local armPID = pid.new(0.05, 0, 0)
 armPID.min, armPID.max = -1.0, 1.0
 armPID:start()
@@ -30,8 +32,12 @@ local function pot2deg(volts)
     return (volts - potBottom) * gain
 end
 
+local function calibrate()
+    angleOffset = angleOffset - getArmAngle()
+end
+
 function getArmAngle()
-    return encoder:Get() / 50 * 3
+    return encoder:Get() / 50 * 3 + angleOffset
 end
 
 function setPreset(name)
