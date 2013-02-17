@@ -20,6 +20,10 @@ PRESETS = {
     Shooting = { armAngle = 37.1 }, 
 }
 
+function setArmTarget(target)
+    armPID.target = target
+end
+
 local function pot2deg(volts)
     local gain = (138.360 - 0.00) / (4.66 - 0.73)
     local potBottom = 0.73
@@ -35,10 +39,6 @@ function setPreset(name)
     if p then
         setArmTarget(p.armAngle)
     end
-end
-
-function setArmTarget(target)
-    armPID.target = target
 end
 
 function update()
