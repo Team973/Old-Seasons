@@ -34,8 +34,6 @@ local driveX, driveY, quickTurn = 0, 0, false
 -- End Declarations
 
 function run()
-    wpilib.SmartDashboard_PutString("mode", "Ready")
-
     local lw = wpilib.LiveWindow_GetInstance()
     lw:SetEnabled(false)
 
@@ -76,16 +74,25 @@ function run()
     end
 end
 
+function dashboardUpdate()
+    wpilib.SmartDashboard_PutBoolean("pressure", pressureSwitch:Get())
+    wpilib.SmartDashboard_PutNumber("Colin Gyro (Degrees)", colinGyro:Get() / colinGyroTicksPerRevolution * 360.0)
+end
+
 function disabledIdle()
     while wpilib.IsDisabled() do
         feedWatchdog()
 
-        wpilib.SmartDashboard_PutBoolean("Auto Drive", autoDriveSwitch:Get())
+        --Load Dashboard outputs
+        arm.dashboardUpdate()
+        dashboardUpdate()
 
         feedWatchdog()
         wpilib.Wait(AUTO_LOOP_LAG)
         feedWatchdog()
     end
+
+
 end
 
 function autonomous()
@@ -98,8 +105,6 @@ function teleop()
         enableWatchdog()
         feedWatchdog()
 
-        wpilib.SmartDashboard_PutString("mode", "Running")
-        wpilib.SmartDashboard_PutNumber("Colin Gyro (Degrees)", colinGyro:Get() / colinGyroTicksPerRevolution * 360.0)
 
         -- Read controls
         controls.update(controlMap)
@@ -117,6 +122,10 @@ function teleop()
         -- Arm
         arm.update()
 
+        -- Dashboard
+        dashboardUpdate()
+        arm.dashboardUpdate()
+
         -- Iteration cleanup
         feedWatchdog()
         wpilib.Wait(TELEOP_LOOP_LAG)
@@ -125,7 +134,6 @@ function teleop()
 end
 
 function updateCompressor()
-    wpilib.SmartDashboard_PutBoolean("pressure", pressureSwitch:Get())
     if pressureSwitch:Get() then
         compressor:Set(wpilib.Relay_kOff)
     else
@@ -235,7 +243,6 @@ else
 end
 
 -- Only create the gyro at the end, because it blocks the entire thread.
-wpilib.SmartDashboard_PutString("mode", "Waiting for Gyro...")
 --TODO(rlight): Add this back in when we have gyro
 --drive.initGyro()
 -- vim: ft=lua et ts=4 sts=4 sw=4

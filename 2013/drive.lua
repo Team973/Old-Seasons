@@ -51,7 +51,6 @@ function initGyro()
     gyro:SetSensitivity(0.00703)
     gyro:Reset()
     gyroOkay = true
-    wpilib.SmartDashboard_PutBoolean("Gyro Okay", true)
 end
 
 function resetGyro()
@@ -72,7 +71,6 @@ end
 
 function disableGyro()
     gyroOkay = false
-    wpilib.SmartDashboard_PutBoolean("Gyro Okay", false)
 end
 
 

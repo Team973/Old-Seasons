@@ -26,6 +26,10 @@ local function pot2deg(volts)
     return (volts - potBottom) * gain
 end
 
+function getArmAngle()
+    return encoder:Get() / 50 * 3
+end
+
 function setPreset(name)
     local p = PRESETS[name]
     if p then
@@ -38,10 +42,11 @@ function setArmTarget(target)
 end
 
 function update()
-    local angle = encoder:Get() / 50 * 3
-    motor:Set(-armPID:update(angle))
+    motor:Set(-armPID:update(getArmAngle()))
+end
 
-    wpilib.SmartDashboard_PutNumber("Arm Angle", angle)
+function dashboardUpdate()
+    wpilib.SmartDashboard_PutNumber("Arm Angle", getArmAngle())
     wpilib.SmartDashboard_PutNumber("Arm PID Output", armPID.output)
     wpilib.SmartDashboard_PutNumber("Potentiometer Output", absoluteEncoder:GetVoltage())
     wpilib.SmartDashboard_PutNumber("pot2deg", pot2deg(absoluteEncoder:GetVoltage()))

@@ -68,7 +68,6 @@ function update()
         conveyer:Set(-conveyerSpeed)
         roller:Set(rollerSpeed)
     end
-
 end
 
 function fullStop()
