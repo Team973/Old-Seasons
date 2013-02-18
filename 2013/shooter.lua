@@ -26,7 +26,6 @@ flywheelCounter:Start()
 
 local feeding = false
 local firing = false
-local flywheelRPM = 0
 local measuredRPM = 0
 
 function fire(bool)
@@ -49,26 +48,24 @@ function setRollerManual(speed)
     rollerSpeed = speed
 end
 
-function RPMcontrol(rpm)
+local function RPMcontrol(rpm)
     local dangerRPM = 8000
     local pointRPM = 6000
-    local RPMconstant = 0
 
-    if rpm < pointRPM then
-        flywheelRPM = 1
-    elseif rpm > dangerRPM then
-        flywheelRPM = RPMconstant
+    if rpm > dangerRPM then
+        return 0
+    elseif rpm < pointRPM then
+        return 1
     else
-        flywheelRPM = 0
+        return 0
     end
-    return flywheelRPM
 end
 
 function update()
     measuredRPM = 60.0 / (flywheelCounter:Get() * flywheelTicksPerRevolution)
 
     if firing then
-        flywheelMotor:Set(RPMControl(measuredRPM))
+        flywheelMotor:Set(RPMcontrol(measuredRPM))
     else
         flywheelMotor:Set(0)
     end
