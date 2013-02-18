@@ -1,7 +1,8 @@
 -- arm.lua
 
-local wpilib = require("wpilib")
+local config = require("config")
 local pid = require("pid")
+local wpilib = require("wpilib")
 
 module(...)
 
@@ -21,6 +22,20 @@ PRESETS = {
     Arm1 = { armAngle = 10 }, 
     Shooting = { armAngle = 37.1 }, 
 }
+
+-- read config file
+do
+    local cfg = config.read("ARMPRESETS")
+    if cfg.PRESETS then
+        for k, v in pairs(cfg.PRESETS) do
+            for _, name in ipairs{"armAngle"} do
+                if v[name] then
+                    PRESETS[k][name] = v[name]
+                end
+            end
+        end
+    end
+end
 
 function setArmTarget(target)
     armPID.target = target
