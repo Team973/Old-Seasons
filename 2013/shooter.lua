@@ -19,10 +19,15 @@ local flywheelSpeed = 0
 local conveyer = wpilib.Victor(5)
 local roller = wpilib.Talon(6)
 local flywheelMotor = wpilib.Talon(7)
+local flywheelCounter = wpilib.Counter(wpilib.DigitalInput(1, 3))
+local flywheelTicksPerRevolution = 1.0
+
+flywheelCounter:Start()
 
 local feeding = false
 local firing = false
 local flywheelRPM = 0
+local measuredRPM = 0
 
 function fire(bool)
     firing = bool
@@ -59,11 +64,11 @@ function RPMcontrol(rpm)
     return flywheelRPM
 end
 
-
 function update()
+    measuredRPM = 60.0 / (flywheelCounter:Get() * flywheelTicksPerRevolution)
+
     if firing then
-        --TODO Put in the actual rpm value for the flywheel (Adam should be able to tell you where it is coming from)
-        flywheelMotor:Set(RPMControl( VALUE ))
+        flywheelMotor:Set(RPMControl(measuredRPM))
     else
         flywheelMotor:Set(0)
     end
@@ -87,6 +92,11 @@ end
 
 function fullStop()
     flywheelMotor:Set(0.0)
+end
+
+function dashboardUpdate()
+    wpilib.SmartDashboard_PutNumber("RPM Bang-Bang control", RPMcontrol(measuredRPM))
+    wpilib.SmartDashboard_PutNumber("Flywheel RPM", measuredRPM)
 end
 
 -- vim: ft=lua et ts=4 sts=4 sw=4

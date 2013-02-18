@@ -86,6 +86,7 @@ function disabledIdle()
         --Load Dashboard outputs
         arm.dashboardUpdate()
         dashboardUpdate()
+        shooter.dashboardUpdate()
 
         feedWatchdog()
         wpilib.Wait(AUTO_LOOP_LAG)
@@ -125,6 +126,7 @@ function teleop()
         -- Dashboard
         dashboardUpdate()
         arm.dashboardUpdate()
+        shooter.dashboardUpdate()
 
         -- Iteration cleanup
         feedWatchdog()
