@@ -20,11 +20,9 @@ local conveyer = wpilib.Victor(5)
 local roller = wpilib.Talon(6)
 local flywheelMotor = wpilib.Talon(7)
 
-local flywheelLights = wpilib.Relay(1, 7, wpilib.Relay_kForwardOnly)
-local lightTimer = wpilib.Timer()
-local lightFlashOn = true
 local feeding = false
 local firing = false
+local flywheelRPM = 0
 
 function fire(bool)
     firing = bool
@@ -46,9 +44,26 @@ function setRollerManual(speed)
     rollerSpeed = speed
 end
 
+function RPMcontrol(rpm)
+    local dangerRPM = 8000
+    local pointRPM = 6000
+    local RPMconstant = 0
+
+    if rpm < pointRPM then
+        flywheelRPM = 1
+    elseif rpm > dangerRPM then
+        flywheelRPM = RPMconstant
+    else
+        flywheelRPM = 0
+    end
+    return flywheelRPM
+end
+
+
 function update()
     if firing then
-        flywheelMotor:Set(-1)
+        --TODO Put in the actual rpm value for the flywheel (Adam should be able to tell you where it is coming from)
+        flywheelMotor:Set(RPMControl( VALUE ))
     else
         flywheelMotor:Set(0)
     end
