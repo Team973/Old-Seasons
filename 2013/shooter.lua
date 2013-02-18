@@ -22,7 +22,6 @@ local flywheelMotor = wpilib.Talon(7)
 
 local feeding = false
 local firing = false
-local flywheelRPM = 0
 
 function fire(bool)
     firing = bool
@@ -44,26 +43,23 @@ function setRollerManual(speed)
     rollerSpeed = speed
 end
 
-function RPMcontrol(rpm)
+local function RPMcontrol(rpm)
     local dangerRPM = 8000
     local pointRPM = 6000
-    local RPMconstant = 0
 
-    if rpm < pointRPM then
-        flywheelRPM = 1
-    elseif rpm > dangerRPM then
-        flywheelRPM = RPMconstant
+    if rpm > dangerRPM then
+        return 0
+    elseif rpm < pointRPM then
+        return 1
     else
-        flywheelRPM = 0
+        return 0
     end
-    return flywheelRPM
 end
-
 
 function update()
     if firing then
         --TODO Put in the actual rpm value for the flywheel (Adam should be able to tell you where it is coming from)
-        flywheelMotor:Set(RPMControl( VALUE ))
+        flywheelMotor:Set(RPMcontrol( VALUE ))
     else
         flywheelMotor:Set(0)
     end
