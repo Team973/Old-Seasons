@@ -39,6 +39,9 @@ end
 
 function read(name)
     local f = loadfile(confpath(name))
+    if f == nil then
+        return {}
+    end
     local tbl = {}
     setfenv(f, tbl)
     f()
