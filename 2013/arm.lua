@@ -47,12 +47,12 @@ local function pot2deg(volts)
     return (volts - potBottom) * gain
 end
 
-local function calibrate()
-    angleOffset = angleOffset - getArmAngle()
+function getAngle()
+    return encoder:Get() / 50 * 3 + angleOffset
 end
 
-function getArmAngle()
-    return encoder:Get() / 50 * 3 + angleOffset
+local function calibrate()
+    angleOffset = angleOffset - getAngle()
 end
 
 function setPreset(name)
@@ -63,11 +63,11 @@ function setPreset(name)
 end
 
 function update()
-    motor:Set(-armPID:update(getArmAngle()))
+    motor:Set(-armPID:update(getAngle()))
 end
 
 function dashboardUpdate()
-    wpilib.SmartDashboard_PutNumber("Arm Angle", getArmAngle())
+    wpilib.SmartDashboard_PutNumber("Arm Angle", getAngle())
     wpilib.SmartDashboard_PutNumber("Arm PID Output", armPID.output)
     wpilib.SmartDashboard_PutNumber("Potentiometer Output", absoluteEncoder:GetVoltage())
     wpilib.SmartDashboard_PutNumber("pot2deg", pot2deg(absoluteEncoder:GetVoltage()))
