@@ -6,8 +6,8 @@ local wpilib = require("wpilib")
 
 module(...)
 
-local encoder = wpilib.Encoder(1, 2, true)
-local motor = wpilib.Talon(8)
+local encoder = wpilib.Encoder(12, 13, true)
+local motor = wpilib.Talon(1)
 local absoluteEncoder = wpilib.AnalogChannel(1)
 
 local angleOffset = 0

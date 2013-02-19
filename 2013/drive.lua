@@ -76,8 +76,8 @@ function disableGyro()
 end
 
 
-local leftDriveMotor = wpilib.Talon(1)
-local rightDriveMotor = wpilib.Talon(2)
+local leftDriveMotor = wpilib.Talon(8)
+local rightDriveMotor = wpilib.Talon(7)
 
 -- Wraps an angle (in degrees) to (-180, 180].
 function normalizeAngle(theta)

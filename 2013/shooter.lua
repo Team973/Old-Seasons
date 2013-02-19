@@ -16,9 +16,9 @@ local conveyerSpeed = 0
 local rollerSpeed = 0
 local flywheelSpeed = 0
 
-local conveyer = wpilib.Victor(5)
-local roller = wpilib.Talon(6)
-local flywheelMotor = wpilib.Talon(7)
+local conveyer = wpilib.Victor(6)
+local roller = wpilib.Talon(3)
+local flywheelMotor = wpilib.Talon(2)
 local flywheelCounter = wpilib.Counter(wpilib.DigitalInput(1, 3))
 local flywheelTicksPerRevolution = 1.0
 
