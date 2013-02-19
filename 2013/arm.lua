@@ -37,6 +37,11 @@ do
     end
 end
 
+-- Arm Preset Prints
+wpilib.SmartDashboard_PutNumber("Shooting Angle", PRESETS.Shooting.armAngle)
+wpilib.SmartDashboard_PutBoolean("Save Presets", false)
+
+
 function setArmTarget(target)
     armPID.target = target
 end
@@ -71,4 +76,14 @@ function dashboardUpdate()
     wpilib.SmartDashboard_PutNumber("Arm PID Output", armPID.output)
     wpilib.SmartDashboard_PutNumber("Potentiometer Output", absoluteEncoder:GetVoltage())
     wpilib.SmartDashboard_PutNumber("pot2deg", pot2deg(absoluteEncoder:GetVoltage()))
+
+    -- Arm Preset Gets
+    PRESETS.Shooter.armAngle = wpilib.SmartDashboard_GetNumber("Shooting Angle")
+    local savePresets = wpilib.SmartDashboard_GetBoolean("Save Presets")
+
+    -- Change Arm Presets
+    if savePresets then
+        wpilib.SmartDashboard_PutBoolean("Save Presets", false)
+        config.write("ARMPRESETS", {PRESETS=PRESETS})
+    end
 end
