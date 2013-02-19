@@ -50,22 +50,22 @@ end
 
 local function RPMcontrol(rpm)
     local dangerRPM = 8000
-    local pointRPM = 6000
+    local pointRPM = 5000
 
     if rpm > dangerRPM then
         return 0
     elseif rpm < pointRPM then
         return 1
     else
-        return 0
+        return 0.8
     end
 end
 
 function update()
-    measuredRPM = 60.0 / (flywheelCounter:Get() * flywheelTicksPerRevolution)
+    measuredRPM = 60.0 / (flywheelCounter:GetPeriod() * flywheelTicksPerRevolution)
 
     if firing then
-        flywheelMotor:Set(RPMcontrol(measuredRPM))
+        flywheelMotor:Set(-RPMcontrol(measuredRPM))
     else
         flywheelMotor:Set(0)
     end
