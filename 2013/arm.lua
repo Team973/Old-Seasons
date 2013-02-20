@@ -64,7 +64,7 @@ function getAngle()
     local degreesPerRevolution = 360
     local gearRatio = 10 * 6
     local ticksPerRevolution = 360
-    return encoder:Get() / (gearRation * ticksPerRevolution) * degreesPerRevolution + angleOffset
+    return encoder:Get() / (gearRatio * ticksPerRevolution) * degreesPerRevolution + angleOffset
 end
 
 local function calibrate()

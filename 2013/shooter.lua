@@ -19,7 +19,7 @@ local flywheelSpeed = 0
 local conveyer = wpilib.Victor(6)
 local roller = wpilib.Talon(3)
 local flywheelMotor = wpilib.Talon(2)
-local flywheelCounter = wpilib.Counter(wpilib.DigitalInput(1, 3))
+local flywheelCounter = wpilib.Counter(wpilib.DigitalInput(8))
 local flywheelTicksPerRevolution = 1.0
 
 flywheelCounter:Start()
@@ -94,6 +94,7 @@ end
 function dashboardUpdate()
     wpilib.SmartDashboard_PutNumber("RPM Bang-Bang control", RPMcontrol(measuredRPM))
     wpilib.SmartDashboard_PutNumber("Flywheel RPM", measuredRPM)
+    wpilib.SmartDashboard_PutNumber("RAW BANNER", flywheelCounter:Get())
 end
 
 -- vim: ft=lua et ts=4 sts=4 sw=4

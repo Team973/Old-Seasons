@@ -145,9 +145,8 @@ end
 
 -- Inputs/Outputs
 -- Don't forget to add to declarations at the top!
-compressor = wpilib.Relay(1, 1, wpilib.Relay_kForwardOnly)
+compressor = wpilib.Relay(1, 8, wpilib.Relay_kForwardOnly)
 pressureSwitch = wpilib.DigitalInput(14)
-autoDriveSwitch = wpilib.DigitalInput(10)
 colinGyroTicksPerRevolution = 512
 colinGyro = wpilib.Encoder(11, 12)
 colinGyro:Start()
