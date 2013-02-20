@@ -9,6 +9,11 @@ local pairs = pairs
 
 module(...)
 
+local leftDriveMotor = wpilib.Talon(8)
+local rightDriveMotor = wpilib.Talon(7)
+local leftCurrent = wpilib.AnalogChannel(2)
+local rightCurrent = wpilib.AnalogChannel(3)
+
 local arcade, cheesyDrive
 
 local gyro = nil
@@ -75,10 +80,6 @@ function disableGyro()
     gyroOkay = false
 end
 
-
-local leftDriveMotor = wpilib.Talon(8)
-local rightDriveMotor = wpilib.Talon(7)
-
 -- Wraps an angle (in degrees) to (-180, 180].
 function normalizeAngle(theta)
     while theta > 180 do
@@ -98,6 +99,11 @@ function update(driveX, driveY, quickTurn)
 	local leftSpeed, rightSpeed = cheesyDrive(driveY, driveX, true, quickTurn)
 	leftDriveMotor:Set(-leftSpeed)
 	rightDriveMotor:Set(rightSpeed)
+end
+
+function dashboardUpdate()
+    wpilib.SmartDashboard_PutNumber("Left Drive Current", leftCurrent:GetVoltage())
+    wpilib.SmartDashboard_PutNumber("Right Drive Current", rightCurrent:GetVoltage())
 end
 
 --[[
