@@ -61,7 +61,10 @@ local function pot2deg(volts)
 end
 
 function getAngle()
-    return encoder:Get() / 50 * 3 + angleOffset
+    local degreesPerRevolution = 360
+    local gearRatio = 10 * 6
+    local ticksPerRevolution = 360
+    return encoder:Get() / (gearRation * ticksPerRevolution) * degreesPerRevolution + angleOffset
 end
 
 local function calibrate()
