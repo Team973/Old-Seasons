@@ -3,10 +3,12 @@
 local config = require("config")
 local pid = require("pid")
 local wpilib = require("wpilib")
+local pairs = pairs
+local ipairs = ipairs
 
 module(...)
 
-local encoder = wpilib.Encoder(12, 13, true)
+local encoder = wpilib.Encoder(12, 13, false)
 local motor = wpilib.Talon(1)
 local absoluteEncoder = wpilib.AnalogChannel(1)
 
