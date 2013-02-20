@@ -76,7 +76,7 @@ end
 
 function dashboardUpdate()
     wpilib.SmartDashboard_PutBoolean("pressure", pressureSwitch:Get())
-    wpilib.SmartDashboard_PutBoolean("Pressure Transducer", pressureTransducer:GetVoltage())
+    wpilib.SmartDashboard_PutNumber("Pressure Transducer", pressureTransducer:GetVoltage())
     wpilib.SmartDashboard_PutNumber("Colin Gyro (Degrees)", colinGyro:Get() / colinGyroTicksPerRevolution * 360.0)
 end
 
