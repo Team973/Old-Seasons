@@ -19,10 +19,12 @@ local flywheelSpeed = 0
 local conveyer = wpilib.Victor(6)
 local roller = wpilib.Talon(3)
 local flywheelMotor = wpilib.Talon(2)
-local flywheelCounter = wpilib.Counter(wpilib.DigitalInput(8))
+local flywheelCounter1 = wpilib.Counter(wpilib.DigitalInput(8))
+local flywheelCounter2 = wpilib.Counter(wpilib.DigitalInput(7))
 local flywheelTicksPerRevolution = 1.0
 
-flywheelCounter:Start()
+flywheelCounter1:Start()
+flywheelCounter2:Start()
 
 local feeding = false
 local firing = false
@@ -62,7 +64,8 @@ local function RPMcontrol(rpm)
 end
 
 function update()
-    measuredRPM = 60.0 / (flywheelCounter:GetPeriod() * flywheelTicksPerRevolution)
+    measuredRPM = 60.0 / (flywheelCounter1:GetPeriod() * flywheelTicksPerRevolution)
+    measuredRPM2 = 60.0 / (flywheelCounter2:GetPeriod() * flywheelTicksPerRevolution)
 
     if firing then
         flywheelMotor:Set(-RPMcontrol(measuredRPM))
