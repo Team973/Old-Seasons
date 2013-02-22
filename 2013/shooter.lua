@@ -70,7 +70,7 @@ function update()
     if firing then
         flywheelMotor:Set(-RPMcontrol(measuredRPM))
     else
-        flywheelMotor:Set(0)
+        flywheelMotor:Set(0.0)
     end
 
     if conveyerSpeed == 0 and rollerSpeed == 0 then
@@ -80,6 +80,7 @@ function update()
         elseif loading then
             conveyer:Set(-0.5)
             roller:Set(0.0)
+            flywheelMotor:Set(0.0)
         else
             conveyer:Set(0)
             roller:Set(0)
