@@ -52,6 +52,11 @@ wpilib.SmartDashboard_PutBoolean("Save Presets", false)
 
 function setArmTarget(target)
     armPID.target = target
+    armTarget = target
+end
+
+function getArmTarget()
+    return armTarget
 end
 
 local function pot2deg(volts)

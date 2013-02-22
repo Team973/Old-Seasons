@@ -31,6 +31,13 @@ local deployStinger
 local compressor, pressureSwitch, autoDriveSwitch, stinger
 local colinGyro, colinGyroTicksPerRevolution
 local driveX, driveY, quickTurn = 0, 0, false
+
+-- STATES
+local state = 0
+local FIRE = "fire"
+local HUMAN_LOAD = "human_load"
+local STOW = "stow"
+
 -- End Declarations
 
 function run()
@@ -198,12 +205,28 @@ controlMap =
             shooter.setRollerManual(-deadband(axis, 0.1))
         end,
         [2] = function() arm.setPreset("Arm1") end,
-        [3] = function() arm.setPreset("Shooting") end,
+        [3] = function()
+                arm.setPreset("Shooting")
+                state = FIRE
+                end,
 
         [5] = {tick=shooter.humanLoad},
         [6] = {tick=shooter.feed},
 
         [8] = {tick=shooter.fire},
+
+        ["haty"] = function(axis)
+            local increment = 1
+            if axis > 0.5 and prevOperatorDpad <= 0.5 then
+                -- Dpad up
+                shooter.setArmTarget(shooter.getArmTarget() + 1)
+            end
+            if axis < -0.5 and prevOperatorDpad >= -0.5 then
+                -- Dpad down
+                shooter.setArmTarget(shooter.getArmTarget() - 1)
+            end
+            prevOperatorDpad = axis
+        end,
     },
     -- Joystick 3
     {
