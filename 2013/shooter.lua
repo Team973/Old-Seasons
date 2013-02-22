@@ -80,6 +80,7 @@ function update()
         elseif loading then
             conveyer:Set(-0.5)
             roller:Set(0.0)
+            -- Locked out so we can't run it during human loading
             flywheelMotor:Set(0.0)
         else
             conveyer:Set(0)
