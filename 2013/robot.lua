@@ -222,12 +222,12 @@ controlMap =
         ["haty"] = function(axis)
             local increment = 1
             if axis > 0.5 and prevOperatorDpad <= 0.5 then
-                -- Dpad up
-                shooter.setArmTarget(shooter.getArmTarget() + 1)
+                -- Dpad down
+                arm.setArmTarget(arm.getArmTarget() - 1)
             end
             if axis < -0.5 and prevOperatorDpad >= -0.5 then
                 -- Dpad down
-                shooter.setArmTarget(shooter.getArmTarget() - 1)
+                arm.setArmTarget(arm.getArmTarget() + 1)
             end
             prevOperatorDpad = axis
         end,
