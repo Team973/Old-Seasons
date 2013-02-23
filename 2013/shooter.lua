@@ -22,6 +22,8 @@ local flywheelMotor = wpilib.Talon(2)
 local flywheelCounter1 = wpilib.Counter(wpilib.DigitalInput(8))
 local flywheelCounter2 = wpilib.Counter(wpilib.DigitalInput(7))
 local flywheelTicksPerRevolution = 1.0
+local hardStop = wpilib.Solenoid(4)
+local humanLoadFlap = wpilib.Solenoid(5)
 
 flywheelCounter1:Start()
 flywheelCounter2:Start()
@@ -59,7 +61,7 @@ local function RPMcontrol(rpm)
     elseif rpm < pointRPM then
         return 1
     else
-        return 0.8
+        return 0.5
     end
 end
 
@@ -69,19 +71,27 @@ function update()
 
     if firing then
         flywheelMotor:Set(-RPMcontrol(measuredRPM))
+        hardStop:Set(false)
+        humanLoadFlap:Set(true)
     else
         flywheelMotor:Set(0.0)
+        hardStop:Set(true)
+        humanLoadFlap:Set(false)
     end
 
     if conveyerSpeed == 0 and rollerSpeed == 0 then
          if feeding then
             conveyer:Set(-0.25)
             roller:Set(1)
+            hardStop:Set(false)
+            humanLoadFlap:Set(false)
         elseif loading then
             conveyer:Set(-0.5)
             roller:Set(0.0)
             -- Locked out so we can't run it during human loading
             flywheelMotor:Set(0.0)
+            hardStop:Set(true)
+            humanLoadFlap:Set(true)
         else
             conveyer:Set(0)
             roller:Set(0)
@@ -99,7 +109,7 @@ end
 function dashboardUpdate()
     wpilib.SmartDashboard_PutNumber("RPM Bang-Bang control", RPMcontrol(measuredRPM))
     wpilib.SmartDashboard_PutNumber("Flywheel RPM", measuredRPM)
-    wpilib.SmartDashboard_PutNumber("RAW BANNER", flywheelCounter:Get())
+    wpilib.SmartDashboard_PutNumber("RAW BANNER", flywheelCounter1:Get())
 end
 
 -- vim: ft=lua et ts=4 sts=4 sw=4
