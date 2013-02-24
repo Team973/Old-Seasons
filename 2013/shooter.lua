@@ -103,7 +103,7 @@ end
 local function performFire()
     local conveyerWait = 1 -- in seconds
     local conveyerStallDist = 3 -- in inches/second
-    local rpmDropThreshold = 4000
+    local rpmDropThreshold = 4500
 
     local t = wpilib.Timer()
     t:Start()
