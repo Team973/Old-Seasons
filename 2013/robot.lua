@@ -29,7 +29,6 @@ local disabledIdle, autonomous, teleop, updateCompressor
 local controlMap
 local deployStinger
 local compressor, pressureSwitch, pressureTransducer, autoDriveSwitch, stinger
-local colinGyro, colinGyroTicksPerRevolution
 local driveX, driveY, quickTurn = 0, 0, false
 
 -- STATES
@@ -85,7 +84,6 @@ end
 function dashboardUpdate()
     wpilib.SmartDashboard_PutBoolean("pressure", pressureSwitch:Get())
     wpilib.SmartDashboard_PutNumber("Pressure Transducer", pressureTransducer:GetVoltage())
-    wpilib.SmartDashboard_PutNumber("Colin Gyro (Degrees)", colinGyro:Get() / colinGyroTicksPerRevolution * 360.0)
 end
 
 function disabledIdle()
@@ -159,9 +157,6 @@ end
 compressor = wpilib.Relay(1, 8, wpilib.Relay_kForwardOnly)
 pressureSwitch = wpilib.DigitalInput(14)
 pressureTransducer = wpilib.AnalogChannel(4)
-colinGyroTicksPerRevolution = 512
-colinGyro = wpilib.Encoder(11, 12)
-colinGyro:Start()
 -- End Inputs/Outputs
 
 -- Controls
