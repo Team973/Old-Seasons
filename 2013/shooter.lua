@@ -27,7 +27,6 @@ local hardStop = wpilib.Solenoid(4)
 local humanLoadFlap = wpilib.Solenoid(5)
 local flapActivated = false
 local hardStopActivated = true
-local conveyerDistance = math.pi * 1.5
 
 flywheelCounter1:Start()
 flywheelCounter2:Start()
@@ -78,11 +77,16 @@ function setHardStopActive(bool)
     hardStopActivated = bool
 end
 
+function getConveyerDistance()
+    local diameter = 1.5
+    local encoderTicks = 360
+    local distancePerRevolution = math.pi * diameter
+    return (conveyerEncoder:Get() / encoderTicks) * distancePerRevolution
+end
+
 function update()
     measuredRPM1 = 60.0 / (flywheelCounter1:GetPeriod() * flywheelTicksPerRevolution)
     measuredRPM2 = 60.0 / (flywheelCounter2:GetPeriod() * flywheelTicksPerRevolution)
-
-    conveyerSpeed = conveyerEncoder:Get() / conveyerDistance
 
     humanLoadFlap:Set(flapActivated)
     hardStop:Set(hardStopActivated)
