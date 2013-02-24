@@ -25,14 +25,14 @@ local flywheelTicksPerRevolution = 1.0
 local hardStop = wpilib.Solenoid(4)
 local humanLoadFlap = wpilib.Solenoid(5)
 local flapActivated = false
-local hardStopActivate = true
+local hardStopActivated = true
 
 flywheelCounter1:Start()
 flywheelCounter2:Start()
 
 local feeding = false
 local firing = false
-local measuredRPM = 0
+local measuredRPM1, measuredRPM2 = 0, 0
 
 function fire(bool)
     firing = bool
@@ -67,24 +67,23 @@ local function RPMcontrol(rpm)
     end
 end
 
-function activateFlap(bool)
+function setFlapActive(bool)
     flapActivated = bool
 end
 
-function activateHardStop(bool)
-    hardStopActivate = bool
+function setHardStopActive(bool)
+    hardStopActivated = bool
 end
 
 function update()
-    measuredRPM = 60.0 / (flywheelCounter1:GetPeriod() * flywheelTicksPerRevolution)
+    measuredRPM1 = 60.0 / (flywheelCounter1:GetPeriod() * flywheelTicksPerRevolution)
     measuredRPM2 = 60.0 / (flywheelCounter2:GetPeriod() * flywheelTicksPerRevolution)
 
     humanLoadFlap:Set(flapActivated)
-
-    hardStop:Set(hardStopActivate)
+    hardStop:Set(hardStopActivated)
 
     if firing then
-        flywheelMotor:Set(-RPMcontrol(measuredRPM))
+        flywheelMotor:Set(-RPMcontrol(measuredRPM1))
     else
         flywheelMotor:Set(0.0)
     end
@@ -112,8 +111,8 @@ function fullStop()
 end
 
 function dashboardUpdate()
-    wpilib.SmartDashboard_PutNumber("RPM Bang-Bang control", RPMcontrol(measuredRPM))
-    wpilib.SmartDashboard_PutNumber("Flywheel RPM", measuredRPM)
+    wpilib.SmartDashboard_PutNumber("RPM Bang-Bang control", RPMcontrol(measuredRPM1))
+    wpilib.SmartDashboard_PutNumber("Flywheel RPM", measuredRPM1)
     wpilib.SmartDashboard_PutNumber("RAW BANNER", flywheelCounter1:Get())
 end
 
