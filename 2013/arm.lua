@@ -21,8 +21,9 @@ armPID:start()
 encoder:Start()
 
 PRESETS = {
-    Arm1 = { armAngle = 10 }, 
-    Shooting = { armAngle = 37.1 }, 
+    Shooting = { armAngle = 36.0 },
+    Loading = { armAngle = 83.9 },
+    Stow = { armAngle = 5 },
 }
 
 -- read config file
