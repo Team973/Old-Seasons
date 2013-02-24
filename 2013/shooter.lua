@@ -22,11 +22,12 @@ local flywheelMotor = wpilib.Talon(2)
 local flywheelCounter1 = wpilib.Counter(wpilib.DigitalInput(8))
 local flywheelCounter2 = wpilib.Counter(wpilib.DigitalInput(7))
 local flywheelTicksPerRevolution = 1.0
-local conveyerEncoder = wpilib.Encoder(10, 11 false)
+local conveyerEncoder = wpilib.Encoder(10, 11)
 local hardStop = wpilib.Solenoid(4)
 local humanLoadFlap = wpilib.Solenoid(5)
 local flapActivated = false
 local hardStopActivated = true
+local conveyerDistance = math.pi * 1.5
 
 flywheelCounter1:Start()
 flywheelCounter2:Start()
@@ -80,6 +81,8 @@ end
 function update()
     measuredRPM1 = 60.0 / (flywheelCounter1:GetPeriod() * flywheelTicksPerRevolution)
     measuredRPM2 = 60.0 / (flywheelCounter2:GetPeriod() * flywheelTicksPerRevolution)
+
+    conveyerSpeed = conveyerEncoder:Get() / conveyerDistance
 
     humanLoadFlap:Set(flapActivated)
     hardStop:Set(hardStopActivated)
