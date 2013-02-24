@@ -101,8 +101,8 @@ local function getConveyerDistance()
 end
 
 local function performFire()
-    local conveyerWait = 1 -- in seconds
-    local conveyerStallDist = 3 -- in inches/second
+    local conveyerWait = 0.5 -- in seconds
+    local conveyerStallSpeed = 6 -- in inches/second
     local rpmDropThreshold = 4500
 
     local t = wpilib.Timer()
@@ -120,7 +120,7 @@ local function performFire()
         coroutine.yield()
         now = t:Get()
         conveyerDist = conveyerEncoder:Get()
-    until now >= conveyerWait and (conveyerDist - lastConveyer) / (now - lastTime) < conveyerStallDist
+    until now >= conveyerWait and (conveyerDist - lastConveyer) / (now - lastTime) < conveyerStallSpeed
 
     while getFlywheelSpeed() >= rpmDropThreshold do
         conveyer:Set(0)
