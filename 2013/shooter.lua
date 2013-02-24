@@ -3,6 +3,7 @@
 local ipairs = ipairs
 
 local bit = require("bit")
+local coroutine = require("coroutine")
 local intake = require("intake")
 local pid = require("pid")
 local linearize = require("linearize")
@@ -28,15 +29,21 @@ local humanLoadFlap = wpilib.Solenoid(5)
 local flapActivated = false
 local hardStopActivated = true
 
+local rollerFeedSpeed = 1
+local rollerLoadSpeed = 0.2
+local conveyerLoadSpeed = 1.0
+
+local fireCoroutine = nil
+
 flywheelCounter1:Start()
 flywheelCounter2:Start()
 conveyerEncoder:Start()
 
 local feeding = false
-local firing = false
+local flywheelRunning = false
 
-function fire(bool)
-    firing = bool
+function setFlywheelRunning(bool)
+    flywheelRunning = bool
 end
 
 function feed(bool)
@@ -85,29 +92,75 @@ function setHardStopActive(bool)
     hardStopActivated = bool
 end
 
-function getConveyerDistance()
+local function getConveyerDistance()
     local diameter = 1.5
     local encoderTicks = 360
     local distancePerRevolution = math.pi * diameter
     return (conveyerEncoder:Get() / encoderTicks) * distancePerRevolution
 end
 
+local function performFire()
+    local conveyerWait = 1 -- in seconds
+    local conveyerStallDist = 3 -- in inches/second
+    local rpmDropThreshold = 4000
+
+    local t = wpilib.Timer()
+    t:Start()
+    local now = t:Get()
+    local conveyerDist = getConveyerDistance()
+    local lastTime = now
+    local lastConveyer = conveyerDist
+    repeat
+        conveyer:Set(conveyerLoadSpeed)
+        roller:Set(0)
+
+        lastTime = now
+        lastConveyer = getConveyerDistance()
+        coroutine.yield()
+        now = t:Get()
+        conveyerDist = conveyerEncoder:Get()
+    until now >= conveyerWait and (conveyerDist - lastConveyer) / (now - lastTime) < conveyerStallDist
+
+    while getFlywheelSpeed() >= rpmDropThreshold do
+        conveyer:Set(0)
+        roller:Set(rollerFeedSpeed)
+        coroutine.yield()
+    end
+end
+
+function fire(firing)
+    if firing == nil then
+        firing = true
+    end
+
+    if firing and fireCoroutine == nil then
+        fireCoroutine = coroutine.create(performFire)
+    elseif not firing then
+        fireCoroutine = nil
+    end
+end
+
 function update()
     humanLoadFlap:Set(flapActivated)
     hardStop:Set(hardStopActivated)
 
-    if firing then
+    if flywheelRunning then
         flywheelMotor:Set(-RPMcontrol(getFlywheelSpeed()))
     else
         flywheelMotor:Set(0.0)
     end
 
-    if conveyerSpeed == 0 and rollerSpeed == 0 then
-         if feeding then
-            roller:Set(1)
+    if fireCoroutine then
+        coroutine.resume(fireCoroutine)
+        if coroutine.status(fireCoroutine) == "dead" then
+            fireCoroutine = nil
+        end
+    elseif conveyerSpeed == 0 and rollerSpeed == 0 then
+        if feeding then
+            roller:Set(rollerFeedSpeed)
         elseif loading then
-            conveyer:Set(-1.0)
-            roller:Set(0.2)
+            conveyer:Set(-conveyerLoadSpeed)
+            roller:Set(rollerLoadSpeed)
             -- Locked out so we can't run it during human loading
             flywheelMotor:Set(0.0)
         else
