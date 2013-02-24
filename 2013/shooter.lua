@@ -29,6 +29,7 @@ local hardStop = wpilib.Solenoid(4)
 local humanLoadFlap = wpilib.Solenoid(5)
 local flapActivated = false
 local hardStopActivated = true
+local targetFlywheelRPM = 6000
 
 local rollerFeedSpeed = 1
 local rollerLoadSpeed = 0.2
@@ -65,11 +66,10 @@ end
 
 local function RPMcontrol(rpm)
     local dangerRPM = 8000
-    local pointRPM = 6000
 
     if rpm > dangerRPM then
         return 0
-    elseif rpm < pointRPM then
+    elseif rpm < targetFlywheelRPM then
         return 1
     else
         return 0.6
@@ -105,27 +105,32 @@ local function performFire()
     local conveyerStallSpeed = 6 -- in inches/second
     local rpmDropThreshold = 4500
 
-    local t = wpilib.Timer()
-    t:Start()
-    local now = t:Get()
-    local conveyerDist = getConveyerDistance()
-    local lastTime = now
-    local lastConveyer = conveyerDist
-    repeat
-        conveyer:Set(conveyerLoadSpeed)
-        roller:Set(0)
+    while true do
+        local t = wpilib.Timer()
+        t:Start()
+        local now = t:Get()
+        local conveyerDist = getConveyerDistance()
+        local lastTime = now
+        local lastConveyer = conveyerDist
+        repeat
+            conveyer:Set(conveyerLoadSpeed)
+            roller:Set(0)
 
-        lastTime = now
-        lastConveyer = getConveyerDistance()
-        coroutine.yield()
-        now = t:Get()
-        conveyerDist = conveyerEncoder:Get()
-    until now >= conveyerWait and (conveyerDist - lastConveyer) / (now - lastTime) < conveyerStallSpeed
+            lastTime = now
+            lastConveyer = getConveyerDistance()
+            coroutine.yield()
+            now = t:Get()
+            conveyerDist = conveyerEncoder:Get()
+        until now >= conveyerWait and (conveyerDist - lastConveyer) / (now - lastTime) < conveyerStallSpeed
+        while getFlywheelSpeed() < targetFlywheelRPM do
+            coroutine.yield()
+        end
 
-    while getFlywheelSpeed() >= rpmDropThreshold do
-        conveyer:Set(0)
-        roller:Set(rollerFeedSpeed)
-        coroutine.yield()
+        while getFlywheelSpeed() >= rpmDropThreshold do
+            conveyer:Set(0)
+            roller:Set(rollerFeedSpeed)
+            coroutine.yield()
+        end
     end
 end
 
