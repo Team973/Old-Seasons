@@ -33,7 +33,7 @@ local colinGyro, colinGyroTicksPerRevolution
 local driveX, driveY, quickTurn = 0, 0, false
 
 -- STATES
-local state = 0
+local state = nil
 local FIRE = "fire"
 local HUMAN_LOAD = "human_load"
 local STOW = "stow"
@@ -184,12 +184,11 @@ local function deadband(axis, threshold)
     end
 end
 
-local prevOperatorDpad = 0.0
+local prevCoDriverDpad = 0.0
 
 controlMap =
 {
     -- Joystick 1 (Driver)
-    -- TODO Add controls back in (some should still be there but you will have to check)
     {
         ["y"] = function(axis) 
             driveY = -deadband(axis, 0.1)
@@ -211,62 +210,62 @@ controlMap =
         end,
 
         [4] = function()
-                arm.setPreset("Shooting")
-                shooter.activateFlap(false)
-                shooter.activateHardStop(false)
-                state = FIRE
-                end,
+            arm.setPreset("Shooting")
+            shooter.setFlapActive(false)
+            shooter.setHardStopActive(false)
+            state = FIRE
+        end,
 
         [2] = function()
-                arm.setPreset("Stow")
-                shooter.activateFlap(false)
-                shooter.fire(false)
-                state = STOW
-                end,
+            arm.setPreset("Stow")
+            shooter.setFlapActive(false)
+            shooter.fire(false)
+            state = STOW
+        end,
 
         [7] = function()
-                arm.setPreset("Loading")
-                shooter.fire(false)
-                shooter.activateFlap(true)
-                shooter.activateHardStop(true)
-                state = HUMAN_LOAD
-                end,
+            arm.setPreset("Loading")
+            shooter.fire(false)
+            shooter.setFlapActive(true)
+            shooter.setHardStopActive(true)
+            state = HUMAN_LOAD
+        end,
 
         [5] = {tick=shooter.humanLoad},
 
         [6] = {tick=shooter.feed},
 
         [8] = function()
-                if state == FIRE then
-                    shooter.fire(true)
-                else
-                    shooter.fire(false)
-                end
-            end,
+            if state == FIRE then
+                shooter.fire(true)
+            else
+                shooter.fire(false)
+            end
+        end,
 
         [9] = function()
-                if state == FIRE then
-                    shooter.fire(false)
-                end
-            end,
+            if state == FIRE then
+                shooter.fire(false)
+            end
+        end,
 
         [10] = function()
-                if state == HUMAN_LOAD then
-                    shooter.activateFlap(false)
-                end
-                end,
+            if state == HUMAN_LOAD then
+                shooter.setFlapActive(false)
+            end
+        end,
 
         ["haty"] = function(axis)
             local increment = 1
-            if axis > 0.5 and prevOperatorDpad <= 0.5 then
+            if axis > 0.5 and prevCoDriverDpad <= 0.5 then
                 -- Dpad down
                 arm.setArmTarget(arm.getArmTarget() - 0.5)
             end
-            if axis < -0.5 and prevOperatorDpad >= -0.5 then
+            if axis < -0.5 and prevCoDriverDpad >= -0.5 then
                 -- Dpad down
                 arm.setArmTarget(arm.getArmTarget() + 0.5)
             end
-            prevOperatorDpad = axis
+            prevCoDriverDpad = axis
         end,
     },
     -- Joystick 3
