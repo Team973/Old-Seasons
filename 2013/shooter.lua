@@ -5,8 +5,9 @@ local ipairs = ipairs
 local bit = require("bit")
 local coroutine = require("coroutine")
 local intake = require("intake")
-local pid = require("pid")
 local linearize = require("linearize")
+local pid = require("pid")
+local reversemotor = require("reversemotor")
 local math = require("math")
 local string = require("string")
 local wpilib = require("wpilib")
@@ -17,7 +18,7 @@ local conveyerSpeed = 0
 local rollerSpeed = 0
 local flywheelSpeed = 0
 
-local conveyer = wpilib.Victor(6)
+local conveyer = reversemotor.wrap(wpilib.Victor(6))
 local roller = wpilib.Talon(3)
 local flywheelMotor = wpilib.Talon(2)
 local flywheelCounter1 = wpilib.Counter(wpilib.DigitalInput(8))
@@ -159,7 +160,7 @@ function update()
         if feeding then
             roller:Set(rollerFeedSpeed)
         elseif loading then
-            conveyer:Set(-conveyerLoadSpeed)
+            conveyer:Set(conveyerLoadSpeed)
             roller:Set(rollerLoadSpeed)
             -- Locked out so we can't run it during human loading
             flywheelMotor:Set(0.0)
@@ -168,7 +169,7 @@ function update()
             roller:Set(0)
         end
     else
-        conveyer:Set(-conveyerSpeed)
+        conveyer:Set(conveyerSpeed)
         roller:Set(rollerSpeed)
     end
 end
