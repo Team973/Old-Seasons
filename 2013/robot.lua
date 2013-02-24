@@ -37,6 +37,7 @@ local state = 0
 local FIRE = "fire"
 local HUMAN_LOAD = "human_load"
 local STOW = "stow"
+local FEED = "feed"
 
 -- End Declarations
 
@@ -208,26 +209,62 @@ controlMap =
         ["ry"] = function(axis)
             shooter.setRollerManual(-deadband(axis, 0.1))
         end,
-        [2] = function() arm.setPreset("Arm1") end,
-        [3] = function()
+
+        [4] = function()
                 arm.setPreset("Shooting")
+                shooter.activateFlap(false)
+                shooter.activateHardStop(false)
                 state = FIRE
                 end,
 
+        [2] = function()
+                arm.setPreset("Stow")
+                shooter.activateFlap(false)
+                shooter.fire(false)
+                state = STOW
+                end,
+
+        [7] = function()
+                arm.setPreset("Loading")
+                shooter.fire(false)
+                shooter.activateFlap(true)
+                shooter.activateHardStop(true)
+                state = HUMAN_LOAD
+                end,
+
         [5] = {tick=shooter.humanLoad},
+
         [6] = {tick=shooter.feed},
 
-        [8] = {tick=shooter.fire},
+        [8] = function()
+                if state == FIRE then
+                    shooter.fire(true)
+                else
+                    shooter.fire(false)
+                end
+            end,
+
+        [9] = function()
+                if state == FIRE then
+                    shooter.fire(false)
+                end
+            end,
+
+        [10] = function()
+                if state == HUMAN_LOAD then
+                    shooter.activateFlap(false)
+                end
+                end,
 
         ["haty"] = function(axis)
             local increment = 1
             if axis > 0.5 and prevOperatorDpad <= 0.5 then
                 -- Dpad down
-                arm.setArmTarget(arm.getArmTarget() - 1)
+                arm.setArmTarget(arm.getArmTarget() - 0.5)
             end
             if axis < -0.5 and prevOperatorDpad >= -0.5 then
                 -- Dpad down
-                arm.setArmTarget(arm.getArmTarget() + 1)
+                arm.setArmTarget(arm.getArmTarget() + 0.5)
             end
             prevOperatorDpad = axis
         end,

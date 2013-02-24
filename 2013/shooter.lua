@@ -24,6 +24,8 @@ local flywheelCounter2 = wpilib.Counter(wpilib.DigitalInput(7))
 local flywheelTicksPerRevolution = 1.0
 local hardStop = wpilib.Solenoid(4)
 local humanLoadFlap = wpilib.Solenoid(5)
+local flapActivated = false
+local hardStopActivate = true
 
 flywheelCounter1:Start()
 flywheelCounter2:Start()
@@ -54,44 +56,47 @@ end
 
 local function RPMcontrol(rpm)
     local dangerRPM = 8000
-    local pointRPM = 5000
+    local pointRPM = 6000
 
     if rpm > dangerRPM then
         return 0
     elseif rpm < pointRPM then
         return 1
     else
-        return 0.5
+        return 0.6
     end
+end
+
+function activateFlap(bool)
+    flapActivated = bool
+end
+
+function activateHardStop(bool)
+    hardStopActivate = bool
 end
 
 function update()
     measuredRPM = 60.0 / (flywheelCounter1:GetPeriod() * flywheelTicksPerRevolution)
     measuredRPM2 = 60.0 / (flywheelCounter2:GetPeriod() * flywheelTicksPerRevolution)
 
+    humanLoadFlap:Set(flapActivated)
+
+    hardStop:Set(hardStopActivate)
+
     if firing then
         flywheelMotor:Set(-RPMcontrol(measuredRPM))
-        hardStop:Set(false)
-        humanLoadFlap:Set(true)
     else
         flywheelMotor:Set(0.0)
-        hardStop:Set(true)
-        humanLoadFlap:Set(false)
     end
 
     if conveyerSpeed == 0 and rollerSpeed == 0 then
          if feeding then
-            conveyer:Set(-0.25)
             roller:Set(1)
-            hardStop:Set(false)
-            humanLoadFlap:Set(false)
         elseif loading then
-            conveyer:Set(-0.5)
-            roller:Set(0.0)
+            conveyer:Set(-1.0)
+            roller:Set(0.2)
             -- Locked out so we can't run it during human loading
             flywheelMotor:Set(0.0)
-            hardStop:Set(true)
-            humanLoadFlap:Set(true)
         else
             conveyer:Set(0)
             roller:Set(0)
