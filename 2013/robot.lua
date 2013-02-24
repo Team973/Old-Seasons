@@ -36,7 +36,6 @@ local state = nil
 local FIRE = "fire"
 local HUMAN_LOAD = "human_load"
 local STOW = "stow"
-local FEED = "feed"
 
 -- End Declarations
 
@@ -214,13 +213,13 @@ controlMap =
         [2] = function()
             arm.setPreset("Stow")
             shooter.setFlapActive(false)
-            shooter.fire(false)
+            shooter.setFlywheelRunning(false)
             state = STOW
         end,
 
         [7] = function()
             arm.setPreset("Loading")
-            shooter.fire(false)
+            shooter.setFlywheelRunning(false)
             shooter.setFlapActive(true)
             shooter.setHardStopActive(true)
             state = HUMAN_LOAD
@@ -228,19 +227,19 @@ controlMap =
 
         [5] = {tick=shooter.humanLoad},
 
-        [6] = {tick=shooter.feed},
+        [6] = {tick=shooter.fire},
 
         [8] = function()
             if state == FIRE then
-                shooter.fire(true)
+                shooter.setFlywheelRunning(true)
             else
-                shooter.fire(false)
+                shooter.setFlywheelRunning(false)
             end
         end,
 
         [9] = function()
             if state == FIRE then
-                shooter.fire(false)
+                shooter.setFlywheelRunning(false)
             end
         end,
 
