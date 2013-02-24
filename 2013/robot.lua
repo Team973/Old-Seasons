@@ -227,7 +227,7 @@ controlMap =
 
         [5] = {tick=shooter.humanLoad},
 
-        [6] = {tick=shooter.fire},
+        [6] = {down=shooter.fire, up=function() shooter.fire(false) end},
 
         [8] = function()
             if state == FIRE then
