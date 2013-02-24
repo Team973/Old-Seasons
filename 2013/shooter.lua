@@ -35,7 +35,6 @@ conveyerEncoder:Start()
 
 local feeding = false
 local firing = false
-local measuredRPM1, measuredRPM2 = 0, 0
 
 function fire(bool)
     firing = bool
@@ -70,6 +69,15 @@ local function RPMcontrol(rpm)
     end
 end
 
+-- Return RPM of a flywheel counter.
+local function computeFlywheelSpeed(counter)
+    return 60.0 / (counter:GetPeriod() * flywheelTicksPerRevolution)
+end
+
+local function getFlywheelSpeed()
+    return computeFlywheelSpeed(flywheelCounter1)
+end
+
 function setFlapActive(bool)
     flapActivated = bool
 end
@@ -79,16 +87,13 @@ function setHardStopActive(bool)
 end
 
 function update()
-    measuredRPM1 = 60.0 / (flywheelCounter1:GetPeriod() * flywheelTicksPerRevolution)
-    measuredRPM2 = 60.0 / (flywheelCounter2:GetPeriod() * flywheelTicksPerRevolution)
-
     conveyerSpeed = conveyerEncoder:Get() / conveyerDistance
 
     humanLoadFlap:Set(flapActivated)
     hardStop:Set(hardStopActivated)
 
     if firing then
-        flywheelMotor:Set(-RPMcontrol(measuredRPM1))
+        flywheelMotor:Set(-RPMcontrol(getFlywheelSpeed()))
     else
         flywheelMotor:Set(0.0)
     end
@@ -116,8 +121,9 @@ function fullStop()
 end
 
 function dashboardUpdate()
-    wpilib.SmartDashboard_PutNumber("RPM Bang-Bang control", RPMcontrol(measuredRPM1))
-    wpilib.SmartDashboard_PutNumber("Flywheel RPM", measuredRPM1)
+    local flywheelSpeed = getFlywheelSpeed()
+    wpilib.SmartDashboard_PutNumber("RPM Bang-Bang control", RPMcontrol(flywheelSpeed))
+    wpilib.SmartDashboard_PutNumber("Flywheel RPM", flywheelSpeed)
     wpilib.SmartDashboard_PutNumber("RAW BANNER", flywheelCounter1:Get())
 end
 
