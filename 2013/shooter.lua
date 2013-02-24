@@ -22,6 +22,7 @@ local flywheelMotor = wpilib.Talon(2)
 local flywheelCounter1 = wpilib.Counter(wpilib.DigitalInput(8))
 local flywheelCounter2 = wpilib.Counter(wpilib.DigitalInput(7))
 local flywheelTicksPerRevolution = 1.0
+local conveyerEncoder = wpilib.Encoder(10, 11 false)
 local hardStop = wpilib.Solenoid(4)
 local humanLoadFlap = wpilib.Solenoid(5)
 local flapActivated = false
@@ -29,6 +30,7 @@ local hardStopActivated = true
 
 flywheelCounter1:Start()
 flywheelCounter2:Start()
+conveyerEncoder:Start()
 
 local feeding = false
 local firing = false
