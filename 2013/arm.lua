@@ -8,17 +8,21 @@ local ipairs = ipairs
 
 module(...)
 
-local encoder = wpilib.Encoder(12, 13, false)
+local encoder = wpilib.Encoder(11, 10, false)
 local motor = wpilib.Talon(1)
 local absoluteEncoder = wpilib.AnalogChannel(1)
+local calibrationPulse = wpilib.Counter(9)
 
 local angleOffset = 0
+local prevAngle = 0
+local prevCalibPulse = 0
 
 local armPID = pid.new(0.05, 0, 0)
 armPID.min, armPID.max = -1.0, 1.0
 armPID:start()
 
 encoder:Start()
+calibrationPulse:Start()
 
 PRESETS = {
     Shooting = { armAngle = 36.0 },
@@ -67,10 +71,14 @@ local function pot2deg(volts)
 end
 
 function getAngle()
+    return getRawAngle() + angleOffset
+end
+
+function getRawAngle()
     local degreesPerRevolution = 360
-    local gearRatio = 10 * 6
-    local ticksPerRevolution = 360
-    return encoder:Get() / (gearRatio * ticksPerRevolution) * degreesPerRevolution + angleOffset
+    local gearRatio = 1
+    local ticksPerRevolution = 2500
+    return encoder:Get() / (gearRatio * ticksPerRevolution) * degreesPerRevolution
 end
 
 local function calibrate()
@@ -85,6 +93,14 @@ function setPreset(name)
 end
 
 function update()
+    local newAngle = getRawAngle()
+    local newCalibPulse = calibrationPulse:Get()
+    if newCalibPulse > prevCalibPulse then
+        angleOffset = -getRawAngle() + (prevAngle + newAngle) / 2
+    end
+    prevCalibPulse = newCalibPulse
+    prevAngle = newAngle
+
     motor:Set(-armPID:update(getAngle()))
 end
 
