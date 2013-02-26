@@ -51,13 +51,12 @@ end
 
 wpilib.SmartDashboard_PutBoolean("Save Presets", false)
 
-function setArmTarget(target)
-    armPID.target = target
-    armTarget = target
+function getTarget()
+    return armPID.target
 end
 
-function getArmTarget()
-    return armTarget
+function setTarget(target)
+    armPID.target = target
 end
 
 local function pot2deg(volts)
@@ -80,7 +79,7 @@ end
 function setPreset(name)
     local p = PRESETS[name]
     if p then
-        setArmTarget(p.armAngle)
+        setTarget(p.armAngle)
     end
 end
 

@@ -253,11 +253,11 @@ controlMap =
             local increment = 1
             if axis > 0.5 and prevCoDriverDpad <= 0.5 then
                 -- Dpad down
-                arm.setArmTarget(arm.getArmTarget() - 0.5)
+                arm.setTarget(arm.getTarget() - 0.5)
             end
             if axis < -0.5 and prevCoDriverDpad >= -0.5 then
                 -- Dpad down
-                arm.setArmTarget(arm.getArmTarget() + 0.5)
+                arm.setTarget(arm.getTarget() + 0.5)
             end
             prevCoDriverDpad = axis
         end,
