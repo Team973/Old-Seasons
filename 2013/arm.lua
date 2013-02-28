@@ -14,8 +14,10 @@ local absoluteEncoder = wpilib.AnalogChannel(1)
 local calibrationPulse = wpilib.Counter(9)
 
 local angleOffset = 0
-local prevAngle = 0
+local prevRawAngle = 0
 local prevCalibPulse = 0
+
+local calibrationAngle = 0.0
 
 local armPID = pid.new(0.05, 0, 0)
 armPID.min, armPID.max = -1.0, 1.0
@@ -69,10 +71,6 @@ local function pot2deg(volts)
     return (volts - potBottom) * gain
 end
 
-function getAngle()
-    return getRawAngle() + angleOffset
-end
-
 function getRawAngle()
     local degreesPerRevolution = 360
     local gearRatio = 1
@@ -80,8 +78,8 @@ function getRawAngle()
     return encoder:Get() / (gearRatio * ticksPerRevolution) * degreesPerRevolution
 end
 
-local function calibrate()
-    angleOffset = angleOffset - getAngle()
+function getAngle()
+    return getRawAngle() + angleOffset
 end
 
 function setPreset(name)
@@ -92,15 +90,17 @@ function setPreset(name)
 end
 
 function update()
-    local newAngle = getRawAngle()
+    local newRawAngle = getRawAngle()
     local newCalibPulse = calibrationPulse:Get()
     if newCalibPulse > prevCalibPulse then
-        angleOffset = -getRawAngle() + (prevAngle + newAngle) / 2
+        -- Calibration pulse encountered
+        angleOffset = calibrationAngle - (prevRawAngle+newRawAngle)/2
     end
-    prevCalibPulse = newCalibPulse
-    prevAngle = newAngle
 
-    motor:Set(-armPID:update(getAngle()))
+    motor:Set(-armPID:update(newRawAngle + angleOffset))
+
+    prevCalibPulse = newCalibPulse
+    prevRawAngle = newRawAngle
 end
 
 function dashboardUpdate()
