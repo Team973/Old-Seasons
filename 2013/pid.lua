@@ -4,6 +4,8 @@ pid.lua - PID loops!
 Useful indexes of a PID table:
     p, i, and d: The constants of the loop
     min and max: Limit the output (nil represents no limit)
+    icap: Limit the contribution of K_i * (integral of error)
+          (must be positive, nil represents no limit)
     target: The desired value of the dependent variable
     errFunc: Function used to calculate the error. Takes two arguments: actual
              and target. Defaults to the difference of target from actual.
@@ -111,12 +113,20 @@ function PID:update(actual, time)
 
     -- Calculate integral
     self.integral = self.integral + e * time
+    local iterm = self.i * self.integral
+    if self.icap then
+        if iterm > self.icap then
+            iterm = self.icap
+        elseif iterm < -self.icap then
+            iterm = -self.icap
+        end
+    end
 
     -- Calculate derivative
     local derivative = self.derivFunc(e, self.previousError, time)
 
     -- Compute output
-    self.output = (self.p * e) + (self.i * self.integral) + (self.d * derivative)
+    self.output = (self.p * e) + iterm + (self.d * derivative)
     self.previousError = e
 
     if self.max and self.output > self.max then

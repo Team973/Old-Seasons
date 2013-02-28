@@ -250,14 +250,14 @@ controlMap =
         end,
 
         ["haty"] = function(axis)
-            local increment = 1
+            local increment = 0.5
             if axis > 0.5 and prevCoDriverDpad <= 0.5 then
                 -- Dpad down
-                arm.setArmTarget(arm.getArmTarget() - 0.5)
+                arm.setTarget(arm.getTarget() - increment)
             end
             if axis < -0.5 and prevCoDriverDpad >= -0.5 then
                 -- Dpad down
-                arm.setArmTarget(arm.getArmTarget() + 0.5)
+                arm.setTarget(arm.getTarget() + increment)
             end
             prevCoDriverDpad = axis
         end,
