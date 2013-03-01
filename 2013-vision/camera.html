@@ -24,11 +24,11 @@
         -webkit-transform: translate(-20px, 0px);
     } 
 </style>
-<img id="feed" src="http://10.9.73.20/mjpg/video.mjpg" width="160" height="120">
-<canvas id="overlay" width="160" height="120"></canvas>
+<img id="feed" src="http://10.9.73.20/mjpg/video.mjpg" width="320" height="240">
+<canvas id="overlay" width="320" height="240"></canvas>
 <script type="text/javascript">
-    var w = 160;
-    var h = 120;
+    var w = 320;
+    var h = 240;
     var horizLineY = h * 0.5;
     var context = document.getElementById("overlay").getContext("2d");
     context.lineWidth = 2;
