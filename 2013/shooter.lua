@@ -120,7 +120,7 @@ local function performFire()
             lastConveyer = getConveyerDistance()
             coroutine.yield()
             now = t:Get()
-            conveyerDist = conveyerEncoder:Get()
+            conveyerDist = getConveyerDistance()
         until now >= conveyerWait and (conveyerDist - lastConveyer) / (now - lastTime) < conveyerStallSpeed
         while getFlywheelSpeed() < targetFlywheelRPM do
             coroutine.yield()
@@ -188,6 +188,7 @@ function dashboardUpdate()
     wpilib.SmartDashboard_PutNumber("RPM Bang-Bang control", RPMcontrol(flywheelSpeed))
     wpilib.SmartDashboard_PutNumber("Flywheel RPM", flywheelSpeed)
     wpilib.SmartDashboard_PutNumber("RAW BANNER", flywheelCounter1:Get())
+    wpilib.SmartDashboard_PutNumber("Conveyer Distance", getConveyerDistance())
 end
 
 -- vim: ft=lua et ts=4 sts=4 sw=4
