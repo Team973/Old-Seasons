@@ -73,8 +73,8 @@ end
 
 function getRawAngle()
     local degreesPerRevolution = 360
-    local gearRatio = 1
-    local ticksPerRevolution = 2500
+    local gearRatio = 10 * 6
+    local ticksPerRevolution = 360
     return encoder:Get() / (gearRatio * ticksPerRevolution) * degreesPerRevolution
 end
 
@@ -92,10 +92,14 @@ end
 function update()
     local newRawAngle = getRawAngle()
     local newCalibPulse = calibrationPulse:Get()
+    --[[
+    TODO(ross)
+
     if newCalibPulse > prevCalibPulse then
         -- Calibration pulse encountered
         angleOffset = calibrationAngle - (prevRawAngle+newRawAngle)/2
     end
+    --]]
 
     motor:Set(-armPID:update(newRawAngle + angleOffset))
 
