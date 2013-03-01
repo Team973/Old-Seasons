@@ -17,11 +17,15 @@ local angleOffset = 0
 local prevRawAngle = 0
 local prevCalibPulse = 0
 
+local calibrationTimeOut = wpilib.Timer()
+local lastCalibTime = 0
 local calibrationAngle = 0.0
+local calibrationStepSpeed = 2.0 -- degrees/second
 
 local armPID = pid.new(0.05, 0, 0)
 armPID.min, armPID.max = -1.0, 1.0
 armPID:start()
+local realTarget = armPID.target
 
 encoder:Start()
 calibrationPulse:Start()
@@ -58,11 +62,14 @@ end
 wpilib.SmartDashboard_PutBoolean("Save Presets", false)
 
 function getTarget()
-    return armPID.target
+    return realTarget
 end
 
 function setTarget(target)
-    armPID.target = target
+    realTarget = target
+    if not calibrationTimeOut then
+        armPID.target = target
+    end
 end
 
 local function pot2deg(volts)
@@ -90,13 +97,38 @@ function setPreset(name)
 end
 
 function update()
+    -- Check for calibration pulse
     local newRawAngle = getRawAngle()
     local newCalibPulse = calibrationPulse:Get()
     if newCalibPulse > prevCalibPulse then
         -- Calibration pulse encountered
         angleOffset = calibrationAngle - (prevRawAngle+newRawAngle)/2
+        armPID.target = realTarget
+        calibrationTimeOut = nil
     end
 
+    if calibrationTimeOut and armPID.target ~= realTarget then
+        -- Run arm PID slowly until first calibration pulse
+        calibrationTimeOut:Start()
+        local t = calibrationTimeOut:Get()
+        local maxTargetStep = calibrationStepSpeed * (t - lastCalibTime)
+        if armPID.target + maxTargetStep < realTarget then
+            armPID.target = armPID.target + maxTargetStep
+        elseif armPID.target - maxTargetStep > realTarget then
+            armPID.target = armPID.target - maxTargetStep
+        else
+            armPID.target = realTarget
+        end
+        lastCalibTime = t
+
+        -- Time out
+        if t > 5 then
+            armPID.target = realTarget
+            calibrationTimeOut = nil
+        end
+    end
+
+    -- Run 
     motor:Set(-armPID:update(newRawAngle + angleOffset))
 
     prevCalibPulse = newCalibPulse
