@@ -29,7 +29,9 @@ local disabledIdle, autonomous, teleop, updateCompressor
 local controlMap
 local deployStinger
 local compressor, pressureSwitch, pressureTransducer, autoDriveSwitch, stinger
+local hangingPin, hangDeployOn, hangDeployOff
 local driveX, driveY, quickTurn = 0, 0, false
+local prepareHang, hanging = false, false
 
 -- STATES
 local state = nil
@@ -81,6 +83,7 @@ function run()
 end
 
 function dashboardUpdate()
+    -- local pressureVoltageMin = 1.17
     wpilib.SmartDashboard_PutBoolean("pressure", pressureSwitch:Get())
     wpilib.SmartDashboard_PutNumber("Pressure Transducer", pressureTransducer:GetVoltage())
 end
@@ -124,6 +127,13 @@ function teleop()
         intake.update(true)
         shooter.update()
 
+        if prepareHang or hanging then
+            arm.setPreset("Horizontal")
+        end
+        hangingPin:Set(prepareHang)
+        hangDeployOn:Set(hanging)
+        hangDeployOff:Set(not hanging)
+
         -- Drive
         drive.update(driveX, driveY, quickTurn)
 
@@ -156,6 +166,9 @@ end
 compressor = wpilib.Relay(1, 8, wpilib.Relay_kForwardOnly)
 pressureSwitch = wpilib.DigitalInput(14)
 pressureTransducer = wpilib.AnalogChannel(4)
+hangingPin = wpilib.Solenoid(4)
+hangDeployOn = wpilib.Solenoid(1)
+hangDeployOff = wpilib.Solenoid(7)
 -- End Inputs/Outputs
 
 -- Controls
@@ -193,6 +206,14 @@ controlMap =
         [5] = {tick=function(held)
             quickTurn = held
         end},
+        [2] = function()
+            prepareHang = true
+        end,
+        ["rtrigger"] = function()
+            if prepareHang then
+                hanging = true
+            end
+        end,
     },
     -- Joystick 2 (Co-Driver)
     {
