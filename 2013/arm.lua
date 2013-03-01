@@ -8,7 +8,7 @@ local ipairs = ipairs
 
 module(...)
 
-local encoder = wpilib.Encoder(11, 10, false)
+local encoder = wpilib.Encoder(12, 13, false)
 local motor = wpilib.Talon(1)
 local absoluteEncoder = wpilib.AnalogChannel(1)
 local calibrationPulse = wpilib.Counter(9)
