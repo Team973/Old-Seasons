@@ -30,6 +30,7 @@ PRESETS = {
     Shooting = { armAngle = 36.0 },
     Loading = { armAngle = 83.9 },
     Stow = { armAngle = 5 },
+    Horizontal = { armAngle = 60.0 },
 }
 
 -- read config file
