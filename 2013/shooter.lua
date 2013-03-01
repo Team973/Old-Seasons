@@ -35,6 +35,8 @@ local rollerFeedSpeed = 1
 local rollerLoadSpeed = 0.2
 local conveyerLoadSpeed = 1.0
 
+local CONVEYER_SPEED = 0
+
 local fireCoroutine = nil
 
 flywheelCounter1:Start()
@@ -113,6 +115,7 @@ local function performFire()
         local lastTime = now
         local lastConveyer = conveyerDist
         repeat
+            CONVEYER_SPEED = (conveyerDist - lastConveyer) / (now - lastTime)
             conveyer:Set(conveyerLoadSpeed)
             roller:Set(0)
 
@@ -189,6 +192,7 @@ function dashboardUpdate()
     wpilib.SmartDashboard_PutNumber("Flywheel RPM", flywheelSpeed)
     wpilib.SmartDashboard_PutNumber("RAW BANNER", flywheelCounter1:Get())
     wpilib.SmartDashboard_PutNumber("Conveyer Distance", getConveyerDistance())
+    wpilib.SmartDashboard_PutNumber("Conveyer Speed", CONVEYER_SPEED)
 end
 
 -- vim: ft=lua et ts=4 sts=4 sw=4
