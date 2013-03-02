@@ -28,7 +28,7 @@ local conveyerEncoder = wpilib.Encoder(6, 5)
 local hardStop = wpilib.Solenoid(6)
 local humanLoadFlap = wpilib.Solenoid(5)
 local flapActivated = false
-local hardStopActivated = true
+local hardStopActivated = false
 local targetFlywheelRPM = 6000
 
 local rollerFeedSpeed = 1
@@ -193,6 +193,8 @@ function fullStop()
     rollerSpeed = 0
     feeding = false
     loading = false
+    hardStopActivated = false
+    flapActivated = false
 end
 
 function dashboardUpdate()
