@@ -30,7 +30,7 @@ calibrationPulse:Start()
 
 PRESETS = {
     Shooting = { armAngle = 34 },
-    Loading = { armAngle = 83.9 },
+    Loading = { armAngle = 82.25 },
     Stow = { armAngle = 5 },
     Horizontal = { armAngle = 60.0 },
 }
