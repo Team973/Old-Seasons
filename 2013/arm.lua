@@ -84,8 +84,7 @@ function getAngle()
 end
 
 function isIntakeDeploySafe()
-    -- TODO(ross)
-    return false
+    return getAngle() > 50
 end
 
 function setPreset(name)
