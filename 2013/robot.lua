@@ -191,9 +191,6 @@ function teleop()
         intake.update()
         shooter.update()
 
-        if prepareHang or hanging then
-            arm.setPreset("Horizontal")
-        end
         hangingPin:Set(prepareHang)
         hangDeployOn:Set(hanging)
         hangDeployOff:Set(not hanging)
@@ -273,7 +270,14 @@ controlMap =
         end},
         [1] = function()
             prepareHang = true
+            arm.setPreset("Horizontal")
             intake.setLowered(true)
+        end,
+
+        [10] = function()
+            if prepareHang then
+                hanging = false
+            end
         end,
 
         ["rtrigger"] = function()
@@ -292,26 +296,32 @@ controlMap =
         end,
 
         [4] = function()
-            arm.setPreset("Shooting")
-            shooter.setFlapActive(false)
-            shooter.setHardStopActive(false)
-            state = FIRE
+            if not prepareHang then
+                arm.setPreset("Shooting")
+                shooter.setFlapActive(false)
+                shooter.setHardStopActive(false)
+                state = FIRE
+            end
         end,
 
         [2] = function()
-            arm.setPreset("Stow")
-            shooter.setFlapActive(false)
-            shooter.setFlywheelRunning(false)
-            state = STOW
+            if not prepareHang then
+                arm.setPreset("Stow")
+                shooter.setFlapActive(false)
+                shooter.setFlywheelRunning(false)
+                state = STOW
+            end
         end,
 
         [7] = function()
-            arm.setPreset("Loading")
-            shooter.setFlywheelRunning(false)
-            shooter.setFlapActive(true)
-            shooter.setHardStopActive(true)
-            state = HUMAN_LOAD
-            intake.setLowered(true)
+            if not prepareHang then
+                arm.setPreset("Loading")
+                shooter.setFlywheelRunning(false)
+                shooter.setFlapActive(true)
+                shooter.setHardStopActive(true)
+                state = HUMAN_LOAD
+                intake.setLowered(true)
+            end
         end,
 
         [5] = {tick=shooter.humanLoad},
@@ -340,6 +350,9 @@ controlMap =
 
         ["haty"] = function(axis)
             local increment = 0.5
+            if prepareHang then
+                increment = 5
+            end
             if axis > 0.5 and prevCoDriverDpad <= 0.5 then
                 -- Dpad down
                 arm.setTarget(arm.getTarget() - increment)
