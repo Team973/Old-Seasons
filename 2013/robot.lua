@@ -212,6 +212,11 @@ controlMap =
             prepareHang = true
             intake.setLowered(true)
         end,
+
+        [10] = function()
+            arm.setPreset("Horizontal")
+        end,
+
         ["rtrigger"] = function()
             if prepareHang then
                 hanging = true
