@@ -104,7 +104,7 @@ end
 
 local function performFire()
     local conveyerWait = 0.5 -- in seconds
-    local conveyerStallSpeed = 100 -- in inches/second
+    local conveyerStallSpeed = 120 -- in inches/second
     local rpmDropThreshold = 4500
 
     while true do
@@ -125,7 +125,10 @@ local function performFire()
             now = t:Get()
             conveyerDist = getConveyerDistance()
         until now >= conveyerWait and (conveyerDist - lastConveyer) / (now - lastTime) < conveyerStallSpeed
+
         while getFlywheelSpeed() < targetFlywheelRPM do
+            conveyer:Set(0)
+            roller:Set(0)
             coroutine.yield()
         end
 
