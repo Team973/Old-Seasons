@@ -3,6 +3,7 @@
 local config = require("config")
 local pid = require("pid")
 local wpilib = require("wpilib")
+local string = require("string")
 local pairs = pairs
 local ipairs = ipairs
 
