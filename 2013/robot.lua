@@ -130,7 +130,7 @@ local function performAuto()
 
     local t = wpilib.Timer()
     t:Start()
-    arm.fire()
+    shooter.fire()
     while t:Get() < 5 do
         shooter.setConveyerManual(0)
         shooter.setRollerManual(0)
