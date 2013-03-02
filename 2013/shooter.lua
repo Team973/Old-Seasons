@@ -32,7 +32,7 @@ local hardStopActivated = true
 local targetFlywheelRPM = 6000
 
 local rollerFeedSpeed = 1
-local rollerLoadSpeed = 0.2
+local rollerLoadSpeed = 0.5
 local conveyerLoadSpeed = 1.0
 
 local CONVEYER_SPEED = 0
