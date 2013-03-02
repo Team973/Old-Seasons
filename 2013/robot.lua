@@ -107,10 +107,71 @@ function disabledIdle()
 
 end
 
-function autonomous()
-    --TODO
+local function performAuto()
+    shooter.fullStop()
+
+    arm.setPreset("Shooting")
+    while math.abs(arm.getAngle() - arm.getTarget()) > 5 do
+        shooter.setFlywheelRunning(true)
+        intake.setLowered(true)
+        drive.update(0, 0, false)
+        coroutine.yield()
+    end
+
+    local t = wpilib.Timer()
+    t:Start()
+    while t:Get() < 1 do
+        shooter.setConveyerManual(0)
+        shooter.setRollerManual(1)
+        intake.setLowered(true)
+        drive.update(0, 0, false)
+        coroutine.yield()
+    end
+
+    local t = wpilib.Timer()
+    t:Start()
+    arm.fire()
+    while t:Get() < 5 do
+        shooter.setConveyerManual(0)
+        shooter.setRollerManual(0)
+        intake.setLowered(true)
+        drive.update(0, 0, false)
+        coroutine.yield()
+    end
+
+    -- Clean up
+    shooter.fullStop()
+    drive.update(0, 0, false)
 end
 
+function autonomous()
+    disableWatchdog()
+    local c = coroutine.create(performAuto)
+
+    while wpilib.IsAutonomous() and wpilib.IsEnabled() and coroutine.status(c) ~= "dead" do
+        coroutine.resume(c)
+
+        updateCompressor()
+        intake.update()
+        shooter.update()
+        hangingPin:Set(false)
+        hangDeployOn:Set(false)
+        hangDeployOff:Set(true)
+        arm.update()
+        -- don't update drive, should be done in coroutine
+
+        dashboardUpdate()
+        arm.dashboardUpdate()
+        drive.dashboardUpdate()
+        shooter.dashboardUpdate()
+
+        wpilib.Wait(TELEOP_LOOP_LAG)
+    end
+
+    -- Clean up
+    shooter.fullStop()
+    drive.update(0, 0, false)
+end
 
 function teleop()
     while wpilib.IsOperatorControl() and wpilib.IsEnabled() do
