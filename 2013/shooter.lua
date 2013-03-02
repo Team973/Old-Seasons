@@ -104,7 +104,7 @@ end
 
 local function performFire()
     local conveyerWait = 0.5 -- in seconds
-    local conveyerStallSpeed = 50 -- in inches/second
+    local conveyerStallSpeed = 100 -- in inches/second
     local rpmDropThreshold = 4500
 
     while true do
