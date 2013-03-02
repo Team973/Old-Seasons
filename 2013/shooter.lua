@@ -201,6 +201,8 @@ function dashboardUpdate()
     wpilib.SmartDashboard_PutNumber("Flywheel RPM", flywheelSpeed)
     wpilib.SmartDashboard_PutNumber("RAW BANNER", flywheelCounter1:Get())
     wpilib.SmartDashboard_PutNumber("Conveyer Distance", getConveyerDistance())
+    wpilib.DriverStationLCD_GetInstance():PrintLine(wpilib.DriverStationLCD_kUser_Line1, string.format("Flywheel RPM: %.2f", flywheelSpeed))
+    wpilib.DriverStationLCD_GetInstance():UpdateLCD()
 end
 
 -- vim: ft=lua et ts=4 sts=4 sw=4

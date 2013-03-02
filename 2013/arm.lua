@@ -28,7 +28,7 @@ encoder:Start()
 calibrationPulse:Start()
 
 PRESETS = {
-    Shooting = { armAngle = 35.5 },
+    Shooting = { armAngle = 34 },
     Loading = { armAngle = 83.9 },
     Stow = { armAngle = 5 },
     Horizontal = { armAngle = 60.0 },
@@ -118,6 +118,9 @@ function dashboardUpdate()
     wpilib.SmartDashboard_PutNumber("Arm PID Output", armPID.output)
     wpilib.SmartDashboard_PutNumber("Potentiometer Output", absoluteEncoder:GetVoltage())
     wpilib.SmartDashboard_PutNumber("pot2deg", pot2deg(absoluteEncoder:GetVoltage()))
+
+    wpilib.DriverStationLCD_GetInstance():PrintLine(wpilib.DriverStationLCD_kUser_Line2, string.format("Arm Angle: %.2f", getAngle()))
+    wpilib.DriverStationLCD_GetInstance():UpdateLCD()
 
     -- Arm Preset Gets
     for k,v in pairs(PRESETS) do
