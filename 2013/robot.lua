@@ -32,6 +32,7 @@ local compressor, pressureSwitch, pressureTransducer, autoDriveSwitch, stinger
 local hangingPin, hangDeployOn, hangDeployOff
 local driveX, driveY, quickTurn = 0, 0, false
 local prepareHang, hanging = false, false
+local deployIntake = false
 
 -- STATES
 local state = nil
@@ -124,7 +125,7 @@ function teleop()
         -- Pneumatics
         updateCompressor()
 
-        intake.update(true)
+        intake.update()
         shooter.update()
 
         if prepareHang or hanging then

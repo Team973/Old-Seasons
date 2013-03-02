@@ -83,6 +83,11 @@ function getAngle()
     return getRawAngle() + angleOffset
 end
 
+function isIntakeDeploySafe()
+    -- TODO(ross)
+    return false
+end
+
 function setPreset(name)
     local p = PRESETS[name]
     if p then
