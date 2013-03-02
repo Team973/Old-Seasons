@@ -84,7 +84,7 @@ function getAngle()
 end
 
 function isIntakeDeploySafe()
-    return getAngle() > 50
+    return getAngle() > 35
 end
 
 function setPreset(name)

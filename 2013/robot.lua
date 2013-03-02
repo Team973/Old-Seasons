@@ -210,6 +210,7 @@ controlMap =
         end},
         [1] = function()
             prepareHang = true
+            intake.setLowered(true)
         end,
         ["rtrigger"] = function()
             if prepareHang then
@@ -246,6 +247,7 @@ controlMap =
             shooter.setFlapActive(true)
             shooter.setHardStopActive(true)
             state = HUMAN_LOAD
+            intake.setLowered(true)
         end,
 
         [5] = {tick=shooter.humanLoad},
