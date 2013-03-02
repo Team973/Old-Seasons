@@ -111,7 +111,9 @@ local function performAuto()
     shooter.fullStop()
 
     arm.setPreset("Shooting")
-    while math.abs(arm.getAngle() - arm.getTarget()) > 5 do
+    local shootTimer = wpilib.Timer()
+    shootTimer:Start()
+    while shootTimer:Get() < 7 do
         shooter.setFlywheelRunning(true)
         intake.setLowered(true)
         drive.update(0, 0, false)
