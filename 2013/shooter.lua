@@ -187,7 +187,12 @@ function update()
 end
 
 function fullStop()
-    flywheelMotor:Set(0.0)
+    flywheelRunning = false
+    fireCoroutine = nil
+    conveyerSpeed = 0
+    rollerSpeed = 0
+    feeding = false
+    loading = false
 end
 
 function dashboardUpdate()
