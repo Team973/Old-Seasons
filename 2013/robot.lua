@@ -204,10 +204,11 @@ controlMap =
         ["rx"] = function(axis)
             driveX = deadband(axis, 0.1)
         end,
+        [3] = intake.toggleRaise,
         [5] = {tick=function(held)
             quickTurn = held
         end},
-        [2] = function()
+        [1] = function()
             prepareHang = true
         end,
         ["rtrigger"] = function()
