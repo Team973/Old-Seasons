@@ -116,8 +116,9 @@ local function performFire()
         local lastConveyer = conveyerDist
         repeat
             CONVEYER_SPEED = (conveyerDist - lastConveyer) / (now - lastTime)
+            wpilib.SmartDashboard_PutNumber("Conveyer Speed", CONVEYER_SPEED)
             conveyer:Set(conveyerLoadSpeed)
-            roller:Set(0)
+            roller:Set(-0.25)
 
             lastTime = now
             lastConveyer = getConveyerDistance()
@@ -195,7 +196,6 @@ function dashboardUpdate()
     wpilib.SmartDashboard_PutNumber("Flywheel RPM", flywheelSpeed)
     wpilib.SmartDashboard_PutNumber("RAW BANNER", flywheelCounter1:Get())
     wpilib.SmartDashboard_PutNumber("Conveyer Distance", getConveyerDistance())
-    wpilib.SmartDashboard_PutNumber("Conveyer Speed", CONVEYER_SPEED)
 end
 
 -- vim: ft=lua et ts=4 sts=4 sw=4
