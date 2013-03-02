@@ -19,8 +19,9 @@ local prevCalibPulse = 0
 
 local calibrationAngle = 0.0
 
-local armPID = pid.new(0.05, 0, 0)
+local armPID = pid.new(0.05, 0.001, 0)
 armPID.min, armPID.max = -1.0, 1.0
+armPID.icap = .023
 armPID:start()
 
 encoder:Start()
