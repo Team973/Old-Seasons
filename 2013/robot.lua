@@ -113,7 +113,7 @@ local function performAuto()
     arm.setPreset("Shooting")
     local shootTimer = wpilib.Timer()
     shootTimer:Start()
-    while shootTimer:Get() < 7 do
+    while shootTimer:Get() < 4 do
         shooter.setFlywheelRunning(true)
         intake.setLowered(true)
         drive.update(0, 0, false)
