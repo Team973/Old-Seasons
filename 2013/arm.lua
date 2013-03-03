@@ -29,7 +29,7 @@ encoder:Start()
 calibrationPulse:Start()
 
 PRESETS = {
-    Shooting = { armAngle = 35 },
+    Shooting = { armAngle = 34.75 },
     Loading = { armAngle = 82.25 },
     Stow = { armAngle = 5 },
     Horizontal = { armAngle = 60.0 },
