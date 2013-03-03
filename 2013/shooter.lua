@@ -108,25 +108,6 @@ local function performFire()
     local rpmDropThreshold = 4500
 
     while true do
-        local t = wpilib.Timer()
-        t:Start()
-        local now = t:Get()
-        local conveyerDist = getConveyerDistance()
-        local lastTime = now
-        local lastConveyer = conveyerDist
-        repeat
-            CONVEYER_SPEED = (conveyerDist - lastConveyer) / (now - lastTime)
-            wpilib.SmartDashboard_PutNumber("Conveyer Speed", CONVEYER_SPEED)
-            conveyer:Set(conveyerLoadSpeed)
-            roller:Set(-0.25)
-
-            lastTime = now
-            lastConveyer = getConveyerDistance()
-            coroutine.yield()
-            now = t:Get()
-            conveyerDist = getConveyerDistance()
-        until now >= conveyerWait and (conveyerDist - lastConveyer) / (now - lastTime) < conveyerStallSpeed
-
         while getFlywheelSpeed() < targetFlywheelRPM do
             conveyer:Set(0)
             roller:Set(0)
@@ -134,7 +115,7 @@ local function performFire()
         end
 
         while getFlywheelSpeed() >= rpmDropThreshold do
-            conveyer:Set(0)
+            conveyer:Set(conveyerLoadSpeed)
             roller:Set(rollerFeedSpeed)
             coroutine.yield()
         end
