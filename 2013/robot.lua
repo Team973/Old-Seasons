@@ -289,10 +289,18 @@ controlMap =
     -- Joystick 2 (Co-Driver)
     {
         ["y"] = function(axis)
-            shooter.setConveyerManual(-deadband(axis, 0.1))
+            if axis > 0 then
+                shooter.setConveyerManual(-deadband(axis, 0.1))
+            else
+                shooter.setConveyerManual(0)
+            end
         end,
         ["ry"] = function(axis)
-            shooter.setRollerManual(-deadband(axis, 0.1))
+            if axis > 0 then
+                shooter.setRollerManual(-deadband(axis, 0.1))
+            else
+                shooter.setRollerManual(0)
+            end
         end,
 
         [4] = function()
