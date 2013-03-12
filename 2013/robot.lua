@@ -34,6 +34,8 @@ local driveX, driveY, quickTurn = 0, 0, false
 local prepareHang, hanging = false, false
 local deployIntake = false
 
+local colinGyro = 1
+
 -- STATES
 local state = nil
 local FIRE = "fire"
@@ -144,6 +146,27 @@ local function performAuto()
     -- Clean up
     shooter.fullStop()
     drive.update(0, 0, false)
+end
+
+local function isDone()
+    if isLeftDriveDone() and isRightDriveDone() then
+    end
+end
+
+local function isLeftDriveDone()
+    if drive.getLeftDrive() > -0.3 and drive.getLeftDrive() < 0.3 then
+        return true
+    else
+        return false
+    end
+end
+
+local function isRightDriveDone()
+    if drive.getRightDrive() > -0.3 and drive.getRightDrive() < 0.3 then
+        return true
+    else
+        return false
+    end
 end
 
 function autonomous()

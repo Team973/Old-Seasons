@@ -232,4 +232,12 @@ function accum(val)
     end
 end
 
+function getLeftDrive()
+    return leftDriveMotor:Get()
+end
+
+function getRightDrive()
+    return rightDriveMotor:Get()
+end
+
 -- vim: ft=lua et ts=4 sts=4 sw=4
