@@ -70,9 +70,9 @@ function run()
         elseif wpilib.IsTest() then
             disableWatchdog()
             lw:SetEnabled(true)
-            --ds:InTest(true)
+            ds:InTest(true)
             repeat ds:WaitForData() until not wpilib.IsTest() or not wpilib.IsEnabled()
-            --ds:InTest(false)
+            ds:InTest(false)
             lw:SetEnabled(false)
         else
             ds:InOperatorControl(true)
