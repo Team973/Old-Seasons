@@ -45,8 +45,8 @@ local STOW = "stow"
 -- End Declarations
 
 function run()
-    local lw = wpilib.LiveWindow_GetInstance()
-    lw:SetEnabled(false)
+    --local lw = wpilib.LiveWindow_GetInstance()
+    --lw:SetEnabled(false)
 
     local ds = wpilib.DriverStation_GetInstance()
 
@@ -69,11 +69,11 @@ function run()
             enableWatchdog()
         elseif wpilib.IsTest() then
             disableWatchdog()
-            lw:SetEnabled(true)
+            --lw:SetEnabled(true)
             ds:InTest(true)
             repeat ds:WaitForData() until not wpilib.IsTest() or not wpilib.IsEnabled()
             ds:InTest(false)
-            lw:SetEnabled(false)
+            --lw:SetEnabled(false)
         else
             ds:InOperatorControl(true)
             teleop()
@@ -148,24 +148,50 @@ local function performAuto()
     drive.update(0, 0, false)
 end
 
-local function isDone()
-    if isLeftDriveDone() and isRightDriveDone() then
+local function isDone(speed, angle, dist)
+    if isLeftDriveDone(speed) and isRightDriveDone(speed) then
+        if isAngleDone(angle) then
+            if isDistDone(dist) then
+            end
+        end
     end
 end
 
-local function isLeftDriveDone()
-    if drive.getLeftDrive() > -0.3 and drive.getLeftDrive() < 0.3 then
+local function isLeftDriveDone(speed)
+    if drive.getLeftDrive() > -speed and drive.getLeftDrive() < speed then
         return true
     else
         return false
     end
 end
 
-local function isRightDriveDone()
-    if drive.getRightDrive() > -0.3 and drive.getRightDrive() < 0.3 then
+local function isRightDriveDone(speed)
+    if drive.getRightDrive() > -speed and drive.getRightDrive() < speed then
         return true
     else
         return false
+    end
+end
+
+local function getAngle()
+end
+
+local function getTargetAngle()
+end
+
+local function isAngleDone(angle)
+    if getAngle() <= angle and getAngle() > angle - 2 then
+        return true
+    else
+        return false
+    end
+end
+
+local function getTargetDist()
+end
+
+local function isDistDone(dist)
+    if then
     end
 end
 
