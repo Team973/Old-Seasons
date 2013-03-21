@@ -29,7 +29,7 @@ encoder:Start()
 calibrationPulse:Start()
 
 PRESETS = {
-    Shooting = { armAngle = 37.5 },
+    Shooting = { armAngle = 33.5 },
     -- for the small wheels use 35.75
     Loading = { armAngle = 82.25 },
     Stow = { armAngle = 5 },
