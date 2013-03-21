@@ -41,6 +41,7 @@ local state = nil
 local FIRE = "fire"
 local HUMAN_LOAD = "human_load"
 local STOW = "stow"
+local INTAKE_LOAD = "intake_load"
 
 -- End Declarations
 
