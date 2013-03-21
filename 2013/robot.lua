@@ -192,10 +192,7 @@ local function getTargetDist()
 end
 
 local function isDistDone(dist)
-    if then
-    end
 end
-
 function autonomous()
     disableWatchdog()
     local c = coroutine.create(performAuto)
