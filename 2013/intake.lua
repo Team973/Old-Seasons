@@ -33,13 +33,14 @@ function update()
     intakeRollers:Set(intakeSpeed)
 
     intakeTimer:Start()
-    if deploy and intakeTimer:Get() <= 1.5 then
+    if deploy and intakeTimer:Get() <= 1 then
         motor:Set(intakeDeploySpeed)
-    elseif retract and intakeTimer:Get() <= 1.5 then
+    elseif retract and intakeTimer:Get() <= 1 then
         motor:Set(-intakeDeploySpeed)
     else
         motor:Set(0.0)
     end
+    intakeTimer:Reset()
 end
 
 function fullStop()
