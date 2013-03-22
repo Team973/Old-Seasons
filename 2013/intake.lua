@@ -31,10 +31,12 @@ end
 function update()
     intakeRollers:Set(intakeSpeed)
 
-    if retract then
-        motor:Set(-intakeDeploySpeed)
-    elseif deploy then
+    intakeTimer = wpilib.Timer()
+    intakeTimer:Start()
+    if deploy and intakeTimer:Get() <= 1.5 then
         motor:Set(intakeDeploySpeed)
+    elseif retract and intakeTimer:Get() <= 1.5 then
+        motor:Set(-intakeDeploySpeed)
     else
         motor:Set(0.0)
     end
