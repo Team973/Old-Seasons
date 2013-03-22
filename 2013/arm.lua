@@ -31,6 +31,8 @@ calibrationPulse:Start()
 PRESETS = {
     Shooting = { armAngle = 33.5 },
     -- for the small wheels use 35.75
+    sideShot = { armAngle = 35 },
+    sideShot2 = { armAngle = 37 },
     Loading = { armAngle = 82.25 },
     Stow = { armAngle = 5 },
     Horizontal = { armAngle = 60.0 },
