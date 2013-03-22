@@ -116,6 +116,16 @@ local function performAuto()
     arm.setPreset("Shooting")
     local shootTimer = wpilib.Timer()
     shootTimer:Start()
+
+    --local intakeTimer = wpilib.Timer()
+    --intakeTimer:Start()
+    --while intakeTimer < 3 do
+    --  intake.setDeploy(true)
+    --  intake.setIntakeSpeed(0.0)
+    --  drive.update(0, 0, false)
+    --  coroutine.yield()
+    --  end
+    --  intake.setDeploy(false)
     while shootTimer:Get() < 4 do
         shooter.setFlywheelRunning(true)
         drive.update(0, 0, false)
@@ -349,31 +359,24 @@ controlMap =
     -- Joystick 2 (Co-Driver)
     {
         ["y"] = function(axis)
-            if axis > 0 then
-                shooter.setConveyerManual(-deadband(axis, 0.1))
-            else
-                shooter.setConveyerManual(0)
-            end
+            intake.setIntakeSpeed(-deadband(axis, 0.1))
         end,
 
         ["x"] = function(axis)
-            intake.setIntakeSpeed(deadband(axis, 0.1))
+            shooter.setConveyerManual(deadband(axis, 0.1))
         end,
 
         ["ry"] = function(axis)
-            if axis > 0 then
-                shooter.setRollerManual(-deadband(axis, 0.1))
-            else
-                shooter.setRollerManual(0)
-            end
+            shooter.setRollerManual(-deadband(axis, 0.1))
         end,
 
         [1] = function()
             if not prepareHang then
-                arm.setPreset("sideShot")
+                arm.setPreset("Intake")
+                shooter.setFlywheelRunning(false)
                 shooter.setFlapActive(false)
-                shooter.setHardStopActive(false)
-                state = FIRE
+                shooter.setHardStopActive(true)
+                state = INTAKE_LOAD
             end
         end,
 
