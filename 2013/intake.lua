@@ -19,6 +19,9 @@ end
 function setDeploy(val)
     if deploy ~= val and arm.isIntakeDeploySafe() then
         deploy = val
+        if deploy and checkDeploy then
+            checkDeploy = false
+        end
     end
 end
 
@@ -33,8 +36,9 @@ function update()
 
     intakeTimer = wpilib.Timer()
     intakeTimer:Start()
-    if deploy and intakeTimer:Get() <= 1.5 then
+    if deploy and intakeTimer:Get() <= 1.5 and not checkDeploy then
         motor:Set(intakeDeploySpeed)
+        checkDeploy = true
     elseif retract and intakeTimer:Get() <= 1.5 then
         motor:Set(-intakeDeploySpeed)
     else
