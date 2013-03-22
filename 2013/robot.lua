@@ -311,7 +311,20 @@ controlMap =
         ["rx"] = function(axis)
             driveX = deadband(axis, 0.1)
         end,
-        [3] = intake.toggleRaise,
+        [7] = {tick=function(held)
+            if held then
+                intake.setRetract(true)
+            else
+                intake.setRetract(false)
+            end
+        end},
+        [3] = {tick=function(held)
+            if held then
+                intake.setDeploy(true)
+            else
+                intake.setDeploy(false)
+            end
+        end},
         [5] = {tick=function(held)
             quickTurn = held
         end},
