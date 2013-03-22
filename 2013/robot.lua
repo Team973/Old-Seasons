@@ -127,11 +127,9 @@ local function performAuto()
     while t:Get() < 1 do
         shooter.setConveyerManual(0)
         shooter.setRollerManual(1)
-        intake.setDeploy(true)
         drive.update(0, 0, false)
         coroutine.yield()
     end
-    intake.setDeploy(false)
 
     local t = wpilib.Timer()
     t:Start()
@@ -139,7 +137,6 @@ local function performAuto()
     while t:Get() < 5 do
         shooter.setConveyerManual(0)
         shooter.setRollerManual(0)
-        intake.setLowered(true)
         drive.update(0, 0, false)
         coroutine.yield()
     end
@@ -147,6 +144,7 @@ local function performAuto()
     -- Clean up
     shooter.fullStop()
     drive.update(0, 0, false)
+    intake.setDeploy(false)
 end
 
 local function isDone(speed, angle, dist)
@@ -355,6 +353,11 @@ controlMap =
                 shooter.setConveyerManual(0)
             end
         end,
+
+        ["x"] = function(axis)
+            intake.setIntakeSpeed(deadband(axis, 0.1))
+        end,
+
         ["ry"] = function(axis)
             if axis > 0 then
                 shooter.setRollerManual(-deadband(axis, 0.1))
