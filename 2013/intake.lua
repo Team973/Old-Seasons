@@ -28,10 +28,10 @@ function setRetract(val)
     end
 end
 
+local intakeTimer = wpilib.Timer()
 function update()
     intakeRollers:Set(intakeSpeed)
 
-    intakeTimer = wpilib.Timer()
     intakeTimer:Start()
     if deploy and intakeTimer:Get() <= 1.5 then
         motor:Set(intakeDeploySpeed)
