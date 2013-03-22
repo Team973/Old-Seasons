@@ -119,6 +119,7 @@ local function performAuto()
     while shootTimer:Get() < 4 do
         shooter.setFlywheelRunning(true)
         drive.update(0, 0, false)
+        intake.setIntakeSpeed(0.0)
         coroutine.yield()
     end
 
@@ -128,6 +129,7 @@ local function performAuto()
         shooter.setConveyerManual(0)
         shooter.setRollerManual(1)
         drive.update(0, 0, false)
+        intake.setIntakeSpeed(0.0)
         coroutine.yield()
     end
 
@@ -138,13 +140,14 @@ local function performAuto()
         shooter.setConveyerManual(0)
         shooter.setRollerManual(0)
         drive.update(0, 0, false)
+        intake.setIntakeSpeed(0.0)
         coroutine.yield()
     end
 
     -- Clean up
     shooter.fullStop()
     drive.update(0, 0, false)
-    intake.setDeploy(false)
+    intake.setIntakeSpeed(0.0)
 end
 
 local function isDone(speed, angle, dist)
@@ -329,7 +332,6 @@ controlMap =
         [1] = function()
             prepareHang = true
             arm.setPreset("Horizontal")
-            intake.setLowered(true)
         end,
 
         [10] = function()
@@ -409,7 +411,6 @@ controlMap =
                 shooter.setFlapActive(true)
                 shooter.setHardStopActive(true)
                 state = HUMAN_LOAD
-                intake.setLowered(true)
             end
         end,
 

@@ -44,6 +44,7 @@ end
 
 function fullStop()
     motor:Set(0.0)
+    intakeRollers:Set(0.0)
 end
 
 -- vim: ft=lua et ts=4 sts=4 sw=4
