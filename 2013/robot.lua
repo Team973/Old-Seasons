@@ -118,7 +118,6 @@ local function performAuto()
     shootTimer:Start()
     while shootTimer:Get() < 4 do
         shooter.setFlywheelRunning(true)
-        intake.setLowered(true)
         drive.update(0, 0, false)
         coroutine.yield()
     end
@@ -128,10 +127,11 @@ local function performAuto()
     while t:Get() < 1 do
         shooter.setConveyerManual(0)
         shooter.setRollerManual(1)
-        intake.setLowered(true)
+        intake.setDeploy(true)
         drive.update(0, 0, false)
         coroutine.yield()
     end
+    intake.setDeploy(false)
 
     local t = wpilib.Timer()
     t:Start()
