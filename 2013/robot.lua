@@ -123,16 +123,17 @@ local function performAuto()
         intake.setIntakeSpeed(0.0)
         coroutine.yield()
     end
-
+    intake.setDeploy(true)
+--[[
     local intakeTimer = wpilib.Timer()
     intakeTimer:Start()
-
     while intakeTimer < 2 do
         intake.setDeploy(true)
         drive.update(0, 0, false)
         intake.setIntakeSpeed(0.0)
         coroutine.yield()
     end
+    --]]
 
     local t = wpilib.Timer()
     t:Start()
@@ -143,6 +144,8 @@ local function performAuto()
         intake.setIntakeSpeed(0.0)
         coroutine.yield()
     end
+
+    intake.setDeploy(false)
 
     local t = wpilib.Timer()
     t:Start()
@@ -155,8 +158,10 @@ local function performAuto()
         coroutine.yield()
     end
 
+    arm.setPreset("Intake")
     -- Clean up
     shooter.fullStop()
+    intake.setDeploy(false)
     drive.update(0, 0, false)
     intake.setIntakeSpeed(0.0)
 end
@@ -318,10 +323,18 @@ controlMap =
     -- Joystick 1 (Driver)
     {
         ["y"] = function(axis) 
-            driveY = -deadband(axis, 0.1)
+            if lowGear then
+                driveY = -deadband(axis, 0.1) / 3
+            else
+                driveY = -deadband(axis, 0.1)
+            end
         end,
         ["rx"] = function(axis)
-            driveX = deadband(axis, 0.1)
+            if lowGear then
+                driveX = deadband(axis, 0.1) / 3
+            else
+                driveX = deadband(axis, 0.1)
+        end
         end,
         [7] = {tick=function(held)
             if held then
@@ -340,6 +353,11 @@ controlMap =
         [5] = {tick=function(held)
             quickTurn = held
         end},
+
+        [6] = {tick=function(held)
+            lowGear = held
+        end},
+
         [1] = function()
             prepareHang = true
             arm.setPreset("Horizontal")
@@ -360,15 +378,16 @@ controlMap =
     -- Joystick 2 (Co-Driver)
     {
         ["y"] = function(axis)
-            intake.setIntakeSpeed(-deadband(axis, 0.1))
-        end,
-
-        ["x"] = function(axis)
-            shooter.setConveyerManual(deadband(axis, 0.1))
+            shooter.setRollerManual(-deadband(axis, 0.1))
+            shooter.setConveyerManual(-deadband(axis, 0.1))
         end,
 
         ["ry"] = function(axis)
-            shooter.setRollerManual(-deadband(axis, 0.1))
+            if state == INTAKE_LOAD then
+                shooter.setRollerManual(-deadband(axis, 0.1))
+                shooter.setConveyerManual(-deadband(axis, 0.1))
+                intake.setIntakeSpeed(-deadband(axis, 0.1))
+            end
         end,
 
         [1] = function()
