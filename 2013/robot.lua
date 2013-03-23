@@ -34,8 +34,6 @@ local driveX, driveY, quickTurn = 0, 0, false
 local prepareHang, hanging = false, false
 local deployIntake = false
 
-local colinGyro = 1
-
 -- STATES
 local state = nil
 local FIRE = "fire"
@@ -44,6 +42,30 @@ local STOW = "stow"
 local INTAKE_LOAD = "intake_load"
 
 -- End Declarations
+
+local drivePID = pid.new(0, 0, 0)
+drivePID.min, drivePID.max = -.3, .3
+drivePID:start()
+
+local anglePID = pid.new(0, 0, 0)
+anglePID.min, anglePID.max = -.3, .3
+anglePID:start()
+
+function getDriveTarget()
+    return drivePID.target
+end
+
+function setDriveTarget(target)
+    drivePID.target = target
+end
+
+function getAngleTarget()
+    return anglePID.target
+end
+
+function setAngleTarget(target)
+    anglePID.target = target
+end
 
 function run()
     --local lw = wpilib.LiveWindow_GetInstance()
@@ -123,17 +145,7 @@ local function performAuto()
         intake.setIntakeSpeed(0.0)
         coroutine.yield()
     end
-    intake.setDeploy(true)
---[[
-    local intakeTimer = wpilib.Timer()
-    intakeTimer:Start()
-    while intakeTimer < 2 do
-        intake.setDeploy(true)
-        drive.update(0, 0, false)
-        intake.setIntakeSpeed(0.0)
-        coroutine.yield()
-    end
-    --]]
+--    intake.setDeploy(true)
 
     local t = wpilib.Timer()
     t:Start()
@@ -145,7 +157,7 @@ local function performAuto()
         coroutine.yield()
     end
 
-    intake.setDeploy(false)
+ --   intake.setDeploy(false)
 
     local t = wpilib.Timer()
     t:Start()
@@ -158,7 +170,7 @@ local function performAuto()
         coroutine.yield()
     end
 
-    arm.setPreset("Intake")
+  --  arm.setPreset("Intake")
     -- Clean up
     shooter.fullStop()
     intake.setDeploy(false)
