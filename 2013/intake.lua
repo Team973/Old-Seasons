@@ -8,6 +8,7 @@ module(...)
 local deploy = false
 local retract = false
 local intakeDeploySpeed = .5
+local intakeSpeed = 0
 
 local motor = wpilib.Victor(4)
 local intakeRollers = wpilib.Victor(5)
@@ -29,10 +30,12 @@ function setRetract(val)
 end
 
 local intakeTimer = wpilib.Timer()
+intakeTimer:Start()
+
 function update()
     intakeRollers:Set(intakeSpeed)
 
-    intakeTimer:Start()
+    intakeTimer:Reset()
     if deploy and intakeTimer:Get() <= 1 then
         motor:Set(intakeDeploySpeed)
     elseif retract and intakeTimer:Get() <= 1 then
@@ -40,7 +43,6 @@ function update()
     else
         motor:Set(0.0)
     end
-    intakeTimer:Reset()
 end
 
 function fullStop()
