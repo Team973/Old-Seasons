@@ -113,7 +113,7 @@ function getWheelDistance()
 end
 
 function getGyroAngle()
-    local encoderTicks = 512
+    local encoderTicks = 1024
     return colinGyro:Get() * (360 / encoderTicks)
 end
 
@@ -133,7 +133,8 @@ function dashboardUpdate()
     wpilib.SmartDashboard_PutNumber("Distance traveled", getWheelDistance())
     wpilib.SmartDashboard_PutNumber("right drive encoder", rightEncoder:Get())
     wpilib.SmartDashboard_PutNumber("left drive encoder", leftEncoder:Get())
-    wpilib.SmartDashboard_PutNumber("Gyro Angle", colinGyro:Get())
+    wpilib.SmartDashboard_PutNumber("Gyro Angle Raw", colinGyro:Get())
+    wpilib.SmartDashboard_PutNumber("Gyro Angle", getGyroAngle())
 end
 
 --[[
