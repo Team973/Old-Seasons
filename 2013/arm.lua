@@ -20,17 +20,17 @@ local prevCalibPulse = 0
 
 local calibrationAngle = 0.0
 
-local armPID = pid.new(0.05, 0.001, 0)
+local armPID = pid.new(0.07, 0.01, 0)
 armPID.min, armPID.max = -1.0, 1.0
-armPID.icap = .023
+armPID.icap = .025
 armPID:start()
 
 encoder:Start()
 calibrationPulse:Start()
 
 PRESETS = {
-    Shooting = { armAngle = 35.5 },
-    -- for the small wheels use 35.75
+    Shooting = { armAngle = 33 },
+    -- also use 35 if it doesn't work
     sideShot = { armAngle = 35 },
     sideShot2 = { armAngle = 37 },
     Loading = { armAngle = 81.3 },

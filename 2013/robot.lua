@@ -117,15 +117,17 @@ local function performAuto()
     local shootTimer = wpilib.Timer()
     shootTimer:Start()
 
-    --local intakeTimer = wpilib.Timer()
-    --intakeTimer:Start()
-    --while intakeTimer < 3 do
-    --  intake.setDeploy(true)
-    --  intake.setIntakeSpeed(0.0)
-    --  drive.update(0, 0, false)
-    --  coroutine.yield()
-    --  end
-    --  intake.setDeploy(false)
+    local intakeTimer = wpilib.Timer()
+    intakeTimer:Start()
+    while intakeTimer < 5 do
+        intake.setDeploy(true)
+        drive.update(0, 0, false)
+        intake.setIntakeSpeed(0.0)
+        coroutine.yield()
+    end
+    intake.setDeploy(false)
+    intake.setIntakeSpeed(0.0)
+
     while shootTimer:Get() < 4 do
         shooter.setFlywheelRunning(true)
         drive.update(0, 0, false)
@@ -438,6 +440,8 @@ controlMap =
         [10] = function()
             if state == HUMAN_LOAD then
                 shooter.setFlapActive(false)
+            elseif state == INTAKE_LOAD then
+                shooter.setFlapActive(true)
             end
         end,
 
