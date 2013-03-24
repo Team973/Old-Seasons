@@ -414,7 +414,7 @@ controlMap =
 
         [3] = function()
             if not prepareHang then
-                arm.setPreset("sideShot2")
+                arm.setPreset("sideShot")
                 shooter.setFlapActive(false)
                 shooter.setHardStopActive(false)
                 state = FIRE
