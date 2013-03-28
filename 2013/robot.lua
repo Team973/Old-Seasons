@@ -43,6 +43,7 @@ local INTAKE_LOAD = "intake_load"
 
 -- End Declarations
 
+-- Auto PID
 local drivePID = pid.new(0, 0, 0)
 drivePID.min, drivePID.max = -.3, .3
 drivePID:start()
@@ -178,12 +179,15 @@ local function performAuto()
     intake.setIntakeSpeed(0.0)
 end
 
-local function isDone(speed, angle, dist)
+local function isDone(speed, dist)
     if isLeftDriveDone(speed) and isRightDriveDone(speed) then
-        if isAngleDone(angle) then
-            if isDistDone(dist) then
-            end
+        if isDistDone(dist) then
+            return true
+        else
+            return false
         end
+    else
+        return false
     end
 end
 
@@ -217,11 +221,14 @@ local function isAngleDone(angle)
     end
 end
 
-local function getTargetDist()
+local function isDistDone(dist)
+    if getDriveTarget() - drive.getWheelDistance() <= dist and getDriveTarget() - drive.getWheelDistance() >= dist - 1 then
+        return true
+    else
+        return false
+    end
 end
 
-local function isDistDone(dist)
-end
 function autonomous()
     disableWatchdog()
     local c = coroutine.create(performAuto)
