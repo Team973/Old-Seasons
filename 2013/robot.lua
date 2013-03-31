@@ -44,12 +44,11 @@ local INTAKE_LOAD = "intake_load"
 -- End Declarations
 
 -- Auto PID
-local drivePID = pid.new(0, 0, 0)
-drivePID.min, drivePID.max = -.3, .3
+local drivePID = pid.new(.05, 0, 0)
+drivePID.min, drivePID.max = -.5, .5
+local anglePID = pid.new(0.1, 0, 0)
+anglePID.min, anglePID.max = -.5, .5
 drivePID:start()
-
-local anglePID = pid.new(0, 0, 0)
-anglePID.min, anglePID.max = -.3, .3
 anglePID:start()
 
 function getDriveTarget()
@@ -113,6 +112,7 @@ function dashboardUpdate()
     -- local pressureVoltageMin = 1.17
     wpilib.SmartDashboard_PutBoolean("pressure", pressureSwitch:Get())
     wpilib.SmartDashboard_PutNumber("Pressure Transducer", pressureTransducer:GetVoltage())
+    wpilib.SmartDashboard_PutNumber("Drive PID output", drivePID.output)
 end
 
 function disabledIdle()
@@ -134,9 +134,10 @@ function disabledIdle()
 end
 
 local function performAuto()
-    shooter.fullStop()
+    --shooter.fullStop()
+    --arm.setPreset("sideShot")
 
-    arm.setPreset("sideShot")
+--[[
     local shootTimer = wpilib.Timer()
     shootTimer:Start()
 
@@ -157,9 +158,10 @@ local function performAuto()
         intake.setIntakeSpeed(0.0)
         coroutine.yield()
     end
+]]
 
  --   intake.setDeploy(false)
-
+--[[
     local t = wpilib.Timer()
     t:Start()
     shooter.fire()
@@ -170,8 +172,12 @@ local function performAuto()
         intake.setIntakeSpeed(0.0)
         coroutine.yield()
     end
+    ]]
 
   --  arm.setPreset("Intake")
+
+
+
     -- Clean up
     shooter.fullStop()
     intake.setDeploy(false)
@@ -191,7 +197,7 @@ local function isDone(speed, dist)
     end
 end
 
-local function isLeftDriveDone(speed)
+function isLeftDriveDone(speed)
     if drive.getLeftDrive() > -speed and drive.getLeftDrive() < speed then
         return true
     else
@@ -199,7 +205,7 @@ local function isLeftDriveDone(speed)
     end
 end
 
-local function isRightDriveDone(speed)
+function isRightDriveDone(speed)
     if drive.getRightDrive() > -speed and drive.getRightDrive() < speed then
         return true
     else
@@ -221,7 +227,7 @@ local function isAngleDone(angle)
     end
 end
 
-local function isDistDone(dist)
+function isDistDone(dist)
     if getDriveTarget() - drive.getWheelDistance() <= dist and getDriveTarget() - drive.getWheelDistance() >= dist - 1 then
         return true
     else
@@ -231,10 +237,14 @@ end
 
 function autonomous()
     disableWatchdog()
-    local c = coroutine.create(performAuto)
 
-    while wpilib.IsAutonomous() and wpilib.IsEnabled() and coroutine.status(c) ~= "dead" do
-        coroutine.resume(c)
+    --local c = coroutine.create(performAuto)
+
+    while wpilib.IsAutonomous() and wpilib.IsEnabled() do --and coroutine.status(c) ~= "dead" do
+        --coroutine.resume(c)
+        setDriveTarget(96)
+        setAngleTarget(0)
+        drive.update(drivePID:update(drive.getWheelDistance()), -anglePID:update(drive.getGyroAngle()), false)
 
         updateCompressor()
         intake.update()
