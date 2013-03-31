@@ -105,7 +105,7 @@ end
 local function performFire()
     local conveyerWait = 0.5 -- in seconds
     local conveyerStallSpeed = 120 -- in inches/second
-    local rpmDropThreshold = 4500
+    local rpmDropThreshold = 5500
 
     while true do
         while getFlywheelSpeed() < targetFlywheelRPM do

@@ -17,10 +17,7 @@ local rightCurrent = wpilib.AnalogChannel(3)
 --auto pid
 local rightEncoder = wpilib.Encoder(5, 6, false)
 local leftEncoder = wpilib.Encoder(3, 4, false)
-
 local colinGyro = wpilib.Encoder(1, 2, false)
-
-
 colinGyro:Start()
 rightEncoder:Start()
 leftEncoder:Start()
@@ -112,12 +109,20 @@ end
 
 -- These are all functions for the auto pid
 function getWheelDistance()
-    local diameter = 6
+    local diameter = 6.2
     local encoderTicks = 360
     local distancePerRevolution = math.pi * diameter
-    local rightDist = (rightEncoder:Get() / encoderTicks) * distancePerRevolution
-    local leftDist = (leftEncoder:Get() / encoderTicks) * distancePerRevolution
+     rightDist = (rightEncoder:Get() / encoderTicks) * distancePerRevolution
+     leftDist = (leftEncoder:Get() / 300) * distancePerRevolution
     return (rightDist + leftDist) / 2
+end
+
+function getRightDist()
+    return rightDist
+end
+
+function getLeftDist()
+    return leftDist
 end
 
 function getGyroAngle()
@@ -130,7 +135,7 @@ local function LinearVictor(...)
 end
 
 function update(driveX, driveY, quickTurn)
-	local leftSpeed, rightSpeed = cheesyDrive(driveY, driveX, true, quickTurn)
+	local leftSpeed, rightSpeed = arcade(driveX, driveY) --cheesyDrive(driveY, driveX, true, quickTurn)
 	leftDriveMotor:Set(-leftSpeed)
 	rightDriveMotor:Set(rightSpeed)
 end
@@ -143,6 +148,8 @@ function dashboardUpdate()
     wpilib.SmartDashboard_PutNumber("left drive encoder", leftEncoder:Get())
     wpilib.SmartDashboard_PutNumber("Gyro Angle Raw", colinGyro:Get())
     wpilib.SmartDashboard_PutNumber("Gyro Angle", getGyroAngle())
+    wpilib.SmartDashboard_PutNumber("left dist", getLeftDist())
+    wpilib.SmartDashboard_PutNumber("right dist", getRightDist())
 end
 
 --[[
