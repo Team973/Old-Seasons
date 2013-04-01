@@ -41,6 +41,11 @@ local HUMAN_LOAD = "human_load"
 local STOW = "stow"
 local INTAKE_LOAD = "intake_load"
 
+local autoState = nil
+local DRIVE = "drive"
+local TURN = "turn"
+local DONE = "done"
+
 -- End Declarations
 
 -- Auto PID
@@ -240,10 +245,28 @@ function autonomous()
 
     --local c = coroutine.create(performAuto)
 
+local firstDriveZero = 96
+local firstAngleZero = 0
+local secondAngleZero = -90
     while wpilib.IsAutonomous() and wpilib.IsEnabled() do --and coroutine.status(c) ~= "dead" do
         --coroutine.resume(c)
-        setDriveTarget(96)
-        setAngleTarget(0)
+        if autoState == DRIVE then
+            setDriveTarget(firstDriveZero)
+            setAngleTarget(firstAngleZero)
+            if isDone(.3, .6) then
+                autoState = TURN
+            end
+        elseif autoState == TURN then
+            setDriveTarget(firstDriveZero)
+            setAngleTarget(secondAngleZero)
+            if isDone(.3, .6) then
+                autoState = DONE
+            end
+        elseif autoState == Done then
+            setDriveTarget(firstDriveZero)
+            setAngleTarget(secondAngleZero)
+        end
+
         drive.update(drivePID:update(drive.getWheelDistance()), -anglePID:update(drive.getGyroAngle()), false)
 
         updateCompressor()
