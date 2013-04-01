@@ -135,7 +135,11 @@ local function LinearVictor(...)
 end
 
 function update(driveX, driveY, quickTurn)
-	local leftSpeed, rightSpeed = arcade(driveX, driveY) --cheesyDrive(driveY, driveX, true, quickTurn)
+    if wpilib.isAutonomous() then
+        local leftSpeed, rightSpeed = arcade(driveX, driveY) 
+    else
+        local leftSpeed, rightSpeed = cheesyDrive(driveY, driveX, true, quickTurn)
+    end
 	leftDriveMotor:Set(-leftSpeed)
 	rightDriveMotor:Set(rightSpeed)
 end
