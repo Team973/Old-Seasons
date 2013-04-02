@@ -85,13 +85,6 @@ function effTheGyro()
     ignoreGyro = true
 end
 
-function getGyroAngle()
-    if not gyroOkay or ignoreGyro then
-        return 0
-    end
-    return -gyro:GetAngle()
-end
-
 function disableGyro()
     gyroOkay = false
 end
