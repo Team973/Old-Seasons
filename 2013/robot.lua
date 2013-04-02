@@ -33,6 +33,15 @@ local hangingPin, hangDeployOn, hangDeployOff
 local driveX, driveY, quickTurn = 0, 0, false
 local prepareHang, hanging = false, false
 local deployIntake = false
+local currTheta, prevTheta = 0, 0
+local gyroCurr
+local prevGyro = 0
+local leftPrev = 0
+local rightPrev = 0
+local currX, currY = 0, 0
+local driveError, angleError = 0, 0
+local drivePercision = 6
+local turnPercision = 5
 
 -- STATES
 local state = nil
@@ -41,20 +50,18 @@ local HUMAN_LOAD = "human_load"
 local STOW = "stow"
 local INTAKE_LOAD = "intake_load"
 
-local autoState = nil
-local DRIVE = "drive"
-local TURN = "turn"
-local DONE = "done"
-
 -- End Declarations
 
 -- Auto PID
-local drivePID = pid.new(.05, 0, 0)
+local drivePID = pid.new(.3, 0, 0)
 drivePID.min, drivePID.max = -.5, .5
 local anglePID = pid.new(0.1, 0, 0)
-anglePID.min, anglePID.max = -.5, .5
+anglePID.min, anglePID.max = -.3, .3
+local rotatePID = pid.new(0.1, 0, 0)
+rotatePID.min, rotatePID.max = -.5, .5
 drivePID:start()
 anglePID:start()
+rotatePID:start()
 
 function getDriveTarget()
     return drivePID.target
@@ -240,6 +247,11 @@ function isDistDone(dist)
     end
 end
 
+function setTarget(x, y)
+    targetX = x
+    targetY = y
+end
+
 function autonomous()
     disableWatchdog()
 
@@ -248,26 +260,47 @@ function autonomous()
 local firstDriveZero = 96
 local firstAngleZero = 0
 local secondAngleZero = -90
+setTarget(36, 36)
     while wpilib.IsAutonomous() and wpilib.IsEnabled() do --and coroutine.status(c) ~= "dead" do
         --coroutine.resume(c)
-        if autoState == DRIVE then
-            setDriveTarget(firstDriveZero)
-            setAngleTarget(firstAngleZero)
-            if isDone(.3, .6) then
-                autoState = TURN
+        gyroCurr = drive.getGyroAngle()
+            if gyroCurr > 180 then
+                gryoCurr = gyroCurr - 360
+            elseif gyroCurr < -180 then
+                gyroCurr = gyroCurr + 360
+            else 
+                gyroCurr = gyroCurr
             end
-        elseif autoState == TURN then
-            setDriveTarget(firstDriveZero)
-            setAngleTarget(secondAngleZero)
-            if isDone(.3, .6) then
-                autoState = DONE
-            end
-        elseif autoState == Done then
-            setDriveTarget(firstDriveZero)
-            setAngleTarget(secondAngleZero)
-        end
+        currTheta = currTheta + (gyroCurr - prevGyro)
+        theta = (currTheta + prevTheta) / 2
+        local leftCurr =  drive.getLeftDist()
+        local rightCurr = drive.getRightDist()
+        local magnitude = (leftCurr + rightCurr - leftPrev - rightPrev) / 2
+        local deltaX = -magnitude * math.sin(theta / 180 * math.pi)
+        local deltaY = magnitude * math.cos(theta / 180 * math.pi)
+        prevGyro = gyroCurr
+        leftPrev = leftCurr
+        rightPrev = rightCurr
+        prevTheta = currTheta
+        currX = currX + deltaX
+        currY = currY + deltaY
+        driveError = math.sqrt((targetX - currX)^2 + (targetY - currY)^2)
+        targetAngle = math.atan2(currX - targetX, targetY - currY) / math.pi * 180
+        robotLinearError = (targetY - currY) * math.cos(drive.getGyroAngle() / 180 * math.pi) - (targetX - currX) * math.sin(drive.getGyroAngle() / 180 * math.pi)
+        wpilib.SmartDashboard_PutNumber("X", currX)
+        wpilib.SmartDashboard_PutNumber("Y", currY)
+        wpilib.SmartDashboard_PutNumber("Drive Error", driveError)
+        wpilib.SmartDashboard_PutNumber("Angle Error", angleError)
 
-        drive.update(drivePID:update(drive.getWheelDistance()), -anglePID:update(drive.getGyroAngle()), false)
+            if math.abs(targetAngle - drive.getGyroAngle()) < turnPercision then
+                if math.abs(robotLinearError) < drivePercision then
+                    drive.update(0, 0, false)
+                else
+                    drive.update(-drivePID:update(driveError), anglePID:update(targetAngle - drive.getGyroAngle()), false)
+                end
+            else
+                drive.update(0, rotatePID:update(targetAngle - drive.getGyroAngle()), false)
+            end
 
         updateCompressor()
         intake.update()
