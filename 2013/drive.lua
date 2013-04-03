@@ -102,13 +102,24 @@ end
 
 -- These are all functions for the auto pid
 function getWheelDistance()
-    local diameter = 6.2
+    local diameter = 2.75
     local encoderTicks = 360
     local distancePerRevolution = math.pi * diameter
      rightDist = (rightEncoder:Get() / encoderTicks) * distancePerRevolution
-     leftDist = (leftEncoder:Get() / 300) * distancePerRevolution
+     leftDist = (leftEncoder:Get() / encoderTicks) * distancePerRevolution
     return (rightDist + leftDist) / 2
 end
+--[[
+function getDriveVelocity()
+    local diameter = 2.75
+    local encoderTicks = 360
+    leftEncoderPeriod = leftEncoder:GetPeriod()
+    rightEncoderPeriod = rightEncoder:GetPeriod()
+    leftVelocity = 2 * math.pi^2 * (diameter / encoderTicks * leftEncoderPeriod)
+    rightVelocity = 2 * math.pi^2 * (diameter / encoderTicks * rightEncoderPeriod)
+    return (leftVelocity + rightVelocity) / 2
+end
+]]
 
 function getRightDist()
     return rightDist
