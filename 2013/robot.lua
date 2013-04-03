@@ -44,6 +44,8 @@ local drivePercision = 6
 local turnPercision = 5
 local isBackward = false
 local leftCurr, rightCurr = 0, 0
+local deltaX, deltaY = 0, 0
+local magnitude = 0
 
 -- STATES
 local state = nil
@@ -270,6 +272,9 @@ function autonomous()
         leftPrev = leftCurr
         rightPrev = rightCurr
         prevTheta = currTheta
+        magnitude = (leftCurr + rightCurr - leftPrev - rightPrev) / 2
+        deltaX = -magnitude * math.sin(theta / 180 * math.pi)
+        deltaY = magnitude * math.cos(theta / 180 * math.pi)
         currX = currX + deltaX
         currY = currY + deltaY
         wpilib.SmartDashboard_PutNumber("X", currX)
@@ -277,6 +282,7 @@ function autonomous()
         wpilib.SmartDashboard_PutNumber("Drive Error", driveError)
         wpilib.SmartDashboard_PutNumber("Angle Error", angleError)
 
+        autoDrive(0, 0, false, 6, 5)
 
         updateCompressor()
         intake.update()
@@ -305,9 +311,6 @@ function autoDrive(x, y, isBackward, dPer, tPer)
     targetY = y
     drivePercision = dPer
     turnPercision = tPer
-    local magnitude = (leftCurr + rightCurr - leftPrev - rightPrev) / 2
-    local deltaX = -magnitude * math.sin(theta / 180 * math.pi)
-    local deltaY = magnitude * math.cos(theta / 180 * math.pi)
     driveError = math.sqrt((targetX - currX)^2 + (targetY - currY)^2)
     targetAngle = math.atan2(currX - targetX, targetY - currY) / math.pi * 180
     robotLinearError = (targetY - currY) * math.cos(drive.getGyroAngle() / 180 * math.pi) - (targetX - currX) * math.sin(drive.getGyroAngle() / 180 * math.pi)
