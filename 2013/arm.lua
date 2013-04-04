@@ -36,7 +36,7 @@ PRESETS = {
     Loading = { armAngle = 80.5 },
     Stow = { armAngle = 4.2 },
     Horizontal = { armAngle = 59.2 },
-    Intake = { armAngle = 1.0 },
+    Intake = { armAngle = 0.0 },
 }
 
 -- read config file
