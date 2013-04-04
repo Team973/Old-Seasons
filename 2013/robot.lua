@@ -151,8 +151,8 @@ function disabledIdle()
 end
 
 local function performAuto()
-    --shooter.fullStop()
-    --arm.setPreset("sideShot")
+    shooter.fullStop()
+    arm.setPreset("sideShot")
 
     local shootTimer = wpilib.Timer()
     shootTimer:Start()
@@ -224,10 +224,10 @@ end
 function autonomous()
     disableWatchdog()
 
-    --local c = coroutine.create(performAuto)
+    local c = coroutine.create(performAuto)
 
-    while wpilib.IsAutonomous() and wpilib.IsEnabled() do --and coroutine.status(c) ~= "dead" do
-        --coroutine.resume(c)
+    while wpilib.IsAutonomous() and wpilib.IsEnabled() and coroutine.status(c) ~= "dead" do
+        coroutine.resume(c)
 
         -- values for the auto drive
         gyroCurr = drive.getGyroAngle()
