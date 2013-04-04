@@ -46,6 +46,7 @@ local velocityPercision = 0
 local leftCurr, rightCurr = 0, 0
 local deltaX, deltaY = 0, 0
 local magnitude = 0
+local targetX, targetY = 0, 0
 
 -- STATES
 local state = nil
