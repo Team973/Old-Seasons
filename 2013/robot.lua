@@ -153,7 +153,6 @@ local function performAuto()
     --shooter.fullStop()
     --arm.setPreset("sideShot")
 
---[[
     local shootTimer = wpilib.Timer()
     shootTimer:Start()
 
@@ -174,10 +173,8 @@ local function performAuto()
         intake.setIntakeSpeed(0.0)
         coroutine.yield()
     end
-]]
 
  --   intake.setDeploy(false)
---[[
     local t = wpilib.Timer()
     t:Start()
     shooter.fire()
@@ -188,7 +185,6 @@ local function performAuto()
         intake.setIntakeSpeed(0.0)
         coroutine.yield()
     end
-    ]]
 
   --  arm.setPreset("Intake")
 
@@ -229,7 +225,6 @@ function autonomous()
 
     --local c = coroutine.create(performAuto)
 
-    autoDrive(0, -24, true, 6, 5, .5, .5, .3)
     while wpilib.IsAutonomous() and wpilib.IsEnabled() do --and coroutine.status(c) ~= "dead" do
         --coroutine.resume(c)
 
