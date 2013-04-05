@@ -9,7 +9,8 @@ local ipairs = ipairs
 
 module(...)
 
-local encoder = wpilib.Encoder(12, 13, false)
+local encoder = wpilib.Encoder(10, 11, false)
+-- 12, 13
 local motor = wpilib.Talon(1)
 local absoluteEncoder = wpilib.AnalogChannel(1)
 local calibrationPulse = wpilib.Counter(9)
@@ -80,8 +81,8 @@ end
 
 function getRawAngle()
     local degreesPerRevolution = 360
-    local gearRatio = 10 * 6
-    local ticksPerRevolution = 360
+    local gearRatio = 1
+    local ticksPerRevolution = 2500
     return encoder:Get() / (gearRatio * ticksPerRevolution) * degreesPerRevolution
 end
 
