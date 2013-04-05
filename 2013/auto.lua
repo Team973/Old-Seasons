@@ -6,6 +6,7 @@ local intake = require("intake")
 local pid = require("pid")
 local shooter = require("shooter")
 local wpilib = require("wpilib")
+local math = require("math")
 
 module(...)
 
@@ -18,8 +19,11 @@ function run()
     arm.setPreset("sideShot")
 
     while driveToPoint(0, 12, false) do
+        wpilib.SmartDashboard_PutString("Auto Phase", "WTF")
         coroutine.yield()
     end
+
+    wpilib.SmartDashboard_PutString("Auto Phase", "FINISHED")
 
     --[[
     local shootTimer = wpilib.Timer()
@@ -68,8 +72,8 @@ function run()
 end
 
 local drivePID = pid.new(.3)
-local anglePID = pid.new(0)
-local rotatePID = pid.new(0)
+local anglePID = pid.new(.1)
+local rotatePID = pid.new(.1)
 
 local prevTheta = 0
 local prevGyro = 0
@@ -81,7 +85,7 @@ local prevY = 0
 local driveTimer
 
 function resetDrive()
-    prevGyro = drive.getGyroAngle()
+    prevGyro = 0 --drive.getGyroAngle()
 
     -- XXX(ross): these values may not actually be zero at start
     prevTheta = 0
@@ -117,7 +121,7 @@ function driveToPoint(targetX, targetY, backward, drivePrecision, turnPrecision,
 
     local currGyro = drive.getGyroAngle()
     while currGyro > 180 do
-        gryoCurr = currGyro - 360
+        currGyro = currGyro - 360
     end
     while currGyro < -180 do
         currGyro = currGyro + 360
