@@ -11,7 +11,7 @@ local coroutine = require("coroutine")
 
 module(...)
 
-local resetDrive, driveToPoint
+local resetDrive, driveToPoint, calculateDrive, storeDriveCalculations
 
 function run()
     resetDrive()
@@ -19,7 +19,7 @@ function run()
     shooter.fullStop()
     arm.setPreset("sideShot")
 
-    while driveToPoint(0, 12, false) do
+    while turnInPlace(15) do
         wpilib.SmartDashboard_PutString("Auto Phase", "WTF")
         coroutine.yield()
     end
@@ -76,6 +76,13 @@ local drivePID = pid.new(.3)
 local anglePID = pid.new(.1)
 local rotatePID = pid.new(.1)
 
+local currTheta = 0
+local currGyro = 0
+local currLeft = 0
+local currRight = 0
+local currX = 0
+local currY = 0
+
 local prevTheta = 0
 local prevGyro = 0
 local prevLeft = 0
@@ -86,14 +93,13 @@ local prevY = 0
 local driveTimer
 
 function resetDrive()
-    prevGyro = 0 --drive.getGyroAngle()
-
     -- XXX(ross): these values may not actually be zero at start
-    prevTheta = 0
-    prevLeft = 0
-    prevRight = 0
-    prevX = 0
-    prevY = 0
+    prevTheta = currTheta = 0
+    prevGyro = currGyro = 0
+    prevLeft = currLeft = 0
+    prevRight = = currRight = 0
+    prevX = currX = 0
+    prevY = currY = 0
 
     drivePID:reset()
     anglePID:reset()
@@ -108,6 +114,34 @@ function resetDrive()
     drive.dropFollowerWheels(true)
 end
 
+function calculateDrive()
+    currGyro = drive.getGyroAngle()
+    while currGyro > 180 do
+        currGyro = currGyro - 360
+    end
+    while currGyro < -180 do
+        currGyro = currGyro + 360
+    end
+    currTheta = prevTheta + (currGyro - prevGyro)
+    theta = (currTheta + prevTheta) / 2
+    currLeft =  drive.getLeftDist()
+    currRight = drive.getRightDist()
+    magnitude = (currLeft + currRight - prevLeft - prevRight) / 2
+    deltaX = -magnitude * math.sin(theta / 180 * math.pi)
+    deltaY = magnitude * math.cos(theta / 180 * math.pi)
+    currX = prevX + deltaX
+    currY = prevY + deltaY
+end
+
+function storeDriveCalculations()
+    prevGyro = currGyro
+    prevTheta = currTheta
+    prevLeft = currLeft
+    prevRight = currRight
+    prevX = currX
+    prevY = currY
+end
+
 function driveToPoint(targetX, targetY, backward, drivePrecision, turnPrecision, driveCap, turnCap, arcCap)
     if not drivePrecision then drivePrecision = 6 end -- inches
     if not turnPrecision then turnPrecision = 5 end -- degrees
@@ -120,22 +154,8 @@ function driveToPoint(targetX, targetY, backward, drivePrecision, turnPrecision,
     anglePID.min, anglePID.max = -arcCap, arcCap
     rotatePID.min, rotatePID.max = -turnCap, turnCap
 
-    local currGyro = drive.getGyroAngle()
-    while currGyro > 180 do
-        currGyro = currGyro - 360
-    end
-    while currGyro < -180 do
-        currGyro = currGyro + 360
-    end
-    local currTheta = prevTheta + (currGyro - prevGyro)
-    local theta = (currTheta + prevTheta) / 2
-    local currLeft =  drive.getLeftDist()
-    local currRight = drive.getRightDist()
-    local magnitude = (currLeft + currRight - prevLeft - prevRight) / 2
-    local deltaX = -magnitude * math.sin(theta / 180 * math.pi)
-    local deltaY = magnitude * math.cos(theta / 180 * math.pi)
-    local currX = prevX + deltaX
-    local currY = prevY + deltaY
+    calculateDrive()
+
     local driveError = math.sqrt((targetX - currX)^2 + (targetY - currY)^2)
     local targetAngle = math.atan2(currX - targetX, targetY - currY) / math.pi * 180
     if backward then
@@ -153,8 +173,6 @@ function driveToPoint(targetX, targetY, backward, drivePrecision, turnPrecision,
     if driveTimer:Get() > 2 then
         local driveInput = 0
         local turnInput = 0
-
-        local angleError = targetAngle - currGyro
 
         if math.abs(angleError) < turnPrecision then
             if math.abs(robotLinearError) < drivePrecision then
@@ -188,13 +206,34 @@ function driveToPoint(targetX, targetY, backward, drivePrecision, turnPrecision,
     wpilib.SmartDashboard_PutNumber("Drive PID output", drivePID.output)
 
     -- Store values as previous
-    prevGyro = currGyro
-    prevTheta = currTheta
-    prevLeft = currLeft
-    prevRight = currRight
-    prevX = currX
-    prevY = currY
+    storeDriveCalculations()
 
     -- Report whether we should continue driving
     return math.abs(robotLinearError) > drivePrecision
+end
+
+function turnInPlace(targetAngle, turnPrecision, turnCap)
+    if not turnPrecision then turnPrecision = 5 end -- degrees
+    if not turnCap then turnCap = 0.5 end
+    rotatePID.min, rotatePID.max = -turnCap, turnCap
+
+    local angleError = targetAngle - currGyro
+
+    calculateDrive()
+
+    if driveTimer:Get() > 2 then
+        if math.abs(angleError) < turnPrecision then
+            turnInput = 0
+        else
+            turnInput = rotatePID:update(angleError)
+        end
+
+        drive.update(0, turnInput, false)
+    else
+        drive.update(0, 0, false)
+    end
+
+    storeDriveCalculations()
+
+    return math.abs(angleError) > turnPrecision
 end
