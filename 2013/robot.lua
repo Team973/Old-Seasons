@@ -1,5 +1,6 @@
 -- robot.lua
 
+local error = error
 local pid = require("pid")
 local wpilib = require("wpilib")
 -- Inject WPILib timer object into PID
@@ -112,8 +113,11 @@ function autonomous()
 
     local c = coroutine.create(auto.run)
 
-    while wpilib.IsAutonomous() and wpilib.IsEnabled() and coroutine.status(c) ~= "dead" do
-        coroutine.resume(c)
+    while wpilib.IsAutonomous() and wpilib.IsEnabled() and coroutine.status(c) == "running" do
+        local success, err = coroutine.resume(c)
+        if not success then
+            error(err)
+        end
 
         updateCompressor()
         intake.update()
@@ -135,6 +139,18 @@ function autonomous()
     -- Clean up
     shooter.fullStop()
     drive.update(0, 0, false)
+
+    -- Make sure systems don't do dangerous things at the end of autonomous
+    while wpilib.IsAutonomous() and wpilib.IsEnabled() do
+        drive.update(0, 0, false)
+        updateCompressor()
+        intake.update()
+        shooter.update()
+        hangingPin:Set(false)
+        hangDeployOn:Set(false)
+        hangDeployOff:Set(true)
+        arm.update()
+    end
 end
 
 
