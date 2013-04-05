@@ -9,7 +9,7 @@ local ipairs = ipairs
 
 module(...)
 
-local encoder = wpilib.Encoder(10, 11, false)
+local encoder = wpilib.Encoder(11, 10, false)
 -- 12, 13
 local motor = wpilib.Talon(1)
 local absoluteEncoder = wpilib.AnalogChannel(1)
