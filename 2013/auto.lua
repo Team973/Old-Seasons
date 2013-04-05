@@ -7,6 +7,7 @@ local pid = require("pid")
 local shooter = require("shooter")
 local wpilib = require("wpilib")
 local math = require("math")
+local coroutine = require("coroutine")
 
 module(...)
 
@@ -191,6 +192,8 @@ function driveToPoint(targetX, targetY, backward, drivePrecision, turnPrecision,
     prevTheta = currTheta
     prevLeft = currLeft
     prevRight = currRight
+    prevX = currX
+    prevY = currY
 
     -- Report whether we should continue driving
     return math.abs(robotLinearError) > drivePrecision
