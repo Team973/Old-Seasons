@@ -155,7 +155,7 @@ end
 
 local function performAuto()
     shooter.fullStop()
-    arm.setPreset("sideShot")
+    arm.setPreset("autoShot")
 
     local shootTimer = wpilib.Timer()
     shootTimer:Start()
