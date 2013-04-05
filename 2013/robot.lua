@@ -224,7 +224,7 @@ end
 function autonomous()
     disableWatchdog()
 
-    --local c = coroutine.create(performAuto)
+    local c = coroutine.create(performAuto)
 
     local driveTimer = wpilib.Timer()
     driveTimer:Start()
