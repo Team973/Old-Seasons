@@ -15,6 +15,8 @@ local leftCurrent = wpilib.AnalogChannel(2)
 local rightCurrent = wpilib.AnalogChannel(3)
 
 --auto pid
+local followerWheels = wpilib.Solenoid(3)
+local lowered = false
 local rightEncoder = wpilib.Encoder(5, 6, false)
 local leftEncoder = wpilib.Encoder(3, 4, false)
 local colinGyro = wpilib.Encoder(1, 2, false)
@@ -109,6 +111,10 @@ function getWheelDistance()
      leftDist = (leftEncoder:Get() / encoderTicks) * distancePerRevolution
     return (rightDist + leftDist) / 2
 end
+
+function dropFollowerWheels(bool)
+    lowered = bool
+end
 --[[
 function getDriveVelocity()
     local diameter = 2.75
@@ -147,6 +153,7 @@ function update(driveX, driveY, quickTurn)
     end
 	leftDriveMotor:Set(-leftSpeed)
 	rightDriveMotor:Set(rightSpeed)
+    followerWheels:Set(true)
 end
 
 function dashboardUpdate()
