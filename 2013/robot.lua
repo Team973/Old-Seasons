@@ -47,6 +47,7 @@ local leftCurr, rightCurr = 0, 0
 local deltaX, deltaY = 0, 0
 local magnitude = 0
 local targetX, targetY = 0, 0
+local isBackward = false
 
 -- STATES
 local state = nil
@@ -60,9 +61,11 @@ local INTAKE_LOAD = "intake_load"
 -- Auto PID
 local drivePID = pid.new(.3, 0, 0)
 drivePID.min, drivePID.max = -.5, .5
-local anglePID = pid.new(0.1, 0, 0)
+local anglePID = pid.new(0, 0, 0)
+--0.1
 anglePID.min, anglePID.max = -.3, .3
-local rotatePID = pid.new(0.1, 0, 0)
+local rotatePID = pid.new(0, 0, 0)
+--0.1
 rotatePID.min, rotatePID.max = -.5, .5
 drivePID:start()
 anglePID:start()
@@ -206,30 +209,31 @@ local function isDone()
     end
 end
 
-function autoDrive(x, y, isBackward, dPer, tPer, driveCap, turnCap, arcCap)
+function autoDrive(x, y, backward, dPer, tPer, driveCap, turnCap, arcCap)
     targetX = x
     targetY = y
     drivePercision = dPer
     turnPercision = tPer
+    isBackward = backward
     --velocityPercision = vPer
     drivePID.min, drivePID.max = -driveCap, driveCap
     anglePID.min, anglePID.max = -arcCap, arcCap
     rotatePID.min, rotatePID.max = -turnCap, turnCap
 end
 
-function getIsBackward()
-    return isBackward
-end
-
 function autonomous()
     disableWatchdog()
 
-    local c = coroutine.create(performAuto)
+    --local c = coroutine.create(performAuto)
+
+    local driveTimer = wpilib.Timer()
+    driveTimer:Start()
 
     while wpilib.IsAutonomous() and wpilib.IsEnabled() and coroutine.status(c) ~= "dead" do
         coroutine.resume(c)
 
         -- values for the auto drive
+        drive.dropFollowerWheels(true)
         gyroCurr = drive.getGyroAngle()
             if gyroCurr > 180 then
                 gryoCurr = gyroCurr - 360
@@ -253,12 +257,7 @@ function autonomous()
         currY = currY + deltaY
         driveError = math.sqrt((targetX - currX)^2 + (targetY - currY)^2)
         targetAngle = math.atan2(currX - targetX, targetY - currY) / math.pi * 180
-        wpilib.SmartDashboard_PutNumber("X", currX)
-        wpilib.SmartDashboard_PutNumber("Y", currY)
-        wpilib.SmartDashboard_PutNumber("Drive Error", driveError)
-        --wpilib.SmartDashboard_PutBoolean("Done", isDone())
-
-        if getIsBackward() then
+        if isBackward then
             targetAngle = targetAngle + 180
         end
         if targetAngle > 180 then
@@ -266,31 +265,40 @@ function autonomous()
         end
         robotLinearError = (targetY - currY) * math.cos(drive.getGyroAngle() / 180 * math.pi) - (targetX - currX) * math.sin(drive.getGyroAngle() / 180 * math.pi)
         angleError = targetAngle - drive.getGyroAngle()
+        wpilib.SmartDashboard_PutNumber("X", currX)
+        wpilib.SmartDashboard_PutNumber("Y", currY)
+        wpilib.SmartDashboard_PutNumber("Drive Error", driveError)
+        --wpilib.SmartDashboard_PutBoolean("Done", isDone())
+        wpilib.SmartDashboard_PutBoolean("Backward", isBackward)
+
         wpilib.SmartDashboard_PutNumber("Angle Error", angleError)
         wpilib.SmartDashboard_PutNumber("Target Angle", targetAngle)
+
         --[[
-        if getIsBackward() then
-            if math.abs(targetAngle - drive.getGyroAngle()) < turnPercision then
-                if math.abs(robotLinearError) < drivePercision then
-                    drive.update(0, 0, false)
+        if driveTimer:Get() > 2 then
+            if isBackward then
+                if math.abs(targetAngle - drive.getGyroAngle()) < turnPercision then
+                    if math.abs(robotLinearError) < drivePercision then
+                        drive.update(0, 0, false)
+                    else
+                        drive.update(drivePID:update(driveError), anglePID:update(targetAngle - drive.getGyroAngle()), false)
+                    end
                 else
-                    drive.update(drivePID:update(driveError), anglePID:update(targetAngle - drive.getGyroAngle()), false)
+                    drive.update(0, rotatePID:update(targetAngle - drive.getGyroAngle()), false)
                 end
             else
-                drive.update(0, rotatePID:update(targetAngle - drive.getGyroAngle()), false)
-            end
-        else
-            if math.abs(targetAngle - drive.getGyroAngle()) < turnPercision then
-                if math.abs(robotLinearError) < drivePercision then
-                    drive.update(0, 0, false)
+                if math.abs(targetAngle - drive.getGyroAngle()) < turnPercision then
+                    if math.abs(robotLinearError) < drivePercision then
+                        drive.update(0, 0, false)
+                    else
+                        drive.update(-drivePID:update(driveError), anglePID:update(targetAngle - drive.getGyroAngle()), false)
+                    end
                 else
-                    drive.update(-drivePID:update(driveError), anglePID:update(targetAngle - drive.getGyroAngle()), false)
+                    drive.update(0, rotatePID:update(targetAngle - drive.getGyroAngle()), false)
                 end
-            else
-                drive.update(0, rotatePID:update(targetAngle - drive.getGyroAngle()), false)
             end
         end
-        ]]
+        --]]
 
         updateCompressor()
         intake.update()

@@ -19,7 +19,7 @@ local followerWheels = wpilib.Solenoid(3)
 local lowered = false
 local rightEncoder = wpilib.Encoder(5, 6, false)
 local leftEncoder = wpilib.Encoder(3, 4, false)
-local colinGyro = wpilib.Encoder(1, 2, false)
+local colinGyro = wpilib.Encoder(2, 1, false)
 colinGyro:Start()
 rightEncoder:Start()
 leftEncoder:Start()
@@ -153,7 +153,7 @@ function update(driveX, driveY, quickTurn)
     end
 	leftDriveMotor:Set(-leftSpeed)
 	rightDriveMotor:Set(rightSpeed)
-    followerWheels:Set(true)
+    followerWheels:Set(lowered)
 end
 
 function dashboardUpdate()
