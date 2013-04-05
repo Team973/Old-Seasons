@@ -113,7 +113,7 @@ function autonomous()
 
     local c = coroutine.create(auto.run)
 
-    while wpilib.IsAutonomous() and wpilib.IsEnabled() and coroutine.status(c) == "running" do
+    while wpilib.IsAutonomous() and wpilib.IsEnabled() and coroutine.status(c) ~= "dead" do
         local success, err = coroutine.resume(c)
         if not success then
             error(err)
