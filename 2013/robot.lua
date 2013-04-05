@@ -268,6 +268,7 @@ function autonomous()
         angleError = targetAngle - drive.getGyroAngle()
         wpilib.SmartDashboard_PutNumber("Angle Error", angleError)
         wpilib.SmartDashboard_PutNumber("Target Angle", targetAngle)
+        --[[
         if getIsBackward() then
             if math.abs(targetAngle - drive.getGyroAngle()) < turnPercision then
                 if math.abs(robotLinearError) < drivePercision then
@@ -289,6 +290,7 @@ function autonomous()
                 drive.update(0, rotatePID:update(targetAngle - drive.getGyroAngle()), false)
             end
         end
+        ]]
 
         updateCompressor()
         intake.update()
