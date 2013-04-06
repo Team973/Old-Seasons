@@ -300,8 +300,6 @@ controlMap =
 
         ["ry"] = function(axis)
             if state == INTAKE_LOAD then
-                shooter.setRollerManual(-deadband(axis, 0.1))
-                shooter.setConveyerManual(-deadband(axis, 0.1))
                 intake.setIntakeSpeed(-deadband(axis, 0.1))
             end
         end,
