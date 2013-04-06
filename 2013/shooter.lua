@@ -161,6 +161,7 @@ function fire(firing)
     end
 end
 
+--just to slap the pyramid
 function setSideFlap(deployed)
     flapDeployed = deployed
 end
