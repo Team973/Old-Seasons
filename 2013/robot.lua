@@ -445,6 +445,7 @@ controlMap =
         [1] = function()
             prepareHang = true
             arm.setPreset("Horizontal")
+            shooter.setSideFlap(false)
         end,
 
         [10] = function()
@@ -480,6 +481,7 @@ controlMap =
                 shooter.setFlywheelRunning(false)
                 shooter.setFlapActive(false)
                 shooter.setHardStopActive(true)
+                shooter.setSideFlap(false)
                 state = INTAKE_LOAD
             end
         end,
@@ -509,6 +511,7 @@ controlMap =
                 arm.setPreset("Stow")
                 shooter.setFlapActive(false)
                 shooter.setFlywheelRunning(false)
+                shooter.setSideFlap(false)
                 state = STOW
             end
         end,
@@ -519,6 +522,7 @@ controlMap =
                 shooter.setFlywheelRunning(false)
                 shooter.setFlapActive(true)
                 shooter.setHardStopActive(true)
+                shooter.setSideFlap(false)
                 state = HUMAN_LOAD
             end
         end,
