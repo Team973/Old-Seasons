@@ -1,5 +1,6 @@
 -- robot.lua
 
+local error = error
 local pid = require("pid")
 local wpilib = require("wpilib")
 -- Inject WPILib timer object into PID
@@ -7,6 +8,7 @@ pid.PID.timerNew = wpilib.Timer
 wpilib.SmartDashboard_init()
 
 local arm = require("arm")
+local auto = require("auto")
 local controls = require("controls")
 local drive = require("drive")
 local intake = require("intake")
@@ -33,21 +35,6 @@ local hangingPin, hangDeployOn, hangDeployOff
 local driveX, driveY, quickTurn = 0, 0, false
 local prepareHang, hanging = false, false
 local deployIntake = false
-local currTheta, prevTheta = 0, 0
-local gyroCurr
-local prevGyro = 0
-local leftPrev = 0
-local rightPrev = 0
-local currX, currY = 0, 0
-local driveError, angleError = 0, 0
-local drivePercision = 6
-local turnPercision = 5
-local velocityPercision = 0
-local leftCurr, rightCurr = 0, 0
-local deltaX, deltaY = 0, 0
-local magnitude = 0
-local targetX, targetY = 0, 0
-local isBackward = false
 
 -- STATES
 local state = nil
@@ -57,35 +44,6 @@ local STOW = "stow"
 local INTAKE_LOAD = "intake_load"
 
 -- End Declarations
-
--- Auto PID
-local drivePID = pid.new(.3, 0, 0)
-drivePID.min, drivePID.max = -.5, .5
-local anglePID = pid.new(0, 0, 0)
---0.1
-anglePID.min, anglePID.max = -.3, .3
-local rotatePID = pid.new(0, 0, 0)
---0.1
-rotatePID.min, rotatePID.max = -.5, .5
-drivePID:start()
-anglePID:start()
-rotatePID:start()
-
-function getDriveTarget()
-    return drivePID.target
-end
-
-function setDriveTarget(target)
-    drivePID.target = target
-end
-
-function getAngleTarget()
-    return anglePID.target
-end
-
-function setAngleTarget(target)
-    anglePID.target = target
-end
 
 function run()
     --local lw = wpilib.LiveWindow_GetInstance()
@@ -132,7 +90,6 @@ function dashboardUpdate()
     -- local pressureVoltageMin = 1.17
     wpilib.SmartDashboard_PutBoolean("pressure", pressureSwitch:Get())
     wpilib.SmartDashboard_PutNumber("Pressure Transducer", pressureTransducer:GetVoltage())
-    wpilib.SmartDashboard_PutNumber("Drive PID output", drivePID.output)
 end
 
 function disabledIdle()
@@ -149,156 +106,18 @@ function disabledIdle()
         wpilib.Wait(AUTO_LOOP_LAG)
         feedWatchdog()
     end
-
-
-end
-
-local function performAuto()
-    shooter.fullStop()
-    arm.setPreset("autoShot")
-
-    local shootTimer = wpilib.Timer()
-    shootTimer:Start()
-
-    while shootTimer:Get() < 4 do
-        shooter.setFlywheelRunning(true)
-        drive.update(0, 0, false)
-        intake.setIntakeSpeed(0.0)
-        coroutine.yield()
-    end
---    intake.setDeploy(true)
-
-    local t = wpilib.Timer()
-    t:Start()
-    while t:Get() < 1 do
-        shooter.setConveyerManual(0)
-        shooter.setRollerManual(1)
-        drive.update(0, 0, false)
-        intake.setIntakeSpeed(0.0)
-        coroutine.yield()
-    end
-
- --   intake.setDeploy(false)
-    local t = wpilib.Timer()
-    t:Start()
-    shooter.fire()
-    while t:Get() < 5 do
-        shooter.setConveyerManual(0)
-        shooter.setRollerManual(0)
-        drive.update(0, 0, false)
-        intake.setIntakeSpeed(0.0)
-        coroutine.yield()
-    end
-
-  --  arm.setPreset("Intake")
-
-
-
-    -- Clean up
-    shooter.fullStop()
-    intake.setDeploy(false)
-    drive.update(0, 0, false)
-    intake.setIntakeSpeed(0.0)
-end
-
-local function isDone()
-    if math.abs(robotLinearError) < drivePercision then --and drive.getDriveVelocity() < velocityPercision then
-        return true
-    else
-        return false
-    end
-end
-
-function autoDrive(x, y, backward, dPer, tPer, driveCap, turnCap, arcCap)
-    targetX = x
-    targetY = y
-    drivePercision = dPer
-    turnPercision = tPer
-    isBackward = backward
-    --velocityPercision = vPer
-    drivePID.min, drivePID.max = -driveCap, driveCap
-    anglePID.min, anglePID.max = -arcCap, arcCap
-    rotatePID.min, rotatePID.max = -turnCap, turnCap
 end
 
 function autonomous()
     disableWatchdog()
 
-    local c = coroutine.create(performAuto)
-
-    local driveTimer = wpilib.Timer()
-    driveTimer:Start()
+    local c = coroutine.create(auto.run)
 
     while wpilib.IsAutonomous() and wpilib.IsEnabled() and coroutine.status(c) ~= "dead" do
-        coroutine.resume(c)
-
-        -- values for the auto drive
-        drive.dropFollowerWheels(true)
-        gyroCurr = drive.getGyroAngle()
-            if gyroCurr > 180 then
-                gryoCurr = gyroCurr - 360
-            elseif gyroCurr < -180 then
-                gyroCurr = gyroCurr + 360
-            else 
-                gyroCurr = gyroCurr
-            end
-        currTheta = currTheta + (gyroCurr - prevGyro)
-        theta = (currTheta + prevTheta) / 2
-        leftCurr =  drive.getLeftDist()
-        rightCurr = drive.getRightDist()
-        magnitude = (leftCurr + rightCurr - leftPrev - rightPrev) / 2
-        deltaX = -magnitude * math.sin(theta / 180 * math.pi)
-        deltaY = magnitude * math.cos(theta / 180 * math.pi)
-        prevGyro = gyroCurr
-        leftPrev = leftCurr
-        rightPrev = rightCurr
-        prevTheta = currTheta
-        currX = currX + deltaX
-        currY = currY + deltaY
-        driveError = math.sqrt((targetX - currX)^2 + (targetY - currY)^2)
-        targetAngle = math.atan2(currX - targetX, targetY - currY) / math.pi * 180
-        if isBackward then
-            targetAngle = targetAngle + 180
+        local success, err = coroutine.resume(c)
+        if not success then
+            error(err)
         end
-        if targetAngle > 180 then
-            targetAngle = targetAngle - 360
-        end
-        robotLinearError = (targetY - currY) * math.cos(drive.getGyroAngle() / 180 * math.pi) - (targetX - currX) * math.sin(drive.getGyroAngle() / 180 * math.pi)
-        angleError = targetAngle - drive.getGyroAngle()
-        wpilib.SmartDashboard_PutNumber("X", currX)
-        wpilib.SmartDashboard_PutNumber("Y", currY)
-        wpilib.SmartDashboard_PutNumber("Drive Error", driveError)
-        --wpilib.SmartDashboard_PutBoolean("Done", isDone())
-        wpilib.SmartDashboard_PutBoolean("Backward", isBackward)
-
-        wpilib.SmartDashboard_PutNumber("Angle Error", angleError)
-        wpilib.SmartDashboard_PutNumber("Target Angle", targetAngle)
-
-        --[[
-        if driveTimer:Get() > 2 then
-            if isBackward then
-                if math.abs(targetAngle - drive.getGyroAngle()) < turnPercision then
-                    if math.abs(robotLinearError) < drivePercision then
-                        drive.update(0, 0, false)
-                    else
-                        drive.update(drivePID:update(driveError), anglePID:update(targetAngle - drive.getGyroAngle()), false)
-                    end
-                else
-                    drive.update(0, rotatePID:update(targetAngle - drive.getGyroAngle()), false)
-                end
-            else
-                if math.abs(targetAngle - drive.getGyroAngle()) < turnPercision then
-                    if math.abs(robotLinearError) < drivePercision then
-                        drive.update(0, 0, false)
-                    else
-                        drive.update(-drivePID:update(driveError), anglePID:update(targetAngle - drive.getGyroAngle()), false)
-                    end
-                else
-                    drive.update(0, rotatePID:update(targetAngle - drive.getGyroAngle()), false)
-                end
-            end
-        end
-        --]]
 
         updateCompressor()
         intake.update()
@@ -320,6 +139,18 @@ function autonomous()
     -- Clean up
     shooter.fullStop()
     drive.update(0, 0, false)
+
+    -- Make sure systems don't do dangerous things at the end of autonomous
+    while wpilib.IsAutonomous() and wpilib.IsEnabled() do
+        drive.update(0, 0, false)
+        updateCompressor()
+        intake.update()
+        shooter.update()
+        hangingPin:Set(false)
+        hangDeployOn:Set(false)
+        hangDeployOff:Set(true)
+        arm.update()
+    end
 end
 
 
@@ -418,7 +249,7 @@ controlMap =
                 driveX = deadband(axis, 0.1) / 3
             else
                 driveX = deadband(axis, 0.1)
-        end
+            end
         end,
         [7] = {tick=function(held)
             if held then
@@ -552,6 +383,8 @@ controlMap =
                 shooter.setFlapActive(true)
             end
         end,
+
+        [11] = {down=shooter.fireOne, up=function() shooter.fireOne(false) end},
 
         ["haty"] = function(axis)
             local increment = 0.5

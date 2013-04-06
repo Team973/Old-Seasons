@@ -1,5 +1,6 @@
 -- shooter.lua
 
+local error = error
 local ipairs = ipairs
 
 local bit = require("bit")
@@ -33,6 +34,8 @@ local flapActivated = false
 local hardStopActivated = false
 local targetFlywheelRPM = 6000
 local flapDeployed = false
+local flywheelFullSpeed = false
+local discsFired = 0
 
 local rollerFeedSpeed = 1
 local rollerLoadSpeed = 0.5
@@ -122,7 +125,28 @@ local function performFire()
             roller:Set(rollerFeedSpeed)
             coroutine.yield()
         end
+        discsFired = discsFired + 1
     end
+end
+
+local function performFireOne()
+    local rpmDropThreshold = 5500
+
+    while getFlywheelSpeed() < targetFlywheelRPM do
+        conveyer:Set(0)
+        roller:Set(0)
+        coroutine.yield()
+    end
+
+    while getFlywheelSpeed() >= rpmDropThreshold do
+        conveyer:Set(conveyerLoadSpeed)
+        roller:Set(rollerFeedSpeed)
+        coroutine.yield()
+    end
+
+    -- Extra Safe Stop
+    conveyer:Set(0)
+    roller:Set(0)
 end
 
 function fire(firing)
@@ -141,6 +165,18 @@ function setSideFlap(deployed)
     flapDeployed = deployed
 end
 
+function fireOne(firing)
+    if firing == nil then
+        firing = true
+    end
+
+    if firing and fireCoroutine == nil then
+        fireCoroutine = coroutine.create(performFireOne)
+    elseif not firing then
+        fireCoroutine = nil
+    end
+end
+
 function update()
     humanLoadFlap:Set(flapActivated)
     hardStop:Set(hardStopActivated)
@@ -153,9 +189,14 @@ function update()
 
 
     if fireCoroutine then
-        coroutine.resume(fireCoroutine)
         if coroutine.status(fireCoroutine) == "dead" then
-            fireCoroutine = nil
+            conveyer:Set(0)
+            roller:Set(0)
+        else
+            local success, err = coroutine.resume(fireCoroutine)
+            if not success then
+                error(err)
+            end
         end
     elseif conveyerSpeed == 0 and rollerSpeed == 0 then
         if feeding then
