@@ -112,9 +112,6 @@ function getWheelDistance()
     return (rightDist + leftDist) / 2
 end
 
-function dropFollowerWheels(bool)
-    lowered = bool
-end
 --[[
 function getDriveVelocity()
     local diameter = 2.75
@@ -148,12 +145,13 @@ function update(driveX, driveY, quickTurn)
     local leftSpeed, rightSpeed
     if wpilib.IsAutonomous()then
         leftSpeed, rightSpeed = arcade(driveX, driveY) 
+        followerWheels:Set(true)
     else
         leftSpeed, rightSpeed = cheesyDrive(driveY, driveX, true, quickTurn)
+        followerWheels:Set(false)
     end
 	leftDriveMotor:Set(-leftSpeed)
 	rightDriveMotor:Set(rightSpeed)
-    followerWheels:Set(lowered)
 end
 
 function dashboardUpdate()
