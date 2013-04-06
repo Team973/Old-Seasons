@@ -574,6 +574,10 @@ controlMap =
 }
 -- End Controls
 
+function getState()
+    return state
+end
+
 -- Watchdog shortcuts
 if watchdogEnabled then
     wpilib.GetWatchdog():SetExpiration(0.25)
