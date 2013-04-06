@@ -27,6 +27,8 @@ local flywheelTicksPerRevolution = 1.0
 local conveyerEncoder = wpilib.Encoder(6, 5)
 local hardStop = wpilib.Solenoid(6)
 local humanLoadFlap = wpilib.Solenoid(5)
+local sideFlapOff = wpilib.Solenoid(2)
+local sideFlapOn =wpilib.solenoid(8)
 local flapActivated = false
 local hardStopActivated = false
 local targetFlywheelRPM = 6000
@@ -146,25 +148,34 @@ function update()
 
     if fireCoroutine then
         coroutine.resume(fireCoroutine)
+        sideFlapOn:Set(true)
+        sideFlapOff:Set(false)
         if coroutine.status(fireCoroutine) == "dead" then
             fireCoroutine = nil
         end
     elseif conveyerSpeed == 0 and rollerSpeed == 0 then
         if feeding then
             roller:Set(rollerFeedSpeed)
+            sideFlapOn:Set(false)
+            sideFlapOff:Set(true)
         elseif loading then
             conveyer:Set(conveyerLoadSpeed)
             roller:Set(rollerLoadSpeed)
+            sideFlapOn:Set(false)
+            sideFlapOff:Set(true)
             -- Locked out so we can't run it during human loading
             flywheelMotor:Set(0.0)
         else
             conveyer:Set(0)
             roller:Set(0)
+            sideFlapOn:Set(false)
+            sideFlapOff:Set(true)
         end
     else
         conveyer:Set(conveyerSpeed)
         roller:Set(rollerSpeed)
     end
+
 end
 
 function fullStop()
