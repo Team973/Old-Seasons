@@ -30,7 +30,7 @@ encoder:Start()
 calibrationPulse:Start()
 
 PRESETS = {
-    Shooting = { armAngle = 33.4 },
+    Shooting = { armAngle = 16.7 },
     -- also use 35 if it doesn't work
     sideShot = { armAngle = 33.4 },
     autoShot = { armAngle = 33.4 },
