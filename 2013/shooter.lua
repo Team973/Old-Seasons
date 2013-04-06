@@ -122,26 +122,29 @@ local function performFire()
             calcDiscsFired()
             coroutine.yield()
         end
+        discsFired = discsFired + 1
     end
 end
 
 local function performFireOne()
     local rpmDropThreshold = 5500
 
-    while calcDiscsFired < 1 do
-        while getFlywheelSpeed() < targetFlywheelRPM do
-            conveyer:Set(0)
-            roller:Set(0)
-            coroutine.yield()
-        end
-
-        while getFlywheelSpeed() >= rpmDropThreshold do
-            conveyer:Set(conveyerLoadSpeed)
-            roller:Set(rollerFeedSpeed)
-            calcDiscsFired()
-            coroutine.yield()
-        end
+    while getFlywheelSpeed() < targetFlywheelRPM do
+        conveyer:Set(0)
+        roller:Set(0)
+        coroutine.yield()
     end
+
+    while getFlywheelSpeed() >= rpmDropThreshold do
+        conveyer:Set(conveyerLoadSpeed)
+        roller:Set(rollerFeedSpeed)
+        calcDiscsFired()
+        coroutine.yield()
+    end
+
+    -- Extra Safe Stop
+    conveyer:Set(0)
+    roller:Set(0)
 end
 
 function fire(firing)
@@ -156,27 +159,16 @@ function fire(firing)
     end
 end
 
-function fireOne(firingOne)
-    if firingOne == nil then
-        firingOne = true
+function fireOne(firing)
+    if firing == nil then
+        firing = true
     end
 
-    if firingOne and fireOneCoroutine == nil then
-        fireOneCoroutine = coroutine.create(performFireOne)
-    elseif not firingOne then
-        fireOneCoroutine = nil
+    if firing and fireCoroutine == nil then
+        fireCoroutine = coroutine.create(performFireOne)
+    elseif not firing then
+        fireCoroutine = nil
     end
-end
-
-function calcDiscsFired()
-    local firedSpeedDrop = 5500
-    if flywheelFullSpeed and getFlywheelSpeed() < firedSpeedDrop and getFlywheelSpeed() > 4100 then
-        discsFired = discsFired + 1
-    end
-    if getFlywheelSpeed() < firedSpeedDrop then
-        flywheelFullSpeed = true
-    end
-    return discsFired
 end
 
 function update()
@@ -190,14 +182,11 @@ function update()
     end
 
     if fireCoroutine then
-        coroutine.resume(fireCoroutine)
         if coroutine.status(fireCoroutine) == "dead" then
-            fireCoroutine = nil
-        end
-    elseif fireOneCoroutine then
-        coroutine.resume(fireOneCoroutine)
-        if coroutine.status(fireOneCoroutine) == "dead" then
-            fireOneCoroutine = nil
+            conveyer:Set(0)
+            roller:Set(0)
+        else
+            coroutine.resume(fireCoroutine)
         end
     elseif conveyerSpeed == 0 and rollerSpeed == 0 then
         if feeding then
