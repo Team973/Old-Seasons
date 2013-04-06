@@ -119,7 +119,6 @@ local function performFire()
         while getFlywheelSpeed() >= rpmDropThreshold do
             conveyer:Set(conveyerLoadSpeed)
             roller:Set(rollerFeedSpeed)
-            calcDiscsFired()
             coroutine.yield()
         end
         discsFired = discsFired + 1
@@ -138,7 +137,6 @@ local function performFireOne()
     while getFlywheelSpeed() >= rpmDropThreshold do
         conveyer:Set(conveyerLoadSpeed)
         roller:Set(rollerFeedSpeed)
-        calcDiscsFired()
         coroutine.yield()
     end
 
@@ -186,7 +184,10 @@ function update()
             conveyer:Set(0)
             roller:Set(0)
         else
-            coroutine.resume(fireCoroutine)
+            local success, err = coroutine.resume(fireCoroutine)
+            if not success then
+                error(err)
+            end
         end
     elseif conveyerSpeed == 0 and rollerSpeed == 0 then
         if feeding then
@@ -223,7 +224,6 @@ function dashboardUpdate()
     wpilib.SmartDashboard_PutNumber("Flywheel RPM", flywheelSpeed)
     wpilib.SmartDashboard_PutNumber("RAW BANNER", flywheelCounter1:Get())
     wpilib.SmartDashboard_PutNumber("Conveyer Distance", getConveyerDistance())
-    wpilib.SmartDashboard_PutNumber("Discs Fired", calcDiscsFired())
     wpilib.DriverStationLCD_GetInstance():PrintLine(wpilib.DriverStationLCD_kUser_Line1, string.format("Flywheel RPM: %.2f", flywheelSpeed))
     wpilib.DriverStationLCD_GetInstance():UpdateLCD()
 end
