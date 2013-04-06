@@ -119,6 +119,26 @@ local function performFire()
         while getFlywheelSpeed() >= rpmDropThreshold do
             conveyer:Set(conveyerLoadSpeed)
             roller:Set(rollerFeedSpeed)
+            calcDiscsFired()
+            coroutine.yield()
+        end
+    end
+end
+
+local function performFireOne()
+    local rpmDropThreshold = 5500
+
+    while getDiscsFired ~= 1 do
+        while getFlywheelSpeed() < targetFlywheelRPM do
+            conveyer:Set(0)
+            roller:Set(0)
+            coroutine.yield()
+        end
+
+        while getFlywheelSpeed() >= rpmDropThreshold do
+            conveyer:Set(conveyerLoadSpeed)
+            roller:Set(rollerFeedSpeed)
+            calcDiscsFired()
             coroutine.yield()
         end
     end
@@ -136,6 +156,18 @@ function fire(firing)
     end
 end
 
+function fireOne(firingOne)
+    if firingOne == nil then
+        firingOne = true
+    end
+
+    if firingOne and fireOneCoroutine == nil then
+        fireOneCoroutine = coroutine.create(performFireOne)
+    elseif not firingOne then
+        fireOneCoroutine = nil
+    end
+end
+
 function calcDiscsFired()
     local firedSpeedDrop = 5500
     if flywheelFullSpeed and getFlywheelSpeed() < firedSpeedDrop and getFlywheelSpeed > 5100 then
@@ -149,6 +181,7 @@ end
 function getDiscsFired()
     return discsFired
 end
+
 
 function update()
     humanLoadFlap:Set(flapActivated)
@@ -164,6 +197,11 @@ function update()
         coroutine.resume(fireCoroutine)
         if coroutine.status(fireCoroutine) == "dead" then
             fireCoroutine = nil
+        end
+    elseif fireOneCoroutine then
+        coroutine.resume(fireOneCoroutine)
+        if coroutine.status(fireOneCoroutine) == "dead" then
+            fireOneCoroutine = nil
         end
     elseif conveyerSpeed == 0 and rollerSpeed == 0 then
         if feeding then
