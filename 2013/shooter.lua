@@ -11,6 +11,7 @@ local reversemotor = require("reversemotor")
 local math = require("math")
 local string = require("string")
 local wpilib = require("wpilib")
+local robot = require("robot")
 
 module(...)
 
