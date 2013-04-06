@@ -136,14 +136,17 @@ function fire(firing)
     end
 end
 
-function getDiscsFired()
+function discsFired()
     local firedSpeedDrop = 5500
-    if getFlywheelSpeed() < firedSpeedDrop and flywheelFullSpeed then
+    if getFlywheelSpeed() < firedSpeedDrop and flywheelFullSpeed and getFlywheelSpeed > 5400 then
         discsFired = discsFired + 1
     end
     if getFlywheelSpeed() < firedSpeedDrop then
         flywheelFullSpeed = true
     end
+end
+
+function getDiscsFired()
     return discsFired
 end
 
