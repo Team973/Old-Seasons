@@ -128,7 +128,7 @@ end
 local function performFireOne()
     local rpmDropThreshold = 5500
 
-    while getDiscsFired ~= 1 do
+    while calcDiscsFired < 1 do
         while getFlywheelSpeed() < targetFlywheelRPM do
             conveyer:Set(0)
             roller:Set(0)
@@ -170,18 +170,14 @@ end
 
 function calcDiscsFired()
     local firedSpeedDrop = 5500
-    if flywheelFullSpeed and getFlywheelSpeed() < firedSpeedDrop and getFlywheelSpeed > 5100 then
+    if flywheelFullSpeed and getFlywheelSpeed() < firedSpeedDrop and getFlywheelSpeed() > 4100 then
         discsFired = discsFired + 1
     end
     if getFlywheelSpeed() < firedSpeedDrop then
         flywheelFullSpeed = true
     end
-end
-
-function getDiscsFired()
     return discsFired
 end
-
 
 function update()
     humanLoadFlap:Set(flapActivated)
@@ -238,7 +234,7 @@ function dashboardUpdate()
     wpilib.SmartDashboard_PutNumber("Flywheel RPM", flywheelSpeed)
     wpilib.SmartDashboard_PutNumber("RAW BANNER", flywheelCounter1:Get())
     wpilib.SmartDashboard_PutNumber("Conveyer Distance", getConveyerDistance())
-    wpilib.SmartDashboard_PutNumber("Discs Fired", getDiscsFired())
+    wpilib.SmartDashboard_PutNumber("Discs Fired", calcDiscsFired())
     wpilib.DriverStationLCD_GetInstance():PrintLine(wpilib.DriverStationLCD_kUser_Line1, string.format("Flywheel RPM: %.2f", flywheelSpeed))
     wpilib.DriverStationLCD_GetInstance():UpdateLCD()
 end
