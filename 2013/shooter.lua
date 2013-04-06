@@ -146,10 +146,12 @@ function update()
         flywheelMotor:Set(0.0)
     end
 
-    if fireCoroutine then
-        coroutine.resume(fireCoroutine)
+    if robot.getState() == FIRE then
         sideFlapOn:Set(true)
         sideFlapOff:Set(false)
+    end
+    if fireCoroutine then
+        coroutine.resume(fireCoroutine)
         if coroutine.status(fireCoroutine) == "dead" then
             fireCoroutine = nil
         end
