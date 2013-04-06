@@ -32,6 +32,7 @@ local sideFlapOn =wpilib.Solenoid(8)
 local flapActivated = false
 local hardStopActivated = false
 local targetFlywheelRPM = 6000
+local flapDeployed = false
 
 local rollerFeedSpeed = 1
 local rollerLoadSpeed = 0.5
@@ -181,7 +182,6 @@ function update()
 
     sideFlapOn:Set(flapDeployed)
     sideFlapOff:Set(not flapDeployed)
-
 end
 
 function fullStop()
