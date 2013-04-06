@@ -489,6 +489,7 @@ controlMap =
                 arm.setPreset("sideShot")
                 shooter.setFlapActive(false)
                 shooter.setHardStopActive(false)
+                shooter.setSideFlap(true)
                 state = FIRE
             end
         end,
@@ -498,6 +499,7 @@ controlMap =
                 arm.setPreset("Shooting")
                 shooter.setFlapActive(false)
                 shooter.setHardStopActive(false)
+                shooter.setSideFlap(true)
                 state = FIRE
             end
         end,
@@ -573,10 +575,6 @@ controlMap =
     cypress={},
 }
 -- End Controls
-
-function getState()
-    return state
-end
 
 -- Watchdog shortcuts
 if watchdogEnabled then

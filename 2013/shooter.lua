@@ -11,7 +11,6 @@ local reversemotor = require("reversemotor")
 local math = require("math")
 local string = require("string")
 local wpilib = require("wpilib")
-local robot = require("robot")
 
 module(...)
 
@@ -137,6 +136,10 @@ function fire(firing)
     end
 end
 
+function setSideFlap(deployed)
+    flapDeployed = deployed
+end
+
 function update()
     humanLoadFlap:Set(flapActivated)
     hardStop:Set(hardStopActivated)
@@ -147,10 +150,7 @@ function update()
         flywheelMotor:Set(0.0)
     end
 
-    if robot.getState() == FIRE then
-        sideFlapOn:Set(true)
-        sideFlapOff:Set(false)
-    end
+
     if fireCoroutine then
         coroutine.resume(fireCoroutine)
         if coroutine.status(fireCoroutine) == "dead" then
@@ -178,6 +178,9 @@ function update()
         conveyer:Set(conveyerSpeed)
         roller:Set(rollerSpeed)
     end
+
+    sideFlapOn:Set(flapDeployed)
+    sideFlapOff:Set(not flapDeployed)
 
 end
 
