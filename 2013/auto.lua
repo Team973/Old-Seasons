@@ -19,14 +19,12 @@ function run()
     shooter.fullStop()
     arm.setPreset("autoShot")
 
+    --[[
     while turnInPlace(15) do
-        wpilib.SmartDashboard_PutString("Auto Phase", "WTF")
         coroutine.yield()
     end
+    ]]
 
-    wpilib.SmartDashboard_PutString("Auto Phase", "FINISHED")
-
-    --[[
     local shootTimer = wpilib.Timer()
     shootTimer:Start()
 
@@ -61,7 +59,6 @@ function run()
     end
 
   --  arm.setPreset("Intake")
-    --]]
 
 
 
