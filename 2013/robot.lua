@@ -378,6 +378,8 @@ controlMap =
             end
         end,
 
+        [11] = {down=shooter.fireOne, up=function() shooter.fireOne(false) end},
+
         ["haty"] = function(axis)
             local increment = 0.5
             if prepareHang then
