@@ -94,12 +94,18 @@ local driveTimer
 
 function resetDrive()
     -- XXX(ross): these values may not actually be zero at start
-    prevTheta = currTheta = 0
-    prevGyro = currGyro = 0
-    prevLeft = currLeft = 0
-    prevRight = = currRight = 0
-    prevX = currX = 0
-    prevY = currY = 0
+    prevTheta = 0
+    currTheta = 0
+    prevGyro = 0
+    currGyro = 0
+    prevLeft = 0
+    currLeft = 0
+    prevRight = 0
+    currRight = 0
+    prevX = 0
+    currX = 0
+    prevY = 0
+    currY = 0
 
     drivePID:reset()
     anglePID:reset()
@@ -111,7 +117,6 @@ function resetDrive()
 
     driveTimer = wpilib.Timer()
     driveTimer:Start()
-    drive.dropFollowerWheels(true)
 end
 
 function calculateDrive()
