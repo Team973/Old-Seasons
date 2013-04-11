@@ -14,6 +14,7 @@ local drive = require("drive")
 local intake = require("intake")
 local math = require("math")
 local shooter = require("shooter")
+local serial = require("serial")
 
 local pairs = pairs
 local tostring = tostring
@@ -101,6 +102,7 @@ function disabledIdle()
         arm.dashboardUpdate()
         drive.dashboardUpdate()
         shooter.dashboardUpdate()
+        serial.dashboardUpdate()
 
         feedWatchdog()
         wpilib.Wait(AUTO_LOOP_LAG)
@@ -180,11 +182,15 @@ function teleop()
         -- Arm
         arm.update()
 
+        -- Serial
+        serial.update()
+
         -- Dashboard
         dashboardUpdate()
         arm.dashboardUpdate()
         drive.dashboardUpdate()
         shooter.dashboardUpdate()
+        serial.dashboardUpdate()
 
         -- Iteration cleanup
         feedWatchdog()
