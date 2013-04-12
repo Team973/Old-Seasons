@@ -285,6 +285,10 @@ controlMap =
             shooter.setSideFlap(false)
         end,
 
+        [9] = {tick=function(held)
+            serial.setRead(held)
+        end},
+
         [10] = function()
             if prepareHang then
                 hanging = false
