@@ -16,15 +16,55 @@ local resetDrive, driveToPoint, calculateDrive, storeDriveCalculations
 function run()
     resetDrive()
 
+    --[[
+    while linearDrive(24, 0) do
+        coroutine.yield()
+    end
+    ]]
+    --[[
     shooter.fullStop()
     arm.setPreset("autoShot")
+    ]]
 
     --[[
     while turnInPlace(15) do
         coroutine.yield()
     end
-    ]]
 
+    while driveToPoint(60, -120, true, 6, 5, .7) do
+        coroutine.yield()
+    end
+
+    while driveToPoint(-120, -120, true, 6, 5, .7) do
+        coroutine.yield()
+    end
+
+    while driveToPoint(60, -120, false, 6, 5, .6) do
+        coroutine.yield()
+    end
+
+    while driveToPoint(12, 0, false, 6, 5, .5) do
+        coroutine.yield()
+    end
+    --]]
+
+    while driveToPoint(-72, 0, true, 6, 5, .5) do
+        coroutine.yield()
+    end
+
+    while driveToPoint(-72, 72, true, 6, 5, .5) do
+        coroutine.yield()
+    end
+
+    while driveToPoint(0, 72, true, 6, 5, .5) do
+        coroutine.yield()
+    end
+
+    while driveToPoint(0, 0, true, 6, 5, .5) do
+        coroutine.yield()
+    end
+
+    --[[
     local shootTimer = wpilib.Timer()
     shootTimer:Start()
 
@@ -57,6 +97,7 @@ function run()
         intake.setIntakeSpeed(0.0)
         coroutine.yield()
     end
+    ]]
 
   --  arm.setPreset("Intake")
 
@@ -144,6 +185,26 @@ function storeDriveCalculations()
     prevY = currY
 end
 
+function linearDrive(targetDrive, targetAngle, drivePercision, arcPercision)
+    if not drivePrecision then drivePrecision = 6 end -- inches
+    local driveError = targetDrive - drive.getWheelDistance()
+    local angleError = targetAngle - currGyro
+    if driveTimer:Get() > 2 then
+        driveInput = 0
+        if math.abs(driveError) < drivePrecision then
+            driveInput = 0
+            arcInput = 0
+        else
+            driveInput = drivePID.update(driveError)
+            arcInput = anglPID.update(angleError)
+        end
+        drive.update(driveInput, arcInput, false)
+    else
+        drive.update(0, 0, false)
+    end
+    return math.abs(driveError) > drivePrecision
+end
+
 function driveToPoint(targetX, targetY, backward, drivePrecision, turnPrecision, driveCap, turnCap, arcCap)
     if not drivePrecision then drivePrecision = 6 end -- inches
     if not turnPrecision then turnPrecision = 5 end -- degrees
@@ -211,7 +272,11 @@ function driveToPoint(targetX, targetY, backward, drivePrecision, turnPrecision,
     storeDriveCalculations()
 
     -- Report whether we should continue driving
-    return math.abs(robotLinearError) > drivePrecision
+    if math.abs(angleError) < turnPrecision then
+        return math.abs(robotLinearError) > drivePrecision
+    else
+        return true
+    end
 end
 
 function turnInPlace(targetAngle, turnPrecision, turnCap)
