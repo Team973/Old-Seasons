@@ -285,9 +285,12 @@ controlMap =
             shooter.setSideFlap(false)
         end,
 
+        --This is for the serial port testing
+        --[[
         [9] = {tick=function(held)
             serial.setRead(held)
         end},
+        -]]
 
         [10] = function()
             if prepareHang then
