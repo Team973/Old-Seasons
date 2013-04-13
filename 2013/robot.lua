@@ -371,7 +371,8 @@ controlMap =
 
         [5] = {tick=shooter.humanLoad},
 
-        [6] = {down=shooter.fire, up=function() shooter.fire(false) end},
+        -- TODO change back to buttong 6 when told to
+        [11] = {down=shooter.fire, up=function() shooter.fire(false) end},
 
         [8] = function()
             if state == FIRE then
@@ -395,7 +396,7 @@ controlMap =
             end
         end,
 
-        [11] = {down=shooter.fireOne, up=function() shooter.fireOne(false) end},
+        [6] = {down=shooter.fireOne, up=function() shooter.fireOne(false) end},
 
         ["haty"] = function(axis)
             local increment = 0.5
