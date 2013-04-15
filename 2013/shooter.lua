@@ -32,7 +32,7 @@ local sideFlapOff = wpilib.Solenoid(2)
 local sideFlapOn =wpilib.Solenoid(8)
 local flapActivated = false
 local hardStopActivated = false
-local targetFlywheelRPM = 6000
+local targetFlywheelRPM = 8500
 local flapDeployed = false
 local flywheelFullSpeed = false
 local discsFired = 0
@@ -73,7 +73,7 @@ function setRollerManual(speed)
 end
 
 local function RPMcontrol(rpm)
-    local dangerRPM = 8000
+    local dangerRPM = 10000
 
     if rpm > dangerRPM then
         return 0
@@ -130,7 +130,7 @@ local function performFire()
 end
 
 local function performFireOne()
-    local rpmDropThreshold = 5500
+    local rpmDropThreshold = 7500
 
     while getFlywheelSpeed() < targetFlywheelRPM do
         conveyer:Set(0)
@@ -143,6 +143,7 @@ local function performFireOne()
         roller:Set(rollerFeedSpeed)
         coroutine.yield()
     end
+    discsFired = discsFired + 1
 
     -- Extra Safe Stop
     conveyer:Set(0)
@@ -176,6 +177,14 @@ function fireOne(firing)
     elseif not firing then
         fireCoroutine = nil
     end
+end
+
+function runConveyer(magnitude, frequency)
+    local timer = wpilib.Timer()
+    timer:Start()
+    local mag = magnitude
+    local freq = frequency
+    conveyerSpeed = math.abs(mag * math.sin(freq * timer:Get()))
 end
 
 function update()
@@ -226,6 +235,14 @@ function update()
     sideFlapOff:Set(not flapDeployed)
 end
 
+function getDiscsFired()
+    return discsFired
+end
+
+function clearDiscsFired()
+    discsFired = 0
+end
+
 function fullStop()
     flywheelRunning = false
     fireCoroutine = nil
@@ -243,6 +260,7 @@ function dashboardUpdate()
     wpilib.SmartDashboard_PutNumber("Flywheel RPM", flywheelSpeed)
     wpilib.SmartDashboard_PutNumber("RAW BANNER", flywheelCounter1:Get())
     wpilib.SmartDashboard_PutNumber("Conveyer Distance", getConveyerDistance())
+    wpilib.SmartDashboard_PutNumber("Discs Fired", discsFired)
     wpilib.DriverStationLCD_GetInstance():PrintLine(wpilib.DriverStationLCD_kUser_Line1, string.format("Flywheel RPM: %.2f", flywheelSpeed))
     wpilib.DriverStationLCD_GetInstance():UpdateLCD()
 end

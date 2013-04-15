@@ -11,56 +11,78 @@ local coroutine = require("coroutine")
 
 module(...)
 
-local resetDrive, driveToPoint, calculateDrive, storeDriveCalculations
+local resetDrive, driveToPoint, calculateDrive, storeDriveCalculations, runConveyer
 
 function run()
     resetDrive()
-
-    --[[
-    while linearDrive(24, 0) do
+--[[
+    while turnInPlace(90) do
         coroutine.yield()
     end
-    ]]
+    
+    --[[
+    while linearDrive(96, 0) do
+        coroutine.yield()
+    end
+
     --[[
     shooter.fullStop()
     arm.setPreset("autoShot")
     ]]
 
-    --[[
-    while turnInPlace(15) do
+    arm.setPreset("autoShot")
+
+    shooter.setFlywheelRunning(true)
+
+    while turnInPlace(20) do
         coroutine.yield()
     end
 
-    while driveToPoint(60, -120, true, 6, 5, .7) do
+    shooter.fire()
+    while shooter.getDiscsFired() < 3 do
         coroutine.yield()
     end
 
-    while driveToPoint(-120, -120, true, 6, 5, .7) do
+    shooter.setFlywheelRunning(false)
+    shooter.clearDiscsFired()
+
+
+    while driveToPoint(0, -110, true, 12, 5, .7) do
         coroutine.yield()
     end
 
-    while driveToPoint(60, -120, false, 6, 5, .6) do
+    arm.setPreset("Intake")
+
+    while driveToPoint(-60, -110, true, 12, 5, .7) do
+        shooter.humanLoad(true)
         coroutine.yield()
     end
 
-    while driveToPoint(12, 0, false, 6, 5, .5) do
-        coroutine.yield()
-    end
-    --]]
-
-    while driveToPoint(-72, 0, true, 6, 5, .5) do
+    while driveToPoint(12, -40, false, 12, 5, .7) do
         coroutine.yield()
     end
 
-    while driveToPoint(-72, 72, true, 6, 5, .5) do
+    wpilib.SmartDashboard_PutNumber("HIT", 1)
+    arm.setPreset("autoShot")
+    wpilib.SmartDashboard_PutNumber("HIT", 2)
+
+    while driveToPoint(12, 0, false, 12, 5, .7) do
         coroutine.yield()
     end
+    wpilib.SmartDashboard_PutNumber("HIT", 3)
 
-    while driveToPoint(0, 72, true, 6, 5, .5) do
+    shooter.setFlywheelRunning(true)
+    wpilib.SmartDashboard_PutNumber("HIT", 4)
+
+    while turnInPlace(20) do
         coroutine.yield()
     end
+    wpilib.SmartDashboard_PutNumber("HIT", 5)
 
-    while driveToPoint(0, 0, true, 6, 5, .5) do
+    shooter.fire()
+    wpilib.SmartDashboard_PutNumber("HIT", 6)
+
+    while shooter.getDiscsFired() <= 3 do
         coroutine.yield()
     end
 
@@ -110,9 +132,10 @@ function run()
     intake.setIntakeSpeed(0.0)
 end
 
-local drivePID = pid.new(.3)
+local drivePID = pid.new(.02)
 local anglePID = pid.new(.1)
-local rotatePID = pid.new(.1)
+local rotatePID = pid.new(.1, .01, 0.005)
+rotatePID.icap = .1
 
 local currTheta = 0
 local currGyro = 0
@@ -157,6 +180,7 @@ function resetDrive()
     driveTimer:Start()
 end
 
+
 function calculateDrive()
     currGyro = drive.getGyroAngle()
     while currGyro > 180 do
@@ -186,22 +210,25 @@ function storeDriveCalculations()
 end
 
 function linearDrive(targetDrive, targetAngle, drivePercision, arcPercision)
-    if not drivePrecision then drivePrecision = 6 end -- inches
+    if not drivePrecision then drivePrecision = 0 end -- inches
     local driveError = targetDrive - drive.getWheelDistance()
     local angleError = targetAngle - currGyro
-    if driveTimer:Get() > 2 then
-        driveInput = 0
+    local driveInput = 0
+    drivePID.min, drivePID.max = -.7, .7
+    --anglePID.min, anglePID.max = -arcCap, arcCap
+    drivePID.target = targetDrive
+    anglePID.target = targetAngle
+
         if math.abs(driveError) < drivePrecision then
             driveInput = 0
             arcInput = 0
         else
-            driveInput = drivePID.update(driveError)
-            arcInput = anglPID.update(angleError)
+            driveInput = drivePID:update(drive.getWheelDistance())
+            arcInput = anglePID:update(currGyro)
         end
-        drive.update(driveInput, arcInput, false)
-    else
-        drive.update(0, 0, false)
-    end
+
+    drive.update(driveInput, arcInput, false)
+
     return math.abs(driveError) > drivePrecision
 end
 
@@ -211,7 +238,7 @@ function driveToPoint(targetX, targetY, backward, drivePrecision, turnPrecision,
 
     if not driveCap then driveCap = 0.5 end
     if not arcCap then arcCap = 0.3 end
-    if not turnCap then turnCap = 0.5 end
+    if not turnCap then turnCap = 0.7 end
 
     drivePID.min, drivePID.max = -driveCap, driveCap
     anglePID.min, anglePID.max = -arcCap, arcCap
@@ -233,7 +260,6 @@ function driveToPoint(targetX, targetY, backward, drivePrecision, turnPrecision,
     local angleError = targetAngle - currGyro
 
     -- Run wheels, but wait until follower wheels have deployed.
-    if driveTimer:Get() > 2 then
         local driveInput = 0
         local turnInput = 0
 
@@ -255,9 +281,6 @@ function driveToPoint(targetX, targetY, backward, drivePrecision, turnPrecision,
         end
 
         drive.update(driveInput, turnInput, false)
-    else
-        drive.update(0, 0, false)
-    end
 
     -- Display auto values
     wpilib.SmartDashboard_PutNumber("X", currX)
@@ -281,14 +304,13 @@ end
 
 function turnInPlace(targetAngle, turnPrecision, turnCap)
     if not turnPrecision then turnPrecision = 5 end -- degrees
-    if not turnCap then turnCap = 0.5 end
+    if not turnCap then turnCap = 0.7 end
     rotatePID.min, rotatePID.max = -turnCap, turnCap
 
     local angleError = targetAngle - currGyro
 
     calculateDrive()
 
-    if driveTimer:Get() > 2 then
         if math.abs(angleError) < turnPrecision then
             turnInput = 0
         else
@@ -296,9 +318,6 @@ function turnInPlace(targetAngle, turnPrecision, turnCap)
         end
 
         drive.update(0, turnInput, false)
-    else
-        drive.update(0, 0, false)
-    end
 
     storeDriveCalculations()
 
