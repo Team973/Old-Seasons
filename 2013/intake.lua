@@ -3,6 +3,7 @@
 local arm = require("arm")
 local wpilib = require("wpilib")
 local pid = require("pid")
+local robot = require("robot")
 
 module(...)
 
@@ -47,15 +48,34 @@ function setIntakeSpeed(speed)
 end
 
 function update()
+    local currState = robot.getIntakeState()
     intakeRollers:Set(intakeSpeed)
 
-    if getAngle() > 3.4 then
-        motor:Set(intakePID:update(getAngle()))
-    elseif arm.isIntakeDeploySafe() then
-        motor:Set(intakePID:update(getAngle()))
+    if currState == DEPLOYED then
+        if arm.isIntakeDeploySafe() then
+            motor:Set(intakePID:update(getAngle()))
+        else
+            motor:Set(0.0)
+        end
+    elseif currState == STOW then
+        if getAngle() > 1 and arm.isIntakeDeploySafe() then
+            motor:Set(intakePID:update(getAngle()))
+        else
+            motor:Set(0.0)
+        end
+    elseif currState == DOWN then
+        if getAngle() < 3.4 then
+            motor:Set(intakePID:update(getAngle()))
+        else
+            motor:Set(0.0)
+        end
     else
         motor:Set(0.0)
     end
+end
+
+function dashboardUpdate()
+    wpilib.SmartDashboard_PutNumber("Intake Angle", getAngle())
 end
 
 function fullStop()

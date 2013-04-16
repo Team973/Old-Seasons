@@ -46,7 +46,7 @@ local INTAKE_LOAD = "intake_load"
 
 -- Intake States
 local intakeState = nil
-local STOW = "stow"
+local STOWED = "stowed"
 local DEPLOYED = "deployed"
 local DOWN = "down"
 
@@ -109,6 +109,7 @@ function disabledIdle()
         drive.dashboardUpdate()
         shooter.dashboardUpdate()
         serial.dashboardUpdate()
+        intake.dashboardUpdate()
 
         feedWatchdog()
         wpilib.Wait(AUTO_LOOP_LAG)
@@ -272,7 +273,6 @@ controlMap =
         end,
 
         [3] = function()
-            arm.setPreset("Horizontal")
             intake.setPreset("Deployed")
             intakeState = DEPLOYED
         end,
@@ -286,7 +286,6 @@ controlMap =
         end},
 
         [7] = function()
-            arm.setPreset("Horizontal")
             intake.setPreset("Stow")
             intakeState = STOW
         end,
@@ -446,6 +445,10 @@ controlMap =
     cypress={},
 }
 -- End Controls
+
+function getIntakeState()
+    return intakeState
+end
 
 -- Watchdog shortcuts
 if watchdogEnabled then
