@@ -32,7 +32,7 @@ local sideFlapOff = wpilib.Solenoid(2)
 local sideFlapOn =wpilib.Solenoid(8)
 local flapActivated = false
 local hardStopActivated = false
-local targetFlywheelRPM = 8500
+local targetFlywheelRPM = 6000
 local flapDeployed = false
 local flywheelFullSpeed = false
 local discsFired = 0
@@ -130,7 +130,7 @@ local function performFire()
 end
 
 local function performFireOne()
-    local rpmDropThreshold = 7500
+    local rpmDropThreshold = 5500
 
     while getFlywheelSpeed() < targetFlywheelRPM do
         conveyer:Set(0)
