@@ -24,7 +24,7 @@ PRESETS = {
 }
 
 function getAngle()
-    return intakePot:Get()
+    return intakePot:GetVoltage()
 end
 
 function getTarget()
