@@ -265,9 +265,10 @@ controlMap =
             end
         end,
 
-        [7] = function()
-            intake.setPreset("Stow")
-            intakeState = STOW
+        [1] = function()
+            prepareHang = true
+            arm.setPreset("Horizontal")
+            shooter.setSideFlap(false)
         end,
 
         [3] = function()
@@ -283,10 +284,9 @@ controlMap =
             lowGear = held
         end},
 
-        [1] = function()
-            prepareHang = true
-            arm.setPreset("Horizontal")
-            shooter.setSideFlap(false)
+        [7] = function()
+            intake.setPreset("Stow")
+            intakeState = STOW
         end,
 
         --This is for the serial port testing
@@ -335,6 +335,19 @@ controlMap =
             end
         end,
 
+        [2] = function()
+            if not prepareHang then
+                arm.setPreset("Stow")
+                shooter.setFlapActive(false)
+                shooter.setFlywheelRunning(false)
+                shooter.setSideFlap(false)
+                if intakeState == DEPLOYED then
+                    intake.setPreset("Deployed")
+                end
+                state = STOW
+            end
+        end,
+
         [3] = function()
             if not prepareHang then
                 arm.setPreset("sideShot")
@@ -361,18 +374,9 @@ controlMap =
             end
         end,
 
-        [2] = function()
-            if not prepareHang then
-                arm.setPreset("Stow")
-                shooter.setFlapActive(false)
-                shooter.setFlywheelRunning(false)
-                shooter.setSideFlap(false)
-                if intakeState == DEPLOYED then
-                    intake.setPreset("Deployed")
-                end
-                state = STOW
-            end
-        end,
+        [5] = {tick=shooter.humanLoad},
+
+        [6] = {down=shooter.fireOne, up=function() shooter.fireOne(false) end},
 
         [7] = function()
             if not prepareHang then
@@ -388,10 +392,6 @@ controlMap =
             end
         end,
 
-        [5] = {tick=shooter.humanLoad},
-
-        -- TODO change back to buttong 6 when told to
-        [11] = {down=shooter.fire, up=function() shooter.fire(false) end},
 
         [8] = function()
             if state == FIRE then
@@ -414,8 +414,9 @@ controlMap =
                 shooter.setFlapActive(true)
             end
         end,
-
-        [6] = {down=shooter.fireOne, up=function() shooter.fireOne(false) end},
+        
+        -- TODO change back to buttong 6 when told to
+        [11] = {down=shooter.fire, up=function() shooter.fire(false) end},
 
         ["haty"] = function(axis)
             local increment = 0.5
