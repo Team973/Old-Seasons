@@ -272,6 +272,7 @@ controlMap =
         end,
 
         [3] = function()
+            arm.setPreset("Horizontal")
             intake.setPreset("Deployed")
             intakeState = DEPLOYED
         end,
@@ -285,6 +286,7 @@ controlMap =
         end},
 
         [7] = function()
+            arm.setPreset("Horizontal")
             intake.setPreset("Stow")
             intakeState = STOW
         end,
