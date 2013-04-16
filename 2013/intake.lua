@@ -12,7 +12,7 @@ local intakeSpeed = 0
 
 local motor = wpilib.Victor(4)
 local intakeRollers = wpilib.Victor(5)
-local intakePot = wpilib.AnalogChannel()
+local intakePot = wpilib.AnalogChannel(8)
 
 local intakePID = pid.new(0, 0, 0)
 intakePID.min, intakePID.max = -.5, .5
