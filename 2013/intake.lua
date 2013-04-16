@@ -2,6 +2,7 @@
 
 local arm = require("arm")
 local wpilib = require("wpilib")
+local pid = require("pid")
 
 module(...)
 
