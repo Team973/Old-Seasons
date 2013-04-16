@@ -12,34 +12,46 @@ local intakeSpeed = 0
 
 local motor = wpilib.Victor(4)
 local intakeRollers = wpilib.Victor(5)
+local intakePot = wpilib.AnalogChannel()
+
+local intakePID = pid.new(0, 0, 0)
+intakePID.min, intakePID.max = -.5, .5
+intakePID:start()
+
+PRESETS = {
+    Stow = { angle = 0.0 },
+}
+
+function getAngle()
+    return intakePot:Get()
+end
+
+function getTarget()
+    return intakePID.target
+end
+
+function setTarget(target)
+    intakePID.target = target
+end
+
+function setPreset(name)
+    local p = PRESETS[name]
+    if p then
+        setTarget(p.angle)
+    end
+end
 
 function setIntakeSpeed(speed)
     intakeSpeed = speed
 end
 
-function setDeploy(val)
-    if deploy ~= val and arm.isIntakeDeploySafe() then
-        deploy = val
-    end
-end
-
-function setRetract(val)
-    if retract ~= val and arm.isIntakeDeploySafe() then
-        retract = val
-    end
-end
-
-local intakeTimer = wpilib.Timer()
-intakeTimer:Start()
-
 function update()
     intakeRollers:Set(intakeSpeed)
 
-    intakeTimer:Reset()
-    if deploy and intakeTimer:Get() <= 1 then
-        motor:Set(intakeDeploySpeed)
-    elseif retract and intakeTimer:Get() <= 1 then
-        motor:Set(-intakeDeploySpeed)
+    if getAngle() > 3.4 then
+        motor:Set(intakePID:update(getAngle()))
+    elseif arm.isIntakeDeploySafe() then
+        motor:Set(intakePID:update(getAngle()))
     else
         motor:Set(0.0)
     end
