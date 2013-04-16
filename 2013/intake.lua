@@ -3,7 +3,6 @@
 local arm = require("arm")
 local wpilib = require("wpilib")
 local pid = require("pid")
-local robot = require("robot")
 
 module(...)
 
@@ -14,7 +13,13 @@ local intakeSpeed = 0
 
 local motor = wpilib.Victor(4)
 local intakeRollers = wpilib.Victor(5)
-local intakePot = wpilib.AnalogChannel(8)
+local intakePot = wpilib.AnalogChannel(7)
+
+-- Intake States
+local intakeState = nil
+local STOWED = "stowed"
+local DEPLOYED = "deployed"
+local DOWN = "down"
 
 local intakePID = pid.new(0, 0, 0)
 intakePID.min, intakePID.max = -.5, .5
@@ -47,23 +52,46 @@ function setIntakeSpeed(speed)
     intakeSpeed = speed
 end
 
+function goToStow(bool)
+    stowed = bool
+    if stowed then
+        setPreset("Stow")
+        intakeState = STOW
+    end
+end
+
+function goToDeploy(bool)
+    deployed = bool
+    if deployed then
+        setPreset("Deployed")
+        intakeState = DEPLOYED
+    end
+end
+
+function goToDown(bool)
+    down = bool
+    if down then
+        setPreset("Down")
+        intakeState = DOWN
+    end
+end
+
 function update()
-    local currState = robot.getIntakeState()
     intakeRollers:Set(intakeSpeed)
 
-    if currState == DEPLOYED then
+    if intakeState == DEPLOYED then
         if arm.isIntakeDeploySafe() then
             motor:Set(intakePID:update(getAngle()))
         else
             motor:Set(0.0)
         end
-    elseif currState == STOW then
+    elseif intakeState == STOW then
         if getAngle() > 1 and arm.isIntakeDeploySafe() then
             motor:Set(intakePID:update(getAngle()))
         else
             motor:Set(0.0)
         end
-    elseif currState == DOWN then
+    elseif intakeState == DOWN then
         if getAngle() < 3.4 then
             motor:Set(intakePID:update(getAngle()))
         else
@@ -72,6 +100,10 @@ function update()
     else
         motor:Set(0.0)
     end
+end
+
+function getState()
+    return intakeState
 end
 
 function dashboardUpdate()

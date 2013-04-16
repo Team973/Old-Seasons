@@ -44,12 +44,6 @@ local HUMAN_LOAD = "human_load"
 local STOW = "stow"
 local INTAKE_LOAD = "intake_load"
 
--- Intake States
-local intakeState = nil
-local STOWED = "stowed"
-local DEPLOYED = "deployed"
-local DOWN = "down"
-
 -- End Declarations
 
 function run()
@@ -273,8 +267,7 @@ controlMap =
         end,
 
         [3] = function()
-            intake.setPreset("Deployed")
-            intakeState = DEPLOYED
+            intake.goToDown(true)
         end,
 
         [5] = {tick=function(held)
@@ -286,8 +279,7 @@ controlMap =
         end},
 
         [7] = function()
-            intake.setPreset("Stow")
-            intakeState = STOW
+            intake.goToStow(true)
         end,
 
         --This is for the serial port testing
@@ -329,8 +321,8 @@ controlMap =
                 shooter.setFlapActive(false)
                 shooter.setHardStopActive(true)
                 shooter.setSideFlap(false)
-                if intakeState == DEPLOYED then
-                    intake.setPreset("Down")
+                if intake.getState() == DEPLOYED then
+                    intake.goToDown(true)
                 end
                 state = INTAKE_LOAD
             end
@@ -342,8 +334,8 @@ controlMap =
                 shooter.setFlapActive(false)
                 shooter.setFlywheelRunning(false)
                 shooter.setSideFlap(false)
-                if intakeState == DEPLOYED then
-                    intake.setPreset("Deployed")
+                if intake.getState() == DEPLOYED then
+                    intake.goToDeploy(true)
                 end
                 state = STOW
             end
@@ -355,8 +347,8 @@ controlMap =
                 shooter.setFlapActive(false)
                 shooter.setHardStopActive(false)
                 shooter.setSideFlap(true)
-                if intakeState == DEPLOYED then
-                    intake.setPreset("Deployed")
+                if intake.getState() == DEPLOYED then
+                    intake.goToDeploy(true)
                 end
                 state = FIRE
             end
@@ -369,7 +361,7 @@ controlMap =
                 shooter.setHardStopActive(false)
                 shooter.setSideFlap(true)
                 if intakeState == DEPLOYED then
-                    intake.setPreset("Deployed")
+                    intake.goToDeploy(true)
                 end
                 state = FIRE
             end
@@ -386,8 +378,8 @@ controlMap =
                 shooter.setFlapActive(true)
                 shooter.setHardStopActive(true)
                 shooter.setSideFlap(false)
-                if intakeState == DEPLOYED then
-                    intake.setPreset("Intake")
+                if intake.getState() == DEPLOYED then
+                    intake.goToDown(true)
                 end
                 state = HUMAN_LOAD
             end
