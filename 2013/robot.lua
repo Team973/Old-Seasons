@@ -44,6 +44,12 @@ local HUMAN_LOAD = "human_load"
 local STOW = "stow"
 local INTAKE_LOAD = "intake_load"
 
+-- Intake States
+local intakeState = nil
+local STOW = "stow"
+local DEPLOYED = "deployed"
+local DOWN = "down"
+
 -- End Declarations
 
 function run()
@@ -250,6 +256,7 @@ controlMap =
                 driveY = -deadband(axis, 0.1)
             end
         end,
+
         ["rx"] = function(axis)
             if lowGear then
                 driveX = deadband(axis, 0.1) / 3
@@ -257,20 +264,17 @@ controlMap =
                 driveX = deadband(axis, 0.1)
             end
         end,
-        [7] = {tick=function(held)
-            if held then
-                intake.setRetract(true)
-            else
-                intake.setRetract(false)
-            end
-        end},
-        [3] = {tick=function(held)
-            if held then
-                intake.setDeploy(true)
-            else
-                intake.setDeploy(false)
-            end
-        end},
+
+        [7] = function()
+            intake.setPreset("Stow")
+            intakeState = STOW
+        end,
+
+        [3] = function()
+            intake.setPreset("Deployed")
+            intakeState = DEPLOYED
+        end,
+
         [5] = {tick=function(held)
             quickTurn = held
         end},
@@ -324,6 +328,9 @@ controlMap =
                 shooter.setFlapActive(false)
                 shooter.setHardStopActive(true)
                 shooter.setSideFlap(false)
+                if intakeState == DEPLOYED then
+                    intake.setPreset("Down")
+                end
                 state = INTAKE_LOAD
             end
         end,
@@ -334,6 +341,9 @@ controlMap =
                 shooter.setFlapActive(false)
                 shooter.setHardStopActive(false)
                 shooter.setSideFlap(true)
+                if intakeState == DEPLOYED then
+                    intake.setPreset("Deployed")
+                end
                 state = FIRE
             end
         end,
@@ -344,6 +354,9 @@ controlMap =
                 shooter.setFlapActive(false)
                 shooter.setHardStopActive(false)
                 shooter.setSideFlap(true)
+                if intakeState == DEPLOYED then
+                    intake.setPreset("Deployed")
+                end
                 state = FIRE
             end
         end,
@@ -354,6 +367,9 @@ controlMap =
                 shooter.setFlapActive(false)
                 shooter.setFlywheelRunning(false)
                 shooter.setSideFlap(false)
+                if intakeState == DEPLOYED then
+                    intake.setPreset("Deployed")
+                end
                 state = STOW
             end
         end,
@@ -365,6 +381,9 @@ controlMap =
                 shooter.setFlapActive(true)
                 shooter.setHardStopActive(true)
                 shooter.setSideFlap(false)
+                if intakeState == DEPLOYED then
+                    intake.setPreset("Intake")
+                end
                 state = HUMAN_LOAD
             end
         end,
