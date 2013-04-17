@@ -30,7 +30,7 @@ PRESETS = {
 }
 
 function getAngle()
-    return intakePot:GetVoltage()
+    return intakePot:GetValue()
 end
 
 function getTarget()
@@ -79,6 +79,7 @@ end
 function update()
     intakeRollers:Set(intakeSpeed)
 
+    --[[
     if intakeState == DEPLOYED then
         if arm.isIntakeDeploySafe() then
             motor:Set(intakePID:update(getAngle()))
@@ -100,6 +101,7 @@ function update()
     else
         motor:Set(0.0)
     end
+    ]]
 end
 
 function getState()

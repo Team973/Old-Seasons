@@ -37,6 +37,9 @@ local flapDeployed = false
 local flywheelFullSpeed = false
 local discsFired = 0
 
+local pulseTimer = wpilib.Timer()
+pulseTimer:Start()
+
 local rollerFeedSpeed = 1
 local rollerLoadSpeed = 0.5
 local conveyerLoadSpeed = 1.0
@@ -179,12 +182,10 @@ function fireOne(firing)
     end
 end
 
-function runConveyer(magnitude, frequency)
-    local timer = wpilib.Timer()
-    timer:Start()
-    local mag = magnitude
-    local freq = frequency
-    conveyerSpeed = math.abs(mag * math.sin(freq * timer:Get()))
+function pulseConveyer(bool, magnitude, frequency)
+    pulseMag = magnitude
+    pulseFreq = frequency
+    pulsing = bool
 end
 
 function update()
@@ -196,6 +197,7 @@ function update()
     else
         flywheelMotor:Set(0.0)
     end
+
 
 
     if fireCoroutine then
@@ -220,6 +222,8 @@ function update()
             sideFlapOff:Set(true)
             -- Locked out so we can't run it during human loading
             flywheelMotor:Set(0.0)
+        elseif pulsing then
+            conveyer:Set(math.abs(pulseMag * math.sin(pulseFreq * pulseTimer:Get())))
         else
             conveyer:Set(0)
             roller:Set(0)
