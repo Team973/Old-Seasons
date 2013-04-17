@@ -42,6 +42,7 @@ function run()
     while shooter.getDiscsFired() < 3 do
         coroutine.yield()
     end
+    shooter.fire(false)
 
     shooter.setFlywheelRunning(false)
     shooter.clearDiscsFired()
@@ -54,7 +55,7 @@ function run()
     arm.setPreset("Intake")
 
     while driveToPoint(-60, -110, true, 12, 5, .7) do
-        shooter.humanLoad(true)
+        shooter.pulseConveyer(true, 5, 2)
         coroutine.yield()
     end
 
