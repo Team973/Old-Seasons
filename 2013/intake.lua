@@ -13,7 +13,7 @@ local intakeSpeed = 0
 
 local motor = wpilib.Victor(4)
 local intakeRollers = wpilib.Victor(5)
-local intakePot = wpilib.AnalogChannel(7)
+local intakePot = wpilib.AnalogChannel(1)
 
 -- Intake States
 local intakeState = nil
@@ -26,11 +26,13 @@ intakePID.min, intakePID.max = -.5, .5
 intakePID:start()
 
 PRESETS = {
-    Stow = { angle = 0.0 },
+    Stow = { angle = 2.3 },
+    Deployed = { angle = 2.7 },
+    Down = { angle = 2.63 },
 }
 
 function getAngle()
-    return intakePot:GetValue()
+    return intakePot:GetVoltage()
 end
 
 function getTarget()
@@ -57,6 +59,7 @@ function goToStow(bool)
     if stowed then
         setPreset("Stow")
         intakeState = STOW
+        stowed = false
     end
 end
 
@@ -65,6 +68,7 @@ function goToDeploy(bool)
     if deployed then
         setPreset("Deployed")
         intakeState = DEPLOYED
+        deployed = false
     end
 end
 
@@ -73,13 +77,13 @@ function goToDown(bool)
     if down then
         setPreset("Down")
         intakeState = DOWN
+        down = false
     end
 end
 
 function update()
     intakeRollers:Set(intakeSpeed)
 
-    --[[
     if intakeState == DEPLOYED then
         if arm.isIntakeDeploySafe() then
             motor:Set(intakePID:update(getAngle()))
@@ -87,13 +91,13 @@ function update()
             motor:Set(0.0)
         end
     elseif intakeState == STOW then
-        if getAngle() > 1 and arm.isIntakeDeploySafe() then
+        if getAngle() > 2.36 and arm.isIntakeDeploySafe() then
             motor:Set(intakePID:update(getAngle()))
         else
             motor:Set(0.0)
         end
     elseif intakeState == DOWN then
-        if getAngle() < 3.4 then
+        if getAngle() > 2.63 then
             motor:Set(intakePID:update(getAngle()))
         else
             motor:Set(0.0)
@@ -101,7 +105,6 @@ function update()
     else
         motor:Set(0.0)
     end
-    ]]
 end
 
 function getState()
@@ -110,6 +113,7 @@ end
 
 function dashboardUpdate()
     wpilib.SmartDashboard_PutNumber("Intake Angle", getAngle())
+    wpilib.SmartDashboard_PutNumber("Intake PID Output", intakePID:update(getAngle()))
 end
 
 function fullStop()

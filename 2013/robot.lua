@@ -192,6 +192,7 @@ function teleop()
         drive.dashboardUpdate()
         shooter.dashboardUpdate()
         serial.dashboardUpdate()
+        shooter.dashboardUpdate()
 
         -- Iteration cleanup
         feedWatchdog()

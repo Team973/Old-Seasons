@@ -12,7 +12,6 @@ module(...)
 local encoder = wpilib.Encoder(11, 10, false)
 -- 12, 13
 local motor = wpilib.Talon(1)
-local absoluteEncoder = wpilib.AnalogChannel(1)
 local calibrationPulse = wpilib.Counter(9)
 
 local angleOffset = 0
@@ -122,8 +121,6 @@ end
 function dashboardUpdate()
     wpilib.SmartDashboard_PutNumber("Arm Angle", getAngle())
     wpilib.SmartDashboard_PutNumber("Arm PID Output", armPID.output)
-    wpilib.SmartDashboard_PutNumber("Potentiometer Output", absoluteEncoder:GetVoltage())
-    wpilib.SmartDashboard_PutNumber("pot2deg", pot2deg(absoluteEncoder:GetVoltage()))
 
     wpilib.DriverStationLCD_GetInstance():PrintLine(wpilib.DriverStationLCD_kUser_Line2, string.format("Arm Angle: %.2f", getAngle()))
     wpilib.DriverStationLCD_GetInstance():UpdateLCD()
