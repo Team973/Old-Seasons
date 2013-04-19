@@ -36,6 +36,8 @@ local targetFlywheelRPM = 6000
 local flapDeployed = false
 local flywheelFullSpeed = false
 local discsFired = 0
+local pulseMag = 10
+local pulseFreq = .5
 
 local pulseTimer = wpilib.Timer()
 pulseTimer:Start()
@@ -216,7 +218,9 @@ function update()
             sideFlapOn:Set(false)
             sideFlapOff:Set(true)
         elseif loading then
-            conveyer:Set(conveyerLoadSpeed)
+            conveyer:Set(math.abs(pulseMag * math.sin(pulseFreq * pulseTimer:Get())))
+            wpilib.SmartDashboard_PutNumber("Pulse Timer", pulseTimer:Get())
+            --conveyer:Set(conveyerLoadSpeed)
             roller:Set(rollerLoadSpeed)
             sideFlapOn:Set(false)
             sideFlapOff:Set(true)
