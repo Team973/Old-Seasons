@@ -29,6 +29,7 @@ PRESETS = {
     Stow = { angle = 2.3 },
     Deployed = { angle = 2.7 },
     Down = { angle = 2.63 },
+    Human = { angle = 2.4 },
 }
 
 function getAngle()
@@ -72,18 +73,20 @@ function goToDeploy(bool)
     end
 end
 
-function goToDown(bool)
-    down = bool
-    if down then
-        setPreset("Down")
-        intakeState = DOWN
-        down = false
-    end
-end
-
 function update()
     intakeRollers:Set(intakeSpeed)
 
+    if arm.isIntakeDeploySafe() then
+        if intakeState == DEPLOYED and getAngle() > 2.63 then
+            motor:Set(intakePID:update(getAngle()))
+        elseif intakeState == STOW and getAngle() > 2.36 then
+            motor:Set(intakePID:update(getAngle()))
+        else
+            motor:Set(0.0)
+        end
+    end
+
+    --[[
     if intakeState == DEPLOYED then
         if arm.isIntakeDeploySafe() then
             motor:Set(intakePID:update(getAngle()))
@@ -105,6 +108,7 @@ function update()
     else
         motor:Set(0.0)
     end
+    ]]
 end
 
 function getState()
