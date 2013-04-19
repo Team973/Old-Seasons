@@ -214,31 +214,34 @@ function update()
         end
     elseif conveyerSpeed == 0 and rollerSpeed == 0 then
         if feeding then
-            roller:Set(rollerFeedSpeed)
+            rollerInput = rollerFeedSpeed
             sideFlapOn:Set(false)
             sideFlapOff:Set(true)
         elseif loading then
-            conveyer:Set(math.abs(pulseMag * math.sin(pulseFreq * pulseTimer:Get())))
+            conveyerInput = math.abs(pulseMag * math.sin(pulseFreq * pulseTimer:Get()))
+            wpilib.SmartDashboard_PutNumber("Pulse Motor", conveyer:Get())
             wpilib.SmartDashboard_PutNumber("Pulse Timer", pulseTimer:Get())
             --conveyer:Set(conveyerLoadSpeed)
-            roller:Set(rollerLoadSpeed)
+            rollerInput = rollerLoadSpeed
             sideFlapOn:Set(false)
             sideFlapOff:Set(true)
             -- Locked out so we can't run it during human loading
             flywheelMotor:Set(0.0)
         elseif pulsing then
-            conveyer:Set(math.abs(pulseMag * math.sin(pulseFreq * pulseTimer:Get())))
+            conveyerInput = math.abs(pulseMag * math.sin(pulseFreq * pulseTimer:Get()))
         else
-            conveyer:Set(0)
-            roller:Set(0)
+            conveyerInput = 0
+            rollerInput = 0
             sideFlapOn:Set(false)
             sideFlapOff:Set(true)
         end
     else
-        conveyer:Set(conveyerSpeed)
-        roller:Set(rollerSpeed)
+        conveyerInput = conveyerSpeed
+        rollerInput = rollerSpeed
     end
 
+    conveyer:Set(conveyerInput)
+    roller:Set(rollerInput)
     sideFlapOn:Set(flapDeployed)
     sideFlapOff:Set(not flapDeployed)
 end
