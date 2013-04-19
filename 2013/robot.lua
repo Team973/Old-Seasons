@@ -322,10 +322,13 @@ controlMap =
                 shooter.setFlapActive(false)
                 shooter.setHardStopActive(true)
                 shooter.setSideFlap(false)
-                if intake.getState() == DEPLOYED then
-                    intake.goToDown(true)
-                end
                 state = INTAKE_LOAD
+                -- Set Intake Angle
+                if state == INTAKE_LOAD then
+                    intake.setPreset("Down")
+                else
+                    intake.setPreset("Deployed")
+                end
             end
         end,
 
@@ -335,9 +338,6 @@ controlMap =
                 shooter.setFlapActive(false)
                 shooter.setFlywheelRunning(false)
                 shooter.setSideFlap(false)
-                if intake.getState() == DEPLOYED then
-                    intake.goToDeploy(true)
-                end
                 state = STOW
             end
         end,
@@ -348,10 +348,11 @@ controlMap =
                 shooter.setFlapActive(false)
                 shooter.setHardStopActive(false)
                 shooter.setSideFlap(true)
-                if intake.getState() == DEPLOYED then
-                    intake.goToDeploy(true)
-                end
                 state = FIRE
+                -- Set Intake Angle
+                if state == FIRE then
+                    intake.setPreset("Down")
+                end
             end
         end,
 
@@ -361,10 +362,11 @@ controlMap =
                 shooter.setFlapActive(false)
                 shooter.setHardStopActive(false)
                 shooter.setSideFlap(true)
-                if intakeState == DEPLOYED then
-                    intake.goToDeploy(true)
-                end
                 state = FIRE
+                -- Set Intake Angle
+                if state == FIRE then
+                    intake.setPreset("Down")
+                end
             end
         end,
 
@@ -379,10 +381,13 @@ controlMap =
                 shooter.setFlapActive(true)
                 shooter.setHardStopActive(true)
                 shooter.setSideFlap(false)
-                if intake.getState() == DEPLOYED then
-                    intake.goToDown(true)
-                end
                 state = HUMAN_LOAD
+                -- Set Intake Angle
+                if state == HUMAN_LOAD then
+                    intake.setPreset("Human")
+                else
+                    intake.setPreset("Deployed")
+                end
             end
         end,
 
@@ -409,7 +414,7 @@ controlMap =
             end
         end,
         
-        -- TODO change back to buttong 6 when told to
+        -- TODO change back to button 6 when told to
         [11] = {down=shooter.fire, up=function() shooter.fire(false) end},
 
         ["haty"] = function(axis)
