@@ -193,6 +193,7 @@ function teleop()
         shooter.dashboardUpdate()
         serial.dashboardUpdate()
         shooter.dashboardUpdate()
+        intake.dashboardUpdate()
 
         -- Iteration cleanup
         feedWatchdog()
@@ -268,7 +269,7 @@ controlMap =
         end,
 
         [3] = function()
-            intake.goToDown(true)
+            intake.goToDeploy(true)
         end,
 
         [5] = {tick=function(held)
@@ -339,6 +340,10 @@ controlMap =
                 shooter.setFlywheelRunning(false)
                 shooter.setSideFlap(false)
                 state = STOW
+                -- Set Intake Angle
+                if state == STOW then
+                    intake.setPreset("Deployed")
+                end
             end
         end,
 
