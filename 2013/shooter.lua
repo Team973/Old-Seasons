@@ -117,11 +117,17 @@ local function performFire()
     local conveyerWait = 0.5 -- in seconds
     local conveyerStallSpeed = 120 -- in inches/second
     local rpmDropThreshold = 5500
+    local time = 0
 
     while true do
         while getFlywheelSpeed() < targetFlywheelRPM do
             conveyer:Set(0)
             roller:Set(0)
+            coroutine.yield()
+        end
+
+        while time ~= 100 do
+            time = time + 1
             coroutine.yield()
         end
 
@@ -131,6 +137,7 @@ local function performFire()
             coroutine.yield()
         end
         discsFired = discsFired + 1
+        time = 0
     end
 end
 

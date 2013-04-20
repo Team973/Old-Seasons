@@ -327,14 +327,12 @@ controlMap =
                 -- Set Intake Angle
                 if state == INTAKE_LOAD then
                     intake.setPreset("Intake")
-                else
-                    intake.setPreset("Deployed")
                 end
             end
         end,
 
         [2] = function()
-            if not prepareHang then
+            if not prepareHang and state ~= INTAKE_LOAD then
                 arm.setPreset("Stow")
                 shooter.setFlapActive(false)
                 shooter.setFlywheelRunning(false)
@@ -390,8 +388,6 @@ controlMap =
                 -- Set Intake Angle
                 if state == HUMAN_LOAD then
                     intake.setPreset("Human")
-                else
-                    intake.setPreset("Deployed")
                 end
             end
         end,
