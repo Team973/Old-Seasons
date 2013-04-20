@@ -20,15 +20,15 @@ local intakeState = nil
 local STOWED = "stowed"
 local DEPLOYED = "deployed"
 
-local intakePID = pid.new(17, 0, 0)
+local intakePID = pid.new(15, 0, 0)
 intakePID.min, intakePID.max = -1, 1
 intakePID:start()
 
 PRESETS = {
     Stow = { angle = 2.3 },
     Deployed = { angle = 2.7 },
-    Down = { angle = 2.55 },
     Human = { angle = 2.5 },
+    Intake = { angle = 2.76 },
 }
 
 function getAngle()
@@ -75,22 +75,18 @@ end
 function update()
     intakeRollers:Set(intakeSpeed)
 
-    wpilib.SmartDashboard_PutNumber("Intake HIT", 1)
     if arm.isIntakeDeploySafe() then
-        wpilib.SmartDashboard_PutNumber("Intake HIT", 2)
         if intakeState == DEPLOYED  then
-            if getAngle() < 2.76 then
-                wpilib.SmartDashboard_PutNumber("Intake HIT", 3)
+            if getAngle() < 2.74 then
                 motor:Set(intakePID:update(getAngle()))
-                wpilib.SmartDashboard_PutNumber("Intake HIT", 4)
+            elseif intakePID:update(getAngle()) < 0 then
+                motor:Set(intakePID:update(getAngle()))
             else
                 motor:Set(0.0)
             end
         elseif intakeState == STOW then
             if getAngle() > 2.36 then
-                wpilib.SmartDashboard_PutNumber("Intake HIT", 5)
                 motor:Set(intakePID:update(getAngle()))
-                wpilib.SmartDashboard_PutNumber("Intake HIT", 6)
             else
                 motor:Set(0.0)
             end
