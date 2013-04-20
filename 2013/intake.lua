@@ -75,27 +75,34 @@ end
 function update()
     intakeRollers:Set(intakeSpeed)
 
-    if arm.isIntakeDeploySafe() then
         if intakeState == DEPLOYED  then
-            if getAngle() < 2.74 then
-                motor:Set(intakePID:update(getAngle()))
-            elseif intakePID:update(getAngle()) < 0 then
+            if arm.isIntakeDeploySafe() then
+                if getAngle() < 2.74 then
+                    motor:Set(intakePID:update(getAngle()))
+                elseif intakePID:update(getAngle()) < 0 then
+                    motor:Set(intakePID:update(getAngle()))
+                else
+                    motor:Set(0.0)
+                end
+            elseif not arm.isIntakeDeploySafe() and getAngle() > 2.7 then
+                --this is so we can have the point blank shot
                 motor:Set(intakePID:update(getAngle()))
             else
                 motor:Set(0.0)
             end
         elseif intakeState == STOW then
-            if getAngle() > 2.36 then
-                motor:Set(intakePID:update(getAngle()))
+            if arm.isIntakeDeploySafe() then
+                if getAngle() > 2.36 then
+                    motor:Set(intakePID:update(getAngle()))
+                else
+                    motor:Set(0.0)
+                end
             else
                 motor:Set(0.0)
             end
         else
             motor:Set(0.0)
         end
-    else
-        motor:Set(0.0)
-    end
 
     --[[
     if intakeState == DEPLOYED then
