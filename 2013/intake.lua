@@ -19,17 +19,16 @@ local intakePot = wpilib.AnalogChannel(1)
 local intakeState = nil
 local STOWED = "stowed"
 local DEPLOYED = "deployed"
-local DOWN = "down"
 
-local intakePID = pid.new(0, 0, 0)
-intakePID.min, intakePID.max = -.5, .5
+local intakePID = pid.new(17, 0, 0)
+intakePID.min, intakePID.max = -1, 1
 intakePID:start()
 
 PRESETS = {
     Stow = { angle = 2.3 },
     Deployed = { angle = 2.7 },
-    Down = { angle = 2.63 },
-    Human = { angle = 2.4 },
+    Down = { angle = 2.55 },
+    Human = { angle = 2.5 },
 }
 
 function getAngle()
@@ -58,8 +57,8 @@ end
 function goToStow(bool)
     stowed = bool
     if stowed then
-        setPreset("Stow")
         intakeState = STOW
+        setPreset("Stow")
         stowed = false
     end
 end
@@ -67,8 +66,8 @@ end
 function goToDeploy(bool)
     deployed = bool
     if deployed then
-        setPreset("Deployed")
         intakeState = DEPLOYED
+        setPreset("Deployed")
         deployed = false
     end
 end
@@ -76,14 +75,30 @@ end
 function update()
     intakeRollers:Set(intakeSpeed)
 
+    wpilib.SmartDashboard_PutNumber("Intake HIT", 1)
     if arm.isIntakeDeploySafe() then
-        if intakeState == DEPLOYED and getAngle() > 2.63 then
-            motor:Set(intakePID:update(getAngle()))
-        elseif intakeState == STOW and getAngle() > 2.36 then
-            motor:Set(intakePID:update(getAngle()))
+        wpilib.SmartDashboard_PutNumber("Intake HIT", 2)
+        if intakeState == DEPLOYED  then
+            if getAngle() < 2.76 then
+                wpilib.SmartDashboard_PutNumber("Intake HIT", 3)
+                motor:Set(intakePID:update(getAngle()))
+                wpilib.SmartDashboard_PutNumber("Intake HIT", 4)
+            else
+                motor:Set(0.0)
+            end
+        elseif intakeState == STOW then
+            if getAngle() > 2.36 then
+                wpilib.SmartDashboard_PutNumber("Intake HIT", 5)
+                motor:Set(intakePID:update(getAngle()))
+                wpilib.SmartDashboard_PutNumber("Intake HIT", 6)
+            else
+                motor:Set(0.0)
+            end
         else
             motor:Set(0.0)
         end
+    else
+        motor:Set(0.0)
     end
 
     --[[
@@ -118,6 +133,9 @@ end
 function dashboardUpdate()
     wpilib.SmartDashboard_PutNumber("Intake Angle", getAngle())
     wpilib.SmartDashboard_PutNumber("Intake PID Output", intakePID:update(getAngle()))
+    wpilib.SmartDashboard_PutNumber("Intake Motor Output", motor:Get())
+    wpilib.SmartDashboard_PutNumber("Intake HIT", 0)
+    wpilib.SmartDashboard_PutNumber("Intake Error", getTarget() - getAngle())
 end
 
 function fullStop()
