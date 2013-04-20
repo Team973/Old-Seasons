@@ -34,7 +34,7 @@ PRESETS = {
     -- also use 35 if it doesn't work
     autoShot = { armAngle = 33.4 },
     Loading = { armAngle = 80.5 },
-    Stow = { armAngle = 4.2 },
+    Stow = { armAngle = 5.2 },
     Horizontal = { armAngle = 59.2 },
     Intake = { armAngle = 0.0 },
 }
