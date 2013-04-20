@@ -326,7 +326,7 @@ controlMap =
                 state = INTAKE_LOAD
                 -- Set Intake Angle
                 if state == INTAKE_LOAD then
-                    intake.setPreset("Down")
+                    intake.setPreset("Intake")
                 else
                     intake.setPreset("Deployed")
                 end
@@ -356,7 +356,7 @@ controlMap =
                 state = FIRE
                 -- Set Intake Angle
                 if state == FIRE then
-                    intake.setPreset("Down")
+                    intake.setPreset("Deployed")
                 end
             end
         end,
@@ -370,7 +370,7 @@ controlMap =
                 state = FIRE
                 -- Set Intake Angle
                 if state == FIRE then
-                    intake.setPreset("Down")
+                    intake.setPreset("Deployed")
                 end
             end
         end,
