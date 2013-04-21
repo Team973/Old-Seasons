@@ -32,7 +32,8 @@ PRESETS = {
     Shooting = { armAngle = 16.7 },
     sideShot = { armAngle = 36.2 },
     -- also use 35 if it doesn't work
-    autoShot = { armAngle = 33.4 },
+    autoShot = { armAngle = 34.12 },
+    -- 33.4 Silicon Valley
     Loading = { armAngle = 80.5 },
     Stow = { armAngle = 5.2 },
     Horizontal = { armAngle = 59.2 },
