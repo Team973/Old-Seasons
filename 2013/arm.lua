@@ -30,7 +30,7 @@ calibrationPulse:Start()
 
 PRESETS = {
     Shooting = { armAngle = 16.7 },
-    sideShot = { armAngle = 36.8 },
+    sideShot = { armAngle = 36.2 },
     -- also use 35 if it doesn't work
     autoShot = { armAngle = 33.4 },
     Loading = { armAngle = 80.5 },
