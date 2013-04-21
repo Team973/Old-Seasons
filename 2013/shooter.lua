@@ -126,7 +126,7 @@ local function performFire()
             coroutine.yield()
         end
 
-        while time ~= 100 do
+        while time ~= 20 do
             time = time + 1
             coroutine.yield()
         end

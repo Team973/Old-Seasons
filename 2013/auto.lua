@@ -34,7 +34,7 @@ function run()
 
     shooter.setFlywheelRunning(true)
 
-    while turnInPlace(20) do
+    while turnInPlace(17) do
         coroutine.yield()
     end
 
@@ -49,15 +49,19 @@ function run()
 
 
     while driveToPoint(0, -110, true, 12, 5, .7) do
+        intake.goToDeploy(true)
         coroutine.yield()
     end
 
     arm.setPreset("Intake")
 
     while driveToPoint(-60, -110, true, 12, 5, .7) do
-        shooter.pulseConveyer(true, 5, 2)
+        intake.setIntakeSpeed(1)
+        shooter.pulseConveyer(true, .5, 10)
         coroutine.yield()
     end
+
+    shooter.fullStop()
 
     while driveToPoint(12, -40, false, 12, 5, .7) do
         coroutine.yield()
@@ -75,7 +79,7 @@ function run()
     shooter.setFlywheelRunning(true)
     wpilib.SmartDashboard_PutNumber("HIT", 4)
 
-    while turnInPlace(20) do
+    while turnInPlace(17) do
         coroutine.yield()
     end
     wpilib.SmartDashboard_PutNumber("HIT", 5)
