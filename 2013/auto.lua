@@ -34,7 +34,7 @@ function run()
 
     shooter.setFlywheelRunning(true)
 
-    while turnInPlace(17) do
+    while turnInPlace(12) do
         coroutine.yield()
     end
 
@@ -48,30 +48,42 @@ function run()
     shooter.clearDiscsFired()
 
 
-    while driveToPoint(0, -110, true, 12, 5, .7) do
+    while driveToPoint(0, -80, true, 12, 5, .8) do
         intake.goToDeploy(true)
+        coroutine.yield()
+    end
+
+    while turnInPlace(-70) do
+        intake.setPreset("Intake")
+        coroutine.yield()
+    end
+
+    while turnInPlace(-90) do
         coroutine.yield()
     end
 
     arm.setPreset("Intake")
 
-    while driveToPoint(-60, -110, true, 12, 5, .7) do
+    while driveToPoint(-72, -80, true, 12, 5, .7) do
         intake.setIntakeSpeed(1)
-        shooter.pulseConveyer(true, .5, 10)
+        shooter.setConveyerManual(1)
         coroutine.yield()
     end
 
-    shooter.fullStop()
 
-    while driveToPoint(12, -40, false, 12, 5, .7) do
+    while driveToPoint(0, -30, false, 12, 5, .8) do
         coroutine.yield()
     end
+
+    shooter.setConveyerManual(0)
+    shooter.setRollerManual(0)
+    intake.setIntakeSpeed(0)
 
     wpilib.SmartDashboard_PutNumber("HIT", 1)
     arm.setPreset("autoShot")
     wpilib.SmartDashboard_PutNumber("HIT", 2)
 
-    while driveToPoint(12, 0, false, 12, 5, .7) do
+    while driveToPoint(0, 0, false, 12, 5, .7) do
         coroutine.yield()
     end
     wpilib.SmartDashboard_PutNumber("HIT", 3)
@@ -79,7 +91,7 @@ function run()
     shooter.setFlywheelRunning(true)
     wpilib.SmartDashboard_PutNumber("HIT", 4)
 
-    while turnInPlace(17) do
+    while turnInPlace(20) do
         coroutine.yield()
     end
     wpilib.SmartDashboard_PutNumber("HIT", 5)
@@ -139,7 +151,7 @@ end
 
 local drivePID = pid.new(.02)
 local anglePID = pid.new(.1)
-local rotatePID = pid.new(.1, .01, 0.005)
+local rotatePID = pid.new(.2, .01, 0.005)
 rotatePID.icap = .1
 
 local currTheta = 0
