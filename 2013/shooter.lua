@@ -85,7 +85,7 @@ local function RPMcontrol(rpm)
     elseif rpm < targetFlywheelRPM then
         return 1
     else
-        return 0.6
+        return 0.4
     end
 end
 
@@ -118,15 +118,26 @@ local function performFire()
     local conveyerStallSpeed = 120 -- in inches/second
     local rpmDropThreshold = 5500
     local time = 0
+    local timeOut = 0
+
 
     while true do
+        timeOut = 0
         while getFlywheelSpeed() < targetFlywheelRPM do
             conveyer:Set(0)
             roller:Set(0)
             coroutine.yield()
         end
 
-        while time ~= 20 do
+        if discsFired == 1 then
+            timeOut = 30
+        elseif discsFired == 2 then
+            timeOut = 45
+        elseif discsFired == 3 then
+            timeOut = 50
+        end
+
+        while time ~= timeOut do
             time = time + 1
             coroutine.yield()
         end

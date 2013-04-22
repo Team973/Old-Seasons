@@ -20,15 +20,15 @@ local intakeState = nil
 local STOWED = "stowed"
 local DEPLOYED = "deployed"
 
-local intakePID = pid.new(15, 0, 0)
+local intakePID = pid.new(5, 0, 0)
 intakePID.min, intakePID.max = -1, 1
 intakePID:start()
 
 PRESETS = {
-    Stow = { angle = 2.3 },
-    Deployed = { angle = 2.7 },
-    Human = { angle = 2.5 },
-    Intake = { angle = 2.76 },
+    Stow = { angle = .5 },
+    Deployed = { angle = 2.9 },
+    Human = { angle = 1.7 },
+    Intake = { angle = 3.12 },
 }
 
 function getAngle()
@@ -77,7 +77,7 @@ function update()
 
         if intakeState == DEPLOYED  then
             if arm.isIntakeDeploySafe() then
-                if getAngle() < 2.7 then
+                if getAngle() < 3.2 then
                     motor:Set(intakePID:update(getAngle()))
                 elseif intakePID:update(getAngle()) < 0 then
                     motor:Set(intakePID:update(getAngle()))
@@ -92,7 +92,7 @@ function update()
             end
         elseif intakeState == STOW then
             if arm.isIntakeDeploySafe() then
-                if getAngle() > 2.36 then
+                if getAngle() > .7 then
                     motor:Set(intakePID:update(getAngle()))
                 else
                     motor:Set(0.0)
