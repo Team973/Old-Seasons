@@ -34,7 +34,7 @@ function run()
 
     shooter.setFlywheelRunning(true)
 
-    while turnInPlace(12) do
+    while turnInPlace(12, 2) do
         coroutine.yield()
     end
 
@@ -83,7 +83,7 @@ function run()
     arm.setPreset("autoShot")
     wpilib.SmartDashboard_PutNumber("HIT", 2)
 
-    while driveToPoint(0, 0, false, 12, 5, .7) do
+    while driveToPoint(12, 12, false, 12, 5, .8) do
         coroutine.yield()
     end
     wpilib.SmartDashboard_PutNumber("HIT", 3)
@@ -149,7 +149,7 @@ function run()
     intake.setIntakeSpeed(0.0)
 end
 
-local drivePID = pid.new(.02)
+local drivePID = pid.new(.03)
 local anglePID = pid.new(.1)
 local rotatePID = pid.new(.2, .01, 0.005)
 rotatePID.icap = .1
