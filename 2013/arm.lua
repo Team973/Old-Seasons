@@ -38,6 +38,7 @@ PRESETS = {
     Stow = { armAngle = 5.2 },
     Horizontal = { armAngle = 59.2 },
     Intake = { armAngle = 0.0 },
+    Nil  = { armAngle = nil },
 }
 
 -- read config file
@@ -60,7 +61,7 @@ end
 
 -- Arm Preset Prints
 for k,v in pairs(PRESETS) do
-    wpilib.SmartDashboard_PutNumber(presetLabel(k), v.armAngle)
+    --wpilib.SmartDashboard_PutNumber(presetLabel(k), v.armAngle)
 end
 
 wpilib.SmartDashboard_PutBoolean("Save Presets", false)
@@ -101,8 +102,25 @@ function setPreset(name)
     end
 end
 
+function isArmGoingUp(pid)
+    if pid > 0 then
+        return true
+    else
+        return false
+    end
+end
+
+function isArmGoingDown(pid)
+    if pid < 0 then
+        return true
+    else
+        return false
+    end
+end
+
 -- Table for Arm Blocker
-local armValue = {}
+local armValue = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+
 function update()
     local newRawAngle = getRawAngle()
     local newCalibPulse = calibrationPulse:Get()
@@ -119,16 +137,28 @@ function update()
     end
     --]]
 
-    if armValue[6] - armValue[1] < .5 and -armPID:update(newRawAngle + angleOffset) >= .5 then
-        motor:Set(0.0)
-    else
-        motor:Set(-armPID:update(newRawAngle + angleOffset))
-    end
+    --if isArmGoingUp(-armPID:update(newRawAngle + angleOffset)) then
+        if armValue[10] - armValue[1] < .4 and -armPID:update(newRawAngle + angleOffset) >= .5 then
+            setPreset("Nil")
+        else
+            motor:Set(-armPID:update(newRawAngle + angleOffset))
+        end
+    --elseif isArmGoingDown(-armPID:update(newRawAngle + angleOffset)) then
+        if armValue[10] - armValue[1] < -.4 and -armPID:update(newRawAngle + angleOffset) <= -.5 then
+            setPreset("Nil")
+        else
+            motor:Set(-armPID:update(newRawAngle + angleOffset))
+        end
+    --end
 
     prevCalibPulse = newCalibPulse
     prevRawAngle = newRawAngle
     
     -- Set Data for arm
+    armValue[10] = armValue[9]
+    armValue[9] = armValue[8]
+    armValue[8] = armValue[7]
+    armValue[7] = armValue[6]
     armValue[6] = armValue[5]
     armValue[5] = armValue[4]
     armValue[4] = armValue[3]
