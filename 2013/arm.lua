@@ -101,9 +101,15 @@ function setPreset(name)
     end
 end
 
+-- Table for Arm Blocker
+local armValue = {}
 function update()
     local newRawAngle = getRawAngle()
     local newCalibPulse = calibrationPulse:Get()
+
+    -- Data collection for the arm blocker
+    armValue[1] = newRawAngle + angleOffset
+
     --[[
     TODO(ross)
 
@@ -113,10 +119,21 @@ function update()
     end
     --]]
 
-    motor:Set(-armPID:update(newRawAngle + angleOffset))
+    if armValue[6] - armValue[1] < .5 and -armPID:update(newRawAngle + angleOffset) >= .5 then
+        motor:Set(0.0)
+    else
+        motor:Set(-armPID:update(newRawAngle + angleOffset))
+    end
 
     prevCalibPulse = newCalibPulse
     prevRawAngle = newRawAngle
+    
+    -- Set Data for arm
+    armValue[6] = armValue[5]
+    armValue[5] = armValue[4]
+    armValue[4] = armValue[3]
+    armValue[3] = armValue[2]
+    armValue[2] = armValue[1]
 end
 
 function dashboardUpdate()
