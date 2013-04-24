@@ -38,7 +38,6 @@ PRESETS = {
     Stow = { armAngle = 5.2 },
     Horizontal = { armAngle = 59.2 },
     Intake = { armAngle = 0.0 },
-    Nil  = { armAngle = nil },
 }
 
 -- read config file
@@ -61,7 +60,7 @@ end
 
 -- Arm Preset Prints
 for k,v in pairs(PRESETS) do
-    --wpilib.SmartDashboard_PutNumber(presetLabel(k), v.armAngle)
+    wpilib.SmartDashboard_PutNumber(presetLabel(k), v.armAngle)
 end
 
 wpilib.SmartDashboard_PutBoolean("Save Presets", false)
@@ -139,13 +138,13 @@ function update()
 
     --if isArmGoingUp(-armPID:update(newRawAngle + angleOffset)) then
         if armValue[10] - armValue[1] < .4 and -armPID:update(newRawAngle + angleOffset) >= .5 then
-            setPreset("Nil")
+            setTarget(nil)
         else
             motor:Set(-armPID:update(newRawAngle + angleOffset))
         end
     --elseif isArmGoingDown(-armPID:update(newRawAngle + angleOffset)) then
         if armValue[10] - armValue[1] < -.4 and -armPID:update(newRawAngle + angleOffset) <= -.5 then
-            setPreset("Nil")
+            setTarget(nil)
         else
             motor:Set(-armPID:update(newRawAngle + angleOffset))
         end
