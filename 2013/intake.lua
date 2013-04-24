@@ -19,6 +19,7 @@ local intakePot = wpilib.AnalogChannel(1)
 local intakeState = nil
 local STOWED = "stowed"
 local DEPLOYED = "deployed"
+local INTAKE_LOAD = "intake_load"
 
 local intakePID = pid.new(5, 0, 0)
 intakePID.min, intakePID.max = -1, 1
@@ -72,61 +73,43 @@ function goToDeploy(bool)
     end
 end
 
+function goToIntake(bool)
+    intaking = bool
+    if intaking then
+        intakeState = INTAKE_LOAD
+        setPreset("Intake")
+        intaking = false
+    end
+end
+
 function update()
     intakeRollers:Set(intakeSpeed)
 
-        if intakeState == DEPLOYED  then
-            if arm.isIntakeDeploySafe() then
-                if getAngle() < 3.2 then
-                    motor:Set(intakePID:update(getAngle()))
-                elseif intakePID:update(getAngle()) < 0 then
-                    motor:Set(intakePID:update(getAngle()))
-                else
-                    motor:Set(0.0)
-                end
-            --elseif not arm.isIntakeDeploySafe() and getAngle() > 2.7 then
-                --this is so we can have the point blank shot
-                --motor:Set(intakePID:update(getAngle()))
-            else
-                motor:Set(0.0)
-            end
-        elseif intakeState == STOW then
-            if arm.isIntakeDeploySafe() then
-                if getAngle() > .7 then
-                    motor:Set(intakePID:update(getAngle()))
-                else
-                    motor:Set(0.0)
-                end
-            else
-                motor:Set(0.0)
-            end
-        else
-            motor:Set(0.0)
-        end
-
-    --[[
-    if intakeState == DEPLOYED then
-        if arm.isIntakeDeploySafe() then
+    if intakeState == DEPLOYED  then
+        if arm.isIntakeDeploySafe() or arm.getAngle() > 4.3 and getAngle() < 2 then
             motor:Set(intakePID:update(getAngle()))
+        elseif intakeState == INTAKE_LOAD then
+            if getAngle() < 5 then
+                motor:Set(intakePID:update(getAngle()))
+            else
+                motor:Set(0.0)
+            end
         else
             motor:Set(0.0)
         end
     elseif intakeState == STOW then
-        if getAngle() > 2.36 and arm.isIntakeDeploySafe() then
-            motor:Set(intakePID:update(getAngle()))
-        else
-            motor:Set(0.0)
-        end
-    elseif intakeState == DOWN then
-        if getAngle() > 2.63 then
-            motor:Set(intakePID:update(getAngle()))
+        if arm.isIntakeDeploySafe() then
+            if getAngle() > .7 then
+                motor:Set(intakePID:update(getAngle()))
+            else
+                motor:Set(0.0)
+            end
         else
             motor:Set(0.0)
         end
     else
         motor:Set(0.0)
     end
-    ]]
 end
 
 function getState()
