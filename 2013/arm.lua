@@ -101,6 +101,11 @@ function setPreset(name)
     end
 end
 
+function constantVoltage(voltage)
+    if not voltage then armVoltage = 0
+    armVoltage = voltage
+end
+
 function isArmGoingUp(pid)
     if pid > 0 then
         return true
@@ -140,13 +145,13 @@ function update()
         if armValue[10] - armValue[1] < .4 and -armPID:update(newRawAngle + angleOffset) >= .5 then
             setTarget(nil)
         else
-            motor:Set(-armPID:update(newRawAngle + angleOffset))
+            motor:Set(-armPID:update(newRawAngle + angleOffset) + armVoltage)
         end
     --elseif isArmGoingDown(-armPID:update(newRawAngle + angleOffset)) then
         if armValue[10] - armValue[1] < -.4 and -armPID:update(newRawAngle + angleOffset) <= -.5 then
             setTarget(nil)
         else
-            motor:Set(-armPID:update(newRawAngle + angleOffset))
+            motor:Set(-armPID:update(newRawAngle + angleOffset) + armVoltage)
         end
     --end
 
