@@ -361,24 +361,6 @@ controlMap =
 
         [4] = function()
             if not prepareHang then
-                arm.setPreset("Shooting")
-                shooter.setFlapActive(false)
-                shooter.setHardStopActive(false)
-                shooter.setSideFlap(true)
-                state = FIRE
-                -- Set Intake Angle
-                if state == FIRE then
-                    intake.setPreset("Deployed")
-                end
-            end
-        end,
-
-        [5] = {tick=shooter.humanLoad},
-
-        [6] = {down=shooter.fireOne, up=function() shooter.fireOne(false) end},
-
-        [7] = function()
-            if not prepareHang then
                 arm.setPreset("Loading")
                 shooter.setFlywheelRunning(false)
                 shooter.setFlapActive(true)
@@ -392,6 +374,24 @@ controlMap =
             end
         end,
 
+
+        [5] = {tick=shooter.humanLoad},
+
+        [6] = {down=shooter.fireOne, up=function() shooter.fireOne(false) end},
+
+        [7] = function()
+            if not prepareHang then
+                arm.setPreset("Shooting")
+                shooter.setFlapActive(false)
+                shooter.setHardStopActive(false)
+                shooter.setSideFlap(true)
+                state = FIRE
+                -- Set Intake Angle
+                if state == FIRE then
+                    intake.setPreset("Deployed")
+                end
+            end
+        end,
 
         [8] = function()
             if state == FIRE then
