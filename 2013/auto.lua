@@ -34,7 +34,8 @@ function run()
 
     shooter.setFlywheelRunning(true)
 
-    while turnInPlace(12, 2) do
+    local turnTimer = wpilib.Timer()
+    while not turnInPlace(12, 2) or  do
         coroutine.yield()
     end
 
@@ -48,30 +49,30 @@ function run()
     shooter.clearDiscsFired()
 
 
-    while driveToPoint(0, -80, true, 12, 5, .8) do
+    while not driveToPoint(0, -80, true, 12, 5, .8) do
         intake.goToDeploy(true)
         coroutine.yield()
     end
 
-    while turnInPlace(-70) do
+    while not turnInPlace(-70) do
         intake.setPreset("Intake")
         coroutine.yield()
     end
 
-    while turnInPlace(-90) do
+    while not turnInPlace(-90) do
         coroutine.yield()
     end
 
     arm.setPreset("Intake")
 
-    while driveToPoint(-72, -80, true, 12, 5, .7) do
+    while not driveToPoint(-72, -80, true, 12, 5, .7) do
         intake.setIntakeSpeed(1)
         shooter.setConveyerManual(1)
         coroutine.yield()
     end
 
 
-    while driveToPoint(0, -30, false, 12, 5, .8) do
+    while not driveToPoint(0, -30, false, 12, 5, .8) do
         coroutine.yield()
     end
 
@@ -79,25 +80,19 @@ function run()
     shooter.setRollerManual(0)
     intake.setIntakeSpeed(0)
 
-    wpilib.SmartDashboard_PutNumber("HIT", 1)
     arm.setPreset("autoShot")
-    wpilib.SmartDashboard_PutNumber("HIT", 2)
 
-    while driveToPoint(12, 12, false, 12, 5, .8) do
+    while not driveToPoint(12, 12, false, 12, 5, .8) do
         coroutine.yield()
     end
-    wpilib.SmartDashboard_PutNumber("HIT", 3)
 
     shooter.setFlywheelRunning(true)
-    wpilib.SmartDashboard_PutNumber("HIT", 4)
 
-    while turnInPlace(20) do
+    while not turnInPlace(20) do
         coroutine.yield()
     end
-    wpilib.SmartDashboard_PutNumber("HIT", 5)
 
     shooter.fire()
-    wpilib.SmartDashboard_PutNumber("HIT", 6)
 
     while shooter.getDiscsFired() <= 3 do
         coroutine.yield()
@@ -313,9 +308,9 @@ function driveToPoint(targetX, targetY, backward, drivePrecision, turnPrecision,
 
     -- Report whether we should continue driving
     if math.abs(angleError) < turnPrecision then
-        return math.abs(robotLinearError) > drivePrecision
+        return math.abs(robotLinearError) < drivePrecision
     else
-        return true
+        return false
     end
 end
 
