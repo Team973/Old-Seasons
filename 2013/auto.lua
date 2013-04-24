@@ -35,7 +35,8 @@ function run()
     shooter.setFlywheelRunning(true)
 
     local turnTimer = wpilib.Timer()
-    while not turnInPlace(12, 2) or  do
+    turnTimer:Start()
+    while not turnInPlace(12, 2) do
         coroutine.yield()
     end
 
