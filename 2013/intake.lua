@@ -28,8 +28,8 @@ intakePID.min, intakePID.max = -1, 1
 intakePID:start()
 
 PRESETS = {
-    Stow = { angle = 1.8 },
-    Deployed = { angle = 4.8 },
+    Stow = { angle = 2.0 },
+    Deployed = { angle = 4.7 },
     Human = { angle = 3.27 },
     Intake = { angle = 4.8 },
 }
