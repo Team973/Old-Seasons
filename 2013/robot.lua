@@ -158,7 +158,7 @@ end
 
 
 function teleop()
-    local HANG_TIMER = .5
+    local HANG_CONSTANT = .5
     local hangTimer = wpilib.Timer()
     hangTimer:Start()
     while wpilib.IsOperatorControl() and wpilib.IsEnabled() do
