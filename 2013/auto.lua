@@ -15,7 +15,9 @@ local resetDrive, driveToPoint, calculateDrive, storeDriveCalculations, runConve
 
 function run()
     resetDrive()
-    local FIRST_TURN = 2
+    local FIRST_TURN = .1
+    local INTAKE_TIME = 4
+    local MOVEMENT_6 = 4
 --[[
     while turnInPlace(90) do
         coroutine.yield()
@@ -35,7 +37,10 @@ function run()
 
     shooter.setFlywheelRunning(true)
 
-    while turnInPlace(12, 2) or driveTimer:Get() < driveTimer:Get() + FIRST_TURN do
+    driveTimer = wpilib.Timer()
+    driveTimer:Start()
+
+    while turnInPlace(12, 2) do
         coroutine.yield()
     end
 
@@ -65,14 +70,14 @@ function run()
 
     arm.setPreset("Intake")
 
-    while driveToPoint(-72, -110, true, 12, 5, .7) do
+    while driveToPoint(-72, -110, true, 12, 5, .7) or driveTimer:Get() < driveTimer:Get() + INTAKE_TIME do
         intake.setIntakeSpeed(1)
         shooter.setConveyerManual(1)
         coroutine.yield()
     end
 
 
-    while driveToPoint(0, -30, false, 12, 5, .8) do
+    while driveToPoint(0, -30, false, 12, 5, .8) or driveTimer:Get() < driveTimer:Get() + MOVEMENT_6 do
         coroutine.yield()
     end
 
@@ -189,8 +194,6 @@ function resetDrive()
     anglePID:start()
     rotatePID:start()
 
-    driveTimer = wpilib.Timer()
-    driveTimer:Start()
 end
 
 

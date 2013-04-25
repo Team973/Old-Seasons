@@ -32,6 +32,7 @@ local gyro = nil
 local gyroOkay = true
 local ignoreGyro = false
 
+local punching = false
 function punchTheGround(bool)
     punching = bool
 end
