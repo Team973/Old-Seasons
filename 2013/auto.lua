@@ -50,7 +50,7 @@ function run()
     shooter.clearDiscsFired()
 
 
-    while not driveToPoint(0, -80, true, 12, 5, .8) do
+    while not driveToPoint(0, -110, true, 12, 5, .8) do
         intake.goToDeploy(true)
         coroutine.yield()
     end
@@ -66,7 +66,7 @@ function run()
 
     arm.setPreset("Intake")
 
-    while not driveToPoint(-72, -80, true, 12, 5, .7) do
+    while not driveToPoint(-72, -110, true, 12, 5, .7) do
         intake.setIntakeSpeed(1)
         shooter.setConveyerManual(1)
         coroutine.yield()
