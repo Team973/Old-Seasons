@@ -34,9 +34,7 @@ function run()
 
     shooter.setFlywheelRunning(true)
 
-    local turnTimer = wpilib.Timer()
-    turnTimer:Start()
-    while not turnInPlace(12, 2) do
+    while turnInPlace(12, 2) do
         coroutine.yield()
     end
 
@@ -50,30 +48,30 @@ function run()
     shooter.clearDiscsFired()
 
 
-    while not driveToPoint(0, -110, true, 12, 5, .8) do
+    while driveToPoint(0, -110, true, 12, 5, .8) do
         intake.goToDeploy(true)
         coroutine.yield()
     end
 
-    while not turnInPlace(-70) do
+    while turnInPlace(-70) do
         intake.setPreset("Intake")
         coroutine.yield()
     end
 
-    while not turnInPlace(-90) do
+    while turnInPlace(-90) do
         coroutine.yield()
     end
 
     arm.setPreset("Intake")
 
-    while not driveToPoint(-72, -110, true, 12, 5, .7) do
+    while driveToPoint(-72, -110, true, 12, 5, .7) do
         intake.setIntakeSpeed(1)
         shooter.setConveyerManual(1)
         coroutine.yield()
     end
 
 
-    while not driveToPoint(0, -30, false, 12, 5, .8) do
+    while driveToPoint(0, -30, false, 12, 5, .8) do
         coroutine.yield()
     end
 
@@ -83,13 +81,13 @@ function run()
 
     arm.setPreset("autoShot")
 
-    while not driveToPoint(12, 12, false, 12, 5, .8) do
+    while driveToPoint(12, 12, false, 12, 5, .8) do
         coroutine.yield()
     end
 
     shooter.setFlywheelRunning(true)
 
-    while not turnInPlace(20) do
+    while turnInPlace(20) do
         coroutine.yield()
     end
 
@@ -196,12 +194,6 @@ end
 
 function calculateDrive()
     currGyro = drive.getGyroAngle()
-    while currGyro > 180 do
-        currGyro = currGyro - 360
-    end
-    while currGyro < -180 do
-        currGyro = currGyro + 360
-    end
     currTheta = prevTheta + (currGyro - prevGyro)
     theta = (currTheta + prevTheta) / 2
     currLeft =  drive.getLeftDist()
@@ -303,15 +295,16 @@ function driveToPoint(targetX, targetY, backward, drivePrecision, turnPrecision,
     wpilib.SmartDashboard_PutNumber("Angle Error", angleError)
     wpilib.SmartDashboard_PutNumber("Target Angle", targetAngle)
     wpilib.SmartDashboard_PutNumber("Drive PID output", drivePID.output)
+    wpilib.SmartDashboard_PutNumber("Current Gyro", currGyro)
 
     -- Store values as previous
     storeDriveCalculations()
 
     -- Report whether we should continue driving
-    if math.abs(angleError) < turnPrecision then
-        return math.abs(robotLinearError) < drivePrecision
+    if math.abs(angleError) > turnPrecision then
+        return math.abs(robotLinearError) > drivePrecision
     else
-        return false
+        return true
     end
 end
 
