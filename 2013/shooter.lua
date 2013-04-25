@@ -122,7 +122,6 @@ local function performFire()
 
 
     while true do
-        timeOut = 0
         while getFlywheelSpeed() < targetFlywheelRPM do
             conveyer:Set(0)
             roller:Set(0)
