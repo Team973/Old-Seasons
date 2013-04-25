@@ -45,7 +45,6 @@ function run()
     end
 
     shooter.fire()
-    -- Change this back to three
     while shooter.getDiscsFired() < 3 do
         coroutine.yield()
     end

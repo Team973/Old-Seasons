@@ -273,7 +273,6 @@ controlMap =
         [1] = function()
             prepareHang = true
             arm.setPreset("Horizontal")
-            shooter.setSideFlap(false)
         end,
 
         [3] = function()
@@ -341,7 +340,6 @@ controlMap =
                 shooter.setFlywheelRunning(false)
                 shooter.setFlapActive(false)
                 shooter.setHardStopActive(true)
-                shooter.setSideFlap(false)
                 state = INTAKE_LOAD
                 -- Set Intake Angle
                 if state == INTAKE_LOAD then
@@ -355,7 +353,6 @@ controlMap =
                 arm.setPreset("Stow")
                 shooter.setFlapActive(false)
                 shooter.setFlywheelRunning(false)
-                shooter.setSideFlap(false)
                 state = STOW
                 -- Set Intake Angle
                 if state == STOW then
@@ -369,7 +366,6 @@ controlMap =
                 arm.setPreset("sideShot")
                 shooter.setFlapActive(false)
                 shooter.setHardStopActive(false)
-                shooter.setSideFlap(true)
                 state = FIRE
                 -- Set Intake Angle
                 if state == FIRE then
@@ -384,7 +380,6 @@ controlMap =
                 shooter.setFlywheelRunning(false)
                 shooter.setFlapActive(true)
                 shooter.setHardStopActive(true)
-                shooter.setSideFlap(false)
                 state = HUMAN_LOAD
                 -- Set Intake Angle
                 if state == HUMAN_LOAD then
@@ -403,7 +398,6 @@ controlMap =
                 arm.setPreset("Shooting")
                 shooter.setFlapActive(false)
                 shooter.setHardStopActive(false)
-                shooter.setSideFlap(true)
                 state = FIRE
                 -- Set Intake Angle
                 if state == FIRE then
