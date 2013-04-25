@@ -240,7 +240,7 @@ function update()
             wpilib.SmartDashboard_PutNumber("Pulse Motor", conveyer:Get())
             wpilib.SmartDashboard_PutNumber("Pulse Timer", pulseTimer:Get())
             --conveyer:Set(conveyerLoadSpeed)
-            roller:Set(rollerLoadSpeed)
+            roller:Set(.1)
             sideFlapOn:Set(false)
             sideFlapOff:Set(true)
             -- Locked out so we can't run it during human loading
