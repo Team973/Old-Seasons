@@ -326,7 +326,7 @@ controlMap =
                 state = INTAKE_LOAD
                 -- Set Intake Angle
                 if state == INTAKE_LOAD then
-                    intake.setPreset("Intake")
+                    intake.goToIntake(true)
                 end
             end
         end,
