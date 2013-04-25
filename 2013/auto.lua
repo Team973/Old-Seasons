@@ -33,7 +33,6 @@ function run()
     arm.setPreset("autoShot")
     ]]
 
-    --[[
     arm.setPreset("autoShot")
 
     shooter.setFlywheelRunning(true)
@@ -55,7 +54,7 @@ function run()
     shooter.clearDiscsFired()
 
 
-    while driveToPoint(0, -110, true, 12, 5, .8) do
+    while not driveToPoint(0, -110, true, 12, 5, .8) do
         intake.goToDeploy(true)
         coroutine.yield()
     end
@@ -71,14 +70,14 @@ function run()
 
     arm.setPreset("Intake")
 
-    while driveToPoint(-96, -110, true, 36, 5, .7) or driveTimer:Get() < driveTimer:Get() + INTAKE_TIME do
+    while not driveToPoint(-96, -110, true, 36, 5, .7) or driveTimer:Get() < driveTimer:Get() + INTAKE_TIME do
         intake.setIntakeSpeed(1)
         shooter.setConveyerManual(1)
         coroutine.yield()
     end
 
 
-    while driveToPoint(0, -30, false, 12, 5, .8) or driveTimer:Get() < driveTimer:Get() + MOVEMENT_6 do
+    while not driveToPoint(0, -30, false, 12, 5, .8) or driveTimer:Get() < driveTimer:Get() + MOVEMENT_6 do
         coroutine.yield()
     end
 
@@ -88,7 +87,7 @@ function run()
 
     arm.setPreset("autoShot")
 
-    while driveToPoint(12, 60, false, 66, 5, .9) do
+    while not driveToPoint(12, 60, false, 66, 5, .9) do
         coroutine.yield()
     end
 
@@ -103,8 +102,8 @@ function run()
     while shooter.getDiscsFired() <= 3 do
         coroutine.yield()
     end
-    ]]
 
+    --[[
     local shootTimer = wpilib.Timer()
     shootTimer:Start()
 
@@ -141,6 +140,7 @@ function run()
     end
 
   --  arm.setPreset("Intake")
+  --  ]]
 
 
 
@@ -310,7 +310,7 @@ function driveToPoint(targetX, targetY, backward, drivePrecision, turnPrecision,
     if math.abs(angleError) > turnPrecision then
         return math.abs(robotLinearError) > drivePrecision
     else
-        return true
+        return false
     end
 end
 
