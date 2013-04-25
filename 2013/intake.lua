@@ -21,6 +21,7 @@ local STOWED = "stowed"
 local DEPLOYED = "deployed"
 local INTAKE_LOAD = "intake_load"
 local HUMAN_LOAD = "human_load"
+local DOWN = "down"
 
 local intakePID = pid.new(5, 0, 0)
 intakePID.min, intakePID.max = -1, 1
@@ -92,12 +93,20 @@ function goToHuman(bool)
     end
 end
 
+function goToDown(bool)
+    down = bool
+    if down then
+        intakeState = DOWN
+        setPreset("Deployed")
+        down = false
+    end
+end
+
 function update()
     intakeRollers:Set(intakeSpeed)
 
     if arm.isIntakeDeploySafe() then
         if intakeState == DEPLOYED  then
-            motor:Set(intakePID:update(getAngle()))
             if intakeState == INTAKE_LOAD then
                 if getAngle() < 4.4 then
                     motor:Set(intakePID:update(getAngle()))
@@ -106,8 +115,10 @@ function update()
                 end
             elseif intakeState == HUMAN_LOAD  then
                 motor:Set(intakePID:update(getAngle()))
+            elseif intakeState == DOWN then
+                motor:Set(intakePID:update(getAngle()))
             else
-                motor:Set(0.0)
+                motor:Set(intakePID:update(getAngle()))
             end
         elseif intakeState == STOWED then
             if getAngle() > 2.2 then
