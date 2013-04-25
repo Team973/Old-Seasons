@@ -143,7 +143,8 @@ function run()
     intake.setIntakeSpeed(0.0)
 end
 
-local drivePID = pid.new(.03)
+local drivePID = pid.new(.03, .001)
+drivePID.icap = .1
 local anglePID = pid.new(.1)
 local rotatePID = pid.new(.15, .01, 0.005)
 rotatePID.icap = .1
