@@ -28,8 +28,6 @@ local flywheelTicksPerRevolution = 1.0
 local conveyerEncoder = wpilib.Encoder(6, 5)
 local hardStop = wpilib.Solenoid(6)
 local humanLoadFlap = wpilib.Solenoid(5)
-local sideFlapOff = wpilib.Solenoid(2)
-local sideFlapOn =wpilib.Solenoid(8)
 local flapActivated = false
 local hardStopActivated = false
 local targetFlywheelRPM = 6000
@@ -185,11 +183,6 @@ function fire(firing)
     end
 end
 
---just to slap the pyramid
-function setSideFlap(deployed)
-    flapDeployed = deployed
-end
-
 function fireOne(firing)
     if firing == nil then
         firing = true
@@ -233,16 +226,12 @@ function update()
     elseif conveyerSpeed == 0 and rollerSpeed == 0 then
         if feeding then
             roller:Set(rollerFeedSpeed)
-            sideFlapOn:Set(false)
-            sideFlapOff:Set(true)
         elseif loading then
             conveyer:Set(conveyerLoadSpeed)
             wpilib.SmartDashboard_PutNumber("Pulse Motor", conveyer:Get())
             wpilib.SmartDashboard_PutNumber("Pulse Timer", pulseTimer:Get())
             --conveyer:Set(conveyerLoadSpeed)
             roller:Set(.1)
-            sideFlapOn:Set(false)
-            sideFlapOff:Set(true)
             -- Locked out so we can't run it during human loading
             flywheelMotor:Set(0.0)
         elseif pulsing then
@@ -252,8 +241,6 @@ function update()
             end
             conveyer:Set(conveyerInput)
         else
-            sideFlapOn:Set(false)
-            sideFlapOff:Set(true)
             conveyer:Set(0)
             roller:Set(0)
         end
@@ -262,8 +249,6 @@ function update()
         roller:Set(rollerSpeed)
     end
 
-    sideFlapOn:Set(flapDeployed)
-    sideFlapOff:Set(not flapDeployed)
 end
 
 function getDiscsFired()

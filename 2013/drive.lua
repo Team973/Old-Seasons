@@ -13,6 +13,8 @@ local leftDriveMotor = wpilib.Talon(8)
 local rightDriveMotor = wpilib.Talon(7)
 local leftCurrent = wpilib.AnalogChannel(2)
 local rightCurrent = wpilib.AnalogChannel(3)
+local kickUpOn = wpilib.Solenoid(2)
+local kickUpOff = wpilib.Solenoid(8)
 
 --auto pid
 local followerWheels = wpilib.Solenoid(3)
@@ -29,6 +31,10 @@ local arcade, cheesyDrive
 local gyro = nil
 local gyroOkay = true
 local ignoreGyro = false
+
+function punchTheGround(bool)
+    punching = bool
+end
 
 function getLeftDrive()
     return leftEncoder:Get()
@@ -158,6 +164,9 @@ function update(driveX, driveY, quickTurn)
         leftSpeed, rightSpeed = cheesyDrive(driveY, driveX, true, quickTurn)
         followerWheels:Set(false)
     end
+
+    kickUpOn:Set(punching)
+    kickUpOff:Set(not punching)
 	leftDriveMotor:Set(-leftSpeed)
 	rightDriveMotor:Set(rightSpeed)
 end
