@@ -81,7 +81,7 @@ function run()
 
     arm.setPreset("autoShot")
 
-    while driveToPoint(12, 12, false, 18, 5, .9) do
+    while driveToPoint(12, 60, false, 66, 5, .9) do
         coroutine.yield()
     end
 
