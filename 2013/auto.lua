@@ -146,7 +146,6 @@ function run()
 
     -- Clean up
     shooter.fullStop()
-    intake.setDeploy(false)
     drive.update(0, 0, false)
     intake.setIntakeSpeed(0.0)
 end
