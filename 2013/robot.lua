@@ -289,8 +289,15 @@ controlMap =
         end},
 
         [6] = {tick=function(held)
+            drive.punchTheGround(held)
+        end},
+
+        -- This needs to be kept
+        --[[
+        [6] = {tick=function(held)
             lowGear = held
         end},
+        ]]
 
         [7] = function()
             intake.goToStow(true)
