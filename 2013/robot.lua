@@ -158,6 +158,9 @@ end
 
 
 function teleop()
+    local HANG_TIMER = .5
+    local hangTimer = wpilib.Timer()
+    hangTimer:Start()
     while wpilib.IsOperatorControl() and wpilib.IsEnabled() do
         enableWatchdog()
         feedWatchdog()
@@ -166,6 +169,11 @@ function teleop()
         -- Read controls
         controls.update(controlMap)
         feedWatchdog()
+
+        -- Hanger
+        if prepareHang and hangTimer:Get() >= 120 - HANG_CONSTANT then
+            hanging = true
+        end
 
         -- Pneumatics
         updateCompressor()
