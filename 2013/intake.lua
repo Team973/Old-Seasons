@@ -85,12 +85,9 @@ end
 function update()
     intakeRollers:Set(intakeSpeed)
 
-    if intakeState == DEPLOYED  then
-        if arm.isIntakeDeploySafe() then
+    if arm.isIntakeDeploySafe() then
+        if intakeState == DEPLOYED  then
             motor:Set(intakePID:update(getAngle()))
-        else
-            motor:Set(0.0)
-        end
         --[[
     elseif intakeState == INTAKE_LOAD then
         if arm.isIntakeDeplySafe() then
@@ -103,8 +100,7 @@ function update()
             motor:Set(0.0)
         end
         ]]
-    elseif intakeState == STOW then
-        if arm.isIntakeDeploySafe() then
+        elseif intakeState == STOW then
             if getAngle() > 1.7 then
                 motor:Set(intakePID:update(getAngle()))
             else
