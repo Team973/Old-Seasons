@@ -33,6 +33,7 @@ function run()
     arm.setPreset("autoShot")
     ]]
 
+    --[[
     arm.setPreset("autoShot")
 
     shooter.setFlywheelRunning(true)
@@ -102,8 +103,8 @@ function run()
     while shooter.getDiscsFired() <= 3 do
         coroutine.yield()
     end
+    ]]
 
-    --[[
     local shootTimer = wpilib.Timer()
     shootTimer:Start()
 
