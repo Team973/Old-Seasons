@@ -98,14 +98,17 @@ function update()
     if arm.isIntakeDeploySafe() then
         if intakeState == DEPLOYED  then
             motor:Set(intakePID:update(getAngle()))
-        elseif intakeState == INTAKE_LOAD then
+            if intakeState == INTAKE_LOAD then
                 if getAngle() < 4.4 then
                     motor:Set(intakePID:update(getAngle()))
                 else
                     motor:Set(0.0)
                 end
-        elseif intakeState == HUMAN_LOAD  then
-            motor:Set(intakePID:update(getAngle()))
+            elseif intakeState == HUMAN_LOAD  then
+                motor:Set(intakePID:update(getAngle()))
+            else
+                motor:Set(0.0)
+            end
         elseif intakeState == STOWED then
             if getAngle() > 2.2 then
                 motor:Set(intakePID:update(getAngle()))
