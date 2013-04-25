@@ -158,7 +158,7 @@ end
 
 
 function teleop()
-    local HANG_CONSTANT = .5
+    local HANG_CONSTANT = 1.5
     local hangTimer = wpilib.Timer()
     hangTimer:Start()
     while wpilib.IsOperatorControl() and wpilib.IsEnabled() do
@@ -278,6 +278,10 @@ controlMap =
 
         [3] = function()
             intake.goToDeploy(true)
+        end,
+
+        [4] = function()
+          arm.setPreset("shotBlock")
         end,
 
         [5] = {tick=function(held)
