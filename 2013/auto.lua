@@ -15,6 +15,7 @@ local resetDrive, driveToPoint, calculateDrive, storeDriveCalculations, runConve
 
 function run()
     resetDrive()
+    local FIRST_TURN = 2
 --[[
     while turnInPlace(90) do
         coroutine.yield()
@@ -34,7 +35,7 @@ function run()
 
     shooter.setFlywheelRunning(true)
 
-    while turnInPlace(12, 2) do
+    while turnInPlace(12, 2) or driveTimer:Get() < driveTimer:Get() + FIRST_TURN do
         coroutine.yield()
     end
 
