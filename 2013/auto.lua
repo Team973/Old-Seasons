@@ -108,6 +108,8 @@ function run()
     local shootTimer = wpilib.Timer()
     shootTimer:Start()
 
+    arm.setPreset("autoShot")
+
     while shootTimer:Get() < 4 do
         shooter.setFlywheelRunning(true)
         drive.update(0, 0, false)
@@ -137,7 +139,6 @@ function run()
         intake.setIntakeSpeed(0.0)
         coroutine.yield()
     end
-    ]]
 
   --  arm.setPreset("Intake")
 
