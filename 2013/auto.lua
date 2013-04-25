@@ -45,7 +45,8 @@ function run()
     end
 
     shooter.fire()
-    while shooter.getDiscsFired() < 3 do
+    -- Change this back to three
+    while shooter.getDiscsFired() < 0 do
         coroutine.yield()
     end
     shooter.fire(false)
@@ -70,7 +71,7 @@ function run()
 
     arm.setPreset("Intake")
 
-    while driveToPoint(-72, -110, true, 12, 5, .7) or driveTimer:Get() < driveTimer:Get() + INTAKE_TIME do
+    while driveToPoint(-96, -110, true, 36, 5, .7) or driveTimer:Get() < driveTimer:Get() + INTAKE_TIME do
         intake.setIntakeSpeed(1)
         shooter.setConveyerManual(1)
         coroutine.yield()
@@ -150,7 +151,7 @@ function run()
 end
 
 local drivePID = pid.new(.03, .001)
-drivePID.icap = .1
+drivePID.icap = .2
 local anglePID = pid.new(.1)
 local rotatePID = pid.new(.15, .01, 0.005)
 rotatePID.icap = .1
