@@ -122,6 +122,7 @@ local function performFire()
 
 
     while true do
+        clearDiscsFired()
         while getFlywheelSpeed() < targetFlywheelRPM do
             conveyer:Set(0)
             roller:Set(0)
