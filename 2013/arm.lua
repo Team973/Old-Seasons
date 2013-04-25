@@ -104,7 +104,6 @@ end
 
 function constantVoltage(voltage)
     if not voltage then armVoltage = 0 end
-    if not voltage then armVoltage = 0
     armVoltage = voltage
 end
 
