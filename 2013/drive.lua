@@ -105,7 +105,7 @@ end
 -- These are all functions for the auto pid
 function getWheelDistance()
     local diameter = 2.75
-    local encoderTicks = 250
+    local encoderTicks = 360
     --comp is still 360
     local distancePerRevolution = math.pi * diameter
      rightDist = (rightEncoder:Get() / encoderTicks) * distancePerRevolution

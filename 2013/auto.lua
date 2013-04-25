@@ -81,7 +81,7 @@ function run()
 
     arm.setPreset("autoShot")
 
-    while driveToPoint(12, 12, false, 12, 5, .8) do
+    while driveToPoint(12, 12, false, 18, 5, .9) do
         coroutine.yield()
     end
 
@@ -145,7 +145,7 @@ end
 
 local drivePID = pid.new(.03)
 local anglePID = pid.new(.1)
-local rotatePID = pid.new(.2, .01, 0.005)
+local rotatePID = pid.new(.15, .01, 0.005)
 rotatePID.icap = .1
 
 local currTheta = 0
