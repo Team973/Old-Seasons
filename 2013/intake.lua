@@ -104,7 +104,7 @@ function update()
                 else
                     motor:Set(0.0)
                 end
-        if intakeState == HUMAN_LOAD  then
+        elseif intakeState == HUMAN_LOAD  then
             motor:Set(intakePID:update(getAngle()))
         elseif intakeState == STOWED then
             if getAngle() > 2.2 then
