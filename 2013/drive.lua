@@ -135,7 +135,14 @@ end
 
 function getGyroAngle()
     local encoderTicks = 1024
-    return colinGyro:Get() * (360 / encoderTicks)
+    local currGyro =  colinGyro:Get() * (360 / encoderTicks)
+    while currGyro > 180 do
+        currGyro = currGyro - 360
+    end
+    while currGyro < -180 do
+        currGyro = currGyro + 360
+    end
+    return currGyro
 end
 
 local function LinearVictor(...)
