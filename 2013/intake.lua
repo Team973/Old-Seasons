@@ -20,6 +20,7 @@ local intakeState = "noState"
 local STOWED = "stowed"
 local DEPLOYED = "deployed"
 local INTAKE_LOAD = "intake_load"
+local HUMAN_LOAD = "human_load"
 
 local intakePID = pid.new(5, 0, 0)
 intakePID.min, intakePID.max = -1, 1
@@ -82,27 +83,29 @@ function goToIntake(bool)
     end
 end
 
+function goToHuman(bool)
+    loading = bool
+    if loading then
+        intakeState = HUMAN_LOAD
+        setPreset("Human")
+        loading = false
+    end
+end
+
 function update()
     intakeRollers:Set(intakeSpeed)
 
     if arm.isIntakeDeploySafe() then
         if intakeState == DEPLOYED  then
             motor:Set(intakePID:update(getAngle()))
-            if intakePID:update(getAngle()) < 0 then
-                motor:Set(intakePID:update(getAngle()))
-            end
-        --[[
-    elseif intakeState == INTAKE_LOAD then
-        if arm.isIntakeDeplySafe() then
-            if getAngle() < 4.4 then
-                motor:Set(intakePID:update(getAngle()))
-            else
-                motor:Set(0.0)
-            end
-        else
-            motor:Set(0.0)
-        end
-        ]]
+        elseif intakeState == INTAKE_LOAD then
+                if getAngle() < 4.4 then
+                    motor:Set(intakePID:update(getAngle()))
+                else
+                    motor:Set(0.0)
+                end
+        if intakeState == HUMAN_LOAD  then
+            motor:Set(intakePID:update(getAngle()))
         elseif intakeState == STOWED then
             if getAngle() > 2.2 then
                 motor:Set(intakePID:update(getAngle()))

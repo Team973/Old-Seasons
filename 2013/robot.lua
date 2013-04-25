@@ -369,7 +369,7 @@ controlMap =
                 state = HUMAN_LOAD
                 -- Set Intake Angle
                 if state == HUMAN_LOAD then
-                    intake.setPreset("Human")
+                    intake.goToHuman(true)
                 end
             end
         end,
