@@ -129,11 +129,11 @@ local function performFire()
         end
 
         if discsFired == 1 then
-            timeOut = 30
+            timeOut = 10
         elseif discsFired == 2 then
-            timeOut = 45
+            timeOut = 10
         elseif discsFired == 3 then
-            timeOut = 50
+            timeOut = 15
         end
 
         while time ~= timeOut do
