@@ -26,10 +26,10 @@ intakePID.min, intakePID.max = -1, 1
 intakePID:start()
 
 PRESETS = {
-    Stow = { angle = .5 },
-    Deployed = { angle = 2.9 },
-    Human = { angle = 1.7 },
-    Intake = { angle = 3.12 },
+    Stow = { angle = 1,8 },
+    Deployed = { angle = 4.8 },
+    Human = { angle = 3.27 },
+    Intake = { angle = 4.8 },
 }
 
 function getAngle()
@@ -86,10 +86,15 @@ function update()
     intakeRollers:Set(intakeSpeed)
 
     if intakeState == DEPLOYED  then
-        if arm.isIntakeDeploySafe() or arm.getAngle() > 4.3 and getAngle() < 2 then
+        if arm.isIntakeDeploySafe() then
             motor:Set(intakePID:update(getAngle()))
-        elseif intakeState == INTAKE_LOAD then
-            if getAngle() < 5 then
+        else
+            motor:Set(0.0)
+        end
+        --[[
+    elseif intakeState == INTAKE_LOAD then
+        if arm.isIntakeDeplySafe() then
+            if getAngle() < 4.4 then
                 motor:Set(intakePID:update(getAngle()))
             else
                 motor:Set(0.0)
@@ -97,9 +102,10 @@ function update()
         else
             motor:Set(0.0)
         end
+        ]]
     elseif intakeState == STOW then
         if arm.isIntakeDeploySafe() then
-            if getAngle() > .7 then
+            if getAngle() > 1.7 then
                 motor:Set(intakePID:update(getAngle()))
             else
                 motor:Set(0.0)

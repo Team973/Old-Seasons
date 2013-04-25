@@ -17,6 +17,7 @@ local calibrationPulse = wpilib.Counter(9)
 local angleOffset = 0
 local prevRawAngle = 0
 local prevCalibPulse = 0
+local armVoltage = 0
 
 local calibrationAngle = 0.0
 
@@ -102,6 +103,7 @@ function setPreset(name)
 end
 
 function constantVoltage(voltage)
+    if not voltage then armVoltage = 0 end
     if not voltage then armVoltage = 0
     armVoltage = voltage
 end
@@ -141,6 +143,7 @@ function update()
     end
     --]]
 
+    --[[
     --if isArmGoingUp(-armPID:update(newRawAngle + angleOffset)) then
         if armValue[10] - armValue[1] < .4 and -armPID:update(newRawAngle + angleOffset) >= .5 then
             setTarget(nil)
@@ -154,6 +157,8 @@ function update()
             motor:Set(-armPID:update(newRawAngle + angleOffset) + armVoltage)
         end
     --end
+    ]]
+    motor:Set(-armPID:update(newRawAngle + angleOffset) + armVoltage)
 
     prevCalibPulse = newCalibPulse
     prevRawAngle = newRawAngle
