@@ -273,6 +273,7 @@ controlMap =
         [1] = function()
             prepareHang = true
             arm.setPreset("Horizontal")
+            intake.goToDeploy(true)
         end,
 
         [3] = function()
