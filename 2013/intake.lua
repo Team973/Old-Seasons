@@ -139,6 +139,10 @@ function getState()
     return intakeState
 end
 
+function getMoveState()
+    return intakeMoveState
+end
+
 function dashboardUpdate()
     wpilib.SmartDashboard_PutNumber("Intake Angle", getAngle())
     wpilib.SmartDashboard_PutNumber("Intake PID Output", intakePID:update(getAngle()))
