@@ -40,7 +40,7 @@ PRESETS = {
     Stow = { armAngle = 5.2 },
     Horizontal = { armAngle = 59.2 },
     Intake = { armAngle = 0.0 },
-    shotBlock = { armAngle = 129.0 },
+    shotBlock = { armAngle = 127.0 },
 }
 
 -- read config file
