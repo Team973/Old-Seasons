@@ -189,6 +189,9 @@ function resetDrive()
     prevY = 0
     currY = 0
 
+    drive.resetColinGyro()
+    drive.resetEncoders()
+
     drivePID:reset()
     anglePID:reset()
     rotatePID:reset()
