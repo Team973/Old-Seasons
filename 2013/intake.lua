@@ -16,6 +16,7 @@ local intakeRollers = wpilib.Victor(5)
 local intakePot = wpilib.AnalogChannel(1)
 
 -- Intake States
+local intakeMoveState = "noState"
 local intakeState = "noState"
 local STOWED = "stowed"
 local DEPLOYED = "deployed"
@@ -60,7 +61,7 @@ end
 function goToStow(bool)
     stowed = bool
     if stowed then
-        intakeState = STOWED
+        intakeMoveState = STOWED
         setPreset("Stow")
         stowed = false
     end
@@ -69,7 +70,7 @@ end
 function goToDeploy(bool)
     deployed = bool
     if deployed then
-        intakeState = DEPLOYED
+        intakeMoveState = DEPLOYED
         setPreset("Deployed")
         deployed = false
     end
@@ -106,7 +107,7 @@ function update()
     intakeRollers:Set(intakeSpeed)
 
     if arm.isIntakeDeploySafe() then
-        if intakeState == DEPLOYED  then
+        if intakeMoveState == DEPLOYED  then
             if intakeState == INTAKE_LOAD then
                 if getAngle() < 4.4 then
                     motor:Set(intakePID:update(getAngle()))
@@ -120,7 +121,7 @@ function update()
             else
                 motor:Set(intakePID:update(getAngle()))
             end
-        elseif intakeState == STOWED then
+        elseif intakeMoveState == STOWED then
             if getAngle() > 2.2 then
                 motor:Set(intakePID:update(getAngle()))
             else
