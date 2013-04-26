@@ -120,6 +120,11 @@ function getWheelDistance()
     return (rightDist + leftDist) / 2
 end
 
+function resetEncoders()
+    rightEncoder:Reset()
+    leftEncoder:Reset()
+end
+
 --[[
 function getDriveVelocity()
     local diameter = 2.75
@@ -138,6 +143,10 @@ end
 
 function getLeftDist()
     return leftDist
+end
+
+function resetColinGyro()
+    colinGyro:Reset()
 end
 
 function getGyroAngle()
