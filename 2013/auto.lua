@@ -70,14 +70,16 @@ function run()
 
     arm.setPreset("Intake")
 
-    while not driveToPoint(-96, -110, true, 36, 5, .7) or driveTimer:Get() < driveTimer:Get() + INTAKE_TIME do
+    targetTime = driveTimer:Get() + INTAKE_TIME
+    while not (driveToPoint(-96, -110, true, 36, 5, .7) or driveTimer:Get() > targetTime) do
         intake.setIntakeSpeed(1)
         shooter.setConveyerManual(1)
         coroutine.yield()
     end
 
 
-    while not driveToPoint(0, -30, false, 12, 5, .8) or driveTimer:Get() < driveTimer:Get() + MOVEMENT_6 do
+    targetTime = driveTimer:Get() + MOVEMENT_6
+    while not (driveToPoint(0, -30, false, 12, 5, .8) or driveTimer:Get() > targetTime) do
         coroutine.yield()
     end
 
@@ -87,7 +89,7 @@ function run()
 
     arm.setPreset("autoShot")
 
-    while not driveToPoint(12, 60, false, 66, 5, .9) do
+    while not driveToPoint(30, 40, false, 48, 5, .9) do
         coroutine.yield()
     end
 
@@ -308,7 +310,7 @@ function driveToPoint(targetX, targetY, backward, drivePrecision, turnPrecision,
 
     -- Report whether we should continue driving
     if math.abs(angleError) > turnPrecision then
-        return math.abs(robotLinearError) > drivePrecision
+        return math.abs(robotLinearError) < drivePrecision
     else
         return false
     end
