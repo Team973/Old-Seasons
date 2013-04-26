@@ -16,8 +16,8 @@ local resetDrive, driveToPoint, calculateDrive, storeDriveCalculations, runConve
 function run()
     resetDrive()
     local FIRST_TURN = .1
-    local INTAKE_TIME = 4
-    local MOVEMENT_6 = 4
+    local INTAKE_TIME = 3
+    local MOVEMENT_6 = 3
 --[[
     while turnInPlace(90) do
         coroutine.yield()
