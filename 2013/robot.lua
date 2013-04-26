@@ -329,7 +329,7 @@ controlMap =
         end,
 
         ["ry"] = function(axis)
-            if state == INTAKE_LOAD then
+            if state == INTAKE_LOAD and intake.getMoveState() == DEPLOYED then
                 intake.setIntakeSpeed(-deadband(axis, 0.1))
             end
         end,
