@@ -30,9 +30,9 @@ intakePID:start()
 
 PRESETS = {
     Stow = { angle = 2.0 },
-    Deployed = { angle = 4.7 },
-    Human = { angle = 3.27 },
-    Intake = { angle = 4.8 },
+    Deployed = { angle = 4.2 },
+    Human = { angle = 3.07 },
+    Intake = { angle = 4.3 },
 }
 
 function getAngle()
@@ -109,7 +109,7 @@ function update()
     if arm.isIntakeDeploySafe() then
         if intakeMoveState == DEPLOYED  then
             if intakeState == INTAKE_LOAD then
-                if getAngle() < 4.4 then
+                if getAngle() < 4.1 then
                     motor:Set(intakePID:update(getAngle()))
                 else
                     motor:Set(0.0)

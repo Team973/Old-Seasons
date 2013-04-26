@@ -16,8 +16,9 @@ local resetDrive, driveToPoint, calculateDrive, storeDriveCalculations, runConve
 function run()
     resetDrive()
     local FIRST_TURN = .1
-    local INTAKE_TIME = 3
+    local INTAKE_TIME = 2.5
     local MOVEMENT_6 = 3
+    local MOVEMENT_7 = 3
 --[[
     while turnInPlace(90) do
         coroutine.yield()
@@ -40,7 +41,7 @@ function run()
     driveTimer = wpilib.Timer()
     driveTimer:Start()
 
-    while turnInPlace(12, 2) do
+    while turnInPlace(15, 2) do
         coroutine.yield()
     end
 
@@ -89,7 +90,8 @@ function run()
 
     arm.setPreset("autoShot")
 
-    while not driveToPoint(30, 40, false, 48, 5, .9) do
+    targetTime = driveTimer:Get() + MOVEMENT_7
+    while not (driveToPoint(10, 40, false, 48, 5, .9) or driveTimer:Get() > targetTime) do
         coroutine.yield()
     end
 
@@ -153,7 +155,7 @@ function run()
 end
 
 local drivePID = pid.new(.03, .001)
-drivePID.icap = .2
+drivePID.icap = .3
 local anglePID = pid.new(.1)
 local rotatePID = pid.new(.15, .01, 0.005)
 rotatePID.icap = .1
