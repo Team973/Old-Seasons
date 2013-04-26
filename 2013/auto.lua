@@ -16,7 +16,7 @@ local resetDrive, driveToPoint, calculateDrive, storeDriveCalculations, runConve
 function run()
     resetDrive()
     local FIRST_TURN = .1
-    local INTAKE_TIME = 2.25
+    local INTAKE_TIME = 2.35
     local MOVEMENT_6 = 3
     local MOVEMENT_7 = 2.25
 --[[
