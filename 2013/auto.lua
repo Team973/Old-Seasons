@@ -18,7 +18,7 @@ function run()
     local FIRST_TURN = .1
     local INTAKE_TIME = 2.5
     local MOVEMENT_6 = 3
-    local MOVEMENT_7 = 3
+    local MOVEMENT_7 = 2.5
 --[[
     while turnInPlace(90) do
         coroutine.yield()
@@ -41,7 +41,7 @@ function run()
     driveTimer = wpilib.Timer()
     driveTimer:Start()
 
-    while turnInPlace(15, 2) do
+    while turnInPlace(17, 2) do
         coroutine.yield()
     end
 
