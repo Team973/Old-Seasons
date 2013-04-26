@@ -34,7 +34,7 @@ function run()
     arm.setPreset("autoShot")
     ]]
 
-    arm.setPreset("autoShot")
+    arm.setPreset("autoShot1")
 
     shooter.setFlywheelRunning(true)
 
