@@ -16,9 +16,9 @@ local resetDrive, driveToPoint, calculateDrive, storeDriveCalculations, runConve
 function run()
     resetDrive()
     local FIRST_TURN = .1
-    local INTAKE_TIME = 2.5
+    local INTAKE_TIME = 2.25
     local MOVEMENT_6 = 3
-    local MOVEMENT_7 = 2.5
+    local MOVEMENT_7 = 2.25
 --[[
     while turnInPlace(90) do
         coroutine.yield()
@@ -55,7 +55,7 @@ function run()
     shooter.clearDiscsFired()
 
 
-    while not driveToPoint(0, -110, true, 12, 5, .8) do
+    while not driveToPoint(0, -105, true, 12, 5, .8) do
         intake.goToDeploy(true)
         coroutine.yield()
     end
@@ -72,7 +72,7 @@ function run()
     arm.setPreset("Intake")
 
     targetTime = driveTimer:Get() + INTAKE_TIME
-    while not (driveToPoint(-96, -110, true, 36, 5, .7) or driveTimer:Get() > targetTime) do
+    while not (driveToPoint(-96, -105, true, 36, 5, .7) or driveTimer:Get() > targetTime) do
         intake.setIntakeSpeed(1)
         shooter.setConveyerManual(1)
         coroutine.yield()
