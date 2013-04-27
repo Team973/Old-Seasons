@@ -34,6 +34,7 @@ function run()
     arm.setPreset("autoShot")
     ]]
 
+    --[[
     arm.setPreset("autoShot1")
 
     shooter.setFlywheelRunning(true)
@@ -106,12 +107,12 @@ function run()
     while shooter.getDiscsFired() <= 3 do
         coroutine.yield()
     end
+    ]]
 
-    --[[
     local shootTimer = wpilib.Timer()
     shootTimer:Start()
 
-    arm.setPreset("autoShot")
+    arm.setPreset("autoShot1")
 
     while shootTimer:Get() < 4 do
         shooter.setFlywheelRunning(true)
@@ -119,7 +120,6 @@ function run()
         intake.setIntakeSpeed(0.0)
         coroutine.yield()
     end
---    intake.setDeploy(true)
 
     local t = wpilib.Timer()
     t:Start()
@@ -131,7 +131,6 @@ function run()
         coroutine.yield()
     end
 
- --   intake.setDeploy(false)
     local t = wpilib.Timer()
     t:Start()
     shooter.fire()
@@ -142,11 +141,6 @@ function run()
         intake.setIntakeSpeed(0.0)
         coroutine.yield()
     end
-
-  --  arm.setPreset("Intake")
-  --  ]]
-
-
 
     -- Clean up
     shooter.fullStop()
