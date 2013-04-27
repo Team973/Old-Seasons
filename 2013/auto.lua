@@ -154,6 +154,46 @@ function run()
     intake.setIntakeSpeed(0.0)
 end
 
+function runAuto2()
+    local shootTimer = wpilib.Timer()
+    shootTimer:Start()
+
+    arm.setPreset("autoShot")
+
+    while shootTimer:Get() < 4 do
+        shooter.setFlywheelRunning(true)
+        drive.update(0, 0, false)
+        intake.setIntakeSpeed(0.0)
+        coroutine.yield()
+    end
+
+    local t = wpilib.Timer()
+    t:Start()
+    while t:Get() < 1 do
+        shooter.setConveyerManual(0)
+        shooter.setRollerManual(1)
+        drive.update(0, 0, false)
+        intake.setIntakeSpeed(0.0)
+        coroutine.yield()
+    end
+
+    local t = wpilib.Timer()
+    t:Start()
+    shooter.fire()
+    while t:Get() < 5 do
+        shooter.setConveyerManual(0)
+        shooter.setRollerManual(0)
+        drive.update(0, 0, false)
+        intake.setIntakeSpeed(0.0)
+        coroutine.yield()
+    end
+
+    -- Clean up
+    shooter.fullStop()
+    drive.update(0, 0, false)
+    intake.setIntakeSpeed(0.0)
+end
+
 local drivePID = pid.new(.03, .001)
 drivePID.icap = .3
 local anglePID = pid.new(.1)
