@@ -118,11 +118,7 @@ end
 function autonomous()
     disableWatchdog()
 
-    if autoSwitch:GetVoltage() > 1 then
-        local c = coroutine.create(auto.run)
-    else
-        local c = coroutine.create(auto.runAuto2)
-    end
+    local c = coroutine.create(auto.run)
 
     while wpilib.IsAutonomous() and wpilib.IsEnabled() and coroutine.status(c) ~= "dead" do
         local success, err = coroutine.resume(c)
