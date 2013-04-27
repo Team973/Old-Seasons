@@ -38,7 +38,7 @@ local prepareHang, hanging = false, false
 local deployIntake = false
 
 -- Auto Switch
-local autoSwitch = wpilib.AnalogChannel(8)
+local autoSwitch = wpilib.AnalogChannel(7)
 
 -- STATES
 local state = nil
@@ -118,7 +118,11 @@ end
 function autonomous()
     disableWatchdog()
 
-    local c = coroutine.create(auto.run)
+    if autoSwitch:GetVoltage() > 1 then
+        local c = coroutine.create(auto.run)
+    else
+        local c = coroutine.create(auto.runAuto2)
+    end
 
     while wpilib.IsAutonomous() and wpilib.IsEnabled() and coroutine.status(c) ~= "dead" do
         local success, err = coroutine.resume(c)
