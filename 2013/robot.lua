@@ -37,6 +37,9 @@ local driveX, driveY, quickTurn = 0, 0, false
 local prepareHang, hanging = false, false
 local deployIntake = false
 
+-- Auto Switch
+local autoSwitch = wpilib.AnalogChannel(8)
+
 -- STATES
 local state = nil
 local FIRE = "fire"
@@ -91,6 +94,7 @@ function dashboardUpdate()
     -- local pressureVoltageMin = 1.17
     wpilib.SmartDashboard_PutBoolean("pressure", pressureSwitch:Get())
     wpilib.SmartDashboard_PutNumber("Pressure Transducer", pressureTransducer:GetVoltage())
+    wpilib.SmartDashboard_PutNumber("Auto Switch", autoSwitch:GetVoltage())
 end
 
 function disabledIdle()
