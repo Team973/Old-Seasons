@@ -262,8 +262,7 @@ controlMap =
             if lowGear then
                 driveY = -deadband(axis, 0.1) / 3
             else
-                driveY = -deadband(axis, 0.1) / 3
-                --driveY = -deadband(axis, 0.1)
+                driveY = -deadband(axis, 0.1)
             end
         end,
 
@@ -271,8 +270,7 @@ controlMap =
             if lowGear then
                 driveX = deadband(axis, 0.1) / 3
             else
-                driveX = deadband(axis, 0.1) / 3
-                --driveX = deadband(axis, 0.1)
+                driveX = deadband(axis, 0.1)
             end
         end,
 
