@@ -30,7 +30,7 @@ local hardStop = wpilib.Solenoid(6)
 local humanLoadFlap = wpilib.Solenoid(5)
 local flapActivated = false
 local hardStopActivated = false
-local targetFlywheelRPM = 6000
+local targetFlywheelRPM = 2000
 local flapDeployed = false
 local flywheelFullSpeed = false
 local discsFired = 0
@@ -114,7 +114,7 @@ end
 local function performFire()
     local conveyerWait = 0.5 -- in seconds
     local conveyerStallSpeed = 120 -- in inches/second
-    local rpmDropThreshold = 5500
+    local rpmDropThreshold = 1500
     local time = 0
     local timeOut = 0
 
