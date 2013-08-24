@@ -7,7 +7,6 @@ local wpilib = require("wpilib")
 pid.PID.timerNew = wpilib.Timer
 wpilib.SmartDashboard_init()
 
-local arm = require("arm")
 local auto = require("auto")
 local controls = require("controls")
 local drive = require("drive")
@@ -100,7 +99,6 @@ function disabledIdle()
 
         --Load Dashboard outputs
         dashboardUpdate()
-        arm.dashboardUpdate()
         drive.dashboardUpdate()
         shooter.dashboardUpdate()
         intake.dashboardUpdate()
@@ -130,11 +128,9 @@ function autonomous()
         hangDeployOn:Set(false)
         hangDeployOff:Set(true)
         --]]
-        arm.update()
         -- don't update drive, should be done in coroutine
 
         dashboardUpdate()
-        arm.dashboardUpdate()
         drive.dashboardUpdate()
         shooter.dashboardUpdate()
 
@@ -156,7 +152,6 @@ function autonomous()
         hangDeployOn:Set(false)
         hangDeployOff:Set(true)
         --]]
-        arm.update()
     end
 end
 
@@ -195,14 +190,12 @@ function teleop()
         drive.update(driveX, driveY, quickTurn)
 
         -- Arm
-        arm.update()
 
         -- Serial
         serial.update()
 
         -- Dashboard
         dashboardUpdate()
-        arm.dashboardUpdate()
         drive.dashboardUpdate()
         shooter.dashboardUpdate()
         shooter.dashboardUpdate()
@@ -279,7 +272,6 @@ controlMap =
 
         [1] = function()
             prepareHang = true
-            arm.setPreset("Horizontal")
             intake.goToDeploy(true)
         end,
 
@@ -288,7 +280,6 @@ controlMap =
         end,
 
         [4] = function()
-          arm.setPreset("shotBlock")
         end,
 
         [5] = {tick=function(held)
@@ -344,7 +335,6 @@ controlMap =
 
         [1] = function()
             if not prepareHang then
-                arm.setPreset("Intake")
                 shooter.setFlywheelRunning(false)
                 shooter.setFlapActive(false)
                 shooter.setHardStopActive(true)
@@ -358,7 +348,6 @@ controlMap =
 
         [2] = function()
             if not prepareHang and state ~= INTAKE_LOAD then
-                arm.setPreset("Stow")
                 shooter.setFlapActive(false)
                 shooter.setFlywheelRunning(false)
                 state = STOW
@@ -371,7 +360,6 @@ controlMap =
 
         [3] = function()
             if not prepareHang then
-                arm.setPreset("sideShot")
                 shooter.setFlapActive(false)
                 shooter.setHardStopActive(false)
                 state = FIRE
@@ -384,7 +372,6 @@ controlMap =
 
         [4] = function()
             if not prepareHang then
-                arm.setPreset("Loading")
                 shooter.setFlywheelRunning(false)
                 shooter.setFlapActive(true)
                 shooter.setHardStopActive(true)
@@ -403,7 +390,6 @@ controlMap =
 
         [7] = function()
             if not prepareHang then
-                arm.setPreset("Shooting")
                 shooter.setFlapActive(false)
                 shooter.setHardStopActive(false)
                 state = FIRE
@@ -440,19 +426,6 @@ controlMap =
         [11] = {down=shooter.fire, up=function() shooter.fire(false) end},
 
         ["haty"] = function(axis)
-            local increment = 0.5
-            if prepareHang then
-                increment = 5
-            end
-            if axis > 0.5 and prevCoDriverDpad <= 0.5 then
-                -- Dpad down
-                arm.setTarget(arm.getTarget() - increment)
-            end
-            if axis < -0.5 and prevCoDriverDpad >= -0.5 then
-                -- Dpad down
-                arm.setTarget(arm.getTarget() + increment)
-            end
-            prevCoDriverDpad = axis
         end,
     },
     -- Joystick 3
