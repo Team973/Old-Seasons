@@ -31,14 +31,11 @@ local feedWatchdog, enableWatchdog, disableWatchdog
 local disabledIdle, autonomous, teleop, updateCompressor
 local controlMap
 local deployStinger
-local compressor, pressureSwitch, pressureTransducer, autoDriveSwitch, stinger
+local compressor, pressureSwitch, pressureTransducer, autoDriveSwitch,
 local hangingPin, hangDeployOn, hangDeployOff
 local driveX, driveY, quickTurn = 0, 0, false
 local prepareHang, hanging = false, false
 local deployIntake = false
-
--- Auto Switch
-local autoSwitch = wpilib.AnalogChannel(7)
 
 -- STATES
 local state = nil
@@ -106,7 +103,6 @@ function disabledIdle()
         arm.dashboardUpdate()
         drive.dashboardUpdate()
         shooter.dashboardUpdate()
-        serial.dashboardUpdate()
         intake.dashboardUpdate()
 
         feedWatchdog()
@@ -129,9 +125,11 @@ function autonomous()
         updateCompressor()
         intake.update()
         shooter.update()
+        --[[
         hangingPin:Set(false)
         hangDeployOn:Set(false)
         hangDeployOff:Set(true)
+        --]]
         arm.update()
         -- don't update drive, should be done in coroutine
 
@@ -153,9 +151,11 @@ function autonomous()
         updateCompressor()
         intake.update()
         shooter.update()
+        --[[
         hangingPin:Set(false)
         hangDeployOn:Set(false)
         hangDeployOff:Set(true)
+        --]]
         arm.update()
     end
 end
@@ -185,9 +185,11 @@ function teleop()
         intake.update()
         shooter.update()
 
+        --[[
         hangingPin:Set(prepareHang)
         hangDeployOn:Set(hanging)
         hangDeployOff:Set(not hanging)
+        -]]
 
         -- Drive
         drive.update(driveX, driveY, quickTurn)
@@ -203,7 +205,6 @@ function teleop()
         arm.dashboardUpdate()
         drive.dashboardUpdate()
         shooter.dashboardUpdate()
-        serial.dashboardUpdate()
         shooter.dashboardUpdate()
         intake.dashboardUpdate()
 
@@ -227,9 +228,11 @@ end
 compressor = wpilib.Relay(1, 8, wpilib.Relay_kForwardOnly)
 pressureSwitch = wpilib.DigitalInput(14)
 pressureTransducer = wpilib.AnalogChannel(4)
+--[[
 hangingPin = wpilib.Solenoid(4)
 hangDeployOn = wpilib.Solenoid(1)
 hangDeployOff = wpilib.Solenoid(7)
+--]]
 -- End Inputs/Outputs
 
 -- Controls
