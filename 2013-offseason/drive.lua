@@ -9,12 +9,15 @@ local pairs = pairs
 
 module(...)
 
-local leftDriveMotor = wpilib.Talon(8)
-local rightDriveMotor = wpilib.Talon(7)
+local leftDriveMotor = wpilib.Talon(1)
+local rightDriveMotor = wpilib.Talon(2)
 local leftCurrent = wpilib.AnalogChannel(2)
 local rightCurrent = wpilib.AnalogChannel(3)
+
 local kickUpOn = wpilib.Solenoid(2)
 local kickUpOff = wpilib.Solenoid(8)
+local lowGearOn
+local lowGearOff
 
 --auto pid
 local followerWheels = wpilib.Solenoid(3)
@@ -78,26 +81,6 @@ local function arcade(move, rotate)
     end
 end
 
-function initGyro()
-    gyro = wpilib.Gyro(1, 1)
-    gyro:SetSensitivity(0.00703)
-    gyro:Reset()
-    gyroOkay = true
-end
-
-function resetGyro()
-    gyro:Reset()
-    ignoreGyro = false
-end
-
-function effTheGyro()
-    ignoreGyro = true
-end
-
-function disableGyro()
-    gyroOkay = false
-end
-
 -- Wraps an angle (in degrees) to (-180, 180].
 function normalizeAngle(theta)
     while theta > 180 do
@@ -126,6 +109,7 @@ function resetEncoders()
 end
 
 --[[
+--TODO(oliver) Find out wether or not we actually need this.
 function getDriveVelocity()
     local diameter = 2.75
     local encoderTicks = 360
