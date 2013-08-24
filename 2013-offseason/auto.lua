@@ -1,6 +1,5 @@
 -- auto.lua
 
-local arm = require("arm")
 local drive = require("drive")
 local intake = require("intake")
 local pid = require("pid")
@@ -31,11 +30,9 @@ function run()
 
     --[[
     shooter.fullStop()
-    arm.setPreset("autoShot")
     ]]
 
     --[[
-    arm.setPreset("autoShot1")
 
     shooter.setFlywheelRunning(true)
 
@@ -70,7 +67,6 @@ function run()
         coroutine.yield()
     end
 
-    arm.setPreset("Intake")
 
     targetTime = driveTimer:Get() + INTAKE_TIME
     while not (driveToPoint(-96, -110, true, 36, 5, .7) or driveTimer:Get() > targetTime) do
@@ -89,7 +85,6 @@ function run()
     shooter.setRollerManual(0)
     intake.setIntakeSpeed(0)
 
-    arm.setPreset("autoShot")
 
     targetTime = driveTimer:Get() + MOVEMENT_7
     while not (driveToPoint(10, 40, false, 48, 5, .9) or driveTimer:Get() > targetTime) do
@@ -112,7 +107,6 @@ function run()
     local shootTimer = wpilib.Timer()
     shootTimer:Start()
 
-    arm.setPreset("autoShot1")
 
     while shootTimer:Get() < 4 do
         shooter.setFlywheelRunning(true)
@@ -152,7 +146,6 @@ function runAuto2()
     local shootTimer = wpilib.Timer()
     shootTimer:Start()
 
-    arm.setPreset("autoShot")
 
     while shootTimer:Get() < 4 do
         shooter.setFlywheelRunning(true)
