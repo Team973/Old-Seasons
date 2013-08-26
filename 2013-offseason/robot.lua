@@ -31,8 +31,10 @@ local disabledIdle, autonomous, teleop, updateCompressor
 local controlMap
 local deployStinger
 local compressor, pressureSwitch, pressureTransducer, autoDriveSwitch,
-local hangingPin, hangDeployOn, hangDeployOff
-local driveX, driveY, quickTurn = 0, 0, false
+
+local driveX = 0
+local driveY = 0
+local quickTurn = false
 local prepareHang, hanging = false, false
 local deployIntake = false
 
