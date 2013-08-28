@@ -20,8 +20,8 @@ local rollerSpeed = 0
 local flywheelSpeed = 0
 
 local conveyer = reversemotor.wrap(wpilib.Victor(6))
-local roller = wpilib.Talon(3)
-local flywheelMotor = wpilib.Talon(2)
+local roller = wpilib.Talon(7)
+local flywheelMotor = wpilib.Talon(3)
 local flywheelCounter1 = wpilib.Counter(wpilib.DigitalInput(8))
 local flywheelCounter2 = wpilib.Counter(wpilib.DigitalInput(7))
 local flywheelTicksPerRevolution = 1.0
