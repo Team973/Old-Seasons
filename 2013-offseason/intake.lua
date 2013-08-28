@@ -1,6 +1,5 @@
 -- intake.lua
 
-local arm = require("arm")
 local wpilib = require("wpilib")
 local pid = require("pid")
 
@@ -105,34 +104,6 @@ end
 
 function update()
     intakeRollers:Set(intakeSpeed)
-
-    if arm.isIntakeDeploySafe() then
-        if intakeMoveState == DEPLOYED  then
-            if intakeState == INTAKE_LOAD then
-                if getAngle() < 4.1 then
-                    motor:Set(intakePID:update(getAngle()))
-                else
-                    motor:Set(0.0)
-                end
-            elseif intakeState == HUMAN_LOAD  then
-                motor:Set(intakePID:update(getAngle()))
-            elseif intakeState == DOWN then
-                motor:Set(intakePID:update(getAngle()))
-            else
-                motor:Set(intakePID:update(getAngle()))
-            end
-        elseif intakeMoveState == STOWED then
-            if getAngle() > 2.2 then
-                motor:Set(intakePID:update(getAngle()))
-            else
-                motor:Set(0.0)
-            end
-        else
-            motor:Set(0.0)
-        end
-    else
-        motor:Set(0.0)
-    end
 end
 
 function getState()
