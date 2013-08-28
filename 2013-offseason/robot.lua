@@ -13,7 +13,6 @@ local drive = require("drive")
 local intake = require("intake")
 local math = require("math")
 local shooter = require("shooter")
-local serial = require("serial")
 
 local pairs = pairs
 local tostring = tostring
@@ -104,7 +103,6 @@ function disabledIdle()
         dashboardUpdate()
         drive.dashboardUpdate()
         shooter.dashboardUpdate()
-        serial.dashboardUpdate()
         intake.dashboardUpdate()
 
         feedWatchdog()
@@ -190,13 +188,11 @@ function teleop()
         -- Arm
 
         -- Serial
-        serial.update()
 
         -- Dashboard
         dashboardUpdate()
         drive.dashboardUpdate()
         shooter.dashboardUpdate()
-        serial.dashboardUpdate()
         shooter.dashboardUpdate()
         intake.dashboardUpdate()
 
