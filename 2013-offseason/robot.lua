@@ -296,13 +296,6 @@ controlMap =
             intake.goToStow(true)
         end,
 
-        --This is for the serial port testing
-        --[[
-        [9] = {tick=function(held)
-            serial.setRead(held)
-        end},
-        -]]
-
         [10] = function()
             if prepareHang then
                 hanging = false
@@ -318,8 +311,6 @@ controlMap =
     -- Joystick 2 (Co-Driver)
     {
         ["y"] = function(axis)
-            shooter.setRollerManual(-deadband(axis, 0.1))
-            shooter.setConveyerManual(-deadband(axis, 0.1))
         end,
 
         ["ry"] = function(axis)
@@ -331,8 +322,6 @@ controlMap =
         [1] = function()
             if not prepareHang then
                 shooter.setFlywheelRunning(false)
-                shooter.setFlapActive(false)
-                shooter.setHardStopActive(true)
                 state = INTAKE_LOAD
                 -- Set Intake Angle
                 if state == INTAKE_LOAD then
@@ -343,7 +332,6 @@ controlMap =
 
         [2] = function()
             if not prepareHang and state ~= INTAKE_LOAD then
-                shooter.setFlapActive(false)
                 shooter.setFlywheelRunning(false)
                 state = STOW
                 -- Set Intake Angle
@@ -355,8 +343,6 @@ controlMap =
 
         [3] = function()
             if not prepareHang then
-                shooter.setFlapActive(false)
-                shooter.setHardStopActive(false)
                 state = FIRE
                 -- Set Intake Angle
                 if state == FIRE then
@@ -368,8 +354,6 @@ controlMap =
         [4] = function()
             if not prepareHang then
                 shooter.setFlywheelRunning(false)
-                shooter.setFlapActive(true)
-                shooter.setHardStopActive(true)
                 state = HUMAN_LOAD
                 -- Set Intake Angle
                 if state == HUMAN_LOAD then
@@ -385,8 +369,6 @@ controlMap =
 
         [7] = function()
             if not prepareHang then
-                shooter.setFlapActive(false)
-                shooter.setHardStopActive(false)
                 state = FIRE
                 -- Set Intake Angle
                 if state == FIRE then
@@ -410,11 +392,6 @@ controlMap =
         end,
 
         [10] = function()
-            if state == HUMAN_LOAD then
-                shooter.setFlapActive(false)
-            elseif state == INTAKE_LOAD then
-                shooter.setFlapActive(true)
-            end
         end,
         
         -- TODO change back to button 6 when told to
