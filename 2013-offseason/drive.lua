@@ -9,8 +9,8 @@ local pairs = pairs
 
 module(...)
 
-local leftDriveMotor = wpilib.Talon(8)
-local rightDriveMotor = wpilib.Talon(7)
+local leftDriveMotor = wpilib.Talon(1)
+local rightDriveMotor = wpilib.Talon(2)
 local leftCurrent = wpilib.AnalogChannel(2)
 local rightCurrent = wpilib.AnalogChannel(3)
 local kickUpOn = wpilib.Solenoid(2)
