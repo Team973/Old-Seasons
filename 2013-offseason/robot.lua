@@ -238,7 +238,6 @@ controlMap =
         end,
 
         [3] = function()
-            intake.goToDeploy(true)
         end,
 
         [4] = function()
@@ -260,19 +259,12 @@ controlMap =
         --]]
 
         [7] = function()
-            intake.goToStow(true)
         end,
 
         [10] = function()
-            if prepareHang then
-                hanging = false
-            end
         end,
 
         ["rtrigger"] = function()
-            if prepareHang then
-                hanging = true
-            end
         end,
     },
     -- Joystick 2 (Co-Driver)
@@ -281,52 +273,25 @@ controlMap =
         end,
 
         ["ry"] = function(axis)
-            if state == INTAKE_LOAD then
                 intake.setIntakeSpeed(-deadband(axis, 0.1))
-            end
         end,
 
         [1] = function()
-            if not prepareHang then
                 shooter.setFlywheelRunning(false)
                 state = INTAKE_LOAD
-                -- Set Intake Angle
-                if state == INTAKE_LOAD then
-                    intake.goToIntake(true)
-                end
-            end
         end,
 
         [2] = function()
-            if not prepareHang and state ~= INTAKE_LOAD then
                 shooter.setFlywheelRunning(false)
                 state = STOW
-                -- Set Intake Angle
-                if state == STOW then
-                    intake.goToDown(true)
-                end
-            end
         end,
 
         [3] = function()
-            if not prepareHang then
-                state = FIRE
-                -- Set Intake Angle
-                if state == FIRE then
-                    intake.goToDown(true)
-                end
-            end
         end,
 
         [4] = function()
-            if not prepareHang then
                 shooter.setFlywheelRunning(false)
                 state = HUMAN_LOAD
-                -- Set Intake Angle
-                if state == HUMAN_LOAD then
-                    intake.goToHuman(true)
-                end
-            end
         end,
 
 
@@ -335,13 +300,6 @@ controlMap =
         [6] = {down=shooter.fireOne, up=function() shooter.fireOne(false) end},
 
         [7] = function()
-            if not prepareHang then
-                state = FIRE
-                -- Set Intake Angle
-                if state == FIRE then
-                    intake.goToDown(true)
-                end
-            end
         end,
 
         [8] = function()
@@ -377,10 +335,6 @@ controlMap =
     cypress={},
 }
 -- End Controls
-
-function getIntakeState()
-    return intakeState
-end
 
 -- Watchdog shortcuts
 if watchdogEnabled then
