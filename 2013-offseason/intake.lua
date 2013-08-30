@@ -5,23 +5,12 @@ local pid = require("pid")
 
 module(...)
 
-local deploy = false
-local retract = false
 local intakeDeploySpeed = .5
 local intakeSpeed = 0
 
 local motor = wpilib.Victor(4)
 local intakeRollers = wpilib.Victor(5)
 local intakePot = wpilib.AnalogChannel(1)
-
--- Intake States
-local intakeMoveState = "noState"
-local intakeState = "noState"
-local STOWED = "stowed"
-local DEPLOYED = "deployed"
-local INTAKE_LOAD = "intake_load"
-local HUMAN_LOAD = "human_load"
-local DOWN = "down"
 
 local intakePID = pid.new(5, 0, 0)
 intakePID.min, intakePID.max = -1, 1
@@ -55,51 +44,6 @@ end
 
 function setIntakeSpeed(speed)
     intakeSpeed = speed
-end
-
-function goToStow(bool)
-    stowed = bool
-    if stowed then
-        intakeMoveState = STOWED
-        setPreset("Stow")
-        stowed = false
-    end
-end
-
-function goToDeploy(bool)
-    deployed = bool
-    if deployed then
-        intakeMoveState = DEPLOYED
-        setPreset("Deployed")
-        deployed = false
-    end
-end
-
-function goToIntake(bool)
-    intaking = bool
-    if intaking then
-        intakeState = INTAKE_LOAD
-        setPreset("Intake")
-        intaking = false
-    end
-end
-
-function goToHuman(bool)
-    loading = bool
-    if loading then
-        intakeState = HUMAN_LOAD
-        setPreset("Human")
-        loading = false
-    end
-end
-
-function goToDown(bool)
-    down = bool
-    if down then
-        intakeState = DOWN
-        setPreset("Deployed")
-        down = false
-    end
 end
 
 function update()
