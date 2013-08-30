@@ -24,6 +24,8 @@ local targetFlywheelRPM = 6000
 local flywheelFullSpeed = false
 local discsFired = 0
 
+local indexer = wpilib.Solenoid(1)
+
 local fireCoroutine = nil
 
 flywheelCounter1:Start()
@@ -63,11 +65,13 @@ local function performFire()
 
 
     clearDiscsFired()
+    indexer:Set(false)
     while true do
         while getFlywheelSpeed() < targetFlywheelRPM do
             coroutine.yield()
         end
 
+        --[[
         if discsFired == 1 then
             timeOut = 10
         elseif discsFired == 2 then
@@ -80,10 +84,15 @@ local function performFire()
             time = time + 1
             coroutine.yield()
         end
+        --]]
 
         while getFlywheelSpeed() >= rpmDropThreshold do
+            indexer:Set(true)
             coroutine.yield()
         end
+
+        indexer:Set(false)
+
         discsFired = discsFired + 1
         time = 0
     end
@@ -91,18 +100,21 @@ end
 
 local function performFireOne()
     local rpmDropThreshold = 5500
+    indexer:Set(false)
 
     while getFlywheelSpeed() < targetFlywheelRPM do
         coroutine.yield()
     end
 
     while getFlywheelSpeed() >= rpmDropThreshold do
+        indexer:Set(true)
         coroutine.yield()
     end
+    indexer:Set(false)
     discsFired = discsFired + 1
 
     -- Extra Safe Stop
-    --TODO(oliver) make new extra safe stop
+    indexer:Set(false)
 end
 
 function fire(firing)
@@ -160,6 +172,7 @@ end
 
 function fullStop()
     flywheelRunning = false
+    indexer:Set(false)
     fireCoroutine = nil
 end
 

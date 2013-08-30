@@ -219,19 +219,11 @@ controlMap =
     -- Joystick 1 (Driver)
     {
         ["y"] = function(axis) 
-            if lowGear then
-                driveY = -deadband(axis, 0.1) / 3
-            else
-                driveY = -deadband(axis, 0.1)
-            end
+            driveY = -deadband(axis, 0.1)
         end,
 
         ["rx"] = function(axis)
-            if lowGear then
-                driveX = deadband(axis, 0.1) / 3
-            else
-                driveX = deadband(axis, 0.1)
-            end
+            driveX = deadband(axis, 0.1)
         end,
 
         [1] = function()
@@ -248,18 +240,12 @@ controlMap =
         end},
 
         [6] = {tick=function(held)
+            drive.setLowGear(held)
+        end},
+
+        [7] = {tick=function(held)
             drive.punchTheGround(held)
         end},
-
-        -- This needs to be kept
-        --[[
-        [6] = {tick=function(held)
-            lowGear = held
-        end},
-        --]]
-
-        [7] = function()
-        end,
 
         [10] = function()
         end,
@@ -273,54 +259,39 @@ controlMap =
         end,
 
         ["ry"] = function(axis)
-                intake.setIntakeSpeed(-deadband(axis, 0.1))
         end,
 
         [1] = function()
-                shooter.setFlywheelRunning(false)
-                state = INTAKE_LOAD
         end,
 
         [2] = function()
-                shooter.setFlywheelRunning(false)
-                state = STOW
         end,
 
         [3] = function()
         end,
 
         [4] = function()
-                shooter.setFlywheelRunning(false)
-                state = HUMAN_LOAD
         end,
 
 
-        [5] = {tick=shooter.humanLoad},
+        [5] = {},
 
-        [6] = {down=shooter.fireOne, up=function() shooter.fireOne(false) end},
+        [6] = {down=shooter.fire, up=function() shooter.fire(false) end},
 
         [7] = function()
         end,
 
         [8] = function()
-            if state == FIRE then
-                shooter.setFlywheelRunning(true)
-            else
-                shooter.setFlywheelRunning(false)
-            end
         end,
 
-        [9] = function()
-            if state == FIRE then
-                shooter.setFlywheelRunning(false)
-            end
-        end,
+        [9] = {tick=function(held)
+            shooter.setFlywheelRunning(held)
+        end},
 
         [10] = function()
         end,
         
-        -- TODO change back to button 6 when told to
-        [11] = {down=shooter.fire, up=function() shooter.fire(false) end},
+        [11] = {down=shooter.fireOne, up=function() shooter.fireOne(false) end},
 
         ["haty"] = function(axis)
         end,

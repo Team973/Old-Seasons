@@ -13,8 +13,8 @@ local leftDriveMotor = wpilib.Talon(1)
 local rightDriveMotor = wpilib.Talon(2)
 local leftCurrent = wpilib.AnalogChannel(2)
 local rightCurrent = wpilib.AnalogChannel(3)
-local kickUpOn = wpilib.Solenoid(2)
-local kickUpOff = wpilib.Solenoid(8)
+local kickUp = wpilib.Solenoid(2)
+local lowGear = wpilib.Solenoid(3)
 
 --auto pid
 local followerWheels = wpilib.Solenoid(3)
@@ -28,13 +28,14 @@ leftEncoder:Start()
 
 local arcade, cheesyDrive
 
-local gyro = nil
-local gyroOkay = true
-local ignoreGyro = false
-
 local punching = false
 function punchTheGround(bool)
     punching = bool
+end
+
+local isLowGear = false
+function setLowGear(bool)
+    isLowGear = bool
 end
 
 function getLeftDrive()
@@ -76,26 +77,6 @@ local function arcade(move, rotate)
             return -move - rotate, -math.max(move, -rotate)
         end
     end
-end
-
-function initGyro()
-    gyro = wpilib.Gyro(1, 1)
-    gyro:SetSensitivity(0.00703)
-    gyro:Reset()
-    gyroOkay = true
-end
-
-function resetGyro()
-    gyro:Reset()
-    ignoreGyro = false
-end
-
-function effTheGyro()
-    ignoreGyro = true
-end
-
-function disableGyro()
-    gyroOkay = false
 end
 
 -- Wraps an angle (in degrees) to (-180, 180].
@@ -175,8 +156,8 @@ function update(driveX, driveY, quickTurn)
         followerWheels:Set(false)
     end
 
-    kickUpOn:Set(punching)
-    kickUpOff:Set(not punching)
+    kickUp:Set(punching)
+    lowGear:Set(isLowGear)
 	leftDriveMotor:Set(-leftSpeed)
 	rightDriveMotor:Set(rightSpeed)
 end
