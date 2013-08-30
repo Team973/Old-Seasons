@@ -29,14 +29,8 @@ local feedWatchdog, enableWatchdog, disableWatchdog
 local disabledIdle, autonomous, teleop, updateCompressor
 local controlMap
 local deployStinger
-local compressor, pressureSwitch, pressureTransducer, autoDriveSwitch, stinger
-local hangingPin, hangDeployOn, hangDeployOff
+local compressor, pressureSwitch, pressureTransducer, autoDriveSwitch
 local driveX, driveY, quickTurn = 0, 0, false
-local prepareHang, hanging = false, false
-local deployIntake = false
-
--- Auto Switch
-local autoSwitch = wpilib.AnalogChannel(7)
 
 -- STATES
 local state = nil
@@ -92,7 +86,6 @@ function dashboardUpdate()
     -- local pressureVoltageMin = 1.17
     wpilib.SmartDashboard_PutBoolean("pressure", pressureSwitch:Get())
     wpilib.SmartDashboard_PutNumber("Pressure Transducer", pressureTransducer:GetVoltage())
-    wpilib.SmartDashboard_PutNumber("Auto Switch", autoSwitch:GetVoltage())
 end
 
 function disabledIdle()
@@ -125,9 +118,6 @@ function autonomous()
         updateCompressor()
         intake.update()
         shooter.update()
-        hangingPin:Set(false)
-        hangDeployOn:Set(false)
-        hangDeployOff:Set(true)
         -- don't update drive, should be done in coroutine
 
         dashboardUpdate()
@@ -147,9 +137,6 @@ function autonomous()
         updateCompressor()
         intake.update()
         shooter.update()
-        hangingPin:Set(false)
-        hangDeployOn:Set(false)
-        hangDeployOff:Set(true)
     end
 end
 
@@ -167,27 +154,14 @@ function teleop()
         controls.update(controlMap)
         feedWatchdog()
 
-        -- Hanger
-        if prepareHang and hangTimer:Get() >= 120 - HANG_CONSTANT then
-            hanging = true
-        end
-
         -- Pneumatics
         updateCompressor()
 
         intake.update()
         shooter.update()
 
-        hangingPin:Set(prepareHang)
-        hangDeployOn:Set(hanging)
-        hangDeployOff:Set(not hanging)
-
         -- Drive
         drive.update(driveX, driveY, quickTurn)
-
-        -- Arm
-
-        -- Serial
 
         -- Dashboard
         dashboardUpdate()
@@ -216,9 +190,6 @@ end
 compressor = wpilib.Relay(1, 8, wpilib.Relay_kForwardOnly)
 pressureSwitch = wpilib.DigitalInput(14)
 pressureTransducer = wpilib.AnalogChannel(4)
-hangingPin = wpilib.Solenoid(4)
-hangDeployOn = wpilib.Solenoid(1)
-hangDeployOff = wpilib.Solenoid(7)
 -- End Inputs/Outputs
 
 -- Controls
