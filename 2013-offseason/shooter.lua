@@ -58,6 +58,10 @@ local function getFlywheelSpeed()
     return computeFlywheelSpeed(flywheelCounter1)
 end
 
+function setIndexer(bool)
+    indexer:Set(bool)
+end
+
 local function performFire()
     local rpmDropThreshold = 5500
     local time = 0

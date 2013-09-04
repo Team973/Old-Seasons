@@ -264,8 +264,9 @@ controlMap =
         [1] = function()
         end,
 
-        [2] = function()
-        end,
+        [2] = {tick=function(held)
+            shooter.setIndexer(held)
+        end},
 
         [3] = function()
         end,
