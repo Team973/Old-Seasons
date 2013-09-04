@@ -143,7 +143,7 @@ end
 
 function update()
     if flywheelRunning then
-        flywheelMotor:Set(-RPMcontrol(getFlywheelSpeed()))
+        flywheelMotor:Set(RPMcontrol(getFlywheelSpeed()))
     else
         flywheelMotor:Set(0.0)
     end
