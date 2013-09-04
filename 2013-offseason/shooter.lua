@@ -18,7 +18,7 @@ module(...)
 local flywheelSpeed = 0
 
 local flywheelMotor = wpilib.Talon(3)
-local flywheelCounter1 = wpilib.Counter(wpilib.DigitalInput(8))
+local flywheelCounter1 = wpilib.Counter(wpilib.DigitalInput(1))
 local flywheelTicksPerRevolution = 1.0
 local targetFlywheelRPM = 6000
 local flywheelFullSpeed = false
