@@ -223,7 +223,7 @@ controlMap =
         end,
 
         ["rx"] = function(axis)
-            driveX = deadband(axis, 0.1)
+            driveX = deadband(-axis, 0.1)
         end,
 
         [1] = function()
