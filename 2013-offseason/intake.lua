@@ -64,7 +64,6 @@ function dashboardUpdate()
     wpilib.SmartDashboard_PutNumber("Intake Motor Output", motor:Get())
     wpilib.SmartDashboard_PutNumber("Intake HIT", 0)
     wpilib.SmartDashboard_PutNumber("Intake Error", getTarget() - getAngle())
-    wpilib.SmartDashboard_PutString("Intake State", intakeState)
 end
 
 function fullStop()
