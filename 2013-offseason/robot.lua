@@ -281,10 +281,7 @@ controlMap =
         [7] = function()
         end,
 
-        [8] = function()
-        end,
-
-        [9] = {tick=function(held)
+        [8] = {tick=function(held)
             shooter.setFlywheelRunning(held)
         end},
 
@@ -292,6 +289,9 @@ controlMap =
         end,
         
         [11] = {down=shooter.fireOne, up=function() shooter.fireOne(false) end},
+
+        [12] = function()
+        end,
 
         ["haty"] = function(axis)
         end,
