@@ -166,7 +166,8 @@ end
 
 function update()
     if flywheelRunning then
-        flywheelMotor:Set(RPMcontrol(getFlywheelSpeed(), RPMpower))
+        --flywheelMotor:Set(RPMcontrol(getFlywheelSpeed(), RPMpower))
+        flywheelMotor:Set(0.5)
     else
         flywheelMotor:Set(0.0)
     end
@@ -201,7 +202,7 @@ end
 
 function dashboardUpdate()
     local flywheelSpeed = getFlywheelSpeed()
-    wpilib.SmartDashboard_PutNumber("RPM Bang-Bang control", RPMcontrol(flywheelSpeed))
+    wpilib.SmartDashboard_PutNumber("RPM Bang-Bang control", RPMcontrol(flywheelSpeed, RPMpower))
     wpilib.SmartDashboard_PutNumber("Flywheel RPM", flywheelSpeed)
     wpilib.SmartDashboard_PutNumber("RAW BANNER", flywheelCounter1:Get())
     wpilib.SmartDashboard_PutNumber("Discs Fired", discsFired)
