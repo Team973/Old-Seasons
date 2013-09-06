@@ -23,6 +23,7 @@ local flywheelTicksPerRevolution = 1.0
 local targetFlywheelRPM = 6000
 local flywheelFullSpeed = false
 local discsFired = 0
+local RPMpower = 0.4
 
 local indexer = wpilib.Solenoid(1)
 
@@ -30,14 +31,32 @@ local fireCoroutine = nil
 
 flywheelCounter1:Start()
 
-local feeding = false
 local flywheelRunning = false
+
+PRESETS = {
+    Pyramid = {power = 0.4,
+    RPM = 6000,},
+
+    fullCourt = {power = 0.4,
+    RPM = 6000,},
+
+    midGoal = {power = 0.4,
+    RPM = 6000,},
+}
+
+function setPreset(name)
+    local p = PRESETS[name]
+    if p then
+        RPMpower = p.power
+        targetRPM = p.RPM
+    end
+end
 
 function setFlywheelRunning(bool)
     flywheelRunning = bool
 end
 
-local function RPMcontrol(rpm)
+local function RPMcontrol(rpm, minPower)
     local dangerRPM = 10000
 
     if rpm > dangerRPM then
@@ -45,7 +64,7 @@ local function RPMcontrol(rpm)
     elseif rpm < targetFlywheelRPM then
         return 1
     else
-        return 0.4
+        return minPower
     end
 end
 
@@ -147,7 +166,7 @@ end
 
 function update()
     if flywheelRunning then
-        flywheelMotor:Set(RPMcontrol(getFlywheelSpeed()))
+        flywheelMotor:Set(RPMcontrol(getFlywheelSpeed(), RPMpower))
     else
         flywheelMotor:Set(0.0)
     end
