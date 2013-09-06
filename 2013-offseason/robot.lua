@@ -32,13 +32,6 @@ local deployStinger
 local compressor, pressureSwitch, pressureTransducer, autoDriveSwitch
 local driveX, driveY, quickTurn = 0, 0, false
 
--- STATES
-local state = nil
-local FIRE = "fire"
-local HUMAN_LOAD = "human_load"
-local STOW = "stow"
-local INTAKE_LOAD = "intake_load"
-
 -- End Declarations
 
 function run()
