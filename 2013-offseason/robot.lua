@@ -279,7 +279,12 @@ controlMap =
             shooter.setFlywheelRunning(held)
         end},
 
+        [9] = function()
+            shooter.setTargetRPM(shooter.getTargetRPM() - 50)
+        end,
+        
         [10] = function()
+            shooter.setTargetRPM(shooter.getTargetRPM() + 50)
         end,
         
         [11] = {down=shooter.fireOne, up=function() shooter.fireOne(false) end},
