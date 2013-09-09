@@ -48,12 +48,20 @@ function setPreset(name)
     local p = PRESETS[name]
     if p then
         RPMpower = p.power
-        targetRPM = p.RPM
+        targetFlywheelRPM = p.RPM
     end
 end
 
 function setFlywheelRunning(bool)
     flywheelRunning = bool
+end
+
+function getTargetRPM()
+    return targetFlywheelRPM
+end
+
+function setTargetRPM(target)
+    targetFlywheelRPM = target
 end
 
 local function RPMcontrol(rpm, minPower)
@@ -82,7 +90,7 @@ function setIndexer(bool)
 end
 
 local function performFire()
-    local rpmDropThreshold = 5500
+    local rpmDropThreshold = targetFlywheelRPM - 500
     local time = 0
     local timeOut = 0
 
@@ -166,8 +174,7 @@ end
 
 function update()
     if flywheelRunning then
-        --flywheelMotor:Set(RPMcontrol(getFlywheelSpeed(), RPMpower))
-        flywheelMotor:Set(1)
+        flywheelMotor:Set(RPMcontrol(getFlywheelSpeed(), RPMpower))
     else
         flywheelMotor:Set(0.0)
     end
@@ -204,6 +211,7 @@ function dashboardUpdate()
     local flywheelSpeed = getFlywheelSpeed()
     wpilib.SmartDashboard_PutNumber("RPM Bang-Bang control", RPMcontrol(flywheelSpeed, RPMpower))
     wpilib.SmartDashboard_PutNumber("Flywheel RPM", flywheelSpeed)
+    wpilib.SmartDashboard_PutNumber("Target Flywheel RPM", targetFlywheelRPM)
     wpilib.SmartDashboard_PutNumber("RAW BANNER", flywheelCounter1:Get())
     wpilib.SmartDashboard_PutNumber("Discs Fired", discsFired)
     wpilib.DriverStationLCD_GetInstance():PrintLine(wpilib.DriverStationLCD_kUser_Line1, string.format("Flywheel RPM: %.2f", flywheelSpeed))

@@ -175,9 +175,11 @@ function teleop()
         feedWatchdog()
 
         -- Hanger
-        if prepareHang and hangTimer:Get() >= 120 - HANG_CONSTANT then
+        --[[
+        if prepareHang and hangTimer:Get() >= -120 - HANG_CONSTANT then
             hanging = true
         end
+        --]]
 
         -- Pneumatics
         updateCompressor()
@@ -411,13 +413,13 @@ controlMap =
             end
         end,
 
-        [8] = function()
+        [8] = {tick=function(held)
             if state == FIRE then
-                shooter.setFlywheelRunning(true)
+                shooter.setFlywheelRunning(held)
             else
                 shooter.setFlywheelRunning(false)
             end
-        end,
+        end},
 
         [9] = function()
             if state == FIRE then
