@@ -14,34 +14,9 @@ local resetDrive, driveToPoint, calculateDrive, storeDriveCalculations, runConve
 
 function run()
     resetDrive()
-    local FIRST_TURN = .1
-    local INTAKE_TIME = 2.35
-    local MOVEMENT_6 = 3
-    local MOVEMENT_7 = 2.25
---[[
-    while turnInPlace(90) do
-        coroutine.yield()
-    end
-    
-    --[[
-    while linearDrive(96, 0) do
-        coroutine.yield()
-    end
-
-    --[[
     shooter.fullStop()
-    ]]
-
-    --[[
 
     shooter.setFlywheelRunning(true)
-
-    driveTimer = wpilib.Timer()
-    driveTimer:Start()
-
-    while turnInPlace(17, 2) do
-        coroutine.yield()
-    end
 
     shooter.fire()
     while shooter.getDiscsFired() < 3 do
@@ -52,133 +27,9 @@ function run()
     shooter.setFlywheelRunning(false)
     shooter.clearDiscsFired()
 
-
-    while not driveToPoint(0, -110, true, 12, 5, .8) do
-        intake.goToDeploy(true)
-        coroutine.yield()
-    end
-
-    while turnInPlace(-70) do
-        intake.setPreset("Intake")
-        coroutine.yield()
-    end
-
-    while turnInPlace(-90) do
-        coroutine.yield()
-    end
-
-
-    targetTime = driveTimer:Get() + INTAKE_TIME
-    while not (driveToPoint(-96, -110, true, 36, 5, .7) or driveTimer:Get() > targetTime) do
-        intake.setIntakeSpeed(1)
-        shooter.setConveyerManual(1)
-        coroutine.yield()
-    end
-
-
-    targetTime = driveTimer:Get() + MOVEMENT_6
-    while not (driveToPoint(0, -30, false, 12, 5, .8) or driveTimer:Get() > targetTime) do
-        coroutine.yield()
-    end
-
-    shooter.setConveyerManual(0)
-    shooter.setRollerManual(0)
-    intake.setIntakeSpeed(0)
-
-
-    targetTime = driveTimer:Get() + MOVEMENT_7
-    while not (driveToPoint(10, 40, false, 48, 5, .9) or driveTimer:Get() > targetTime) do
-        coroutine.yield()
-    end
-
-    shooter.setFlywheelRunning(true)
-
-    while turnInPlace(20) do
-        coroutine.yield()
-    end
-
-    shooter.fire()
-
-    while shooter.getDiscsFired() <= 3 do
-        coroutine.yield()
-    end
-    ]]
-
-    local shootTimer = wpilib.Timer()
-    shootTimer:Start()
-
-
-    while shootTimer:Get() < 4 do
-        shooter.setFlywheelRunning(true)
-        drive.update(0, 0, false)
-        intake.setIntakeSpeed(0.0)
-        coroutine.yield()
-    end
-
-    local t = wpilib.Timer()
-    t:Start()
-    while t:Get() < 1 do
-        shooter.setConveyerManual(0)
-        shooter.setRollerManual(1)
-        drive.update(0, 0, false)
-        intake.setIntakeSpeed(0.0)
-        coroutine.yield()
-    end
-
-    local t = wpilib.Timer()
-    t:Start()
-    shooter.fire()
-    while t:Get() < 5 do
-        shooter.setConveyerManual(0)
-        shooter.setRollerManual(0)
-        drive.update(0, 0, false)
-        intake.setIntakeSpeed(0.0)
-        coroutine.yield()
-    end
-
     -- Clean up
     shooter.fullStop()
     drive.update(0, 0, false)
-    intake.setIntakeSpeed(0.0)
-end
-
-function runAuto2()
-    local shootTimer = wpilib.Timer()
-    shootTimer:Start()
-
-
-    while shootTimer:Get() < 4 do
-        shooter.setFlywheelRunning(true)
-        drive.update(0, 0, false)
-        intake.setIntakeSpeed(0.0)
-        coroutine.yield()
-    end
-
-    local t = wpilib.Timer()
-    t:Start()
-    while t:Get() < 1 do
-        shooter.setConveyerManual(0)
-        shooter.setRollerManual(1)
-        drive.update(0, 0, false)
-        intake.setIntakeSpeed(0.0)
-        coroutine.yield()
-    end
-
-    local t = wpilib.Timer()
-    t:Start()
-    shooter.fire()
-    while t:Get() < 5 do
-        shooter.setConveyerManual(0)
-        shooter.setRollerManual(0)
-        drive.update(0, 0, false)
-        intake.setIntakeSpeed(0.0)
-        coroutine.yield()
-    end
-
-    -- Clean up
-    shooter.fullStop()
-    drive.update(0, 0, false)
-    intake.setIntakeSpeed(0.0)
 end
 
 local drivePID = pid.new(.03, .001)
