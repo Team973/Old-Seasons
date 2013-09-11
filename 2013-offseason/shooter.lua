@@ -183,6 +183,7 @@ function update()
 
     if fireCoroutine then
         if coroutine.status(fireCoroutine) == "dead" then
+            indexer:Set(false)
         else
             local success, err = coroutine.resume(fireCoroutine)
             if not success then
