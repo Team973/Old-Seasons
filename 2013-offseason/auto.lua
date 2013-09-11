@@ -19,7 +19,7 @@ function run()
     shooter.setFlywheelRunning(true)
 
     shooter.fire()
-    while shooter.getDiscsFired() < 3 do
+    while shooter.getDiscsFired() < 20 do
         coroutine.yield()
     end
     shooter.fire(false)

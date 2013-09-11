@@ -95,22 +95,20 @@ end
 
 local function performFire()
     local rpmDropThreshold = targetFlywheelRPM - 500
-    local FIRE_CONSTANT = 0.3
 
     clearDiscsFired()
     indexer:Set(false)
     while true do
         while getFlywheelSpeed() < targetFlywheelRPM do
+            indexer:Set(false)
             coroutine.yield()
         end
-        indexer:Set(true)
 
-        local t = wpilib.Timer()
-        t:Start()
-        t:Reset()
-        while t <= FIRE_CONSTANT do
+        while getFlywheelSpeed() > rpmDropThreshold do
+            indexer:Set(true)
             coroutine.yield()
         end
+
         indexer:Set(false)
 
         discsFired = discsFired + 1
