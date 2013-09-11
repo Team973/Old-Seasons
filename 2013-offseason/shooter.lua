@@ -37,10 +37,10 @@ PRESETS = {
     Pyramid = {power = 0.4,
     RPM = 6000,},
 
-    fullCourt = {power = 0.4,
-    RPM = 6000,},
+    fullCourt = {power = 0.7,
+    RPM = 4500,},
 
-    midGoal = {power = 0.4,
+    midGoal = {power = 0.5,
     RPM = 6000,},
 }
 

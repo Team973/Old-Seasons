@@ -255,13 +255,15 @@ controlMap =
         end,
 
         [1] = function()
+            shooter.setPreset("fullCourt")
         end,
 
-        [2] = {tick=function(held)
-            shooter.setIndexer(held)
-        end},
+        [2] = function()
+            shooter.setPreset("Pyramid")
+        end,
 
         [3] = function()
+            shooter.setPreset("midGoal")
         end,
 
         [4] = function()
