@@ -20,7 +20,7 @@ local flywheelSpeed = 0
 local flywheelMotor = wpilib.Talon(3)
 local flywheelCounter1 = wpilib.Counter(wpilib.DigitalInput(1))
 local flywheelTicksPerRevolution = 1.0
-local targetFlywheelRPM = 6000
+local targetFlywheelRPM = 5500
 local flywheelFullSpeed = false
 local discsFired = 0
 local RPMpower = 0.4
@@ -34,14 +34,14 @@ flywheelCounter1:Start()
 local flywheelRunning = false
 
 PRESETS = {
-    Pyramid = {power = 0.4,
-    RPM = 6000,},
+    Pyramid = {power = 0.6,
+    RPM = 5500,},
 
     fullCourt = {power = 0.7,
     RPM = 4500,},
 
     midGoal = {power = 0.5,
-    RPM = 6000,},
+    RPM = 5500,},
 }
 
 function setPreset(name)
@@ -89,11 +89,13 @@ function setIndexer(bool)
     indexer:Set(bool)
 end
 
+function clearDiscsFired()
+    discsFired = 0
+end
+
 local function performFire()
     local rpmDropThreshold = targetFlywheelRPM - 500
-    local time = 0
-    local timeOut = 0
-
+    local FIRE_CONSTANT = 0.3
 
     clearDiscsFired()
     indexer:Set(false)
@@ -101,31 +103,17 @@ local function performFire()
         while getFlywheelSpeed() < targetFlywheelRPM do
             coroutine.yield()
         end
+        indexer:Set(true)
 
-        --[[
-        if discsFired == 1 then
-            timeOut = 10
-        elseif discsFired == 2 then
-            timeOut = 10
-        elseif discsFired == 3 then
-            timeOut = 15
-        end
-
-        while time ~= timeOut do
-            time = time + 1
+        local t = wpilib.Timer()
+        t:Start()
+        t:Reset()
+        while t <= FIRE_CONSTANT do
             coroutine.yield()
         end
-        --]]
-
-        while getFlywheelSpeed() >= rpmDropThreshold do
-            indexer:Set(true)
-            coroutine.yield()
-        end
-
         indexer:Set(false)
 
         discsFired = discsFired + 1
-        time = 0
     end
 end
 
@@ -179,8 +167,6 @@ function update()
         flywheelMotor:Set(0.0)
     end
 
-
-
     if fireCoroutine then
         if coroutine.status(fireCoroutine) == "dead" then
             indexer:Set(false)
@@ -198,9 +184,6 @@ function getDiscsFired()
     return discsFired
 end
 
-function clearDiscsFired()
-    discsFired = 0
-end
 
 function fullStop()
     flywheelRunning = false
