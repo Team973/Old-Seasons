@@ -272,7 +272,11 @@ controlMap =
 
         [5] = {},
 
-        [6] = {down=shooter.fire, up=function() shooter.fire(false) end},
+        --[6] = {down=shooter.fire, up=function() shooter.fire(false) end},
+
+        [6] = {tick=function(held)
+            shooter.setIndexer(held)
+        end},
 
         [7] = function()
         end,
