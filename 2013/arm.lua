@@ -30,11 +30,11 @@ encoder:Start()
 calibrationPulse:Start()
 
 PRESETS = {
-    Shooting = { armAngle = 16.45 },
+    Shooting = { armAngle = 16.05 },
     sideShot = { armAngle = 32.75},
     -- also use 35 if it doesn't work
-    autoShot1 = { armAngle = 32.40 },
-    autoShot = { armAngle = 32.50 },
+    autoShot1 = { armAngle = 32.0 },
+    autoShot = { armAngle = 32.10 },
     -- 33.4 Silicon Valley
     Loading = { armAngle = 80.5 },
     Stow = { armAngle = 5.2 },

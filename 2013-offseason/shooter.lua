@@ -94,7 +94,7 @@ function clearDiscsFired()
 end
 
 local function performFire()
-    local rpmDropThreshold = targetFlywheelRPM - 500
+    local rpmDropThreshold = targetFlywheelRPM - 300
 
     clearDiscsFired()
     indexer:Set(false)
@@ -163,6 +163,7 @@ function update()
         flywheelMotor:Set(RPMcontrol(getFlywheelSpeed(), RPMpower))
     else
         flywheelMotor:Set(0.0)
+        indexer:Set(false)
     end
 
     if fireCoroutine then

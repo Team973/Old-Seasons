@@ -16,7 +16,13 @@ function run()
     resetDrive()
     shooter.fullStop()
 
-    shooter.setFlywheelRunning(true)
+
+    local t = wpilib.Timer()
+    t:Start()
+    while t:Get() < 1 do
+        shooter.setFlywheelRunning(true)
+        coroutine.yield()
+    end
 
     shooter.fire()
     while shooter.getDiscsFired() < 20 do
@@ -27,8 +33,11 @@ function run()
     shooter.setFlywheelRunning(false)
     shooter.clearDiscsFired()
 
+    drive.setLowGear(true)
+
     -- Clean up
     shooter.fullStop()
+    drive.setLowGear(false)
     drive.update(0, 0, false)
 end
 
