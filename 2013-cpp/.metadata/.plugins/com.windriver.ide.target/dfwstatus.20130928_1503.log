@@ -1,0 +1,94 @@
+DFW status and trace log : Sat Sep 28 14:59:40 2013
+
+14:59:40.666 WARNING: License for Debug Connection Target Server will expire in 4294967295 days
+  SevWarning(1) : UtilLicense.cpp : 545
+14:59:40.816 ERROR: Invalid core (CPU) id
+  SevError(2) : tccoreinfo.cpp : 394
+14:59:40.846 ERROR: Feature MPC5200 has no known license key/code
+  SevError(2) : UtilLicense.cpp : 326
+14:59:40.982 ERROR: Unsupported function call: TargetPluginAPI::GetTraceInfo
+  SevError(2) : tccallwrappers.cpp : 4318
+14:59:41.432 ERROR: File not found: C:\WindRiver\workbench-3.0\dfw\0199bb\host\dfwplugins\targetOS\supportfiles\vxWorks6.0\VersionCheck.xml
+  SevError(2) : xmllex.cpp : 52
+14:59:42.033 ERROR: Internal Error: Target connected notice when not connecting
+  SevInternalError(4) : contextstatemanagerimpl.cpp : 519
+14:59:42.243 WARNING: Object file has minimal debug information: /c/ni-rt/system/FRC_UserProgram.out
+  SevWarning(1) : symbolmanager.cpp : 125
+14:59:42.409 WARNING: Object file has minimal debug information: /c/ni-rt/system/FRC_FPGA.out
+  SevWarning(1) : symbolmanager.cpp : 125
+14:59:42.454 WARNING: Object file has minimal debug information: /tmpout//NiFpga.out
+  SevWarning(1) : symbolmanager.cpp : 125
+14:59:42.484 WARNING: Object file has minimal debug information: /tmpout//niserial.out
+  SevWarning(1) : symbolmanager.cpp : 125
+14:59:42.514 WARNING: Object file has minimal debug information: /tmpout//nivision.out
+  SevWarning(1) : symbolmanager.cpp : 125
+14:59:42.544 WARNING: Object file has minimal debug information: /tmpout//nivissvc.out
+  SevWarning(1) : symbolmanager.cpp : 125
+14:59:42.559 WARNING: Object file has minimal debug information: /tmpout//nisysrpc.out
+  SevWarning(1) : symbolmanager.cpp : 125
+14:59:42.709 WARNING: Object file has minimal debug information: /tmpout//lvrt.out
+  SevWarning(1) : symbolmanager.cpp : 125
+14:59:42.769 WARNING: Object file has minimal debug information: /tmpout//niriomtk.out
+  SevWarning(1) : symbolmanager.cpp : 125
+14:59:42.814 WARNING: Object file has minimal debug information: /tmpout//target.out
+  SevWarning(1) : symbolmanager.cpp : 125
+14:59:42.844 WARNING: Object file has minimal debug information: /tmpout//vx_exec.out
+  SevWarning(1) : symbolmanager.cpp : 125
+14:59:42.874 WARNING: Object file has minimal debug information: /c/ni-rt/system/NiFpgaLv.out
+  SevWarning(1) : symbolmanager.cpp : 125
+14:59:42.904 WARNING: Object file has minimal debug information: /c/ni-rt/system/NiViSv32.out
+  SevWarning(1) : symbolmanager.cpp : 125
+14:59:42.934 WARNING: Object file has minimal debug information: /tmpout//NiRioSrv.out
+  SevWarning(1) : symbolmanager.cpp : 125
+14:59:42.965 WARNING: Object file has minimal debug information: /c/ni-rt/system/ni_emb.out
+  SevWarning(1) : symbolmanager.cpp : 125
+14:59:42.995 WARNING: Object file has minimal debug information: /tmpout//FRC_NetworkCommunication.out
+  SevWarning(1) : symbolmanager.cpp : 125
+14:59:43.025 WARNING: Object file has minimal debug information: /tmpout//visa32.out
+  SevWarning(1) : symbolmanager.cpp : 125
+14:59:43.052 WARNING: Object file has minimal debug information: /c/ni-rt/system/nisvcloc.out
+  SevWarning(1) : symbolmanager.cpp : 125
+14:59:43.079 WARNING: Object file has minimal debug information: /tmpout//nirpcs.out
+  SevWarning(1) : symbolmanager.cpp : 125
+14:59:43.106 WARNING: Object file has minimal debug information: /tmpout//niCPULib.out
+  SevWarning(1) : symbolmanager.cpp : 125
+14:59:43.133 WARNING: Object file has minimal debug information: /c/ni-rt/system/nirtdm.out
+  SevWarning(1) : symbolmanager.cpp : 125
+14:59:43.160 WARNING: Object file has minimal debug information: /tmpout//nisysapi.out
+  SevWarning(1) : symbolmanager.cpp : 125
+14:59:43.187 WARNING: Object file has minimal debug information: /c/ni-rt/system/debug.o
+  SevWarning(1) : symbolmanager.cpp : 125
+14:59:43.214 WARNING: Object file has minimal debug information: /tmpout//tsengine.out
+  SevWarning(1) : symbolmanager.cpp : 125
+14:59:43.241 WARNING: Object file has minimal debug information: /tmpout//libexpat.out
+  SevWarning(1) : symbolmanager.cpp : 125
+14:59:43.268 WARNING: Object file has minimal debug information: /tmpout//nimdnsResponder.out
+  SevWarning(1) : symbolmanager.cpp : 125
+14:59:43.295 WARNING: Object file has minimal debug information: /c/ni-rt/system/vxfpsup.out
+  SevWarning(1) : symbolmanager.cpp : 125
+14:59:43.322 WARNING: Object file has minimal debug information: /c/ni-rt/system/NiRioRpc.out
+  SevWarning(1) : symbolmanager.cpp : 125
+14:59:43.349 WARNING: Object file has minimal debug information: /c/ni-rt/system/nipci.out
+  SevWarning(1) : symbolmanager.cpp : 125
+14:59:43.390 WARNING: Object file has minimal debug information: /c/ni-rt/system/ftpserve.out
+  SevWarning(1) : symbolmanager.cpp : 125
+14:59:43.403 WARNING: Object file has minimal debug information: /c/ni-rt/system/ts_rtc.out
+  SevWarning(1) : symbolmanager.cpp : 125
+14:59:43.430 WARNING: Object file has minimal debug information: /tmpout//libiconv.out
+  SevWarning(1) : symbolmanager.cpp : 125
+14:59:43.457 WARNING: Object file has minimal debug information: /c/ni-rt/system/lvuste.out
+  SevWarning(1) : symbolmanager.cpp : 125
+15:03:42.325 ERROR: Target not connected: TargetComponent::CheckInitAndConnect
+  SevError(2) : targetcomponent.cpp : 2312
+15:03:42.325 ERROR: Target not connected
+  SevError(2) : targetcomponent.cpp : 2312
+15:03:42.325 ERROR: Target not connected: TargetComponent::CheckInitAndConnect
+  SevError(2) : targetcomponent.cpp : 2312
+15:03:42.325 ERROR: Target not connected
+  SevError(2) : targetcomponent.cpp : 2312
+15:03:43.108 ERROR: Socket Error. API: recv, SessionId: 716, ReturnCode:  [SystemErrorCode=10054]: SocketHandler::Read
+  SevError(2) : sockethandler.cpp : 85
+15:03:43.136 ERROR: Socket Error. API: recv, SessionId: 716, ReturnCode:  [SystemErrorCode=10054]
+  SevError(2) : sockethandler.cpp : 85
+15:03:43.136 Operation succeeded: ShutdownServer
+  Reason: ERRNone  Severity: ERRSuccessful
