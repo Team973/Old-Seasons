@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="org.eclipse.rse.ui.wizards.newconnection.RSEMainNewConnectionWizard">
+		<item key="lastSelectedSystemTypeId" value="Wind River Target Server Connection"/>
+		<section name="org.eclipse.rse.ui.wizards.newconnection.RSENewConnectionWizardSelectionPage">
+			<list key="filteredTree.expandedCatogryIds">
+				<item value="org.eclipse.rse.ui.wizards.newconnection.default.category"/>
+				<item value="com.windriver.ide.target.ui.rse.category.vxworks6"/>
+			</list>
+		</section>
+	</section>
+</section>
