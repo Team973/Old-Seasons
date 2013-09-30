@@ -39,35 +39,35 @@ public:
 		
 	}
 
+    const int flywheelTicksPerRevolution = 1;
+
+    float computeFlyheelSpeed(float counter)
+    {
+        return 60 / (counter.GetPeriod() * flywheelTicksPerRevolution);
+    }
+
+    float getFlywheelSpeed()
+    {
+        return computeFlywheelSpeed(flywheelCounter.GetPeriod());
+    }
+
+    float RPMcontrol(float rpm)
+    {
+        const int dangerRPM = 10000;
+        const int targetFlywheelRPM = 5500;
+
+        if (rpm > dangerRPM)
+            return 0;
+        else if (rpm < targetFlywheelRPM)
+            return 1;
+        else
+            return .4;
+    }
 
 	
 	void OperatorControl(void)
 	{
 
-        const int flywheelTicksPerRevolution = 1;
-
-        float computeFlyheelSpeed(float counter)
-        {
-            return 60 / (counter.GetPeriod() * flywheelTicksPerRevolution);
-        }
-
-        float getFlywheelSpeed()
-        {
-            return computeFlywheelSpeed(flywheelCounter.GetPeriod());
-        }
-
-        float RPMcontrol(float rpm)
-        {
-            const int dangerRPM = 10000;
-            const int targetFlywheelRPM = 5500;
-
-            if (rpm > dangerRPM)
-                return 0;
-            else if (rpm < targetFlywheelRPM)
-                return 1;
-            else
-                return .4;
-        }
 
 		//myRobot.SetSafetyEnabled(true);
 		while (IsOperatorControl())
