@@ -26,6 +26,8 @@ local discsFired = 0
 local RPMpower = 0.4
 
 local indexer = wpilib.Solenoid(1)
+local shotAngler = wpilib.Solenoid(4)
+local roller = wpilib.Talon(6)
 
 local fireCoroutine = nil
 
@@ -35,13 +37,13 @@ local flywheelRunning = false
 
 PRESETS = {
     Pyramid = {power = 0.6,
-    RPM = 5500,},
+    RPM = 5500, angle = true, running = false,},
 
     fullCourt = {power = 0.7,
-    RPM = 4500,},
+    RPM = 5500, angle = false, running = true,},
 
     midGoal = {power = 0.5,
-    RPM = 5500,},
+    RPM = 5500, angle = false, running = false,},
 }
 
 function setPreset(name)
@@ -49,6 +51,8 @@ function setPreset(name)
     if p then
         RPMpower = p.power
         targetFlywheelRPM = p.RPM
+        shotAngler:Set(p.angle)
+        rollerRunning = p.running
     end
 end
 
@@ -87,6 +91,10 @@ end
 
 function setIndexer(bool)
     indexer:Set(bool)
+end
+
+function setRollerRunning(bool)
+    rollerRunning = bool
 end
 
 function clearDiscsFired()
@@ -174,6 +182,16 @@ function update()
             if not success then
                 error(err)
             end
+        end
+    end
+
+    if indexer:Get() then
+        roller:Set(.2)
+    else
+        if rollerRunning then
+            roller:Set(.8)
+        else
+            roller:Set(0)
         end
     end
 

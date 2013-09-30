@@ -270,7 +270,9 @@ controlMap =
         end,
 
 
-        [5] = {},
+        [5] = {tick=function(held)
+            shooter.setRollerRunning(held)
+        end},
 
         --[6] = {down=shooter.fire, up=function() shooter.fire(false) end},
 
