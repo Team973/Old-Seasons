@@ -194,7 +194,7 @@ function cheesyDrive(throttle, wheel, highGear, quickTurn)
     local turnNonlinLow = 0.8
     local negInertiaHigh = 0.5
     local senseHigh = 1.2
-    local senseLow = 1.1
+    local senseLow = 0.6
     local senseCutoff = 0.1
     local negInertiaLowMore = 2.5
     local negInertiaLowLessExt = 5.0
