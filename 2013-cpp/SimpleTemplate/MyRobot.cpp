@@ -8,42 +8,42 @@
  */ 
 class RobotDemo : public SimpleRobot
 {
-	//RobotDrive myRobot; // robot drive system
-	Joystick stick; // only joystick
-	Compressor comp;
-	Solenoid indexer;
+    //RobotDrive myRobot; // robot drive system
+    Joystick stick; // only joystick
+    Compressor comp;
+    Solenoid indexer;
     Solenoid shotAngle;
     Talon roller;
     Talon flywheelMotor;
     Counter flywheelCounter;
 
-public:
-	RobotDemo(void):
-		//myRobot(1, 2),	// these must be initialized in the same order
-		stick(1),		// as they are declared above.
-		comp(14,8),
-		indexer(1),
+    public:
+    RobotDemo(void):
+        //myRobot(1, 2),	// these must be initialized in the same order
+        stick(1),		// as they are declared above.
+        comp(14,8),
+        indexer(1),
         shotAngle(4),
         roller(6),
         flywheelMotor(3),
         flywheelCounter(1)
-	{
-		//myRobot.SetExpiration(0.1);
-		comp.Start();
-        flywheelCounter.Start();
-	}
-
-	
-	void Autonomous(void)
-	{
-		
-	}
-
-    const int flywheelTicksPerRevolution = 1;
-
-    float computeFlyheelSpeed(float counter)
     {
-        return 60 / (counter.GetPeriod() * flywheelTicksPerRevolution);
+        //myRobot.SetExpiration(0.1);
+        comp.Start();
+        flywheelCounter.Start();
+    }
+
+
+    void Autonomous(void)
+    {
+
+    }
+
+
+    float computeFlywheelSpeed(float counter)
+    {
+        const int flywheelTicksPerRevolution = 1;
+        return 60 / (flywheelCounter.GetPeriod() * flywheelTicksPerRevolution);
     }
 
     float getFlywheelSpeed()
@@ -64,31 +64,31 @@ public:
             return .4;
     }
 
-	
-	void OperatorControl(void)
-	{
+    void OperatorControl(void)
+    {
 
-
-		//myRobot.SetSafetyEnabled(true);
-		while (IsOperatorControl())
-		{
-			//myRobot.ArcadeDrive(stick); // drive with arcade style (use right stick)
+        //myRobot.SetSafetyEnabled(true);
+        while (IsOperatorControl())
+        {
+            //myRobot.ArcadeDrive(stick); // drive with arcade style (use right stick)
             indexer.Set(stick.GetRawButton(1));
             shotAngle.Set(stick.GetRawButton(2));
             roller.Set(stick.GetRawButton(5));
             if (stick.GetRawButton(8) == true)
-                flywheelMotor.Set(RPMControl(getFlywheelSpeed());
+                flywheelMotor.Set(RPMcontrol(getFlywheelSpeed()));
+            else
+                flywheelMotor.Set(0);
 
-			Wait(0.005);				// wait for a motor update time
-		}
-	}
-	
-	/**
-	 * Runs during test mode
-	 */
-	void Test() {
+            Wait(0.005);				// wait for a motor update time
+        }
+    }
 
-	}
+    /**
+     * Runs during test mode
+     */
+    void Test() {
+
+    }
 };
 
 START_ROBOT_CLASS(RobotDemo);
