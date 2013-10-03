@@ -10,6 +10,8 @@ class RobotDemo : public SimpleRobot
 {
     //RobotDrive myRobot; // robot drive system
     Joystick stick; // only joystick
+    
+    // declaring objects
     Compressor comp;
     Solenoid indexer;
     Solenoid shotAngle;
@@ -19,6 +21,7 @@ class RobotDemo : public SimpleRobot
 
     public:
     RobotDemo(void):
+        // Initializing objects
         //myRobot(1, 2),	// these must be initialized in the same order
         stick(1),		// as they are declared above.
         comp(14,8),
@@ -29,6 +32,7 @@ class RobotDemo : public SimpleRobot
         flywheelCounter(1)
     {
         //myRobot.SetExpiration(0.1);
+        //Starting compressor and banner sensor
         comp.Start();
         flywheelCounter.Start();
     }
@@ -36,10 +40,12 @@ class RobotDemo : public SimpleRobot
 
     void Autonomous(void)
     {
-
+    // Insert awesome autonomous here
     }
 
 
+    // The following computes and controls the speed of the flywheel
+    // TODO: (oliver) Refactor functions into seperate class
     float computeFlywheelSpeed(float counter)
     {
         const int flywheelTicksPerRevolution = 1;
@@ -51,6 +57,7 @@ class RobotDemo : public SimpleRobot
         return computeFlywheelSpeed(flywheelCounter.GetPeriod());
     }
 
+    // Bang-bang control
     float RPMcontrol(float rpm)
     {
         const int dangerRPM = 10000;
@@ -71,6 +78,8 @@ class RobotDemo : public SimpleRobot
         while (IsOperatorControl())
         {
             //myRobot.ArcadeDrive(stick); // drive with arcade style (use right stick)
+            
+            // The controls
             indexer.Set(stick.GetRawButton(1));
             shotAngle.Set(stick.GetRawButton(2));
             roller.Set(stick.GetRawButton(5));
