@@ -6,7 +6,7 @@
  * Autonomous and OperatorControl methods at the right time as controlled by the switches on
  * the driver station or the field controls.
  */ 
-class RobotDemo : public SimpleRobot
+class OffseasonRobot : public SimpleRobot
 {
     //RobotDrive myRobot; // robot drive system
     Joystick stick; // only joystick
@@ -15,19 +15,19 @@ class RobotDemo : public SimpleRobot
     Compressor comp;
     Solenoid indexer;
     Solenoid shotAngle;
-    Talon roller;
+    //Talon roller;
     Talon flywheelMotor;
     Counter flywheelCounter;
 
     public:
-    RobotDemo(void):
+    OffseasonRobot(void):
         // Initializing objects
         //myRobot(1, 2),	// these must be initialized in the same order
         stick(1),		// as they are declared above.
         comp(14,8),
         indexer(1),
         shotAngle(4),
-        roller(6),
+        //roller(6),
         flywheelMotor(3),
         flywheelCounter(1)
     {
@@ -82,7 +82,7 @@ class RobotDemo : public SimpleRobot
             // The controls
             indexer.Set(stick.GetRawButton(1));
             shotAngle.Set(stick.GetRawButton(2));
-            roller.Set(stick.GetRawButton(5));
+            //roller.Set(stick.GetRawButton(5));
             if (stick.GetRawButton(8) == true)
                 flywheelMotor.Set(RPMcontrol(getFlywheelSpeed()));
             else
@@ -100,5 +100,5 @@ class RobotDemo : public SimpleRobot
     }
 };
 
-START_ROBOT_CLASS(RobotDemo);
+START_ROBOT_CLASS(OffseasonRobot);
 
