@@ -23,7 +23,9 @@ local TELEOP_LOOP_LAG = 0.005
 local AUTO_LOOP_LAG = 0.005 * 1.50
 
 -- Declarations
+local hanger = wpilib.Solenoid(4)
 local hanging = false
+local setHanging
 
 local watchdogEnabled = false
 local feedWatchdog, enableWatchdog, disableWatchdog
@@ -188,7 +190,6 @@ end
 compressor = wpilib.Relay(1, 8, wpilib.Relay_kForwardOnly)
 pressureSwitch = wpilib.DigitalInput(14)
 pressureTransducer = wpilib.AnalogChannel(4)
-hanger = wpilib.Solenoid(4)
 -- End Inputs/Outputs
 
 function setHanging(bool)
