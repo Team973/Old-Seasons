@@ -82,6 +82,7 @@ end
 function dashboardUpdate()
     -- local pressureVoltageMin = 1.17
     wpilib.SmartDashboard_PutBoolean("pressure", pressureSwitch:Get())
+    wpilib.SmartDashboard_PutBoolean("HANGING", hanging)
     wpilib.SmartDashboard_PutNumber("Pressure Transducer", pressureTransducer:GetVoltage())
 end
 
