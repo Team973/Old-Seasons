@@ -28,6 +28,7 @@ local RPMpower = 0.4
 local indexer = wpilib.Solenoid(1)
 local shotAngler = wpilib.Solenoid(4)
 local roller = wpilib.Talon(6)
+local rollerRunning = false
 
 local fireCoroutine = nil
 
