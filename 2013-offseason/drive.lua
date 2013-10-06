@@ -17,7 +17,6 @@ local kickUp = wpilib.Solenoid(2)
 local lowGear = wpilib.Solenoid(3)
 
 --auto pid
-local followerWheels = wpilib.Solenoid(3)
 local lowered = false
 local rightEncoder = wpilib.Encoder(5, 6, false)
 local leftEncoder = wpilib.Encoder(3, 4, false)
