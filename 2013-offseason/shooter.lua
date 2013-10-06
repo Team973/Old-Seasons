@@ -186,7 +186,7 @@ function update()
         end
     end
 
-    if indexer:Get() then
+    if indexer:Get() and not shotAngler:Get() then
         roller:Set(.2)
     else
         if rollerRunning then
