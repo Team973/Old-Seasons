@@ -23,6 +23,8 @@ local TELEOP_LOOP_LAG = 0.005
 local AUTO_LOOP_LAG = 0.005 * 1.50
 
 -- Declarations
+local hanging = false
+
 local watchdogEnabled = false
 local feedWatchdog, enableWatchdog, disableWatchdog
 
@@ -156,6 +158,9 @@ function teleop()
         -- Drive
         drive.update(driveX, driveY, quickTurn)
 
+        --Hanger
+        hanger:Set(hanging)
+
         -- Dashboard
         dashboardUpdate()
         drive.dashboardUpdate()
@@ -183,7 +188,12 @@ end
 compressor = wpilib.Relay(1, 8, wpilib.Relay_kForwardOnly)
 pressureSwitch = wpilib.DigitalInput(14)
 pressureTransducer = wpilib.AnalogChannel(4)
+hanger = wpilib.Solenoid(4)
 -- End Inputs/Outputs
+
+function setHanging(bool)
+    hanging = bool
+end
 
 -- Controls
 local function incConstant(tbl, name, pid, delta)
@@ -220,9 +230,11 @@ controlMap =
         end,
 
         [1] = function()
+            setHanging(false)
         end,
 
         [3] = function()
+            setHanging(true)
         end,
 
         [4] = function()
