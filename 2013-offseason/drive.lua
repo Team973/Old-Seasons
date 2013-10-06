@@ -149,10 +149,8 @@ function update(driveX, driveY, quickTurn)
     local leftSpeed, rightSpeed
     if wpilib.IsAutonomous()then
         leftSpeed, rightSpeed = arcade(driveX, driveY) 
-        followerWheels:Set(true)
     else
         leftSpeed, rightSpeed = cheesyDrive(driveY, driveX, true, quickTurn)
-        followerWheels:Set(false)
     end
 
     kickUp:Set(punching)
