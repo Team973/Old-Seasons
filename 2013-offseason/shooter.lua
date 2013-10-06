@@ -190,7 +190,7 @@ function update()
         roller:Set(.2)
     else
         if rollerRunning then
-            roller:Set(.8)
+            roller:Set(1)
         else
             roller:Set(0)
         end
