@@ -23,7 +23,7 @@ local TELEOP_LOOP_LAG = 0.005
 local AUTO_LOOP_LAG = 0.005 * 1.50
 
 -- Declarations
-local hanger = wpilib.Solenoid(4)
+local hanger = wpilib.Solenoid(5)
 local hanging = false
 local setHanging
 
