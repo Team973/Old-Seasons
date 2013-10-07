@@ -4,3 +4,5 @@
 (^|/)_obj/
 (^|/)_test/
 ^frctool/frctool$
+(^|/)PPC603gnu/
+(^|/)\.metadata/
