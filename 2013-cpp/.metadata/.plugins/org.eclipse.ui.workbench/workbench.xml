@@ -37,17 +37,17 @@
 </folder>
 </info>
 </editorArea>
-<editor id="org.eclipse.cdt.ui.editor.CEditor" name="MyRobot.cpp" partName="MyRobot.cpp" path="E:/team-973/2013-cpp/SimpleTemplate/MyRobot.cpp" title="MyRobot.cpp" tooltip="SimpleTemplate/MyRobot.cpp" workbook="DefaultEditorWorkbook">
+<editor activePart="true" focus="true" id="org.eclipse.cdt.ui.editor.CEditor" name="MyRobot.cpp" partName="MyRobot.cpp" path="E:/team-973/2013-cpp/SimpleTemplate/MyRobot.cpp" title="MyRobot.cpp" tooltip="SimpleTemplate/MyRobot.cpp" workbook="DefaultEditorWorkbook">
 <input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/SimpleTemplate/MyRobot.cpp"/>
-<editorState selectionHPixel="0" selectionLength="0" selectionOffset="1304"/>
+<editorState selectionHPixel="0" selectionLength="0" selectionOffset="1201"/>
 </editor>
 <editor id="org.eclipse.cdt.ui.editor.CEditor" name="shooter.cpp" partName="shooter.cpp" path="E:/team-973/2013-cpp/SimpleTemplate/shooter.cpp" title="shooter.cpp" tooltip="SimpleTemplate/shooter.cpp" workbook="DefaultEditorWorkbook">
 <input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/SimpleTemplate/shooter.cpp"/>
-<editorState selectionHPixel="0" selectionLength="0" selectionOffset="67"/>
+<editorState selectionHPixel="0" selectionLength="0" selectionOffset="64"/>
 </editor>
-<editor activePart="true" focus="true" id="org.eclipse.cdt.ui.editor.CEditor" name="shooter.hpp" partName="shooter.hpp" path="E:/team-973/2013-cpp/SimpleTemplate/shooter.hpp" title="shooter.hpp" tooltip="SimpleTemplate/shooter.hpp" workbook="DefaultEditorWorkbook">
+<editor id="org.eclipse.cdt.ui.editor.CEditor" name="shooter.hpp" partName="shooter.hpp" path="E:/team-973/2013-cpp/SimpleTemplate/shooter.hpp" title="shooter.hpp" tooltip="SimpleTemplate/shooter.hpp" workbook="DefaultEditorWorkbook">
 <input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/SimpleTemplate/shooter.hpp"/>
-<editorState selectionHPixel="0" selectionLength="0" selectionOffset="36"/>
+<editorState selectionHPixel="0" selectionLength="0" selectionOffset="49"/>
 </editor>
 </editors>
 <views>
@@ -306,159 +306,159 @@
 <workingSets/>
 <navigationHistory>
 <editors>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/SimpleTemplate/shooter.hpp"/>
 <editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/SimpleTemplate/MyRobot.cpp"/>
 <editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/SimpleTemplate/shooter.cpp"/>
-<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/SimpleTemplate/shooter.hpp"/>
 </editors>
-<item historyLabel="MyRobot.cpp" index="0">
-<position info="not_deleted" x="473" y="0"/>
+<item historyLabel="shooter.cpp" index="2">
+<position/>
 </item>
-<item historyLabel="MyRobot.cpp" index="0">
-<position info="not_deleted" x="495" y="0"/>
+<item historyLabel="shooter.hpp" index="0">
+<position info="not_deleted" x="36" y="0"/>
 </item>
-<item historyLabel="MyRobot.cpp" index="0">
-<position info="not_deleted" x="597" y="0"/>
+<item historyLabel="shooter.cpp" index="2">
+<position/>
 </item>
-<item historyLabel="MyRobot.cpp" index="0">
-<position info="not_deleted" x="1290" y="0"/>
-</item>
-<item historyLabel="MyRobot.cpp" index="0">
-<position info="not_deleted" x="1420" y="0"/>
-</item>
-<item historyLabel="MyRobot.cpp" index="0">
-<position info="not_deleted" x="1297" y="0"/>
-</item>
-<item historyLabel="MyRobot.cpp" index="0">
-<position info="not_deleted" x="59" y="0"/>
-</item>
-<item historyLabel="MyRobot.cpp" index="0">
-<position info="not_deleted" x="372" y="0"/>
-</item>
-<item historyLabel="MyRobot.cpp" index="0">
-<position info="not_deleted" x="1086" y="0"/>
-</item>
-<item historyLabel="MyRobot.cpp" index="0">
-<position info="not_deleted" x="1585" y="0"/>
-</item>
-<item historyLabel="MyRobot.cpp" index="0">
-<position info="not_deleted" x="2058" y="0"/>
-</item>
-<item historyLabel="MyRobot.cpp" index="0">
-<position info="not_deleted" x="2119" y="0"/>
-</item>
-<item historyLabel="MyRobot.cpp" index="0">
+<item historyLabel="MyRobot.cpp" index="1">
 <position info="not_deleted" x="334" y="0"/>
 </item>
-<item historyLabel="MyRobot.cpp" index="0">
-<position info="not_deleted" x="1502" y="0"/>
-</item>
-<item historyLabel="MyRobot.cpp" index="0">
-<position info="not_deleted" x="2032" y="0"/>
-</item>
-<item historyLabel="shooter.cpp" index="1">
-<position/>
-</item>
-<item historyLabel="MyRobot.cpp" index="0">
-<position info="not_deleted" x="2032" y="0"/>
-</item>
-<item historyLabel="shooter.cpp" index="1">
-<position/>
-</item>
-<item historyLabel="MyRobot.cpp" index="0">
-<position info="not_deleted" x="2032" y="0"/>
-</item>
-<item historyLabel="shooter.cpp" index="1">
-<position info="not_deleted" x="86" y="0"/>
-</item>
-<item historyLabel="MyRobot.cpp" index="0">
-<position info="not_deleted" x="444" y="0"/>
-</item>
-<item historyLabel="shooter.hpp" index="2">
-<position/>
-</item>
-<item historyLabel="shooter.cpp" index="1">
-<position info="not_deleted" x="86" y="0"/>
-</item>
-<item historyLabel="MyRobot.cpp" index="0">
-<position info="not_deleted" x="444" y="0"/>
-</item>
-<item historyLabel="MyRobot.cpp" index="0">
-<position info="not_deleted" x="1313" y="53"/>
-</item>
-<item historyLabel="shooter.cpp" index="1">
-<position info="not_deleted" x="109" y="0"/>
-</item>
-<item historyLabel="shooter.hpp" index="2">
-<position/>
-</item>
-<item historyLabel="MyRobot.cpp" index="0">
-<position info="not_deleted" x="1304" y="0"/>
-</item>
-<item historyLabel="shooter.cpp" index="1">
-<position info="not_deleted" x="109" y="0"/>
-</item>
-<item historyLabel="MyRobot.cpp" index="0">
-<position info="not_deleted" x="1304" y="0"/>
-</item>
-<item historyLabel="shooter.hpp" index="2">
-<position/>
-</item>
-<item historyLabel="shooter.cpp" index="1">
-<position/>
-</item>
-<item historyLabel="MyRobot.cpp" index="0">
-<position info="not_deleted" x="1304" y="0"/>
-</item>
-<item historyLabel="shooter.cpp" index="1">
-<position/>
-</item>
-<item historyLabel="shooter.hpp" index="2">
-<position/>
-</item>
-<item historyLabel="shooter.cpp" index="1">
-<position/>
-</item>
-<item historyLabel="MyRobot.cpp" index="0">
-<position info="not_deleted" x="1304" y="0"/>
-</item>
-<item historyLabel="shooter.cpp" index="1">
-<position/>
-</item>
-<item historyLabel="shooter.hpp" index="2">
-<position info="not_deleted" x="44" y="0"/>
-</item>
-<item historyLabel="shooter.cpp" index="1">
-<position/>
-</item>
-<item historyLabel="shooter.hpp" index="2">
-<position info="not_deleted" x="44" y="0"/>
-</item>
-<item historyLabel="shooter.cpp" index="1">
-<position/>
-</item>
-<item historyLabel="shooter.hpp" index="2">
-<position info="not_deleted" x="44" y="0"/>
-</item>
-<item historyLabel="shooter.cpp" index="1">
-<position info="not_deleted" x="67" y="0"/>
-</item>
-<item historyLabel="shooter.hpp" index="2">
-<position info="not_deleted" x="44" y="0"/>
-</item>
-<item historyLabel="shooter.cpp" index="1">
-<position info="not_deleted" x="67" y="0"/>
-</item>
-<item historyLabel="shooter.hpp" index="2">
+<item historyLabel="shooter.hpp" index="0">
 <position info="not_deleted" x="36" y="0"/>
 </item>
-<item historyLabel="shooter.cpp" index="1">
-<position info="not_deleted" x="67" y="0"/>
+<item historyLabel="shooter.cpp" index="2">
+<position/>
 </item>
-<item historyLabel="shooter.cpp" index="1">
-<position info="not_deleted" x="67" y="0"/>
-</item>
-<item active="true" historyLabel="shooter.hpp" index="2">
+<item historyLabel="shooter.hpp" index="0">
 <position info="not_deleted" x="36" y="0"/>
+</item>
+<item historyLabel="MyRobot.cpp" index="1">
+<position info="not_deleted" x="334" y="0"/>
+</item>
+<item historyLabel="shooter.cpp" index="2">
+<position info="not_deleted" x="64" y="0"/>
+</item>
+<item historyLabel="MyRobot.cpp" index="1">
+<position info="not_deleted" x="334" y="0"/>
+</item>
+<item historyLabel="shooter.cpp" index="2">
+<position info="not_deleted" x="64" y="0"/>
+</item>
+<item historyLabel="shooter.hpp" index="0">
+<position info="not_deleted" x="36" y="0"/>
+</item>
+<item historyLabel="shooter.cpp" index="2">
+<position info="not_deleted" x="64" y="0"/>
+</item>
+<item historyLabel="MyRobot.cpp" index="1">
+<position info="not_deleted" x="334" y="0"/>
+</item>
+<item historyLabel="shooter.cpp" index="2">
+<position info="not_deleted" x="94" y="0"/>
+</item>
+<item historyLabel="shooter.hpp" index="0">
+<position info="not_deleted" x="49" y="0"/>
+</item>
+<item historyLabel="shooter.cpp" index="2">
+<position info="not_deleted" x="94" y="0"/>
+</item>
+<item historyLabel="shooter.hpp" index="0">
+<position info="not_deleted" x="49" y="0"/>
+</item>
+<item historyLabel="MyRobot.cpp" index="1">
+<position info="not_deleted" x="334" y="0"/>
+</item>
+<item historyLabel="MyRobot.cpp" index="1">
+<position info="not_deleted" x="1232" y="0"/>
+</item>
+<item historyLabel="shooter.cpp" index="2">
+<position info="not_deleted" x="94" y="0"/>
+</item>
+<item historyLabel="shooter.hpp" index="0">
+<position info="not_deleted" x="49" y="0"/>
+</item>
+<item historyLabel="MyRobot.cpp" index="1">
+<position info="not_deleted" x="1232" y="0"/>
+</item>
+<item historyLabel="shooter.cpp" index="2">
+<position info="not_deleted" x="94" y="0"/>
+</item>
+<item historyLabel="shooter.hpp" index="0">
+<position info="not_deleted" x="49" y="0"/>
+</item>
+<item historyLabel="MyRobot.cpp" index="1">
+<position info="not_deleted" x="1232" y="0"/>
+</item>
+<item historyLabel="shooter.cpp" index="2">
+<position info="not_deleted" x="94" y="0"/>
+</item>
+<item historyLabel="shooter.hpp" index="0">
+<position info="not_deleted" x="49" y="0"/>
+</item>
+<item historyLabel="shooter.cpp" index="2">
+<position info="not_deleted" x="94" y="0"/>
+</item>
+<item historyLabel="MyRobot.cpp" index="1">
+<position info="not_deleted" x="1232" y="0"/>
+</item>
+<item historyLabel="shooter.cpp" index="2">
+<position info="not_deleted" x="94" y="0"/>
+</item>
+<item historyLabel="shooter.hpp" index="0">
+<position info="not_deleted" x="49" y="0"/>
+</item>
+<item historyLabel="MyRobot.cpp" index="1">
+<position info="not_deleted" x="1147" y="0"/>
+</item>
+<item historyLabel="shooter.cpp" index="2">
+<position info="not_deleted" x="94" y="0"/>
+</item>
+<item historyLabel="shooter.cpp" index="2">
+<position info="not_deleted" x="94" y="0"/>
+</item>
+<item historyLabel="shooter.hpp" index="0">
+<position info="not_deleted" x="49" y="0"/>
+</item>
+<item historyLabel="shooter.cpp" index="2">
+<position info="not_deleted" x="94" y="0"/>
+</item>
+<item historyLabel="MyRobot.cpp" index="1">
+<position info="not_deleted" x="523" y="22"/>
+</item>
+<item historyLabel="MyRobot.cpp" index="1">
+<position info="not_deleted" x="974" y="0"/>
+</item>
+<item historyLabel="MyRobot.cpp" index="1">
+<position info="not_deleted" x="41" y="0"/>
+</item>
+<item historyLabel="shooter.cpp" index="2">
+<position info="not_deleted" x="64" y="0"/>
+</item>
+<item historyLabel="MyRobot.cpp" index="1">
+<position info="not_deleted" x="41" y="0"/>
+</item>
+<item historyLabel="shooter.hpp" index="0">
+<position info="not_deleted" x="49" y="0"/>
+</item>
+<item historyLabel="MyRobot.cpp" index="1">
+<position info="not_deleted" x="1201" y="0"/>
+</item>
+<item historyLabel="shooter.cpp" index="2">
+<position info="not_deleted" x="64" y="0"/>
+</item>
+<item historyLabel="shooter.hpp" index="0">
+<position info="not_deleted" x="49" y="0"/>
+</item>
+<item historyLabel="shooter.cpp" index="2">
+<position info="not_deleted" x="64" y="0"/>
+</item>
+<item historyLabel="MyRobot.cpp" index="1">
+<position info="not_deleted" x="1201" y="0"/>
+</item>
+<item historyLabel="shooter.hpp" index="0">
+<position info="not_deleted" x="49" y="0"/>
+</item>
+<item active="true" historyLabel="MyRobot.cpp" index="1">
+<position info="not_deleted" x="1201" y="0"/>
 </item>
 </navigationHistory>
 <input factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/" type="8"/>
