@@ -1,4 +1,5 @@
 #include "WPILib.h"
+#include "drive.hpp"
 #include "shooter.hpp"
 
 /**
@@ -10,18 +11,23 @@
 class OffseasonRobot : public SimpleRobot
 {
     //RobotDrive myRobot; // robot drive system
-    Joystick stick; // only joystick
+    Joystick stick1; // only joystick
+    Joystick stick2;
     
     // declaring objects
     Compressor comp;
     Shooter *myShooter;
+    Drive *myDrive;
 
     public:
     OffseasonRobot(void):
         // Initializing objects
         //myRobot(1, 2),	// these must be initialized in the same order
-        stick(1),		// as they are declared above.
-        comp(14,8)
+        stick1(1),		// as they are declared above.
+        stick2(2),
+        comp(14,8),
+        myShooter(),
+        myDrive()
     {
         //myRobot.SetExpiration(0.1);
         //Starting compressor and banner sensor
@@ -36,7 +42,6 @@ class OffseasonRobot : public SimpleRobot
 
 
     // The following computes and controls the speed of the flywheel
-    // TODO: (oliver) Refactor functions into seperate class
 
     void OperatorControl(void)
     {
@@ -44,18 +49,18 @@ class OffseasonRobot : public SimpleRobot
         //myRobot.SetSafetyEnabled(true);
         while (IsOperatorControl())
         {
-            //myRobot.ArcadeDrive(stick); // drive with arcade style (use right stick)
-            
             // The controls
-            //indexer.Set(stick.GetRawButton(1));
-            //shotAngle.Set(stick.GetRawButton(2));
-            //roller.Set(stick.GetRawButton(5));
-            /*
-            if (stick.GetRawButton(8) == true)
-                flywheelMotor.Set(RPMcontrol(getFlywheelSpeed()));
+            // Joystick 1
+            myDrive->update(stick1.GetRawAxis(3), stick1.GetY(), stick1.GetRawButton(6), stick1.GetRawButton(5));
+
+            // Joystick 2
+            myShooter->setIndexer(stick2.GetRawButton(1));
+            myShooter->setShotAngle(stick2.GetRawButton(2));
+            myShooter->setRollerRunning(stick2.GetRawButton(5));
+            if (stick2.GetRawButton(8) == true)
+                myShooter->setFlywheelRunning(true);
             else
-                flywheelMotor.Set(0);
-                */
+                myShooter->setFlywheelRunning(false);
 
             Wait(0.005);				// wait for a motor update time
         }
