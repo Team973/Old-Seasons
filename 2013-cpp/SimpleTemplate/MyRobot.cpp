@@ -18,6 +18,8 @@ class OffseasonRobot : public SimpleRobot
     Compressor comp;
     Shooter *myShooter;
     Drive *myDrive;
+    bool hanging;
+    Solenoid hanger;
 
     public:
     OffseasonRobot(void):
@@ -27,17 +29,24 @@ class OffseasonRobot : public SimpleRobot
         stick2(2),
         comp(14,8),
         myShooter(new Shooter),
-        myDrive(new Drive)
+        myDrive(new Drive),
+        hanger(5)
     {
         //myRobot.SetExpiration(0.1);
         //Starting compressor and banner sensor
         comp.Start();
+        hanging = false;
     }
 
 
     void Autonomous(void)
     {
     // Insert awesome autonomous here
+    }
+
+    void setHanging(bool h)
+    {
+        hanging = h;
     }
 
     void OperatorControl(void)
@@ -51,10 +60,17 @@ class OffseasonRobot : public SimpleRobot
             // Shooter
             myShooter->update();
 
+            // Hanger
+            hanger.Set(hanging);
+
             // The controls
 
             // Joystick 1
             myDrive->update(stick1.GetRawAxis(3), stick1.GetY(), stick1.GetRawButton(6), stick1.GetRawButton(5));
+            if (stick1.GetRawButton(1))
+                setHanging(false);
+            if (stick1.GetRawButton(3))
+                setHanging(true);
 
             // Joystick 2
             myShooter->setShotAngle(stick2.GetRawButton(2));
