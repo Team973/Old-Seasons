@@ -73,7 +73,10 @@ class OffseasonRobot : public SimpleRobot
                 setHanging(true);
 
             // Joystick 2
-            myShooter->setShotAngle(stick2.GetRawButton(2));
+            if (stick2.GetRawButton(1))
+                myShooter->setShotAngle(false);
+            if (stick2.GetRawButton(2))
+                myShooter->setShotAngle(true);
             myShooter->setRollerRunning(stick2.GetRawButton(5));
             myShooter->setIndexer(stick2.GetRawButton(6));
             if (stick2.GetRawButton(8) == true)
