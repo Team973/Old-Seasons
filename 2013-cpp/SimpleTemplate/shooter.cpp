@@ -11,8 +11,10 @@ Shooter::Shooter()
     shotAngle = new Solenoid(4);
     rollerRunning = false;
     flywheelRunning = false;
+    firingIndexer = false;
 }
 
+// The following computes and controls the speed of the flywheel
 float Shooter::computeFlywheelSpeed(float counter)
 {
     const int flywheelTicksPerRevolution = 1;
@@ -40,7 +42,7 @@ float Shooter::RPMcontrol(float rpm)
 
 void Shooter::setIndexer(bool t)
 {
-    indexer->Set(t);
+    firingIndexer = t;
 }
 
 void Shooter::setShotAngle(bool h)
@@ -63,6 +65,7 @@ void Shooter::update()
     if (flywheelRunning)
     {
         flywheelMotor->Set(RPMcontrol(getFlywheelSpeed()));
+        indexer->Set(firingIndexer);
     }
     else
     {
@@ -70,19 +73,15 @@ void Shooter::update()
         indexer->Set(false);
     }
 
-    if (rollerRunning && !shotAngle)
+    if (rollerRunning)
     {
-        roller->Set(.2);
+        if ((indexer->Get()) && (shotAngle->Get() == true))
+            roller->Set(.2);
+        else
+            roller->Set(.8);
     }
     else
     {
-        if (rollerRunning)
-        {
-            roller->Set(.8);
-        }
-        else
-        {
-            roller->Set(.0);
-        }
+        roller->Set(.0);
     }
 }

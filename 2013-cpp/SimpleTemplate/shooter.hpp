@@ -10,6 +10,7 @@ protected:
     Solenoid *shotAngle;
     bool rollerRunning;
     bool flywheelRunning;
+    bool firingIndexer;
 public:
     Shooter();
     float computeFlywheelSpeed(float counter);

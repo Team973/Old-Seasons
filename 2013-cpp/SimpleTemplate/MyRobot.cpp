@@ -26,8 +26,8 @@ class OffseasonRobot : public SimpleRobot
         stick1(1),		// as they are declared above.
         stick2(2),
         comp(14,8),
-        myShooter(),
-        myDrive()
+        myShooter(new Shooter),
+        myDrive(new Drive)
     {
         //myRobot.SetExpiration(0.1);
         //Starting compressor and banner sensor
@@ -40,27 +40,31 @@ class OffseasonRobot : public SimpleRobot
     // Insert awesome autonomous here
     }
 
-
-    // The following computes and controls the speed of the flywheel
-
     void OperatorControl(void)
     {
 
         //myRobot.SetSafetyEnabled(true);
         while (IsOperatorControl())
         {
+            // Updates:
+
+            // Shooter
+            myShooter->update();
+
             // The controls
+
             // Joystick 1
             myDrive->update(stick1.GetRawAxis(3), stick1.GetY(), stick1.GetRawButton(6), stick1.GetRawButton(5));
 
             // Joystick 2
-            myShooter->setIndexer(stick2.GetRawButton(1));
             myShooter->setShotAngle(stick2.GetRawButton(2));
             myShooter->setRollerRunning(stick2.GetRawButton(5));
+            myShooter->setIndexer(stick2.GetRawButton(6));
             if (stick2.GetRawButton(8) == true)
                 myShooter->setFlywheelRunning(true);
             else
                 myShooter->setFlywheelRunning(false);
+            // End Controls
 
             Wait(0.005);				// wait for a motor update time
         }
