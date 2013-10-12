@@ -12,6 +12,8 @@ Shooter::Shooter()
     rollerRunning = false;
     flywheelRunning = false;
     firingIndexer = false;
+    discsFired = 0;
+    targetFlywheelSpeed = 5500;
 }
 
 // The following computes and controls the speed of the flywheel
@@ -58,6 +60,33 @@ void Shooter::setRollerRunning(bool r)
 void Shooter::setFlywheelRunning(bool f)
 {
     flywheelRunning = f;
+}
+
+void Shooter::clearDiscsFired()
+{
+    discsFired = 0;
+}
+
+void Shooter::autoFire()
+{
+    setFlywheelRunning(true);
+
+    if (discsFired < 4)
+    {
+        if (getFlywheelSpeed() >= targetFlywheelSpeed)
+        {
+            indexer->Set(true);
+            discsFired++;
+        }
+        else
+            indexer->Set(false);
+    }
+    else
+    {
+        setFlywheelRunning(false);
+        indexer->Set(false);
+    }
+
 }
 
 void Shooter::update()

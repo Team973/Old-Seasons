@@ -20,6 +20,7 @@ class OffseasonRobot : public SimpleRobot
     Drive *myDrive;
     bool hanging;
     Solenoid hanger;
+    Timer autoTimer;
 
     public:
     OffseasonRobot(void):
@@ -41,7 +42,18 @@ class OffseasonRobot : public SimpleRobot
 
     void Autonomous(void)
     {
-    // Insert awesome autonomous here
+        // Insert awesome autonomous here
+        autoTimer.Start();
+        while (IsAutonomous())
+        {
+            if (autoTimer.Get() >= 5)
+            {
+                myShooter->autoFire();
+            }
+
+            myShooter->update();
+            myDrive->update(0, 0, false, false);
+        }
     }
 
     void setHanging(bool h)
