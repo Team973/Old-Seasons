@@ -45,6 +45,7 @@ class OffseasonRobot : public SimpleRobot
     void Autonomous(void)
     {
         autoTimer.Start();
+        autoTimer.Reset();
         // Insert awesome autonomous here
         while (IsAutonomous())
         {
