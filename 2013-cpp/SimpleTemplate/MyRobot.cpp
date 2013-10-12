@@ -44,9 +44,10 @@ class OffseasonRobot : public SimpleRobot
     {
         // Insert awesome autonomous here
         autoTimer.Start();
+        myShooter->setShotAngle(true);
         while (IsAutonomous())
         {
-            if (autoTimer.Get() >= 5)
+            if (autoTimer.Get() >= 4)
             {
                 myShooter->autoFire();
             }
