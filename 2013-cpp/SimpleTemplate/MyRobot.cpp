@@ -21,6 +21,8 @@ class OffseasonRobot : public SimpleRobot
     bool hanging;
     Solenoid hanger;
     Timer autoTimer;
+    int discsFired;
+    int targetFlywheelSpeed;
 
     public:
     OffseasonRobot(void):
@@ -42,19 +44,53 @@ class OffseasonRobot : public SimpleRobot
 
     void Autonomous(void)
     {
-        // Insert awesome autonomous here
         autoTimer.Start();
-        myShooter->setShotAngle(true);
+        // Insert awesome autonomous here
         while (IsAutonomous())
         {
-            if (autoTimer.Get() >= 4)
+            myShooter->setFlywheelRunning(true);
+            if (autoTimer.Get() >= 3)
             {
-                myShooter->autoFire();
+                if (autoTimer.Get() >= 4)
+                {
+                    myShooter->setIndexer(true);
+                }
+                if (autoTimer.Get() >= 4.5)
+                {
+                    myShooter->setIndexer(false);
+                }
+                if (autoTimer.Get() >= 7)
+                {
+                    myShooter->setIndexer(true);
+                }
+                if (autoTimer.Get() >= 7.5)
+                {
+                    myShooter->setIndexer(false);
+                }
+                if (autoTimer.Get() >= 9)
+                {
+                    myShooter->setIndexer(true);
+                }
+                if (autoTimer.Get() >= 9.5)
+                {
+                    myShooter->setIndexer(false);
+                }
+                if (autoTimer.Get() >= 10)
+                {
+                    myShooter->setIndexer(true);
+                }
+                if (autoTimer.Get() >= 10.5)
+                {
+                    myShooter->setIndexer(false);
+                }
             }
 
+            //myShooter->setShotAngle(false);
             myShooter->update();
             myDrive->update(0, 0, false, false);
         }
+        myShooter->setFlywheelRunning(false);
+        myShooter->setIndexer(false);
     }
 
     void setHanging(bool h)
