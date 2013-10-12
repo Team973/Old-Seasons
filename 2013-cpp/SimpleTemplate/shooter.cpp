@@ -93,7 +93,7 @@ void Shooter::update()
 {
     if (flywheelRunning)
     {
-        flywheelMotor->Set(1);
+        flywheelMotor->Set(.9);
         indexer->Set(firingIndexer);
     }
     else
