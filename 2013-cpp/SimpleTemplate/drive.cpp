@@ -7,9 +7,26 @@ Drive::Drive()
     leftDrive = new Talon(1);
     rightDrive = new Talon(2);
     lowGear = new Solenoid(3);
+    kickUp = new Solenoid(2);
     oldWheel = 0.0;
     negInertiaAccumulator = 0.0;
     quickStopAccumulator = 0.0;
+}
+
+void Drive::setHighGear(bool g)
+{
+    lowGear->Set(g);
+    kickUp->Set(g);
+}
+
+void Drive::setKickUp(bool k)
+{
+    kickUp->Set(k);
+}
+
+void Drive::setBackWheelsDown(bool d)
+{
+    lowGear->Set(d);
 }
 
 void Drive::setDriveMotors(float left, float right)
@@ -154,7 +171,5 @@ void Drive::CheesyDrive(double throttle, double wheel, bool highGear, bool quick
 void Drive::update(double DriveX, double DriveY, bool Gear, bool quickTurn)
 {
     CheesyDrive(DriveY, DriveX, Gear, quickTurn);
-
-    lowGear->Set(Gear);
 }
 
