@@ -15,6 +15,8 @@ private:
     void setDriveMotors(float left, float right);
     float limit(float x);
     void CheesyDrive(double throttle, double wheel, bool highGear, bool quickTurn);
+    bool isLowGear;
+    bool isKickUp;
 public:
     Drive();
     void update(double DriveX, double DriveY, bool Gear, bool quickTurn);
