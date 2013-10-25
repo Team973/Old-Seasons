@@ -116,14 +116,13 @@ class OffseasonRobot : public SimpleRobot
             // The controls
 
             // Joystick 1
-            myDrive->update(stick1.GetRawAxis(3), stick1.GetY(), stick1.GetRawButton(6), stick1.GetRawButton(5));
+            myDrive->setKickUp(stick1.GetRawButton(7));
             myDrive->setHighGear(stick1.GetRawButton(6));
+            myDrive->update(stick1.GetRawAxis(3), stick1.GetY(), stick1.GetRawButton(6), stick1.GetRawButton(5));
             if (stick1.GetRawButton(1))
                 setHanging(false);
             if (stick1.GetRawButton(3))
                 setHanging(true);
-            myDrive->setKickUp(stick1.GetRawButton(7));
-            myDrive->setBackWheelsDown(stick1.GetRawButton(8));
 
             // Joystick 2
             if (stick2.GetRawButton(1))
