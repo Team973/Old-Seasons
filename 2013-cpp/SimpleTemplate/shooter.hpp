@@ -25,4 +25,5 @@ public:
     void clearDiscsFired();
     void autoFire();
     void update();
+    void dashboardUpdate();
 };
