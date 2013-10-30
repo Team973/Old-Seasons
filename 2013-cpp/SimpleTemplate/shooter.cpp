@@ -14,6 +14,7 @@ Shooter::Shooter()
     firingIndexer = false;
     discsFired = 0;
     targetFlywheelSpeed = 5500;
+    SmartDashboard::init();
 }
 
 // The following computes and controls the speed of the flywheel
@@ -113,4 +114,9 @@ void Shooter::update()
     {
         roller->Set(.0);
     }
+}
+
+void Shooter::dashboardUpdate()
+{
+    SmartDashboard::PutNumber("Flywheel RPM", getFlywheelSpeed());
 }

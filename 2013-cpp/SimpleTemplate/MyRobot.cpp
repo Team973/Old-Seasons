@@ -39,6 +39,7 @@ class OffseasonRobot : public SimpleRobot
         //Starting compressor and banner sensor
         comp.Start();
         hanging = false;
+        SmartDashboard::init();
     }
 
 
@@ -112,6 +113,9 @@ class OffseasonRobot : public SimpleRobot
 
             // Hanger
             hanger.Set(hanging);
+
+            // Dashboard updates
+            myShooter->dashboardUpdate();
 
             // The controls
 
