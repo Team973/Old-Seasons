@@ -4,8 +4,10 @@ class Drive
 {
 protected:
 private:
-    Talon *leftDrive;
-    Talon *rightDrive;
+    Talon *frontLeftDrive;
+    Talon *frontRightDrive;
+    Talon *backLeftDrive;
+    Talon *backRightDrive;
     Solenoid *lowGear;
     Solenoid *kickUp;
     bool highGear;

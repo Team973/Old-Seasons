@@ -4,8 +4,11 @@
 
 Drive::Drive()
 {
-    leftDrive = new Talon(1);
-    rightDrive = new Talon(2);
+    frontLeftDrive = new Talon(1);
+    frontRightDrive = new Talon(2);
+    backLeftDrive = new Talon(9);
+    backRightDrive = new Talon(10);
+
     lowGear = new Solenoid(3);
     kickUp = new Solenoid(2);
     oldWheel = 0.0;
@@ -26,6 +29,7 @@ void Drive::setKickUp(bool k)
     isKickUp = k;
 }
 
+// Divide by for 2.778 scaling
 void Drive::setBackWheelsDown(bool d)
 {
     isLowGear = d;
@@ -33,8 +37,31 @@ void Drive::setBackWheelsDown(bool d)
 
 void Drive::setDriveMotors(float left, float right)
 {
-    leftDrive->Set(-limit(left));
-    rightDrive->Set(limit(right));
+    if ((isKickUp) && (!isLowGear))
+    {
+        frontLeftDrive->Set(-limit(left));
+        backLeftDrive->Set(-limit(left));
+
+        frontRightDrive->Set(limit(right / 2.778));
+        backRightDrive->Set(limit(right / 2.778));
+    }
+    else if ((!isKickUp) && (isLowGear))
+    {
+        frontLeftDrive->Set(-limit(left / 2.778));
+        backLeftDrive->Set(-limit(left / 2.778));
+
+        frontRightDrive->Set(limit(right));
+        backRightDrive->Set(limit(right));
+    }
+    else
+    {
+        frontLeftDrive->Set(-limit(left));
+        backLeftDrive->Set(-limit(left));
+
+        frontRightDrive->Set(limit(right));
+        backRightDrive->Set(limit(right));
+    }
+
 }
 
 float Drive::limit(float x)
@@ -172,7 +199,14 @@ void Drive::CheesyDrive(double throttle, double wheel, bool highGear, bool quick
 
 void Drive::update(double DriveX, double DriveY, bool Gear, bool quickTurn)
 {
-    CheesyDrive(DriveY, DriveX, Gear, quickTurn);
+    if ((isLowGear) && (isKickUp))
+    {
+        CheesyDrive(DriveY, (DriveX * 0), Gear, quickTurn);
+    }
+    else
+    {
+        CheesyDrive(DriveY, DriveX, Gear, quickTurn);
+    }
 
     lowGear->Set(isLowGear);
     kickUp->Set(isKickUp);
