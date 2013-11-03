@@ -23,6 +23,7 @@ class OffseasonRobot : public SimpleRobot
     Timer autoTimer;
     int discsFired;
     int targetFlywheelSpeed;
+    DigitalInput pressureSwitch;
 
     public:
     OffseasonRobot(void):
@@ -33,7 +34,8 @@ class OffseasonRobot : public SimpleRobot
         comp(14,8),
         myShooter(new Shooter),
         myDrive(new Drive),
-        hanger(5)
+        hanger(5),
+        pressureSwitch(14)
     {
         //myRobot.SetExpiration(0.1);
         //Starting compressor and banner sensor
@@ -116,6 +118,7 @@ class OffseasonRobot : public SimpleRobot
 
             // Dashboard updates
             myShooter->dashboardUpdate();
+            SmartDashboard::PutBoolean("PRESSURE", pressureSwitch.Get());
 
             // The controls
 
@@ -131,7 +134,7 @@ class OffseasonRobot : public SimpleRobot
             // Joystick 2
             if (stick2.GetRawButton(1))
                 myShooter->setShotAngle(false);
-            if (stick2.GetRawButton(2))
+            if ((stick2.GetRawButton(2)) || (stick2.GetRawButton(5)))
                 myShooter->setShotAngle(true);
             myShooter->setRollerRunning(stick2.GetRawButton(5));
             myShooter->setIndexer(stick2.GetRawButton(6));
