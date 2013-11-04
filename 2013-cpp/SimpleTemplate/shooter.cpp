@@ -108,7 +108,7 @@ void Shooter::update()
         if ((indexer->Get()) && (shotAngle->Get() == true))
             roller->Set(.2);
         else
-            roller->Set(.7);
+            roller->Set(.8);
     }
     else
     {
