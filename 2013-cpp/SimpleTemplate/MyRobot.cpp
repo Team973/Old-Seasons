@@ -79,11 +79,19 @@ class OffseasonRobot : public SimpleRobot
                 {
                     myShooter->setIndexer(false);
                 }
-                if (autoTimer.Get() >= 10)
+                if (autoTimer.Get() >= 11)
                 {
                     myShooter->setIndexer(true);
                 }
-                if (autoTimer.Get() >= 10.5)
+                if (autoTimer.Get() >= 11.5)
+                {
+                    myShooter->setIndexer(false);
+                }
+                if (autoTimer.Get() >= 13)
+                {
+                    myShooter->setIndexer(true);
+                }
+                if (autoTimer.Get() >= 13.5)
                 {
                     myShooter->setIndexer(false);
                 }
@@ -124,7 +132,7 @@ class OffseasonRobot : public SimpleRobot
 
             // Joystick 1
             myDrive->setKickUp(stick1.GetRawButton(7));
-            myDrive->setHighGear(stick1.GetRawButton(6));
+            myDrive->setBackWheelsDown(stick1.GetRawButton(8));
             myDrive->update(stick1.GetRawAxis(3), stick1.GetY(), stick1.GetRawButton(6), stick1.GetRawButton(5));
             if (stick1.GetRawButton(1))
                 setHanging(false);
