@@ -16,12 +16,7 @@ Drive::Drive()
     quickStopAccumulator = 0.0;
     isLowGear = false;
     isKickUp = false;
-}
-
-void Drive::setHighGear(bool g)
-{
-    isLowGear = g;
-    isKickUp = g;
+    isHighGear = false;
 }
 
 void Drive::setKickUp(bool k)
@@ -35,9 +30,15 @@ void Drive::setBackWheelsDown(bool d)
     isLowGear = d;
 }
 
+void Drive::setHighGear(bool g)
+{
+    isLowGear = g;
+    isKickUp = g;
+}
+
 void Drive::setDriveMotors(float left, float right)
 {
-    if ((isKickUp) && (!isLowGear))
+    if ((isKickUp) && (! isLowGear))
     {
         frontLeftDrive->Set(-limit(left));
         backLeftDrive->Set(-limit(left));
@@ -45,7 +46,7 @@ void Drive::setDriveMotors(float left, float right)
         frontRightDrive->Set(limit(right / 2.778));
         backRightDrive->Set(limit(right / 2.778));
     }
-    else if ((!isKickUp) && (isLowGear))
+    else if ((! isKickUp) && (isLowGear))
     {
         frontLeftDrive->Set(-limit(left / 2.778));
         backLeftDrive->Set(-limit(left / 2.778));
@@ -76,7 +77,6 @@ float Drive::limit(float x)
 
 void Drive::CheesyDrive(double throttle, double wheel, bool highGear, bool quickTurn) {
   bool isQuickTurn = quickTurn;
-  bool isHighGear = highGear;
   float turnNonlinHigh = 0.9;
   float turnNonlinLow = 0.8;
   float negInertiaHigh = 0.5;
@@ -97,7 +97,7 @@ void Drive::CheesyDrive(double throttle, double wheel, bool highGear, bool quick
 
   double M_PI = 3.141592;
 
-  if (isHighGear) {
+  if (highGear) {
     wheelNonLinearity = turnNonlinHigh;
     // Apply a sin function that's scaled to make it feel better.
     wheel = sin(M_PI / 2.0 * wheelNonLinearity * wheel) / sin(M_PI / 2.0 * wheelNonLinearity);
@@ -119,7 +119,7 @@ void Drive::CheesyDrive(double throttle, double wheel, bool highGear, bool quick
   // Negative inertia!
   static double negInertiaAccumulator = 0.0;
   double negInertiaScalar;
-  if (isHighGear) {
+  if (highGear) {
     negInertiaScalar = negInertiaHigh;
     sensitivity = senseHigh;
   } else {
@@ -158,7 +158,7 @@ void Drive::CheesyDrive(double throttle, double wheel, bool highGear, bool quick
       quickStopAccumulator = (1 - alpha) * quickStopAccumulator + alpha * limit(wheel) * quickStopStickScalar;
     }
     overPower = 1.0;
-    if (isHighGear) {
+    if (highGear) {
       sensitivity = 1.0;
     } else {
       sensitivity = 1.0;
@@ -195,13 +195,15 @@ void Drive::CheesyDrive(double throttle, double wheel, bool highGear, bool quick
   }
 
   setDriveMotors(leftPwm, rightPwm);
+  isHighGear = highGear;
+  setHighGear(highGear);
 }
 
 void Drive::update(double DriveX, double DriveY, bool Gear, bool quickTurn)
 {
     if ((isLowGear) && (isKickUp))
     {
-        CheesyDrive(DriveY, (DriveX * 0), Gear, quickTurn);
+        CheesyDrive(DriveY, (DriveX * 0), Gear, false);
     }
     else
     {
