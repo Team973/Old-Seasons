@@ -53,17 +53,25 @@ class OffseasonRobot : public SimpleRobot
         while (IsAutonomous())
         {
             myShooter->setFlywheelRunning(true);
-            if (autoTimer.Get() >= 3)
+            if (autoTimer.Get() >= 1.5)
             {
+                if (autoTimer.Get() >= 2)
+                {
+                    myShooter->setIndexer(true);
+                }
+                if (autoTimer.Get() >= 3.5)
+                {
+                    myShooter->setIndexer(false);
+                }
                 if (autoTimer.Get() >= 4)
                 {
                     myShooter->setIndexer(true);
                 }
-                if (autoTimer.Get() >= 4.5)
+                if (autoTimer.Get() >= 5.5)
                 {
                     myShooter->setIndexer(false);
                 }
-                if (autoTimer.Get() >= 7)
+                if (autoTimer.Get() >= 6)
                 {
                     myShooter->setIndexer(true);
                 }
@@ -71,7 +79,7 @@ class OffseasonRobot : public SimpleRobot
                 {
                     myShooter->setIndexer(false);
                 }
-                if (autoTimer.Get() >= 9)
+                if (autoTimer.Get() >= 8)
                 {
                     myShooter->setIndexer(true);
                 }
@@ -79,7 +87,7 @@ class OffseasonRobot : public SimpleRobot
                 {
                     myShooter->setIndexer(false);
                 }
-                if (autoTimer.Get() >= 11)
+                if (autoTimer.Get() >= 10)
                 {
                     myShooter->setIndexer(true);
                 }
@@ -87,7 +95,7 @@ class OffseasonRobot : public SimpleRobot
                 {
                     myShooter->setIndexer(false);
                 }
-                if (autoTimer.Get() >= 13)
+                if (autoTimer.Get() >= 12)
                 {
                     myShooter->setIndexer(true);
                 }
