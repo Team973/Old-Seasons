@@ -19,22 +19,21 @@ function run()
     local INTAKE_TIME = 2.35
     local MOVEMENT_6 = 3
     local MOVEMENT_7 = 2.25
---[[
+    --[[
     while turnInPlace(90) do
         coroutine.yield()
     end
+    ]]
     
     --[[
     while linearDrive(96, 0) do
         coroutine.yield()
     end
-
-    --[[
-    shooter.fullStop()
-    arm.setPreset("autoShot")
     ]]
 
-    --[[
+    shooter.fullStop()
+    arm.setPreset("autoShot")
+
     arm.setPreset("autoShot1")
 
     shooter.setFlywheelRunning(true)
@@ -107,8 +106,8 @@ function run()
     while shooter.getDiscsFired() <= 3 do
         coroutine.yield()
     end
-    ]]
 
+    --[[
     local shootTimer = wpilib.Timer()
     shootTimer:Start()
 
@@ -141,6 +140,7 @@ function run()
         intake.setIntakeSpeed(0.0)
         coroutine.yield()
     end
+    --]]
 
     -- Clean up
     shooter.fullStop()
