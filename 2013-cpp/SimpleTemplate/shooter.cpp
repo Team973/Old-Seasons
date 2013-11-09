@@ -118,7 +118,7 @@ void Shooter::update()
     }
     else
     {
-        roller->Set(.0);
+        roller->Set(rollerManual);
     }
 }
 
