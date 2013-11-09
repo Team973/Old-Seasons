@@ -309,17 +309,18 @@ controlMap =
             intake.goToStow(true)
         end,
 
-        --This is for the serial port testing
-        --[[
-        [9] = {tick=function(held)
-            serial.setRead(held)
-        end},
-        -]]
+        [9] = function()
+            drive.setFollowerWheels(true)
+        end,
 
         [10] = function()
             if prepareHang then
                 hanging = false
             end
+        end,
+
+        [12] = function()
+            drive.setFollowerWheels(false)
         end,
 
         ["rtrigger"] = function()

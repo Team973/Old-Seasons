@@ -18,6 +18,7 @@ local kickUpOff = wpilib.Solenoid(8)
 
 --auto pid
 local followerWheels = wpilib.Solenoid(3)
+local isFollowerWheels = false
 local lowered = false
 local rightEncoder = wpilib.Encoder(5, 6, false)
 local leftEncoder = wpilib.Encoder(3, 4, false)
@@ -31,6 +32,10 @@ local arcade, cheesyDrive
 local gyro = nil
 local gyroOkay = true
 local ignoreGyro = false
+
+function setFollowerWheels(bool)
+    isFollowerWheels = bool
+end
 
 local punching = false
 function punchTheGround(bool)
@@ -172,7 +177,7 @@ function update(driveX, driveY, quickTurn)
         followerWheels:Set(true)
     else
         leftSpeed, rightSpeed = cheesyDrive(driveY, driveX, true, quickTurn)
-        followerWheels:Set(false)
+        followerWheels:Set(isFollowerWheels)
     end
 
     kickUpOn:Set(punching)

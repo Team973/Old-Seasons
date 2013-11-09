@@ -10,6 +10,7 @@ Shooter::Shooter()
     flywheelCounter->Start();
     shotAngle = new Solenoid(4);
     rollerRunning = false;
+    rollerManual = 0;
     flywheelRunning = false;
     firingIndexer = false;
     discsFired = 0;
@@ -56,6 +57,11 @@ void Shooter::setShotAngle(bool h)
 void Shooter::setRollerRunning(bool r)
 {
     rollerRunning = r;
+}
+
+void Shooter::setRollerManual(float axis)
+{
+    rollerManual = axis;
 }
 
 void Shooter::setFlywheelRunning(bool f)

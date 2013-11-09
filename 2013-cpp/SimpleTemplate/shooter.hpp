@@ -9,6 +9,7 @@ protected:
     Counter *flywheelCounter;
     Solenoid *shotAngle;
     bool rollerRunning;
+    float rollerManual;
     bool flywheelRunning;
     bool firingIndexer;
     int discsFired;
