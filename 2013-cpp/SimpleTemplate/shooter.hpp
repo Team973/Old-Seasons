@@ -21,6 +21,7 @@ public:
     float RPMcontrol(float rpm);
     void setIndexer(bool t);
     void setRollerRunning(bool r);
+    void setRollerManual(float axis);
     void setFlywheelRunning(bool f);
     void setShotAngle(bool h);
     void clearDiscsFired();
