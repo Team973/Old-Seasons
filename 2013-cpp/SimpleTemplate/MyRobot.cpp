@@ -99,9 +99,17 @@ class OffseasonRobot : public SimpleRobot
                 {
                     myShooter->setIndexer(true);
                 }
-                if (autoTimer.Get() >= 13.5)
+                if (autoTimer.Get() >= 13)
                 {
                     myShooter->setIndexer(false);
+                }
+                if (autoTimer.Get() >= 13.5)
+                {
+                    myDrive->update(.5, 0, true, false);
+                }
+                if (autoTimer.Get() >= 14.5)
+                {
+                    myDrive->update(0, 0, false, false);
                 }
             }
 
