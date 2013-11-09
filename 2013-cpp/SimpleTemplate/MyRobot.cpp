@@ -105,15 +105,16 @@ class OffseasonRobot : public SimpleRobot
                 }
                 if (autoTimer.Get() >= 13.5)
                 {
-                    myDrive->update(.5, 0, true, false);
+                    //myDrive->setHighGear(true);
+                    //myDrive->setDriveMotorsAuto(.5, -.5);
                 }
-                if (autoTimer.Get() >= 14.5)
+                if (autoTimer.Get() >= 14.7)
                 {
-                    myDrive->update(0, 0, false, false);
+                    myDrive->setDriveMotorsAuto(0, 0);
+                    myDrive->setHighGear(false);
                 }
             }
 
-            //myShooter->setShotAngle(false);
             myShooter->update();
             myDrive->update(0, 0, false, false);
         }
@@ -156,6 +157,7 @@ class OffseasonRobot : public SimpleRobot
                 setHanging(true);
 
             // Joystick 2
+            myShooter->setRollerManual(stick2.GetY());
             if (stick2.GetRawButton(1))
                 myShooter->setShotAngle(false);
             if ((stick2.GetRawButton(2)) || (stick2.GetRawButton(5)))
