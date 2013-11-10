@@ -16,7 +16,6 @@ Drive::Drive()
     quickStopAccumulator = 0.0;
     isLowGear = false;
     isKickUp = false;
-    isHighGear = false;
 }
 
 void Drive::setKickUp(bool k)
@@ -32,8 +31,16 @@ void Drive::setBackWheelsDown(bool d)
 
 void Drive::setHighGear(bool g)
 {
-    isLowGear = g;
-    isKickUp = g;
+    if ((isLowGear) || (isKickUp))
+    {
+    isLowGear = isLowGear;
+    isKickUp = isKickUp;
+    }
+    else
+    {
+        isLowGear = g;
+        isKickUp = g;
+    }
 }
 
 void Drive::setDriveMotors(float left, float right)
@@ -204,7 +211,6 @@ void Drive::CheesyDrive(double throttle, double wheel, bool highGear, bool quick
   }
 
   setDriveMotors(leftPwm, rightPwm);
-  isHighGear = highGear;
   setHighGear(highGear);
 }
 

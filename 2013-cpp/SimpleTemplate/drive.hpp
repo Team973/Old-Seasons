@@ -10,7 +10,6 @@ private:
     Talon *backRightDrive;
     Solenoid *lowGear;
     Solenoid *kickUp;
-    bool isHighGear;
     float oldWheel;
     float negInertiaAccumulator;
     float quickStopAccumulator;
