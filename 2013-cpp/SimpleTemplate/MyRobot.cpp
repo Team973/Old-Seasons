@@ -19,6 +19,9 @@ class OffseasonRobot : public SimpleRobot
     Shooter *myShooter;
     Drive *myDrive;
     bool hanging;
+    bool isHighGear;
+    double driveX;
+    double driveY;
     Solenoid hanger;
     Timer autoTimer;
     int discsFired;
@@ -105,18 +108,24 @@ class OffseasonRobot : public SimpleRobot
                 }
                 if (autoTimer.Get() >= 13.5)
                 {
-                    myDrive->setHighGear(true);
-                    myDrive->setDriveMotorsAuto(.5, -.5);
+                    isHighGear = true;
+                    driveX = 0;
+                    driveY = .5;
+                }
+                else
+                {
+                    isHighGear = false;
+                    driveX = 0;
+                    driveY = 0;
                 }
                 if (autoTimer.Get() >= 14.7)
                 {
-                    myDrive->setDriveMotorsAuto(0, 0);
                     myDrive->setHighGear(false);
                 }
+                myDrive->update(driveX, driveY, isHighGear, false);
             }
 
             myShooter->update();
-            myDrive->update(0, 0, false, false);
         }
         myShooter->setFlywheelRunning(false);
         myShooter->setIndexer(false);

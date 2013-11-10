@@ -20,9 +20,14 @@ private:
 public:
     Drive();
     void setDriveMotors(float left, float right);
-    void setDriveMotorsAuto(float left, float right);
+    void setLeftDrive(float speed);
+    void setRightDrive(float speed);
     void update(double DriveX, double DriveY, bool Gear, bool quickTurn);
     void setKickUp(bool k);
     void setBackWheelsDown(bool d);
     void setHighGear(bool g);
+    void setFrontLeftDrive(float speed);
+    void setBackLeftDrive(float speed);
+    void setFrontRightDrive(float speed);
+    void setBackRightDrive(float speed);
 };
