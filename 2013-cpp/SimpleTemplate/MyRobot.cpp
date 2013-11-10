@@ -167,7 +167,7 @@ class OffseasonRobot : public SimpleRobot
 
             // Joystick 2
 
-            if (stick2.GetRawButton(1))
+            if ((stick2.GetRawButton(1) || ((stick2.GetRawButton(8)) && ((!stick2.GetRawButton(2)) || (!stick2.GetRawButton(5))))))
                 myShooter->setShotAngle(false);
             if ((stick2.GetRawButton(2)) || (stick2.GetRawButton(5)))
                 myShooter->setShotAngle(true);
