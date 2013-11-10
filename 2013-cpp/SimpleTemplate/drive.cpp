@@ -77,8 +77,8 @@ void Drive::setDriveMotorsAuto(float left, float right)
     frontLeftDrive->Set(-limit(left));
     backLeftDrive->Set(-limit(left));
 
-    frontRightDrive->Set(-limit(right));
-    backRightDrive->Set(-limit(right));
+    frontRightDrive->Set(limit(right));
+    backRightDrive->Set(limit(right));
 }
 
 float Drive::limit(float x)
