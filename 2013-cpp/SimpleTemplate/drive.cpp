@@ -72,13 +72,36 @@ void Drive::setDriveMotors(float left, float right)
 
 }
 
-void Drive::setDriveMotorsAuto(float left, float right)
+void Drive::setLeftDrive(float speed)
 {
-    frontLeftDrive->Set(-limit(left));
-    backLeftDrive->Set(-limit(left));
+    frontLeftDrive->Set(-limit(speed));
+    backLeftDrive->Set(-limit(speed));
+}
 
-    frontRightDrive->Set(limit(right));
-    backRightDrive->Set(limit(right));
+void Drive::setRightDrive(float speed)
+{
+    frontRightDrive->Set(limit(speed));
+    backRightDrive->Set(limit(speed));
+}
+
+void Drive::setFrontLeftDrive(float speed)
+{
+    frontLeftDrive->Set(speed);
+}
+
+void Drive::setBackLeftDrive(float speed)
+{
+    backLeftDrive->Set(speed);
+}
+
+void Drive::setFrontRightDrive(float speed)
+{
+    frontRightDrive->Set(speed);
+}
+
+void Drive::setBackRightDrive(float speed)
+{
+    backRightDrive->Set(speed);
 }
 
 float Drive::limit(float x)
