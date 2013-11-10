@@ -105,8 +105,8 @@ class OffseasonRobot : public SimpleRobot
                 }
                 if (autoTimer.Get() >= 13.5)
                 {
-                    //myDrive->setHighGear(true);
-                    //myDrive->setDriveMotorsAuto(.5, -.5);
+                    myDrive->setHighGear(true);
+                    myDrive->setDriveMotorsAuto(.5, -.5);
                 }
                 if (autoTimer.Get() >= 14.7)
                 {
