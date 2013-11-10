@@ -10,7 +10,7 @@ Shooter::Shooter()
     flywheelCounter->Start();
     shotAngle = new Solenoid(4);
     rollerRunning = false;
-    rollerManual = 0;
+    rollerManual = 0.0;
     flywheelRunning = false;
     firingIndexer = false;
     discsFired = 0;
@@ -118,7 +118,7 @@ void Shooter::update()
     }
     else
     {
-        roller->Set(rollerManual);
+        roller->Set(-rollerManual);
     }
 }
 
