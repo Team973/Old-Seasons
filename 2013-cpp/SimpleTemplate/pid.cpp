@@ -1,4 +1,5 @@
 #include "WPILib.h"
+#include "pid.hpp"
 
 PID::PID(double *p_, double *i_, double *d_)
 {
