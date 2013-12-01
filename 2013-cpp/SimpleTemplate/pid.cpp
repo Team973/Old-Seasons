@@ -1,7 +1,7 @@
 #include "WPILib.h"
 #include "pid.hpp"
 
-PID::PID(double *p_, double *i_, double *d_)
+PID::PID(double p_, double i_, double d_)
 {
     p = p_;
     i = i_;
@@ -18,7 +18,9 @@ PID::PID(double *p_, double *i_, double *d_)
     output = 0;
     prevErr = 0;
 
-    timer = new Timer()
+    timer = new Timer();
+
+    reset();
 }
 
 void PID::setTarget(float target_)
