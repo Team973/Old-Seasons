@@ -20,7 +20,7 @@ protected:
 
     Timer timer;
 public:
-    PID(double *p_, double i_, double d_);
+    PID(double p_=0.0, double i_=0.0, double d_=0.0);
     void setTarget(float target_);
     void reset();
     void start();
