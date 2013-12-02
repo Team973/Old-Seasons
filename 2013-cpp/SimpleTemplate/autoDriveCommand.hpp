@@ -3,7 +3,7 @@
 
 class AutoDriveCommand
 {
-protected:
+private:
     float targetX;
     float targetY;
     bool backward;
@@ -32,9 +32,9 @@ protected:
 
     double PI;
 
-    PID *drivePID;
-    PID *rotatePID;
-    PID *anglePID;
+    PID* drivePID;
+    PID* rotatePID;
+    PID* anglePID;
 public:
     AutoDriveCommand(float targetX_, float targetY_, bool backward_=false, float drivePercision_=6, float turnPercision_=5, float driveCap_=0.5, float turnCap_=0.7, float arcCap_=0.3);
     void resetDrive();
