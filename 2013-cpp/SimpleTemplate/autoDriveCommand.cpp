@@ -1,6 +1,5 @@
 #include "WPILib.h"
 #include "AutoDriveCommand.hpp"
-#include "pid.hpp"
 #include <math.h>
 
 AutoDriveCommand::AutoDriveCommand(float targetX_,float targetY_,bool backward_,float drivePercision_,float turnPercision_,float driveCap_,float turnCap_,float arcCap_)
