@@ -17,8 +17,10 @@ private:
 
     float output;
     float prevErr;
+    float err;
+    float derivative;
 
-    Timer timer;
+    Timer* timer;
 public:
     PID(double p_=0.0, double i_=0.0, double d_=0.0);
     void setTarget(float target_);

@@ -34,18 +34,18 @@ void PID::reset()
     integral = 0;
     output = 0;
     prevErr = 0;
-    timer.Reset();
+    timer->Reset();
 }
 
 void PID::start()
 {
-    timer.Start();
-    timer.Reset();
+    timer->Start();
+    timer->Reset();
 }
 
 void PID::stop()
 {
-    timer.Stop();
+    timer->Stop();
 }
 
 void PID::setICap(float icap_)
@@ -56,7 +56,7 @@ void PID::setICap(float icap_)
 void PID::setBounds(float min_, float max_)
 {
     min = min_;
-    max - max_;
+    max = max_;
 }
 
 float PID::update(float actual)
@@ -64,7 +64,7 @@ float PID::update(float actual)
     err = target - actual;
 
     // Calculate integral
-    integral = integral + err * timer.Get();
+    integral = integral + err * timer->Get();
     iterm = i * integral;
     if (icap)
     {
@@ -79,7 +79,7 @@ float PID::update(float actual)
     }
 
     // Calculate derivative
-    derivative = (err - prevErr) / timer.Get();
+    derivative = (err - prevErr) / timer->Get();
 
     output = (p * err) + iterm + (d * derivative);
     prevErr = err;
