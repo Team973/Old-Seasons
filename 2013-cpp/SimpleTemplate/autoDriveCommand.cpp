@@ -2,8 +2,10 @@
 #include "AutoDriveCommand.hpp"
 #include <math.h>
 
-AutoDriveCommand::AutoDriveCommand(float targetX_,float targetY_,bool backward_,float drivePercision_,float turnPercision_,float driveCap_,float turnCap_,float arcCap_)
+AutoDriveCommand::AutoDriveCommand(float targetX_,float targetY_,bool backward_,double timeout_,float drivePercision_,float turnPercision_,float driveCap_,float turnCap_,float arcCap_)
 {
+
+    setTimeout(timeout_);
 
     targetX = targetX_;
     targetY = targetY_;
@@ -93,6 +95,14 @@ void AutoDriveCommand::storeDriveCalculations()
     prevY = currY;
 }
 
+bool AutoDriveCommand::Init()
+{
+    resetDrive();
+    timer->Start();
+    timer->Reset();
+    return true;
+}
+
 bool AutoDriveCommand::Run()
 {
     if (!drivePercision) { drivePercision = 6;} // inches
@@ -150,12 +160,5 @@ bool AutoDriveCommand::Run()
 
     storeDriveCalculations();
 
-    if (fabs(angleError) > turnPercision)
-    {
-        return fabs(robotLinearError) < drivePercision;
-    }
-    else
-    {
-        return false;
-    }
+    return (timer->Get() == timeout) || ((fabs(robotLinearError) < drivePercision) && (fabs(angleError) > turnPercision));
 }

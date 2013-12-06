@@ -1,7 +1,8 @@
 #include "WPILib.h"
 #include "pid.hpp"
+#include "autoCommand.hpp"
 
-class AutoDriveCommand
+class AutoDriveCommand : public AutoCommand
 {
 private:
     float targetX;
@@ -36,9 +37,10 @@ private:
     PID* rotatePID;
     PID* anglePID;
 public:
-    AutoDriveCommand(float targetX_, float targetY_, bool backward_=false, float drivePercision_=6, float turnPercision_=5, float driveCap_=0.5, float turnCap_=0.7, float arcCap_=0.3);
+    AutoDriveCommand(float targetX_, float targetY_, bool backward_=false, double timeout_ = 0.0, float drivePercision_=6, float turnPercision_=5, float driveCap_=0.5, float turnCap_=0.7, float arcCap_=0.3);
     void resetDrive();
     void calculateDrive();
     void storeDriveCalculations();
+    bool Init();
     bool Run();
 };
