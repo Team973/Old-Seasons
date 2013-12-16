@@ -10,11 +10,10 @@ void AutoCommand::setTimeout(double timeout_)
     timeout = timeout_;
 }
 
-bool AutoCommand::Init()
+void AutoCommand::Init()
 {
     timer->Start();
     timer->Reset();
-    return true;
 }
 
 bool AutoCommand::Run()

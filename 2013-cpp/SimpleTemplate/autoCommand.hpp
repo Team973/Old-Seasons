@@ -4,10 +4,12 @@ class AutoCommand
 {
 public:
     AutoCommand();
-    bool Init();
-    bool Run();
+    virtual void Init();
+    virtual bool Run();
     void setTimeout(double timeout_);
 
     double timeout;
     Timer* timer;
+
+    virtual ~AutoCommand();
 };
