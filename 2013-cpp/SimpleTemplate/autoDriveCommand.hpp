@@ -41,6 +41,6 @@ public:
     void resetDrive();
     void calculateDrive();
     void storeDriveCalculations();
-    bool Init();
-    bool Run();
+    virtual void Init();
+    virtual bool Run();
 };

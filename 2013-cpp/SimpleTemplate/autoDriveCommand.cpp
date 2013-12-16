@@ -95,12 +95,11 @@ void AutoDriveCommand::storeDriveCalculations()
     prevY = currY;
 }
 
-bool AutoDriveCommand::Init()
+void AutoDriveCommand::Init()
 {
     resetDrive();
     timer->Start();
     timer->Reset();
-    return true;
 }
 
 bool AutoDriveCommand::Run()
