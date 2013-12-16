@@ -237,6 +237,55 @@ void Drive::CheesyDrive(double throttle, double wheel, bool highGear, bool quick
   setHighGear(highGear);
 }
 
+void mecanumDrive(float x, float y, float z)
+{
+    float theta = 0; // TODO(oliver): add in the actual gyro
+    x = y*sin(theta) + x*cos(theta);
+    float temp = y*cos(theta) - x*sin(theta);
+    y = temp;
+
+    float wheels[4];
+    wheels[0] = y + x + z;
+    wheels[1] = y - x - z;
+    wheels[2] = y - x + z;
+    wheels[3] = y + x - z;
+
+    float max = 0;
+    for (int i=1; i<3; i++)
+    {
+        if (fabs(wheels[i]) > max)
+        {
+            max = fabs(wheels[i]);
+        }
+
+        for (int j=1; j<3; j++)
+        {
+            if (fabs(wheels[j]) > max)
+            {
+                max = fabs(wheels[j]);
+            }
+        }
+    }
+
+    float FL = wheels[0];
+    float FR = wheels[1];
+    float BL = wheels[2];
+    float BR = wheels[3];
+
+    if (max > 1)
+    {
+        FL /= max;
+        FR /= max;
+        BL /= max;
+        BR /= max;
+    }
+
+    setFrontLeftDrive(FL);
+    setFrontRightDrive(FR);
+    setBackLeftDrive(BL);
+    setBackRightDrive(BR);
+}
+
 void Drive::update(double DriveX, double DriveY, bool Gear, bool quickTurn)
 {
     if ((isLowGear) && (isKickUp))
