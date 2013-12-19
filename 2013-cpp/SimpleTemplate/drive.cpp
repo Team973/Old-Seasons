@@ -1,6 +1,7 @@
 #include "WPILib.h"
 #include "drive.hpp"
 #include <math.h>
+#include <algorithm>
 
 Drive::Drive()
 {
@@ -239,38 +240,25 @@ void Drive::CheesyDrive(double throttle, double wheel, bool highGear, bool quick
 
 void mecanumDrive(float x, float y, float z)
 {
+    float max = 0.0;
     float theta = 0; // TODO(oliver): add in the actual gyro
     x = y*sin(theta) + x*cos(theta);
     float temp = y*cos(theta) - x*sin(theta);
     y = temp;
 
+    int numWheels = 4;
     float wheels[4];
     wheels[0] = y + x + z;
     wheels[1] = y - x - z;
     wheels[2] = y - x + z;
     wheels[3] = y + x - z;
 
-    float max = 0;
-    for (int i=1; i<3; i++)
-    {
-        if (fabs(wheels[i]) > max)
-        {
-            max = fabs(wheels[i]);
-        }
-
-        for (int j=1; j<3; j++)
-        {
-            if (fabs(wheels[j]) > max)
-            {
-                max = fabs(wheels[j]);
-            }
-        }
-    }
-
     float FL = wheels[0];
     float FR = wheels[1];
     float BL = wheels[2];
     float BR = wheels[3];
+
+    max = *std::max_element(wheels, wheels + numWheels);
 
     if (max > 1)
     {
@@ -280,10 +268,11 @@ void mecanumDrive(float x, float y, float z)
         BR /= max;
     }
 
-    setFrontLeftDrive(FL);
-    setFrontRightDrive(FR);
-    setBackLeftDrive(BL);
-    setBackRightDrive(BR);
+    frontLeftDrive->Set(0);
+    frontRightDrive->Set(0);
+    backLeftDrive->Set(0);
+    backRightDrive->Set(0);
+
 }
 
 void Drive::update(double DriveX, double DriveY, bool Gear, bool quickTurn)

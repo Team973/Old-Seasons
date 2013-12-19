@@ -22,16 +22,6 @@ private:
     void setFrontRightDrive(float speed);
     void setBackRightDrive(float speed);
 
-    // For Mecanum drive
-    /*
-    float FL;
-    float FR;
-    float Bl;
-    float BR;
-    */
-    float temp;
-    float theta;
-    float max;
 public:
     Drive();
     void setDriveMotors(float left, float right);
