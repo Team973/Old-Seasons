@@ -122,7 +122,7 @@ class OffseasonRobot : public SimpleRobot
                 {
                     myDrive->setHighGear(false);
                 }
-                myDrive->update(driveX, driveY, isHighGear, false);
+                myDrive->update(driveX, driveY, 0, isHighGear, false);
             }
 
             myShooter->update();
@@ -157,7 +157,7 @@ class OffseasonRobot : public SimpleRobot
             // The controls
 
             // Joystick 1
-            myDrive->update(stick1.GetRawAxis(3), stick1.GetY(), stick1.GetRawButton(6), stick1.GetRawButton(5));
+            myDrive->update(stick1.GetRawAxis(3), stick1.GetY(), stick1.GetX(), stick1.GetRawButton(6), stick1.GetRawButton(5));
             myDrive->setKickUp(stick1.GetRawButton(7));
             myDrive->setBackWheelsDown(stick1.GetRawButton(8));
             if (stick1.GetRawButton(1))
