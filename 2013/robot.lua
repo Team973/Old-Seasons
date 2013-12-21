@@ -309,9 +309,11 @@ controlMap =
             intake.goToStow(true)
         end,
 
+        --[[
         [9] = function()
             drive.setFollowerWheels(true)
         end,
+        --]]
 
         [10] = function()
             if prepareHang then
