@@ -172,7 +172,6 @@ class OffseasonRobot : public SimpleRobot
             if ((stick2.GetRawButton(2)) || (stick2.GetRawButton(5)))
                 myShooter->setShotAngle(true);
             myShooter->setRollerRunning(stick2.GetRawButton(5));
-            myShooter->setRollerManual(stick2.GetY());
             myShooter->setIndexer(stick2.GetRawButton(6));
             if (stick2.GetRawButton(8) == true)
                 myShooter->setFlywheelRunning(true);
