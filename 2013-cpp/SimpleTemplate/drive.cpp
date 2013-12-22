@@ -1,7 +1,6 @@
 #include "WPILib.h"
 #include "drive.hpp"
 #include <math.h>
-#include <algorithm>
 
 Drive::Drive()
 {
@@ -44,16 +43,6 @@ void Drive::setHighGear(bool g)
     }
 }
 
-float Drive::limit(float x)
-{
-    if (x > 1)
-        return 1;
-    else if (x < -1)
-        return -1;
-    else
-        return x;
-}
-
 void Drive::setDriveMotors(float left, float right)
 {
     if ((isKickUp) && (! isLowGear))
@@ -81,6 +70,48 @@ void Drive::setDriveMotors(float left, float right)
         backRightDrive->Set(limit(right));
     }
 
+}
+
+void Drive::setLeftDrive(float speed)
+{
+    frontLeftDrive->Set(-limit(speed));
+    backLeftDrive->Set(-limit(speed));
+}
+
+void Drive::setRightDrive(float speed)
+{
+    frontRightDrive->Set(limit(speed));
+    backRightDrive->Set(limit(speed));
+}
+
+void Drive::setFrontLeftDrive(float speed)
+{
+    frontLeftDrive->Set(speed);
+}
+
+void Drive::setBackLeftDrive(float speed)
+{
+    backLeftDrive->Set(speed);
+}
+
+void Drive::setFrontRightDrive(float speed)
+{
+    frontRightDrive->Set(speed);
+}
+
+void Drive::setBackRightDrive(float speed)
+{
+    backRightDrive->Set(speed);
+}
+
+float Drive::limit(float x)
+{
+    if (x > 1)
+        return 1;
+    else if (x < -1)
+        return -1;
+    else
+        return x;
 }
 
 void Drive::CheesyDrive(double throttle, double wheel, bool highGear, bool quickTurn) {
@@ -208,17 +239,17 @@ void Drive::CheesyDrive(double throttle, double wheel, bool highGear, bool quick
 
 void Drive::update(double DriveX, double DriveY, double DriveZ, bool Gear, bool quickTurn)
 {
-    double x = DriveX;
-    double y = DriveY;
-    double z = DriveZ;
     if ((isLowGear) && (isKickUp))
     {
-        //CheesyDrive(DriveY, (DriveX * 0), Gear, false);
+        CheesyDrive(DriveY, (DriveX * 0), Gear, false);
     }
     else
     {
-        //CheesyDrive(DriveY, DriveX, Gear, quickTurn);
+        CheesyDrive(DriveY, DriveX, Gear, quickTurn);
     }
+    double x = -DriveZ;
+    double y = -DriveY;
+    double z = DriveX;
 
     double theta = 0.0;
     double temp = y*cos(theta) - x*sin(theta);
