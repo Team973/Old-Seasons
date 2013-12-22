@@ -1,6 +1,7 @@
 #include "WPILib.h"
 #include "drive.hpp"
 #include <math.h>
+#include <algorithm>
 
 Drive::Drive()
 {
@@ -70,38 +71,6 @@ void Drive::setDriveMotors(float left, float right)
         backRightDrive->Set(limit(right));
     }
 
-}
-
-void Drive::setLeftDrive(float speed)
-{
-    frontLeftDrive->Set(-limit(speed));
-    backLeftDrive->Set(-limit(speed));
-}
-
-void Drive::setRightDrive(float speed)
-{
-    frontRightDrive->Set(limit(speed));
-    backRightDrive->Set(limit(speed));
-}
-
-void Drive::setFrontLeftDrive(float speed)
-{
-    frontLeftDrive->Set(speed);
-}
-
-void Drive::setBackLeftDrive(float speed)
-{
-    backLeftDrive->Set(speed);
-}
-
-void Drive::setFrontRightDrive(float speed)
-{
-    frontRightDrive->Set(speed);
-}
-
-void Drive::setBackRightDrive(float speed)
-{
-    backRightDrive->Set(speed);
 }
 
 float Drive::limit(float x)
@@ -237,19 +206,100 @@ void Drive::CheesyDrive(double throttle, double wheel, bool highGear, bool quick
   setHighGear(highGear);
 }
 
+void mecanumDrive(double x, double y, double z)
+{
+    double theta = 0.0;
+    double temp = y*cos(theta) - x*sin(theta);
+    x = y*sin(theta) + x*cos(theta);
+    y = temp;
+
+    int numWheels = 3;
+    float wheels[4];
+    wheels[0] = y + x + z;
+    wheels[1] = y - x - z;
+    wheels[2] = y - x + z;
+    wheels[3] = y + x - z;
+
+    float max = 0.0;
+    for (int i=0; i <= numWheels; i++)
+    {
+        max = fabs(wheels[i]);
+        for (int j=0; j <= numWheels; j++)
+        {
+            if (fabs(wheels[j]) > max)
+            {
+                max = fabs(wheels[j]);
+            }
+        }
+    }
+
+    if (max > 1)
+    {
+        wheels[0] /= max;
+        wheels[1] /= max;
+        wheels[2] /= max;
+        wheels[3] /= max;
+    }
+
+    /*
+    frontLeftDrive->Set(wheels[0]);
+    frontRightDrive->Set(wheels[1]);
+    backLeftDrive->Set(wheels[2]);
+    backRightDrive->Set(wheels[3]);
+    */
+}
+/*
+void mecanumDrive(double x, double y, double z)
+{
+    float max = 0.0;
+    float theta = 0; // TODO(oliver): add in the actual gyro
+    x = y*sin(theta) + x*cos(theta);
+    float temp = y*cos(theta) - x*sin(theta);
+    y = temp;
+
+    int numWheels = 4;
+    float *wheels = new float[numWheels];
+    wheels[0] = y + x + z;
+    wheels[1] = y - x - z;
+    wheels[2] = y - x + z;
+    wheels[3] = y + x - z;
+
+    float FL = wheels[0];
+    float FR = wheels[1];
+    float BL = wheels[2];
+    float BR = wheels[3];
+
+    max = *std::max_element(wheels, wheels + numWheels);
+
+    if (max > 1)
+    {
+        FL /= max;
+        FR /= max;
+        BL /= max;
+        BR /= max;
+    }
+
+    frontLeftDrive->Set(FL);
+    frontRightDrive->Set(FR);
+    backLeftDrive->Set(BL);
+    backRightDrive->Set(BR);
+
+}
+*/
+
 void Drive::update(double DriveX, double DriveY, double DriveZ, bool Gear, bool quickTurn)
 {
+    double x = DriveX;
+    double y = DriveY;
+    double z = DriveZ;
     if ((isLowGear) && (isKickUp))
     {
-        CheesyDrive(DriveY, (DriveX * 0), Gear, false);
+        //CheesyDrive(DriveY, (DriveX * 0), Gear, false);
     }
     else
     {
-        CheesyDrive(DriveY, DriveX, Gear, quickTurn);
+        //CheesyDrive(DriveY, DriveX, Gear, quickTurn);
     }
-    double x = -DriveZ;
-    double y = -DriveY;
-    double z = DriveX;
 
     double theta = 0.0;
     double temp = y*cos(theta) - x*sin(theta);

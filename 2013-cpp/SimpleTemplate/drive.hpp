@@ -8,6 +8,7 @@ private:
     Talon *frontRightDrive;
     Talon *backLeftDrive;
     Talon *backRightDrive;
+
     Solenoid *lowGear;
     Solenoid *kickUp;
     float oldWheel;
@@ -15,8 +16,14 @@ private:
     float quickStopAccumulator;
     float limit(float x);
     void CheesyDrive(double throttle, double wheel, bool highGear, bool quickTurn);
+    void mecanumDrive(double x, double y, double z);
     bool isLowGear;
     bool isKickUp;
+    void setFrontLeftDrive(float speed);
+    void setBackLeftDrive(float speed);
+    void setFrontRightDrive(float speed);
+    void setBackRightDrive(float speed);
+
 public:
     Drive();
     void setDriveMotors(float left, float right);
@@ -26,8 +33,5 @@ public:
     void setKickUp(bool k);
     void setBackWheelsDown(bool d);
     void setHighGear(bool g);
-    void setFrontLeftDrive(float speed);
-    void setBackLeftDrive(float speed);
-    void setFrontRightDrive(float speed);
-    void setBackRightDrive(float speed);
+
 };
