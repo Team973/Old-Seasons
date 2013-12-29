@@ -2,6 +2,9 @@
 #include <vector>
 #include "autoCommand.hpp"
 
+#ifndef SEQUENTIALCOMMAND_H
+#define SEQUENTIALCOMMAND_H
+
 class SequentialCommand : public AutoCommand
 {
 public:
@@ -13,3 +16,5 @@ public:
     std::vector<AutoCommand*> commands;
     unsigned int commandRunning;
 };
+
+#endif

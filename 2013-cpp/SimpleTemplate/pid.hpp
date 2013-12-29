@@ -1,5 +1,8 @@
 #include "WPILib.h"
 
+#ifndef PID_H
+#define PID_H
+
 class PID
 {
 private:
@@ -31,3 +34,5 @@ public:
     void setBounds(float min_, float max_);
     float update(float actual);
 };
+
+#endif

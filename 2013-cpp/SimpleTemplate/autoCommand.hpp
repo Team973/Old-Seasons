@@ -1,5 +1,8 @@
 #include "WPILib.h"
 
+#ifndef AUTOCOMMAND_H
+#define AUTOCOMMAND_H
+
 class AutoCommand
 {
 public:
@@ -13,3 +16,5 @@ public:
 
     virtual ~AutoCommand() {};
 };
+
+#endif
