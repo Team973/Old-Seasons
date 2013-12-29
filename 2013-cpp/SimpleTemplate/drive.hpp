@@ -1,5 +1,8 @@
 #include "WPILib.h"
 
+#ifndef DRIVE_H
+#define DRIVE_H
+
 class Drive
 {
 protected:
@@ -35,3 +38,5 @@ public:
     void setHighGear(bool g);
 
 };
+
+#endif

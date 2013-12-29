@@ -2,6 +2,9 @@
 #include "pid.hpp"
 #include "autoCommand.hpp"
 
+#ifndef AUTODRIVECOMMAND_H
+#define AUTODRIVECOMMAND_H
+
 class AutoDriveCommand : public AutoCommand
 {
 private:
@@ -44,3 +47,5 @@ public:
     virtual void Init();
     virtual bool Run();
 };
+
+#endif

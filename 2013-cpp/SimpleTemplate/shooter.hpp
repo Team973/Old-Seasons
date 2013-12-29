@@ -1,5 +1,8 @@
 #include "WPILib.h"
 
+#ifndef SHOOTER_H
+#define SHOOTER_H
+
 class Shooter
 {
 protected:
@@ -29,3 +32,5 @@ public:
     void update();
     void dashboardUpdate();
 };
+
+#endif
