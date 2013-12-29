@@ -1,3 +1,4 @@
+#include "WPILib.h"
 #include "autoCommand.hpp"
 
 AutoCommand::AutoCommand()

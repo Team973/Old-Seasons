@@ -11,5 +11,5 @@ public:
     double timeout;
     Timer* timer;
 
-    virtual ~AutoCommand();
+    virtual ~AutoCommand() {};
 };
