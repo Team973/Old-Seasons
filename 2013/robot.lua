@@ -438,7 +438,6 @@ controlMap =
             end
         end,
         
-        -- TODO change back to button 6 when told to
         [11] = {down=shooter.fire, up=function() shooter.fire(false) end},
 
         ["haty"] = function(axis)
@@ -498,8 +497,4 @@ else
     enableWatchdog = function() end
     disableWatchdog = function() end
 end
-
--- Only create the gyro at the end, because it blocks the entire thread.
---TODO(rlight): Add this back in when we have gyro
---drive.initGyro()
 -- vim: ft=lua et ts=4 sts=4 sw=4
