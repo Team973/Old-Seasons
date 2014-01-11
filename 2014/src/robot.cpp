@@ -21,7 +21,9 @@ Robot::Robot()
     gyro = new GyroManager();
 
     leftDriveEncoder = new Encoder(1);
+    leftDriveEncoder->Start();
     rightDriveEncoder = new Encoder(2);
+    rightDriveEncoder->Start();
 
     compressor = new Compressor(14,8);
 

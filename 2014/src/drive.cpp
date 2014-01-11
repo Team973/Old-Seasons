@@ -23,7 +23,8 @@ float Drive::limit(float x)
 
 void Drive::setDriveMotors(float left, float right)
 {
-    //TODO(oliver): Add the drivemotors at some point
+    leftDrive->Set(lefft);
+    rightDrive->Set(right);
 }
 
 void Drive::CheesyDrive(double throttle, double wheel, bool highGear, bool quickTurn) {
