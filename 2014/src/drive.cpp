@@ -2,13 +2,13 @@
 #include "drive.hpp"
 #include <math.h>
 
-Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Encoder *leftEncoder_, Encoder *rightEncoder)
+Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Encoder *leftEncoder_, Encoder *rightEncoder_)
 {
     leftDrive = leftDrive_;
     rightDrive = rightDrive_;
 
     leftEncoder = leftEncoder_;
-    rightEncoder = rightEncder_;
+    rightEncoder = rightEncoder_;
 }
 
 float Drive::limit(float x)
@@ -23,7 +23,7 @@ float Drive::limit(float x)
 
 void Drive::setDriveMotors(float left, float right)
 {
-    leftDrive->Set(lefft);
+    leftDrive->Set(left);
     rightDrive->Set(right);
 }
 
