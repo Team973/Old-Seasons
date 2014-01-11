@@ -1,12 +1,15 @@
 #include "WPILib.h"
 #include "drive.hpp"
-#include "gyro/GyroManager.h"
+//#include "gyro/GyroManager.h"
 #include "robot.hpp"
 
 #include "NetworkTables/NetworkTable.h"
 
 Robot::Robot()
 {
+    this->SetPeriod(0);
+    motor = new Talon(8);
+    /*
     leftDriveMotors = new Talon(1);
     rightDriveMotors = new Talon(2);
     armMotor = new Talon(3);
@@ -18,7 +21,7 @@ Robot::Robot()
     clawSolenoid = new Solenoid(3);
     winchReleaseSolenoid = new Solenoid(4);
 
-    gyro = new GyroManager();
+    //gyro = new GyroManager();
 
     leftDriveEncoder = new Encoder(1, 2);
     leftDriveEncoder->Start();
@@ -29,12 +32,15 @@ Robot::Robot()
 
     drive = new Drive(leftDriveMotors, rightDriveMotors, leftDriveEncoder, rightDriveEncoder);
 
-    SmartDashboard::init();
+    GetWatchdog().SetExpiration(100);
+    GetWatchdog().SetEnabled(true);
+    */
 }
 
 void Robot::RobotInit()
 {
-    compressor->Start();
+    //compressor->Start();
+    //SmartDashboard::init();
 }
 
 void Robot::DisabledInit()
@@ -43,9 +49,7 @@ void Robot::DisabledInit()
 
 void Robot::DisabledPeriodic()
 {
-    gyro->update();
-
-    SmartDashboard::PutNumber("Gyro RAW angle: ", gyro->getAngle());
+    //GetWatchdog().Feed();
 }
 
 void Robot::AutonomousInit()
@@ -54,6 +58,7 @@ void Robot::AutonomousInit()
 
 void Robot::AutonomousPeriodic()
 {
+    //GetWatchdog().Feed();
 }
 
 void Robot::TeleopInit()
@@ -62,6 +67,10 @@ void Robot::TeleopInit()
 
 void Robot::TeleopPeriodic()
 {
+    //GetWatchdog().Feed();
+    float counter = 0;
+    SmartDashboard::PutNumber("Test call: ", counter++);
+    motor->Set(.3);
 }
 
 void Robot::TestInit()
@@ -70,6 +79,20 @@ void Robot::TestInit()
 
 void Robot::TestPeriodic()
 {
+    //GetWatchdog().Feed();
 }
+
+/*
+void Robot::OperatorControl()
+{
+    float counter = 0;
+    while (IsOperatorControl() && IsEnabled())
+    {
+
+        SmartDashboard::PutNumber("Test call: ", counter++);
+        Wait(0.10);
+    }
+}
+*/
 
 START_ROBOT_CLASS(Robot);
