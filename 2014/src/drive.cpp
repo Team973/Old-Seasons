@@ -2,8 +2,13 @@
 #include "drive.hpp"
 #include <math.h>
 
-Drive::Drive()
+Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Encoder *leftEncoder_, Encoder *rightEncoder)
 {
+    leftDrive = leftDrive_;
+    rightDrive = rightDrive_;
+
+    leftEncoder = leftEncoder_;
+    rightEncoder = rightEncder_;
 }
 
 float Drive::limit(float x)
