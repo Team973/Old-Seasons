@@ -1,7 +1,11 @@
 #include "WPILib.h"
+#include "drive.hpp"
+#include "gyro/GyroManager.h"
 
 #ifndef ROBOT_H
 #define ROBOT_H
+
+class GyroManager;
 
 //XXX: rename class when we decide on a robot name
 class Robot : public IterativeRobot
@@ -19,6 +23,25 @@ public:
     virtual void TestPeriodic();
 
 private:
+    Talon *leftDriveMotors;
+    Talon *rightDriveMotors;
+    Talon *armMotor;
+    Talon *winchMotor;
+    Talon *intakeMotor;
+
+    GyroManager *gyro;
+
+    Encoder *leftDriveEncoder;
+    Encoder *rightDriveEncoder;
+
+    Solenoid *shiftingSolenoid;
+    Solenoid *kickUpSolenoid;
+    Solenoid *clawSolenoid;
+    Solenoid *winchReleaseSolenoid;
+
+    Compressor *compressor;
+
+    Drive *drive;
 };
 
 #endif
