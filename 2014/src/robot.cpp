@@ -7,9 +7,9 @@
 
 Robot::Robot()
 {
-    this->SetPeriod(0);
-    motor = new Talon(8);
-    /*
+    TELEOP_LOOP_LAG = 0.005;
+    AUTO_LOOP_LAG = 0.005 * 1.50;
+
     leftDriveMotors = new Talon(1);
     rightDriveMotors = new Talon(2);
     armMotor = new Talon(3);
@@ -21,78 +21,48 @@ Robot::Robot()
     clawSolenoid = new Solenoid(3);
     winchReleaseSolenoid = new Solenoid(4);
 
-    //gyro = new GyroManager();
 
     leftDriveEncoder = new Encoder(1, 2);
     leftDriveEncoder->Start();
     rightDriveEncoder = new Encoder(3, 4);
     rightDriveEncoder->Start();
 
+    armSensorA = new Encoder(5, 6);
+    armSensorA->Start();
+    armSensorB = new Encoder(7, 8);
+    armSensorB->Start();
+    armSensorC = new Encoder(9, 10);
+    armSensorC->Start();
+
     compressor = new Compressor(14,8);
 
     drive = new Drive(leftDriveMotors, rightDriveMotors, leftDriveEncoder, rightDriveEncoder);
 
-    GetWatchdog().SetExpiration(100);
-    GetWatchdog().SetEnabled(true);
-    */
+    SmartDashboard::init();
 }
 
-void Robot::RobotInit()
-{
-    //compressor->Start();
-    //SmartDashboard::init();
-}
-
-void Robot::DisabledInit()
+void Robot::dashboardUpdate()
 {
 }
 
-void Robot::DisabledPeriodic()
+void Robot::Autonomous()
 {
-    //GetWatchdog().Feed();
-}
-
-void Robot::AutonomousInit()
-{
-}
-
-void Robot::AutonomousPeriodic()
-{
-    //GetWatchdog().Feed();
-}
-
-void Robot::TeleopInit()
-{
-}
-
-void Robot::TeleopPeriodic()
-{
-    //GetWatchdog().Feed();
-    float counter = 0;
-    SmartDashboard::PutNumber("Test call: ", counter++);
-    motor->Set(.3);
-}
-
-void Robot::TestInit()
-{
-}
-
-void Robot::TestPeriodic()
-{
-    //GetWatchdog().Feed();
-}
-
-/*
-void Robot::OperatorControl()
-{
-    float counter = 0;
-    while (IsOperatorControl() && IsEnabled())
+    while (IsAutonomous() && IsEnabled())
     {
-
-        SmartDashboard::PutNumber("Test call: ", counter++);
-        Wait(0.10);
+        Wait(AUTO_LOOP_LAG);
     }
 }
-*/
+
+void Robot::OperatorControl()
+{
+    while (IsOperatorControl() && IsEnabled())
+    {
+        Wait(TELEOP_LOOP_LAG);
+    }
+}
+
+void Robot::Test()
+{
+}
 
 START_ROBOT_CLASS(Robot);
