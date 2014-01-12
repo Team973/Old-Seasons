@@ -1,5 +1,8 @@
 #include "WPILib.h"
 #include "drive.hpp"
+#include "arm.hpp"
+#include "shooter.hpp"
+#include "intake.hpp"
 //#include "gyro/GyroManager.h"
 #include "robot.hpp"
 
@@ -37,6 +40,11 @@ Robot::Robot()
     compressor = new Compressor(14,8);
 
     drive = new Drive(leftDriveMotors, rightDriveMotors, leftDriveEncoder, rightDriveEncoder);
+    arm = new Arm(armMotor, armSensorA, armSensorB, armSensorC);
+    shooter = new Shooter(winchMotor, winchReleaseSolenoid);
+    intake = new Intake(intakeMotor, clawSolenoid);
+
+    crapStick = new Joystick(1);
 
     SmartDashboard::init();
 }
@@ -57,6 +65,22 @@ void Robot::OperatorControl()
 {
     while (IsOperatorControl() && IsEnabled())
     {
+        //crap controls
+        float driveX = crapStick->GetRawAxis(3);
+        float driveY = crapStick->GetY();
+        bool highGear = crapStick->GetRawButton(6);
+        bool quickTurn = crapStick->GetRawButton(5);
+
+        intake->manualIN(crapStick->GetRawButton(7));
+        intake->manualOUT(crapStick->GetRawButton(8));
+
+        // Updates
+        drive->update(driveX, driveY, highGear, quickTurn);
+        arm->update();
+        shooter->update();
+        intake->update();
+
+        // wait for the ds
         Wait(TELEOP_LOOP_LAG);
     }
 }
