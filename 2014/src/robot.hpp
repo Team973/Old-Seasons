@@ -28,6 +28,10 @@ private:
     Encoder *leftDriveEncoder;
     Encoder *rightDriveEncoder;
 
+    Encoder *armSensorA;
+    Encoder *armSensorB;
+    Encoder *armSensorC;
+
     Solenoid *shiftingSolenoid;
     Solenoid *kickUpSolenoid;
     Solenoid *clawSolenoid;
@@ -36,6 +40,11 @@ private:
     Compressor *compressor;
 
     Drive *drive;
+    Arm *arm;
+    Shooter *shooter;
+    Intake *intake;
+
+    Joystick *crapStick;
 
     float TELEOP_LOOP_LAG;
     float AUTO_LOOP_LAG;
