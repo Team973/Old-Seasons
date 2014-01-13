@@ -2,7 +2,7 @@
 #include "drive.hpp"
 #include <math.h>
 
-Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Encoder *leftEncoder_, Encoder *rightEncoder_)
+Drive::Drive(Victor *leftDrive_, Victor *rightDrive_, Encoder *leftEncoder_, Encoder *rightEncoder_)
 {
     leftDrive = leftDrive_;
     rightDrive = rightDrive_;
@@ -23,8 +23,8 @@ float Drive::limit(float x)
 
 void Drive::setDriveMotors(float left, float right)
 {
-    leftDrive->Set(left);
-    rightDrive->Set(right);
+    leftDrive->Set(limit(left));
+    rightDrive->Set(-limit(right));
 }
 
 void Drive::CheesyDrive(double throttle, double wheel, bool highGear, bool quickTurn) {
@@ -42,9 +42,7 @@ void Drive::CheesyDrive(double throttle, double wheel, bool highGear, bool quick
   float quickStopLinearPowerThreshold = 0.2;
   float quickStopStickScalar = 5.0;
 
-  float quickStopAccumulator;
   double wheelNonLinearity;
-  double oldWheel;
 
   double negInertia = wheel - oldWheel;
   oldWheel = wheel;

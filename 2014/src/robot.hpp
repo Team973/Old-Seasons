@@ -16,12 +16,13 @@ public:
 
 private:
     void dashboardUpdate();
+    float deadband(float axis, float threshold);
 
-    Talon *leftDriveMotors;
-    Talon *rightDriveMotors;
+    Victor *leftDriveMotors;
+    Victor *rightDriveMotors;
     Talon *armMotor;
     Talon *winchMotor;
-    Talon *intakeMotor;
+    Victor *intakeMotor;
 
     //GyroManager *gyro;
 

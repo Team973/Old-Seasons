@@ -13,11 +13,11 @@ Robot::Robot()
     TELEOP_LOOP_LAG = 0.005;
     AUTO_LOOP_LAG = 0.005 * 1.50;
 
-    leftDriveMotors = new Talon(1);
-    rightDriveMotors = new Talon(2);
-    armMotor = new Talon(3);
+    leftDriveMotors = new Victor(1);
+    rightDriveMotors = new Victor(2);
+    armMotor = new Talon(5);
     winchMotor = new Talon(4);
-    intakeMotor = new Talon(5);
+    intakeMotor = new Victor(3);
 
     shiftingSolenoid = new Solenoid(1);
     kickUpSolenoid = new Solenoid(2);
@@ -37,7 +37,8 @@ Robot::Robot()
     armSensorC = new Encoder(9, 10);
     armSensorC->Start();
 
-    compressor = new Compressor(14,8);
+    //compressor = new Compressor(14,8);
+    //compressor->Start();
 
     drive = new Drive(leftDriveMotors, rightDriveMotors, leftDriveEncoder, rightDriveEncoder);
     arm = new Arm(armMotor, armSensorA, armSensorB, armSensorC);
@@ -61,27 +62,30 @@ void Robot::Autonomous()
     }
 }
 
+float Robot::deadband(float axis, float threshold)
+{
+    if ((axis < threshold) && (axis > -threshold))
+        return 0.0;
+    else
+        return axis;
+}
+
 void Robot::OperatorControl()
 {
-    while (IsOperatorControl() && IsEnabled())
+    while (IsOperatorControl())
     {
         //crap controls
-        float driveX = crapStick->GetRawAxis(3);
-        float driveY = crapStick->GetY();
-        bool highGear = crapStick->GetRawButton(6);
-        bool quickTurn = crapStick->GetRawButton(5);
-
         intake->manualIN(crapStick->GetRawButton(7));
         intake->manualOUT(crapStick->GetRawButton(8));
 
         // Updates
-        drive->update(driveX, driveY, highGear, quickTurn);
+        drive->update(deadband(-crapStick->GetRawAxis(3), 0.1), deadband(crapStick->GetY(), 0.1), crapStick->GetRawButton(6), crapStick->GetRawButton(5));
         arm->update();
         shooter->update();
         intake->update();
 
         // wait for the ds
-        Wait(TELEOP_LOOP_LAG);
+        //Wait(TELEOP_LOOP_LAG);
     }
 }
 
