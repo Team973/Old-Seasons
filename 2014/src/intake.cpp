@@ -1,30 +1,39 @@
 #include "WPILib.h"
 #include "intake.hpp"
 
-Intake::Intake(Talon *motor_, Solenoid *openClaw_)
+Intake::Intake(Victor *motor_, Solenoid *openClaw_)
 {
     motor = motor_;
     openClaw = openClaw_;
 }
 
-void Intake::manualIN(bool in)
+float Intake::limit(float x)
 {
-   if (in)
-       motor->Set(1);
-   else
-       motor->Set(0);
+    if (x > 1)
+        return 1;
+    else if (x < -1)
+        return -1;
+    else
+        return x;
 }
 
-void Intake::manualOUT(bool out)
+void Intake::manualIN(bool in)
 {
-    if (out)
-        motor->Set(-1);
-    else
-        motor->Set(0);
+    intaking = in;
+}
+ void Intake::manualOUT(bool out)
+{
+    outaking = out;
 }
 
 void Intake::update()
 {
+    if (intaking)
+        motor->Set(1);
+    else if (outaking)
+        motor->Set(-1);
+    else
+        motor->Set(0);
 }
 
 void Intake::dashboardUpdate()

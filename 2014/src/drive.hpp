@@ -10,15 +10,19 @@ private:
     void setDriveMotors(float left, float right);
     void CheesyDrive(double throttle, double wheel, bool highGear, bool quickTurn);
 
+    float oldWheel;
+    float negInertiaAccumulator;
+    float quickStopAccumulator;
+
     // Talons
-    Talon *leftDrive;
-    Talon *rightDrive;
+    Victor *leftDrive;
+    Victor *rightDrive;
 
     // Encoders
     Encoder *leftEncoder;
     Encoder *rightEncoder;
 public:
-    Drive(Talon *leftDrive_, Talon *rightDrive_, Encoder *leftEncoder_, Encoder *rightEncoder_);
+    Drive(Victor *leftDrive_, Victor *rightDrive_, Encoder *leftEncoder_, Encoder *rightEncoder_);
     void update(double DriveX, double DriveY, bool gear, bool quickTurn);
 };
 

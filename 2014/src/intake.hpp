@@ -6,14 +6,18 @@
 class Intake
 {
 public:
-    Intake(Talon *motor_, Solenoid *openClaw_);
+    Intake(Victor *motor_, Solenoid *openClaw_);
     void update();
     void dashboardUpdate();
-
     void manualIN(bool in);
     void manualOUT(bool out);
+
 private:
-    Talon *motor;
+    float limit(float x);
+
+    bool intaking;
+    bool outaking;
+    Victor *motor;
     Solenoid *openClaw;
 };
 
