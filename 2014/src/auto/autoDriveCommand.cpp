@@ -1,11 +1,14 @@
 #include "WPILib.h"
 #include "autoDriveCommand.hpp"
+#include "../drive.hpp"
 #include <math.h>
 
-AutoDriveCommand::AutoDriveCommand(float targetX_,float targetY_,bool backward_,double timeout_,float drivePercision_,float turnPercision_,float driveCap_,float turnCap_,float arcCap_)
+AutoDriveCommand::AutoDriveCommand(Drive* drive_, float targetX_,float targetY_,bool backward_,double timeout_,float drivePercision_,float turnPercision_,float driveCap_,float turnCap_,float arcCap_)
 {
 
     setTimeout(timeout_);
+
+    drive = drive_;
 
     targetX = targetX_;
     targetY = targetY_;
@@ -16,24 +19,6 @@ AutoDriveCommand::AutoDriveCommand(float targetX_,float targetY_,bool backward_,
     turnCap = turnCap_;
     arcCap = arcCap_;
 
-    theta = 0;
-    magnitude = 0;
-    deltaX = 0;
-    deltaY = 0;
-
-    prevTheta = 0;
-    currTheta = 0;
-    prevGyro = 0;
-    currGyro = 0;
-    prevLeft = 0;
-    currLeft = 0;
-    prevRight = 0;
-    currRight = 0;
-    prevX = 0;
-    currX = 0;
-    prevY = 0;
-    currY = 0;
-
     drivePID = new PID(.03, 0.001);
     drivePID->setICap(.3);
     anglePID = new PID(.1);
@@ -42,12 +27,10 @@ AutoDriveCommand::AutoDriveCommand(float targetX_,float targetY_,bool backward_,
 
     PI = 3.14159;
 
-    resetDrive();
 }
 
 void AutoDriveCommand::resetDrive()
 {
-    //TODO(oliver): add the resets/calibrations for encoders + gyros
     prevTheta = 0;
     currTheta = 0;
     prevGyro = 0;
@@ -75,9 +58,8 @@ void AutoDriveCommand::calculateDrive()
     currGyro = 0; //TODO(oliver): add the actual gyro
     currTheta = prevTheta + (currGyro - prevGyro);
     theta = (currTheta + prevTheta) / 2;
-    //TODO(oliver): add the actual encoders
-    currLeft =  0;
-    currRight = 0;
+    currLeft =  drive->getLeftDistance();
+    currRight = drive->getRightDistance();
     magnitude = (currLeft + currRight - prevLeft - prevRight) / 2;
     deltaX = -magnitude * sin(theta / 180 * PI);
     deltaY = magnitude * cos(theta / 180 * PI);
@@ -155,7 +137,7 @@ bool AutoDriveCommand::Run()
         driveInput = -driveInput;
     }
 
-    //TODO(oliver): add drive update call here
+    drive->update(driveInput, turnInput, true, false);
 
     storeDriveCalculations();
 
