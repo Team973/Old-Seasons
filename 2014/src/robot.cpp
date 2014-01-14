@@ -37,15 +37,16 @@ Robot::Robot()
     armSensorC = new Encoder(9, 10);
     armSensorC->Start();
 
-    //compressor = new Compressor(14,8);
-    //compressor->Start();
+    compressor = new Compressor(14,8);
+    compressor->Start();
 
     drive = new Drive(leftDriveMotors, rightDriveMotors, leftDriveEncoder, rightDriveEncoder);
     arm = new Arm(armMotor, armSensorA, armSensorB, armSensorC);
     shooter = new Shooter(winchMotor, winchReleaseSolenoid);
     intake = new Intake(intakeMotor, clawSolenoid);
 
-    crapStick = new Joystick(1);
+    stick1 = new Joystick(1);
+    stick2 = new Joystick(2);
 
     SmartDashboard::init();
 }
@@ -70,16 +71,126 @@ float Robot::deadband(float axis, float threshold)
         return axis;
 }
 
+void Robot::JoyStick1() // Driver
+{
+    // [y]
+    DriveY = deadband(stick1->GetY(), 0.1);
+
+    // [x]
+    //stick1->GetX();
+
+    // [ry]
+    //stick1->GetRawAxis(3);
+
+    // [rx]
+    DriveX = deadband(stick1->GetRawAxis(4), 0.1);
+
+    // [1]
+    //stick1->GetRawButton(1);
+
+    // [2]
+    //stick1->GetRawButton(2);
+
+    // [3]
+    //stick1->GetRawButton(3);
+
+    // [4]
+    //stick1->GetRawButton(4);
+
+    // [5]
+    quickTurn = stick1->GetRawButton(5);
+
+    // [6]
+    lowGear = stick1->GetRawButton(6);
+
+    // [7]
+    //stick1->GetRawButton(7);
+
+    // [8]
+    //stick1->GetRawButton(8);
+
+    // [9]
+    //stick1->GetRawButton(9);
+
+    // [10]
+    //stick1->GetRawButton(10);
+
+    // [11]
+    //stick1->GetRawButton(11);
+
+    // [12]
+    //stick1->GetRawButton(12);
+
+    // [hatx]
+    //stick1->GetRawAxis(5);
+
+    // [haty]
+    //stick1->GetRawAxis(6);
+}
+
+void Robot::JoyStick2() // Co-Driver
+{
+    // [y]
+    //stick2->GetY();
+
+    // [x]
+    //stick2->GetX();
+
+    // [ry]
+    //stick2->GetRawAxis(3);
+
+    // [rx]
+    //stick2->GetRawAxis(4);
+
+    // [1]
+    //stick2->GetRawButton(1);
+
+    // [2]
+    //stick2->GetRawButton(2);
+
+    // [3]
+    //stick2->GetRawButton(3);
+
+    // [4]
+    //stick2->GetRawButton(4);
+
+    // [5]
+    //stick2->GetRawButton(5);
+
+    // [6]
+    //stick2->GetRawButton(6);
+
+    // [7]
+    //stick2->GetRawButton(7);
+
+    // [8]
+    //stick2->GetRawButton(8);
+
+    // [9]
+    //stick2->GetRawButton(9);
+
+    // [10]
+    //stick2->GetRawButton(10);
+
+    // [11]
+    //stick2->GetRawButton(11);
+
+    // [12]
+    //stick2->GetRawButton(12);
+
+    // [hatx]
+    //stick2->GetRawAxis(5);
+
+    // [haty]
+    //stick2->GetRawAxis(6);
+}
+
 void Robot::OperatorControl()
 {
     while (IsOperatorControl())
     {
-        //crap controls
-        intake->manualIN(crapStick->GetRawButton(7));
-        intake->manualOUT(crapStick->GetRawButton(8));
-
         // Updates
-        drive->update(deadband(-crapStick->GetRawAxis(3), 0.1), deadband(crapStick->GetY(), 0.1), crapStick->GetRawButton(6), crapStick->GetRawButton(5));
+        drive->update(DriveX, DriveY, lowGear, quickTurn);
         arm->update();
         shooter->update();
         intake->update();
