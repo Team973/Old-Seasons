@@ -17,6 +17,8 @@ public:
 private:
     void dashboardUpdate();
     float deadband(float axis, float threshold);
+    void JoyStick1();
+    void JoyStick2();
 
     Victor *leftDriveMotors;
     Victor *rightDriveMotors;
@@ -45,7 +47,13 @@ private:
     Shooter *shooter;
     Intake *intake;
 
-    Joystick *crapStick;
+    Joystick *stick1;
+    Joystick *stick2;
+
+    float DriveY;
+    float DriveX;
+    bool quickTurn;
+    bool lowGear;
 
     float TELEOP_LOOP_LAG;
     float AUTO_LOOP_LAG;
