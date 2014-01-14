@@ -27,6 +27,57 @@ void Drive::setDriveMotors(float left, float right)
     rightDrive->Set(-limit(right));
 }
 
+float getLeftDrive()
+{
+    return leftEncoder->Get();
+}
+
+float getRightDrive()
+{
+    return rightEncoder->Get();
+}
+
+float Drive::signSquare(float x)
+{
+    if (x < 0)
+        return -x*x;
+    return x*x;
+}
+
+void Drive::arcade(float move_, float rotate_)
+{
+    float move = signSquare(limit(move_));
+    float rotate = signSquare(limit(rotate_));
+    float left, right;
+    if (move < 0)
+    {
+        if (rotate > 0)
+        {
+            left = (-move - rotate);
+            right = max(-move, rotate);
+        }
+        else
+        {
+            left = max(-move, -rotate);
+            right = (-move + rotate);
+        }
+    }
+    else
+    {
+        if (rotate > 0)
+        {
+            left = -max(move, rotate);
+            right = (-move + rotate);
+        }
+        else
+        {
+            left = (-move - rotate);
+            right = -max(move, -rotate);
+        }
+    }
+    setDriveMotors(left, right);
+}
+
 void Drive::CheesyDrive(double throttle, double wheel, bool highGear, bool quickTurn) {
   bool isQuickTurn = quickTurn;
   float turnNonlinHigh = 0.9;
