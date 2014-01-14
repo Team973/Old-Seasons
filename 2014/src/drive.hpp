@@ -15,6 +15,9 @@ private:
     float oldWheel;
     float negInertiaAccumulator;
     float quickStopAccumulator;
+    float leftDist;
+    float rightDist;
+    double M_PI;
 
     // Talons
     Victor *leftDrive;
@@ -26,6 +29,13 @@ private:
 public:
     Drive(Victor *leftDrive_, Victor *rightDrive_, Encoder *leftEncoder_, Encoder *rightEncoder_);
     void update(double DriveX, double DriveY, bool gear, bool quickTurn);
+
+    float getLeftDrive();
+    float getRightDrive();
+    float getLeftDistance();
+    float getRightDistance();
+    float getWheelDistance();
+    void resetDriveEncoders();
 };
 
 #endif

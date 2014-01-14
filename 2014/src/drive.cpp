@@ -9,6 +9,8 @@ Drive::Drive(Victor *leftDrive_, Victor *rightDrive_, Encoder *leftEncoder_, Enc
 
     leftEncoder = leftEncoder_;
     rightEncoder = rightEncoder_;
+
+    M_PI = 3.141592;
 }
 
 float Drive::limit(float x)
@@ -27,14 +29,40 @@ void Drive::setDriveMotors(float left, float right)
     rightDrive->Set(-limit(right));
 }
 
-float getLeftDrive()
+float Drive::getLeftDrive()
 {
     return leftEncoder->Get();
 }
 
-float getRightDrive()
+float Drive::getRightDrive()
 {
     return rightEncoder->Get();
+}
+
+float Drive::getWheelDistance()
+{
+    float diameter = 2.75;
+    float encoderTicks = 360;
+    float distancePerRevolution = M_PI * diameter;
+    leftDist = (leftEncoder->Get() / encoderTicks) * distancePerRevolution;
+    rightDist = (rightEncoder->Get() / encoderTicks) * distancePerRevolution;
+    return (leftDist + rightDist)/2;
+}
+
+void Drive::resetDriveEncoders()
+{
+    leftEncoder->Reset();
+    rightEncoder->Reset();
+}
+
+float Drive::getLeftDistance()
+{
+    return leftDist;
+}
+
+float Drive::getRightDistance()
+{
+    return rightDist;
 }
 
 float Drive::signSquare(float x)
