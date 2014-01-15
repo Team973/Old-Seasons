@@ -26,9 +26,13 @@ private:
     // Encoders
     Encoder *leftEncoder;
     Encoder *rightEncoder;
+
+    // Gyro
+    Gyro *gyro;
 public:
-    Drive(Victor *leftDrive_, Victor *rightDrive_, Encoder *leftEncoder_, Encoder *rightEncoder_);
+    Drive(Victor *leftDrive_, Victor *rightDrive_, Encoder *leftEncoder_, Encoder *rightEncoder_, Gyro *gyro_);
     void update(double DriveX, double DriveY, bool gear, bool quickTurn);
+    void dashboardUpdate();
 
     float getLeftDrive();
     float getRightDrive();
@@ -36,6 +40,7 @@ public:
     float getRightDistance();
     float getWheelDistance();
     void resetDriveEncoders();
+    void resetGyro();
 };
 
 #endif
