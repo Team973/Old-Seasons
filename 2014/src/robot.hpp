@@ -42,6 +42,8 @@ private:
 
     Compressor *compressor;
 
+    Gyro *gyro;
+
     Drive *drive;
     Arm *arm;
     Shooter *shooter;

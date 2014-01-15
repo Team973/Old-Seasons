@@ -40,7 +40,10 @@ Robot::Robot()
     compressor = new Compressor(14,8);
     compressor->Start();
 
-    drive = new Drive(leftDriveMotors, rightDriveMotors, leftDriveEncoder, rightDriveEncoder);
+    gyro = new Gyro(1, 1);
+    gyro->SetSensitivity(0.00703);
+
+    drive = new Drive(leftDriveMotors, rightDriveMotors, leftDriveEncoder, rightDriveEncoder, gyro);
     arm = new Arm(armMotor, armSensorA, armSensorB, armSensorC);
     shooter = new Shooter(winchMotor, winchReleaseSolenoid);
     intake = new Intake(intakeMotor, clawSolenoid);
@@ -53,6 +56,7 @@ Robot::Robot()
 
 void Robot::dashboardUpdate()
 {
+    //drive->dashboardUpdate();
 }
 
 void Robot::Autonomous()
@@ -194,9 +198,13 @@ void Robot::OperatorControl()
         arm->update();
         shooter->update();
         intake->update();
+        intakeMotor->Set(0);
+
+        float counter = 0;
+        SmartDashboard::PutNumber("Test: ", counter++);
 
         // wait for the ds
-        //Wait(TELEOP_LOOP_LAG);
+        Wait(TELEOP_LOOP_LAG);
     }
 }
 

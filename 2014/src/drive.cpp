@@ -2,7 +2,7 @@
 #include "drive.hpp"
 #include <math.h>
 
-Drive::Drive(Victor *leftDrive_, Victor *rightDrive_, Encoder *leftEncoder_, Encoder *rightEncoder_)
+Drive::Drive(Victor *leftDrive_, Victor *rightDrive_, Encoder *leftEncoder_, Encoder *rightEncoder_, Gyro *gyro_)
 {
     leftDrive = leftDrive_;
     rightDrive = rightDrive_;
@@ -10,7 +10,11 @@ Drive::Drive(Victor *leftDrive_, Victor *rightDrive_, Encoder *leftEncoder_, Enc
     leftEncoder = leftEncoder_;
     rightEncoder = rightEncoder_;
 
+    gyro = gyro_;
+
     M_PI = 3.141592;
+
+
 }
 
 float Drive::limit(float x)
@@ -47,6 +51,11 @@ float Drive::getWheelDistance()
     leftDist = (leftEncoder->Get() / encoderTicks) * distancePerRevolution;
     rightDist = (rightEncoder->Get() / encoderTicks) * distancePerRevolution;
     return (leftDist + rightDist)/2;
+}
+
+void Drive::resetGyro()
+{
+    gyro->Reset();
 }
 
 void Drive::resetDriveEncoders()
@@ -231,4 +240,9 @@ void Drive::CheesyDrive(double throttle, double wheel, bool highGear, bool quick
 void Drive::update(double DriveX, double DriveY, bool gear, bool quickTurn)
 {
     CheesyDrive(DriveY, DriveX, gear, quickTurn);
+}
+
+void Drive::dashboardUpdate()
+{
+    //SmartDashboard::PutNumber("Gyro RAW angle: ", gyro->GetAngle());
 }
