@@ -25,9 +25,9 @@ Robot::Robot()
     winchReleaseSolenoid = new Solenoid(4);
 
 
-    leftDriveEncoder = new Encoder(1, 2);
+    leftDriveEncoder = new Encoder(3, 4);
     leftDriveEncoder->Start();
-    rightDriveEncoder = new Encoder(3, 4);
+    rightDriveEncoder = new Encoder(5, 6);
     rightDriveEncoder->Start();
 
     armSensorA = new Encoder(5, 6);
@@ -191,7 +191,8 @@ void Robot::JoyStick2() // Co-Driver
 
 void Robot::OperatorControl()
 {
-    while (IsOperatorControl())
+    float counter = 0;
+    while (IsOperatorControl() && IsEnabled())
     {
         // Updates
         drive->update(DriveX, DriveY, lowGear, quickTurn);
@@ -200,8 +201,14 @@ void Robot::OperatorControl()
         intake->update();
         intakeMotor->Set(0);
 
-        float counter = 0;
-        SmartDashboard::PutNumber("Test: ", counter++);
+        float increment = counter++;
+        SmartDashboard::PutNumber("Test: ", increment);
+        DriverStationLCD::GetInstance()->PrintfLine(DriverStationLCD::kUser_Line1, "Test: %f", increment);
+        DriverStationLCD::GetInstance()->UpdateLCD();
+
+        SmartDashboard::PutNumber("Gyro RAW Angle", gyro->GetAngle());
+        SmartDashboard::PutNumber("Left Encoder RAW Ticks", leftDriveEncoder->Get());
+        SmartDashboard::PutNumber("Right Encoder RAW Ticks", rightDriveEncoder->Get());
 
         // wait for the ds
         Wait(TELEOP_LOOP_LAG);
