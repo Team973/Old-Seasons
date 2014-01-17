@@ -41,6 +41,7 @@ Robot::Robot()
 
     gyro = new Gyro(1, 1);
     gyro->SetSensitivity(0.00703);
+    gyro->Reset();
 
     drive = new Drive(leftDriveMotors, rightDriveMotors, leftDriveEncoder, rightDriveEncoder, gyro);
     arm = new Arm(armMotor, armSensorA, armSensorB, armSensorC);
@@ -56,7 +57,8 @@ Robot::Robot()
 
 void Robot::dashboardUpdate()
 {
-    //drive->dashboardUpdate();
+    drive->dashboardUpdate();
+    SmartDashboard::PutNumber("Test: ", 50);
 }
 
 float Robot::deadband(float axis, float threshold)
@@ -213,10 +215,8 @@ void Robot::TeleopPeriodic()
     intake->update();
     intakeMotor->Set(0);
 
-    SmartDashboard::PutNumber("Test: ", 50);
-    SmartDashboard::PutNumber("Gyro RAW Angle", gyro->GetAngle());
-    SmartDashboard::PutNumber("Left Encoder RAW Ticks", leftDriveEncoder->Get());
-    SmartDashboard::PutNumber("Right Encoder RAW Ticks", rightDriveEncoder->Get());
+    dashboardUpdate();
+
 }
 
 void Robot::TestInit()

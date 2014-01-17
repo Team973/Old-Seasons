@@ -244,5 +244,7 @@ void Drive::update(double DriveX, double DriveY, bool gear, bool quickTurn)
 
 void Drive::dashboardUpdate()
 {
-    //SmartDashboard::PutNumber("Gyro RAW angle: ", gyro->GetAngle());
+    SmartDashboard::PutNumber("Gyro RAW angle: ", gyro->GetAngle());
+    SmartDashboard::PutNumber("Left Encoder RAW Ticks", leftEncoder->Get());
+    SmartDashboard::PutNumber("Right Encoder RAW Ticks", rightEncoder->Get());
 }

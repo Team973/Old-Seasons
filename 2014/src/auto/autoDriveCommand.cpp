@@ -27,6 +27,7 @@ AutoDriveCommand::AutoDriveCommand(Drive* drive_, float targetX_,float targetY_,
 
     PI = 3.14159;
 
+    resetDrive();
 }
 
 void AutoDriveCommand::resetDrive()
