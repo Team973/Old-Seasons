@@ -6,13 +6,19 @@
 #define ROBOT_H
 
 //XXX: rename class when we decide on a robot name
-class Robot : public SimpleRobot
+class Robot : public IterativeRobot
 {
 public:
     Robot();
-    virtual void Autonomous();
-    virtual void OperatorControl();
-    virtual void Test();
+    virtual void RobotInit();
+    virtual void DisabledInit();
+    virtual void DisabledPeriodic();
+    virtual void AutonomousInit();
+    virtual void AutonomousPeriodic();
+    virtual void TeleopInit();
+    virtual void TeleopPeriodic();
+    virtual void TestInit();
+    virtual void TestPeriodic();
 
 private:
     void dashboardUpdate();
@@ -57,8 +63,6 @@ private:
     bool quickTurn;
     bool lowGear;
 
-    float TELEOP_LOOP_LAG;
-    float AUTO_LOOP_LAG;
 };
 
 #endif

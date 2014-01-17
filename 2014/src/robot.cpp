@@ -10,8 +10,7 @@
 
 Robot::Robot()
 {
-    TELEOP_LOOP_LAG = 0.005;
-    AUTO_LOOP_LAG = 0.005 * 1.50;
+    this->SetPeriod(0);
 
     leftDriveMotors = new Victor(1);
     rightDriveMotors = new Victor(2);
@@ -52,19 +51,12 @@ Robot::Robot()
     stick2 = new Joystick(2);
 
     SmartDashboard::init();
+
 }
 
 void Robot::dashboardUpdate()
 {
     //drive->dashboardUpdate();
-}
-
-void Robot::Autonomous()
-{
-    while (IsAutonomous() && IsEnabled())
-    {
-        Wait(AUTO_LOOP_LAG);
-    }
 }
 
 float Robot::deadband(float axis, float threshold)
@@ -189,33 +181,49 @@ void Robot::JoyStick2() // Co-Driver
     //stick2->GetRawAxis(6);
 }
 
-void Robot::OperatorControl()
+void Robot::RobotInit()
 {
-    float counter = 0;
-    while (IsOperatorControl() && IsEnabled())
-    {
-        // Updates
-        drive->update(DriveX, DriveY, lowGear, quickTurn);
-        arm->update();
-        shooter->update();
-        intake->update();
-        intakeMotor->Set(0);
-
-        float increment = counter++;
-        SmartDashboard::PutNumber("Test: ", increment);
-        DriverStationLCD::GetInstance()->PrintfLine(DriverStationLCD::kUser_Line1, "Test: %f", increment);
-        DriverStationLCD::GetInstance()->UpdateLCD();
-
-        SmartDashboard::PutNumber("Gyro RAW Angle", gyro->GetAngle());
-        SmartDashboard::PutNumber("Left Encoder RAW Ticks", leftDriveEncoder->Get());
-        SmartDashboard::PutNumber("Right Encoder RAW Ticks", rightDriveEncoder->Get());
-
-        // wait for the ds
-        Wait(TELEOP_LOOP_LAG);
-    }
 }
 
-void Robot::Test()
+void Robot::DisabledInit()
+{
+}
+
+void Robot::DisabledPeriodic()
+{
+}
+
+void Robot::AutonomousInit()
+{
+}
+
+void Robot::AutonomousPeriodic()
+{
+}
+
+void Robot::TeleopInit()
+{
+}
+
+void Robot::TeleopPeriodic()
+{
+    drive->update(DriveX, DriveY, lowGear, quickTurn);
+    arm->update();
+    shooter->update();
+    intake->update();
+    intakeMotor->Set(0);
+
+    SmartDashboard::PutNumber("Test: ", 50);
+    SmartDashboard::PutNumber("Gyro RAW Angle", gyro->GetAngle());
+    SmartDashboard::PutNumber("Left Encoder RAW Ticks", leftDriveEncoder->Get());
+    SmartDashboard::PutNumber("Right Encoder RAW Ticks", rightDriveEncoder->Get());
+}
+
+void Robot::TestInit()
+{
+}
+
+void Robot::TestPeriodic()
 {
 }
 
