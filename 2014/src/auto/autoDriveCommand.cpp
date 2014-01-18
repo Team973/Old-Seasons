@@ -56,7 +56,7 @@ void AutoDriveCommand::resetDrive()
 
 void AutoDriveCommand::calculateDrive()
 {
-    currGyro = 0; //TODO(oliver): add the actual gyro
+    currGyro = drive->getGyroAngle();
     currTheta = prevTheta + (currGyro - prevGyro);
     theta = (currTheta + prevTheta) / 2;
     currLeft =  drive->getLeftDistance();

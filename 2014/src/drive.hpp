@@ -19,6 +19,8 @@ private:
     float rightDist;
     double M_PI;
 
+    float normalizeAngle(float theta);
+
     // Talons
     Victor *leftDrive;
     Victor *rightDrive;
@@ -41,6 +43,8 @@ public:
     float getWheelDistance();
     void resetDriveEncoders();
     void resetGyro();
+    float getGyroAngle();
+    void resetDrive();
 };
 
 #endif

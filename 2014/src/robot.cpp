@@ -198,6 +198,10 @@ void Robot::DisabledPeriodic()
 
 void Robot::AutonomousInit()
 {
+    autoTimer = new Timer();
+    autoTimer->Start();
+
+    drive->resetDrive();
     autoMode = new AutoManager(drive, shooter, intake, arm);
     autoMode->autoSelect(TEST);
     autoMode->Init();
@@ -205,7 +209,9 @@ void Robot::AutonomousInit()
 
 void Robot::AutonomousPeriodic()
 {
-    autoMode->Run();
+    float AUTO_WAIT_TIME = 1;
+    if (autoTimer->Get() >= AUTO_WAIT_TIME)
+        autoMode->Run();
 }
 
 void Robot::TeleopInit()
