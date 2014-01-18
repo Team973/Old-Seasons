@@ -1,5 +1,6 @@
 #include "WPILib.h"
 #include "drive.hpp"
+#include "autoManager.hpp"
 //#include "gyro/GyroManager.h"
 
 #ifndef ROBOT_H
@@ -54,6 +55,8 @@ private:
     Arm *arm;
     Shooter *shooter;
     Intake *intake;
+
+    AutoManager *autoMode;
 
     Joystick *stick1;
     Joystick *stick2;
