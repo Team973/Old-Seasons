@@ -58,6 +58,25 @@ void Drive::resetGyro()
     gyro->Reset();
 }
 
+float Drive::normalizeAngle(float theta)
+{
+    while (theta > 180)
+    {
+        theta -= 360;
+    }
+    while (theta < -180)
+    {
+        theta += 360;
+    }
+
+    return theta;
+}
+
+float Drive::getGyroAngle()
+{
+    return normalizeAngle(gyro->GetAngle());
+}
+
 void Drive::resetDriveEncoders()
 {
     leftEncoder->Reset();
@@ -247,4 +266,9 @@ void Drive::dashboardUpdate()
     SmartDashboard::PutNumber("Gyro RAW angle: ", gyro->GetAngle());
     SmartDashboard::PutNumber("Left Encoder RAW Ticks", leftEncoder->Get());
     SmartDashboard::PutNumber("Right Encoder RAW Ticks", rightEncoder->Get());
+}
+
+void Drive::resetDrive()
+{
+    resetDriveEncoders();
 }

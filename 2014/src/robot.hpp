@@ -61,6 +61,8 @@ private:
     Joystick *stick1;
     Joystick *stick2;
 
+    Timer *autoTimer;
+
     float DriveY;
     float DriveX;
     bool quickTurn;
