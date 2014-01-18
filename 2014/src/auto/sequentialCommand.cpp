@@ -23,7 +23,10 @@ bool SequentialCommand::Run()
         if (commands[commandRunning]->Run())
         {
             commandRunning += 1;
-            commands[commandRunning]->Init();
+            if (commandRunning != commands.size())
+                commands[commandRunning]->Init();
+            else
+                return true;
         }
         else
         {
@@ -31,9 +34,7 @@ bool SequentialCommand::Run()
         }
     }
     else
-    {
         return true;
-    }
 
     return false;
 }

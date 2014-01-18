@@ -2,7 +2,7 @@
 #include "drive.hpp"
 #include <math.h>
 
-Drive::Drive(Victor *leftDrive_, Victor *rightDrive_, Encoder *leftEncoder_, Encoder *rightEncoder_, Gyro *gyro_)
+Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Encoder *leftEncoder_, Encoder *rightEncoder_, Gyro *gyro_)
 {
     leftDrive = leftDrive_;
     rightDrive = rightDrive_;

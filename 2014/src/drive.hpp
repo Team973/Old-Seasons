@@ -22,8 +22,8 @@ private:
     float normalizeAngle(float theta);
 
     // Talons
-    Victor *leftDrive;
-    Victor *rightDrive;
+    Talon *leftDrive;
+    Talon *rightDrive;
 
     // Encoders
     Encoder *leftEncoder;
@@ -32,7 +32,7 @@ private:
     // Gyro
     Gyro *gyro;
 public:
-    Drive(Victor *leftDrive_, Victor *rightDrive_, Encoder *leftEncoder_, Encoder *rightEncoder_, Gyro *gyro_);
+    Drive(Talon *leftDrive_, Talon *rightDrive_, Encoder *leftEncoder_, Encoder *rightEncoder_, Gyro *gyro_);
     void update(double DriveX, double DriveY, bool gear, bool quickTurn);
     void dashboardUpdate();
 
