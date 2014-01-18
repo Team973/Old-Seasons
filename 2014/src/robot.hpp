@@ -1,6 +1,7 @@
 #include "WPILib.h"
 #include "drive.hpp"
 #include "autoManager.hpp"
+#include "auto/autoDriveCommand.hpp"
 //#include "gyro/GyroManager.h"
 
 #ifndef ROBOT_H
@@ -27,8 +28,8 @@ private:
     void JoyStick1();
     void JoyStick2();
 
-    Victor *leftDriveMotors;
-    Victor *rightDriveMotors;
+    Talon *leftDriveMotors;
+    Talon *rightDriveMotors;
     Talon *armMotor;
     Talon *winchMotor;
     Victor *intakeMotor;
@@ -57,6 +58,7 @@ private:
     Intake *intake;
 
     AutoManager *autoMode;
+    AutoDriveCommand *autoDrive;
 
     Joystick *stick1;
     Joystick *stick2;

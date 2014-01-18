@@ -6,6 +6,7 @@
 #include "autoManager.hpp"
 //#include "gyro/GyroManager.h"
 #include "robot.hpp"
+#include "auto/autoDriveCommand.hpp"
 
 #include "NetworkTables/NetworkTable.h"
 
@@ -13,8 +14,8 @@ Robot::Robot()
 {
     this->SetPeriod(0);
 
-    leftDriveMotors = new Victor(1);
-    rightDriveMotors = new Victor(2);
+    leftDriveMotors = new Talon(8);
+    rightDriveMotors = new Talon(7);
     armMotor = new Talon(5);
     winchMotor = new Talon(4);
     intakeMotor = new Victor(3);
@@ -48,6 +49,9 @@ Robot::Robot()
     arm = new Arm(armMotor, armSensorA, armSensorB, armSensorC);
     shooter = new Shooter(winchMotor, winchReleaseSolenoid);
     intake = new Intake(intakeMotor, clawSolenoid);
+
+    autoMode = new AutoManager(drive, shooter, intake, arm);
+    autoDrive = new AutoDriveCommand(drive, 24, 0, false, 2);
 
     stick1 = new Joystick(1);
     stick2 = new Joystick(2);
@@ -194,6 +198,7 @@ void Robot::DisabledInit()
 
 void Robot::DisabledPeriodic()
 {
+    dashboardUpdate();
 }
 
 void Robot::AutonomousInit()
@@ -202,16 +207,20 @@ void Robot::AutonomousInit()
     autoTimer->Start();
 
     drive->resetDrive();
-    autoMode = new AutoManager(drive, shooter, intake, arm);
-    autoMode->autoSelect(TEST);
-    autoMode->Init();
+    //autoMode->autoSelect(TEST);
+    //autoMode->Init();
+    autoDrive->Init();
 }
 
 void Robot::AutonomousPeriodic()
 {
     float AUTO_WAIT_TIME = 1;
     if (autoTimer->Get() >= AUTO_WAIT_TIME)
-        autoMode->Run();
+       //autoMode->Run();
+       if (autoDrive->Run())
+           SmartDashboard::PutBoolean("Auto Mode Complete: ", true);
+
+    dashboardUpdate();
 }
 
 void Robot::TeleopInit()
