@@ -1,8 +1,10 @@
 #include "WPILib.h"
 #include "drive.hpp"
 #include "autoManager.hpp"
-#include "auto/autoDriveCommand.hpp"
 //#include "gyro/GyroManager.h"
+#include "auto/sequentialCommand.hpp"
+#include "auto/autoCommand.hpp"
+#include <vector>
 
 #ifndef ROBOT_H
 #define ROBOT_H
@@ -58,7 +60,7 @@ private:
     Intake *intake;
 
     AutoManager *autoMode;
-    AutoDriveCommand *autoDrive;
+    bool autoComplete;
 
     Joystick *stick1;
     Joystick *stick2;

@@ -20,7 +20,8 @@ void AutoManager::autoSelect(int autoMode)
     switch (autoMode)
     {
         case TEST:
-            commandSequence.push_back(new AutoDriveCommand(drive, 24, 0, false, 0.5));
+            commandSequence.push_back(new AutoDriveCommand(drive, 72, 0, false, 2));
+            commandSequence.push_back(new AutoDriveCommand(drive, 0, 90, false, 2));
             break;
         default:
             break;
