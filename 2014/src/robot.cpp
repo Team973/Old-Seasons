@@ -3,6 +3,7 @@
 #include "arm.hpp"
 #include "shooter.hpp"
 #include "intake.hpp"
+#include "autoManager.hpp"
 //#include "gyro/GyroManager.h"
 #include "robot.hpp"
 
@@ -197,10 +198,14 @@ void Robot::DisabledPeriodic()
 
 void Robot::AutonomousInit()
 {
+    autoMode = new AutoManager(drive, shooter, intake, arm);
+    autoMode->autoSelect(TEST);
+    autoMode->Init();
 }
 
 void Robot::AutonomousPeriodic()
 {
+    autoMode->Run();
 }
 
 void Robot::TeleopInit()
