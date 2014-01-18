@@ -6,7 +6,6 @@
 #include "autoManager.hpp"
 //#include "gyro/GyroManager.h"
 #include "robot.hpp"
-#include "auto/autoDriveCommand.hpp"
 
 #include "NetworkTables/NetworkTable.h"
 
@@ -51,10 +50,11 @@ Robot::Robot()
     intake = new Intake(intakeMotor, clawSolenoid);
 
     autoMode = new AutoManager(drive, shooter, intake, arm);
-    autoDrive = new AutoDriveCommand(drive, 24, 0, false, 2);
 
     stick1 = new Joystick(1);
     stick2 = new Joystick(2);
+
+    autoComplete = false;
 
     SmartDashboard::init();
 
@@ -207,18 +207,20 @@ void Robot::AutonomousInit()
     autoTimer->Start();
 
     drive->resetDrive();
-    //autoMode->autoSelect(TEST);
-    //autoMode->Init();
-    autoDrive->Init();
+    autoMode->autoSelect(TEST);
+    autoMode->Init();
 }
 
 void Robot::AutonomousPeriodic()
 {
     float AUTO_WAIT_TIME = 1;
     if (autoTimer->Get() >= AUTO_WAIT_TIME)
-       //autoMode->Run();
-       if (autoDrive->Run())
-           SmartDashboard::PutBoolean("Auto Mode Complete: ", true);
+    {
+       if (autoMode->Run())
+           autoComplete = true;
+    }
+
+    SmartDashboard::PutBoolean("Auto Mode Complete: ", autoComplete);
 
     dashboardUpdate();
 }
