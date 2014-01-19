@@ -60,6 +60,9 @@ bool LinearDriveCommand::Run()
             arcInput = anglePID->update(currGyro);
         }
 
+        if (backwards)
+            driveInput = -driveInput;
+
         drive->update(driveInput, arcInput, false, false);
     }
 
