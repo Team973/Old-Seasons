@@ -258,7 +258,8 @@ void Drive::CheesyDrive(double throttle, double wheel, bool highGear, bool quick
 
 void Drive::update(double DriveX, double DriveY, bool gear, bool quickTurn)
 {
-    CheesyDrive(DriveY, DriveX, gear, quickTurn);
+    //CheesyDrive(DriveY, DriveX, gear, quickTurn);
+    arcade(DriveY, DriveX);
 }
 
 void Drive::dashboardUpdate()
