@@ -9,7 +9,7 @@ LinearDriveCommand::LinearDriveCommand(Drive *drive_, float targetDrive_, bool b
     targetDrive = targetDrive_;
     backwards = backwards_;
     drivePrecision = drivePrecision_;
-    targetAngle = drive->getGyroAngle() + 0.0973;
+    targetAngle = drive->getGyroAngle() + 0.0973; // remove compensation when we switch to colin's gyro
 
     setTimeout(timeout_);
 
@@ -48,6 +48,8 @@ bool LinearDriveCommand::Run()
         anglePID->setTarget(targetAngle);
 
         float driveInput;
+        float turnInput;
+
         if (fabs(driveError) < drivePrecision)
         {
             driveInput = 0;
