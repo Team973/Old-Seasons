@@ -1,4 +1,5 @@
 #include "WPILib.h"
+#include "pid.hpp"
 
 #ifndef ARM_H
 #define ARM_H
@@ -14,6 +15,8 @@ private:
     Encoder *sensorA;
     Encoder *sensorB;
     Encoder *sensorC;
+
+    PID *armPID;
 };
 
 #endif
