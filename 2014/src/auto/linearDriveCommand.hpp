@@ -15,10 +15,12 @@ public:
 private:
     Drive *drive;
     float targetDrive;
+    float targetAngle;
     bool backwards;
     float drivePrecision;
 
     PID *drivePID;
+    PID *anglePID;
 };
 
 #endif
