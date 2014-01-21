@@ -4,7 +4,6 @@
 #include "shooter.hpp"
 #include "intake.hpp"
 #include "autoManager.hpp"
-//#include "gyro/GyroManager.h"
 #include "robot.hpp"
 
 #include "NetworkTables/NetworkTable.h"
@@ -231,11 +230,10 @@ void Robot::TeleopInit()
 
 void Robot::TeleopPeriodic()
 {
-    drive->update(DriveX, DriveY, lowGear, quickTurn);
+    //drive->update(DriveX, DriveY, lowGear, quickTurn);
     arm->update();
     shooter->update();
     intake->update();
-    intakeMotor->Set(0);
 
     dashboardUpdate();
 

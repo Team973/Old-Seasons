@@ -1,7 +1,6 @@
 #include "WPILib.h"
 #include "drive.hpp"
 #include "autoManager.hpp"
-//#include "gyro/GyroManager.h"
 #include "auto/sequentialCommand.hpp"
 #include "auto/autoCommand.hpp"
 #include <vector>
@@ -35,8 +34,6 @@ private:
     Talon *armMotor;
     Talon *winchMotor;
     Victor *intakeMotor;
-
-    //GyroManager *gyro;
 
     Encoder *leftDriveEncoder;
     Encoder *rightDriveEncoder;
