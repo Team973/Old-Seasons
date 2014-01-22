@@ -16,6 +16,7 @@ public:
     void setTarget(float target);
     float getTarget();
     void setPreset(int preset);
+    float getRawAngle();
 private:
     Talon *motor;
     Encoder *sensorA;

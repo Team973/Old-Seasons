@@ -39,6 +39,14 @@ float Arm::getTarget()
     return armPID->getTarget();
 }
 
+float Arm::getRawAngle()
+{
+    float degreesPerRevolution = 360;
+    float gearRatio = 1;
+    float ticksPerRevolution = 2500;
+    return sensorA->Get() / (ticksPerRevolution * gearRatio) * degreesPerRevolution;
+}
+
 void Arm::update()
 {
     motor->Set(armPID->update(sensorA->Get()));
@@ -46,5 +54,5 @@ void Arm::update()
 
 void Arm::dashboardUpdate()
 {
-    SmartDashboard::PutNumber("Arm Angle: ", sensorA->Get());
+    SmartDashboard::PutNumber("Arm Angle: ", getRawAngle());
 }
