@@ -56,7 +56,6 @@ Robot::Robot()
     autoComplete = false;
 
     SmartDashboard::init();
-
 }
 
 void Robot::dashboardUpdate()

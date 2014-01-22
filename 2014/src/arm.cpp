@@ -13,6 +13,27 @@ Arm::Arm(Talon *motor_, Encoder *sensorA_, Encoder *sensorB_, Encoder *sensorC_)
     armPID->start();
 }
 
+void Arm::setPreset(int preset)
+{
+    switch (preset)
+    {
+        case TEST:
+            setTarget(10);
+            break;
+        case TEST2:
+            setTarget(30);
+            break;
+        default:
+            setTarget(sensorA->Get());
+            break;
+    }
+}
+
+void Arm::setTarget(float target)
+{
+    armPID->setTarget(target);
+}
+
 void Arm::update()
 {
 }
