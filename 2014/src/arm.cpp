@@ -36,8 +36,10 @@ void Arm::setTarget(float target)
 
 void Arm::update()
 {
+    motor->Set(armPID->update(sensorA->Get()));
 }
 
 void Arm::dashboardUpdate()
 {
+    SmartDashboard::PutNumber("Arm Angle: ", sensorA->Get());
 }
