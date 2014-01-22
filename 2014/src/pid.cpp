@@ -28,6 +28,11 @@ void PID::setTarget(float target_)
     target = target_;
 }
 
+float PID::getTarget()
+{
+    return target;
+}
+
 void PID::reset()
 {
     target = 0;

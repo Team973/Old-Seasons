@@ -27,6 +27,7 @@ private:
 public:
     PID(double p_=0.0, double i_=0.0, double d_=0.0);
     void setTarget(float target_);
+    float getTarget();
     void reset();
     void start();
     void stop();
