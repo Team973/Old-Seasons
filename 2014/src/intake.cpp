@@ -5,6 +5,7 @@ Intake::Intake(Victor *motor_, Solenoid *openClaw_)
 {
     motor = motor_;
     openClaw = openClaw_;
+    intakeSpeed = 0;
 }
 
 float Intake::limit(float x)
@@ -17,23 +18,21 @@ float Intake::limit(float x)
         return x;
 }
 
-void Intake::manualIN(bool in)
+void Intake::manual(float speed)
 {
-    intaking = in;
-}
- void Intake::manualOUT(bool out)
-{
-    outaking = out;
+    intakeSpeed = speed;
 }
 
 void Intake::update()
 {
-    if (intaking)
-        motor->Set(1);
-    else if (outaking)
-        motor->Set(-1);
+    if (intakeSpeed > 0)
+    {
+        motor->Set(intakeSpeed);
+    }
     else
+    {
         motor->Set(0);
+    }
 }
 
 void Intake::dashboardUpdate()
