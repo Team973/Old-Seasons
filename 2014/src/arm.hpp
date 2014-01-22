@@ -14,6 +14,7 @@ public:
     void update();
     void dashboardUpdate();
     void setTarget(float target);
+    float getTarget();
     void setPreset(int preset);
 private:
     Talon *motor;

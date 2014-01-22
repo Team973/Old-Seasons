@@ -34,6 +34,11 @@ void Arm::setTarget(float target)
     armPID->setTarget(target);
 }
 
+float Arm::getTarget()
+{
+    return armPID->getTarget();
+}
+
 void Arm::update()
 {
     motor->Set(armPID->update(sensorA->Get()));
