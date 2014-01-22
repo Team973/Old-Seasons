@@ -14,7 +14,7 @@ ConsecutiveCommand::ConsecutiveCommand(std::vector<AutoCommand*> cmd_)
 
 void ConsecutiveCommand::Init()
 {
-    for (unsigned int i=0; i<commands.size(); i++)
+    for (unsigned int i=0; i<=commands.size(); i++)
     {
         commands[i]->Init();
     }
@@ -22,9 +22,9 @@ void ConsecutiveCommand::Init()
 
 bool ConsecutiveCommand::Run()
 {
-    if (commandsCompleted != commands.size())
+    if (commandsCompleted <= commands.size())
     {
-        for (unsigned int i=0; i<commands.size(); i++)
+        for (unsigned int i=0; i<=commands.size(); i++)
         {
             if (commands[i]->Run())
             {
