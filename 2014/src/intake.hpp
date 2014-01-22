@@ -9,14 +9,12 @@ public:
     Intake(Victor *motor_, Solenoid *openClaw_);
     void update();
     void dashboardUpdate();
-    void manualIN(bool in);
-    void manualOUT(bool out);
+    void manual(float speed);
 
 private:
     float limit(float x);
 
-    bool intaking;
-    bool outaking;
+    float intakeSpeed;
     Victor *motor;
     Solenoid *openClaw;
 };
