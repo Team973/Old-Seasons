@@ -4,7 +4,7 @@
 #ifndef ARM_H
 #define ARM_H
 
-#define TEST 1
+#define TEST1 1
 #define TEST2 2
 
 class Arm
@@ -17,6 +17,7 @@ public:
     float getTarget();
     void setPreset(int preset);
     float getRawAngle();
+    int getPreset();
 private:
     Talon *motor;
     Encoder *sensorA;
@@ -24,6 +25,8 @@ private:
     Encoder *sensorC;
 
     PID *armPID;
+
+    int lastPreset;
 };
 
 #endif

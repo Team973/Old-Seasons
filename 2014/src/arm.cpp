@@ -17,7 +17,7 @@ void Arm::setPreset(int preset)
 {
     switch (preset)
     {
-        case TEST:
+        case TEST1:
             setTarget(10);
             break;
         case TEST2:
@@ -27,6 +27,13 @@ void Arm::setPreset(int preset)
             setTarget(sensorA->Get());
             break;
     }
+
+    lastPreset = preset;
+}
+
+int Arm::getPreset()
+{
+    return lastPreset;
 }
 
 void Arm::setTarget(float target)

@@ -1,11 +1,15 @@
 #include "WPILib.h"
 #include "intake.hpp"
 
-Intake::Intake(Victor *motor_, Solenoid *openClaw_)
+Intake::Intake(Arm *arm_, Victor *motor_, Solenoid *openClaw_, DigitalInput *ballSensor_)
 {
+    arm = arm_;
     motor = motor_;
     openClaw = openClaw_;
-    intakeSpeed = 0;
+    ballSensor = ballSensor_;
+
+    intakeManualSpeed = 0;
+    hasBall = false;
 }
 
 float Intake::limit(float x)
@@ -20,14 +24,18 @@ float Intake::limit(float x)
 
 void Intake::manual(float speed)
 {
-    intakeSpeed = speed;
+    intakeManualSpeed = speed;
 }
 
 void Intake::update()
 {
-    if (intakeSpeed > 0)
+    //TODO(oliver): Switch test1 to the actual approved intaking preset
+    if ((!hasBall) && (arm->getPreset() == TEST1))
     {
-        motor->Set(intakeSpeed);
+    }
+    else if (intakeManualSpeed > 0)
+    {
+        motor->Set(intakeManualSpeed);
     }
     else
     {
