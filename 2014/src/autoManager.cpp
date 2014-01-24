@@ -7,6 +7,7 @@
 #include "auto/consecutiveCommand.hpp"
 #include "auto/turnCommand.hpp"
 #include "auto/linearDriveCommand.hpp"
+#include "auto/waitCommand.hpp"
 #include <vector>
 
 AutoManager::AutoManager(Drive *drive_, Shooter *shooter_, Intake* intake_, Arm* arm_)
@@ -22,8 +23,14 @@ void AutoManager::autoSelect(int autoMode)
     switch (autoMode)
     {
         case TEST:
-            commandSequence.push_back(new TurnCommand(drive, -90, 2));
-            commandSequence.push_back(new LinearDriveCommand(drive, 24, false, 2));
+            commandSequence.push_back(new TurnCommand(drive, -90, 1.5));
+            commandSequence.push_back(new LinearDriveCommand(drive, 24, false, 1.5));
+            commandSequence.push_back(new TurnCommand(drive, 0, 1.5));
+            commandSequence.push_back(new AutoWaitCommand(2));
+            commandSequence.push_back(new TurnCommand(drive, -90, 1.5));
+            commandSequence.push_back(new LinearDriveCommand(drive, 24, false, 1.5));
+            commandSequence.push_back(new TurnCommand(drive, 0, 1.5));
+            commandSequence.push_back(new LinearDriveCommand(drive, 24, false, 1.5));
             break;
         default:
             break;
