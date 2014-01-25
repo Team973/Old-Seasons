@@ -10,6 +10,8 @@ Intake::Intake(Arm *arm_, Victor *motor_, Solenoid *openClaw_, DigitalInput *bal
 
     intakeManualSpeed = 0;
     hasBall = false;
+
+    possesionTimer = new Timer();
 }
 
 float Intake::limit(float x)
@@ -27,11 +29,43 @@ void Intake::manual(float speed)
     intakeManualSpeed = speed;
 }
 
+void Intake::runIntake(float speed)
+{
+    intakeSpeed = speed;
+}
+
 void Intake::update()
 {
+    float intakeTime = 1;
     //TODO(oliver): Switch test1 to the actual approved intaking preset
-    if ((!hasBall) && (arm->getPreset() == TEST1))
+    if ((!hasBall) && (intakeSpeed > 0) && (arm->getPreset() == TEST1))
     {
+        if (ballSensor)
+        {
+            if (possesionTimer->Get() == 0)
+            {
+                possesionTimer->Start();
+            }
+            else if (possesionTimer->Get() >= intakeTime)
+            {
+                possesionTimer->Stop();
+                hasBall = true;
+                arm->setPreset(TEST2);
+            }
+
+        }
+        else
+        {
+            if (possesionTimer->Get() > 0)
+            {
+                possesionTimer->Stop();
+                possesionTimer->Reset();
+            }
+        }
+    }
+    else if (hasBall) //TODO(oliver): Add the fired boolean whenever that is added to the shooter
+    {
+        hasBall = false;
     }
     else if (intakeManualSpeed > 0)
     {
@@ -39,7 +73,7 @@ void Intake::update()
     }
     else
     {
-        motor->Set(0);
+        motor->Set(intakeSpeed);
     }
 }
 
