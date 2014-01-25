@@ -11,16 +11,20 @@ public:
     void update();
     void dashboardUpdate();
     void manual(float speed);
+    void runIntake(float speed);
 
 private:
     float limit(float x);
 
-    float intakeManualSpeed;
+    float intakeManualSpeed; // manual control
+    float intakeSpeed; // for automated pick up
     bool hasBall;
     Arm *arm;
     Victor *motor;
     Solenoid *openClaw;
     DigitalInput *ballSensor;
+
+    Timer *possesionTimer;
 };
 
 #endif
