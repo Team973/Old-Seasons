@@ -6,11 +6,11 @@
 class Shooter
 {
 public:
-    Shooter(Talon *winchMotor_, Solenoid *winchRelease_);
+    Shooter(Victor *winchMotor_, Solenoid *winchRelease_);
     void update();
     void dashboardUpdate();
 private:
-    Talon *winchMotor;
+    Victor *winchMotor;
     Solenoid *winchRelease;
 };
 

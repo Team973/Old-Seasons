@@ -1,7 +1,7 @@
 #include "WPILib.h"
 #include "shooter.hpp"
 
-Shooter::Shooter(Talon *winchMotor_, Solenoid *winchRelease_)
+Shooter::Shooter(Victor *winchMotor_, Solenoid *winchRelease_)
 {
     winchMotor = winchMotor_;
     winchRelease = winchRelease_;
