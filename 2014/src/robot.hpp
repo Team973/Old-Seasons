@@ -26,14 +26,15 @@ public:
 private:
     void dashboardUpdate();
     float deadband(float axis, float threshold);
-    void JoyStick1();
-    void JoyStick2();
+    void joystick1();
+    void joystick2();
 
     Talon *leftDriveMotors;
     Talon *rightDriveMotors;
     Talon *armMotor;
     Talon *winchMotor;
-    Victor *intakeMotor;
+    Talon *linearIntakeMotor;
+    Talon *crossIntakeMotor;
 
     Encoder *leftDriveEncoder;
     Encoder *rightDriveEncoder;
