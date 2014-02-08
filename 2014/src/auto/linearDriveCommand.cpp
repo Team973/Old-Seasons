@@ -37,7 +37,7 @@ bool LinearDriveCommand::Run()
 
     if ((timer->Get() >= timeout) || (fabs(driveError) < drivePrecision))
     {
-        drive->update(0, 0, false, false);
+        drive->update(0, 0, false, false, false);
         return true;
     }
     else
@@ -64,7 +64,7 @@ bool LinearDriveCommand::Run()
         if (backwards)
             driveInput = -driveInput;
 
-        drive->update(turnInput, -driveInput, false, false);
+        drive->update(turnInput, -driveInput, false, false, false);
     }
 
     return false;

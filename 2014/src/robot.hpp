@@ -70,6 +70,7 @@ private:
     float DriveX;
     bool quickTurn;
     bool lowGear;
+    bool kickUp;
 
 };
 

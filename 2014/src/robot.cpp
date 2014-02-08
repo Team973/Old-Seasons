@@ -45,7 +45,7 @@ Robot::Robot()
     gyro->SetSensitivity(0.00703);
     gyro->Reset();
 
-    drive = new Drive(leftDriveMotors, rightDriveMotors, shiftingSolenoid, leftDriveEncoder, rightDriveEncoder, gyro);
+    drive = new Drive(leftDriveMotors, rightDriveMotors, shiftingSolenoid, kickUpSolenoid, leftDriveEncoder, rightDriveEncoder, gyro);
     arm = new Arm(armMotor, armSensorA, armSensorB, armSensorC);
     shooter = new Shooter(winchMotor, winchReleaseSolenoid);
     intake = new Intake(arm, linearIntakeMotor, clawSolenoid, intakeBallSensor);
@@ -110,7 +110,7 @@ void Robot::joystick1() // Driver
     //stick1->GetRawButton(7);
 
     // [8]
-    //stick1->GetRawButton(8);
+    kickUp = stick1->GetRawButton(8);
 
     // [9]
     //stick1->GetRawButton(9);
@@ -234,7 +234,7 @@ void Robot::TeleopPeriodic()
     joystick1();
     joystick2();
 
-    drive->update(DriveX, DriveY, lowGear, quickTurn);
+    drive->update(DriveX, DriveY, lowGear, kickUp, quickTurn);
     arm->update();
     shooter->update();
     intake->update();
