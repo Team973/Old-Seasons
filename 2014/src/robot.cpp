@@ -15,9 +15,9 @@ Robot::Robot()
     leftDriveMotors = new Talon(1);
     rightDriveMotors = new Talon(2);
     armMotor = new Talon(3);
-    winchMotor = new Talon(4);
-    linearIntakeMotor = new Talon(6);
-    crossIntakeMotor = new Talon(7);
+    winchMotor = new Victor(4);
+    linearIntakeMotor = new Victor(6);
+    crossIntakeMotor = new Victor(7);
 
     shiftingSolenoid = new Solenoid(1);
     kickUpSolenoid = new Solenoid(2);
@@ -45,12 +45,12 @@ Robot::Robot()
     gyro->SetSensitivity(0.00703);
     gyro->Reset();
 
-    //drive = new Drive(leftDriveMotors, rightDriveMotors, leftDriveEncoder, rightDriveEncoder, gyro);
-    //arm = new Arm(armMotor, armSensorA, armSensorB, armSensorC);
-    //shooter = new Shooter(winchMotor, winchReleaseSolenoid);
-    //intake = new Intake(arm, linearIntakeMotor, clawSolenoid, intakeBallSensor);
+    drive = new Drive(leftDriveMotors, rightDriveMotors, leftDriveEncoder, rightDriveEncoder, gyro);
+    arm = new Arm(armMotor, armSensorA, armSensorB, armSensorC);
+    shooter = new Shooter(winchMotor, winchReleaseSolenoid);
+    intake = new Intake(arm, linearIntakeMotor, clawSolenoid, intakeBallSensor);
 
-    //autoMode = new AutoManager(drive, shooter, intake, arm);
+    autoMode = new AutoManager(drive, shooter, intake, arm);
 
     stick1 = new Joystick(1);
     stick2 = new Joystick(2);
@@ -62,7 +62,7 @@ Robot::Robot()
 
 void Robot::dashboardUpdate()
 {
-    //drive->dashboardUpdate();
+    drive->dashboardUpdate();
     SmartDashboard::PutNumber("Test: ", 50);
 }
 
@@ -82,49 +82,23 @@ void Robot::joystick1() // Driver
     // [x]
     //stick1->GetX();
 
-    // [ry]
-    //stick1->GetRawAxis(3);
-
     // [rx]
-    DriveX = deadband(stick1->GetRawAxis(4), 0.1);
+    DriveX = -deadband(stick1->GetRawAxis(3), 0.1);
+
+    // [ry]
+    //stick1->GetRawAxis(4);
 
     // [1]
-    if (stick1->GetRawButton(1))
-    {
-        winchMotor->Set(1);
-        linearIntakeMotor->Set(1);
-        crossIntakeMotor->Set(1);
-    }
+    //stick1->GetRawButton(1);
 
     // [2]
-    if (stick1->GetRawButton(2))
-    {
-        leftDriveMotors->Set(-1);
-        rightDriveMotors->Set(-1);
-        armMotor->Set(-1);
-        winchMotor->Set(-1);
-        linearIntakeMotor->Set(-1);
-        crossIntakeMotor->Set(-1);
-    }
+    //stick1->GetRawButton(2);
 
     // [3]
-    if (stick1->GetRawButton(3))
-    {
-        leftDriveMotors->Set(0);
-        rightDriveMotors->Set(0);
-        armMotor->Set(0);
-        winchMotor->Set(0);
-        linearIntakeMotor->Set(0);
-        crossIntakeMotor->Set(0);
-    }
+    //stick1->GetRawButton(3);
 
     // [4]
-    if (stick1->GetRawButton(4))
-    {
-        leftDriveMotors->Set(1);
-        rightDriveMotors->Set(1);
-        armMotor->Set(1);
-    }
+    //stick1->GetRawButton(4);
 
     // [5]
     quickTurn = stick1->GetRawButton(5);
@@ -233,8 +207,8 @@ void Robot::AutonomousInit()
     autoTimer->Start();
 
     drive->resetDrive();
-    //autoMode->autoSelect(TEST);
-    //autoMode->Init();
+    autoMode->autoSelect(TEST);
+    autoMode->Init();
 }
 
 void Robot::AutonomousPeriodic()
@@ -242,7 +216,7 @@ void Robot::AutonomousPeriodic()
     float AUTO_WAIT_TIME = 1;
     if (autoTimer->Get() >= AUTO_WAIT_TIME)
     {
-       //if (autoMode->Run())
+       if (autoMode->Run())
            autoComplete = true;
     }
 
@@ -260,10 +234,10 @@ void Robot::TeleopPeriodic()
     joystick1();
     joystick2();
 
-    //drive->update(DriveX, DriveY, lowGear, quickTurn);
-    //arm->update();
-    //shooter->update();
-    //intake->update();
+    drive->update(DriveX, DriveY, lowGear, quickTurn);
+    arm->update();
+    shooter->update();
+    intake->update();
 
     dashboardUpdate();
 
