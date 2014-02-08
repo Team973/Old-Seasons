@@ -30,12 +30,13 @@ private:
     Encoder *rightEncoder;
 
     Solenoid *shifters;
+    Solenoid *kickUp;
 
     // Gyro
     Gyro *gyro;
 public:
-    Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Encoder *leftEncoder_, Encoder *rightEncoder_, Gyro *gyro_);
-    void update(double DriveX, double DriveY, bool gear, bool quickTurn);
+    Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoid *kickUp_, Encoder *leftEncoder_, Encoder *rightEncoder_, Gyro *gyro_);
+    void update(double DriveX, double DriveY, bool gear, bool kick, bool quickTurn);
     void dashboardUpdate();
 
     float getLeftDrive();
@@ -48,6 +49,7 @@ public:
     float getGyroAngle();
     void resetDrive();
     void setLowGear(bool lowGear);
+    void setKickUp(bool kick);
 };
 
 #endif

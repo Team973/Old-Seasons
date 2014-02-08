@@ -92,7 +92,7 @@ bool AutoDriveCommand::Run()
 
     if ((timer->Get() >= timeout) || ((fabs(robotLinearError) < drivePercision) && (fabs(angleError) > turnPercision)))
     {
-        drive->update(0, 0, true, false);
+        drive->update(0, 0, true, false, false);
         return true;
     }
     else
@@ -148,7 +148,7 @@ bool AutoDriveCommand::Run()
             driveInput = -driveInput;
         }
 
-        drive->update(driveInput, turnInput, true, false);
+        drive->update(driveInput, turnInput, true, false, false);
 
         storeDriveCalculations();
 
