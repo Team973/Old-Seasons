@@ -32,9 +32,9 @@ private:
     Talon *leftDriveMotors;
     Talon *rightDriveMotors;
     Talon *armMotor;
-    Talon *winchMotor;
-    Talon *linearIntakeMotor;
-    Talon *crossIntakeMotor;
+    Victor *winchMotor;
+    Victor *linearIntakeMotor;
+    Victor *crossIntakeMotor;
 
     Encoder *leftDriveEncoder;
     Encoder *rightDriveEncoder;
