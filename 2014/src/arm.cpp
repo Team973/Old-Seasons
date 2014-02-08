@@ -1,12 +1,11 @@
 #include "WPILib.h"
 #include "arm.hpp"
 
-Arm::Arm(Talon *motor_, Encoder *sensorA_, Encoder *sensorB_, Encoder *sensorC_)
+Arm::Arm(Talon *motor_, Encoder *sensorA_, Encoder *sensorB_)
 {
     motor = motor_;
     sensorA = sensorA_;
     sensorB = sensorB_;
-    sensorC = sensorC_;
 
     armPID = new PID(0, 0, 0);
     armPID->setBounds(-1.0, 1.0);

@@ -10,7 +10,7 @@
 class Arm
 {
 public:
-    Arm(Talon *motor_, Encoder *sensorA_, Encoder *sensorB, Encoder *sensorC);
+    Arm(Talon *motor_, Encoder *sensorA_, Encoder *sensorB);
     void update();
     void dashboardUpdate();
     void setTarget(float target);
@@ -22,7 +22,6 @@ private:
     Talon *motor;
     Encoder *sensorA;
     Encoder *sensorB;
-    Encoder *sensorC;
 
     PID *armPID;
 

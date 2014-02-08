@@ -41,8 +41,12 @@ private:
 
     Encoder *armSensorA;
     Encoder *armSensorB;
-    Encoder *armSensorC;
+
     DigitalInput *intakeBallSensor;
+
+    Encoder *winchEncoder;
+    DigitalInput *winchZeroSensor;
+    DigitalInput *winchFullCockSensor;
 
     Solenoid *shiftingSolenoid;
     Solenoid *kickUpSolenoid;
