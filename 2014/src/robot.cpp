@@ -19,10 +19,10 @@ Robot::Robot()
     linearIntakeMotor = new Victor(6);
     crossIntakeMotor = new Victor(7);
 
-    shiftingSolenoid = new Solenoid(1);
-    kickUpSolenoid = new Solenoid(2);
+    shiftingSolenoid = new Solenoid(5);
+    kickUpSolenoid = new Solenoid(4);
     clawSolenoid = new Solenoid(3);
-    winchReleaseSolenoid = new Solenoid(4);
+    winchReleaseSolenoid = new Solenoid(2);
 
 
     leftDriveEncoder = new Encoder(3, 4);
@@ -45,7 +45,7 @@ Robot::Robot()
     gyro->SetSensitivity(0.00703);
     gyro->Reset();
 
-    drive = new Drive(leftDriveMotors, rightDriveMotors, leftDriveEncoder, rightDriveEncoder, gyro);
+    drive = new Drive(leftDriveMotors, rightDriveMotors, shiftingSolenoid, leftDriveEncoder, rightDriveEncoder, gyro);
     arm = new Arm(armMotor, armSensorA, armSensorB, armSensorC);
     shooter = new Shooter(winchMotor, winchReleaseSolenoid);
     intake = new Intake(arm, linearIntakeMotor, clawSolenoid, intakeBallSensor);
