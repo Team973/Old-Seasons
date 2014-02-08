@@ -2,10 +2,12 @@
 #include "drive.hpp"
 #include <math.h>
 
-Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Encoder *leftEncoder_, Encoder *rightEncoder_, Gyro *gyro_)
+Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Encoder *leftEncoder_, Encoder *rightEncoder_, Gyro *gyro_)
 {
     leftDrive = leftDrive_;
     rightDrive = rightDrive_;
+
+    shifters = shifters_;
 
     leftEncoder = leftEncoder_;
     rightEncoder = rightEncoder_;
@@ -134,6 +136,11 @@ void Drive::arcade(float move_, float rotate_)
     setDriveMotors(left, right);
 }
 
+void Drive::setLowGear(bool lowGear)
+{
+    shifters->Set(lowGear);
+}
+
 void Drive::CheesyDrive(double throttle, double wheel, bool highGear, bool quickTurn) {
   bool isQuickTurn = quickTurn;
   float turnNonlinHigh = 0.9;
@@ -258,8 +265,9 @@ void Drive::CheesyDrive(double throttle, double wheel, bool highGear, bool quick
 
 void Drive::update(double DriveX, double DriveY, bool gear, bool quickTurn)
 {
-    //CheesyDrive(DriveY, DriveX, gear, quickTurn);
-    arcade(DriveY, DriveX);
+    CheesyDrive(DriveY, DriveX, gear, quickTurn);
+    //arcade(DriveY, DriveX);
+    setLowGear(gear);
 }
 
 void Drive::dashboardUpdate()
