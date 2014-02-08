@@ -7,7 +7,7 @@
 class Intake
 {
 public:
-    Intake(Arm *arm_, Victor *motor_, Solenoid *openClaw_, DigitalInput *ballSensor_);
+    Intake(Arm *arm_, Victor *linearMotor_, Victor *crossMotor_, Solenoid *openClaw_, DigitalInput *ballSensor_);
     void update();
     void dashboardUpdate();
     void manual(float speed);
@@ -20,7 +20,8 @@ private:
     float intakeSpeed; // for automated pick up
     bool hasBall;
     Arm *arm;
-    Victor *motor;
+    Victor *linearMotor;
+    Victor *crossMotor;
     Solenoid *openClaw;
     DigitalInput *ballSensor;
 

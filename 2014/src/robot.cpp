@@ -48,7 +48,7 @@ Robot::Robot()
     drive = new Drive(leftDriveMotors, rightDriveMotors, shiftingSolenoid, kickUpSolenoid, leftDriveEncoder, rightDriveEncoder, gyro);
     arm = new Arm(armMotor, armSensorA, armSensorB, armSensorC);
     shooter = new Shooter(winchMotor, winchReleaseSolenoid);
-    intake = new Intake(arm, linearIntakeMotor, clawSolenoid, intakeBallSensor);
+    intake = new Intake(arm, linearIntakeMotor, crossIntakeMotor, clawSolenoid, intakeBallSensor);
 
     autoMode = new AutoManager(drive, shooter, intake, arm);
 
@@ -134,7 +134,7 @@ void Robot::joystick1() // Driver
 void Robot::joystick2() // Co-Driver
 {
     // [y]
-    //stick2->GetY();
+    intake->manual(deadband(stick2->GetY(), 0.1));
 
     // [x]
     //stick2->GetX();
