@@ -12,6 +12,7 @@ public:
     void dashboardUpdate();
     void manual(float speed);
     void runIntake(float speed);
+    void setFangs(bool state);
 
 private:
     float limit(float x);
