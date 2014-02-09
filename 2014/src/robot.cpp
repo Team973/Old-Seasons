@@ -25,24 +25,22 @@ Robot::Robot()
     winchReleaseSolenoid = new Solenoid(2);
 
 
-    leftDriveEncoder = new Encoder(3, 4);
+    leftDriveEncoder = new Encoder(2, 3);
     leftDriveEncoder->Start();
-    rightDriveEncoder = new Encoder(5, 6);
+    rightDriveEncoder = new Encoder(4, 5);
     rightDriveEncoder->Start();
 
-    armSensorA = new Encoder(5, 6);
+    armSensorA = new Encoder(6, 7);
     armSensorA->Start();
-    armSensorB = new Encoder(7, 8);
-    armSensorB->Start();
 
-    intakeBallSensor = new DigitalInput(9);
+    intakeBallSensor = new DigitalInput(8);
 
-    winchEncoder = new Encoder(10, 11);
+    winchEncoder = new Encoder(9, 10);
     winchEncoder->Start();
-    winchZeroSensor = new DigitalInput(12);
-    winchFullCockSensor = new DigitalInput(13);
+    winchZeroSensor = new DigitalInput(11);
+    winchFullCockSensor = new DigitalInput(12);
 
-    compressor = new Compressor(14,8);
+    compressor = new Compressor(1,8);
     compressor->Start();
 
     gyro = new Gyro(1, 1);
@@ -50,7 +48,7 @@ Robot::Robot()
     gyro->Reset();
 
     drive = new Drive(leftDriveMotors, rightDriveMotors, shiftingSolenoid, kickUpSolenoid, leftDriveEncoder, rightDriveEncoder, gyro);
-    arm = new Arm(armMotor, armSensorA, armSensorB);
+    arm = new Arm(armMotor, armSensorA);
     intake = new Intake(arm, linearIntakeMotor, crossIntakeMotor, clawSolenoid, intakeBallSensor);
     shooter = new Shooter(arm, intake, winchMotor, winchReleaseSolenoid, winchZeroSensor, winchFullCockSensor, winchEncoder);
 
