@@ -65,7 +65,7 @@ Robot::Robot()
 void Robot::dashboardUpdate()
 {
     drive->dashboardUpdate();
-    SmartDashboard::PutNumber("Test: ", 50);
+    arm->dashboardUpdate();
 }
 
 float Robot::deadband(float axis, float threshold)
@@ -79,13 +79,13 @@ float Robot::deadband(float axis, float threshold)
 void Robot::joystick1() // Driver
 {
     // [y]
-    DriveY = deadband(stick1->GetY(), 0.1);
+    DriveY = -deadband(stick1->GetY(), 0.1);
 
     // [x]
     //stick1->GetX();
 
     // [rx]
-    DriveX = -deadband(stick1->GetRawAxis(3), 0.1);
+    DriveX = deadband(stick1->GetRawAxis(3), 0.1);
 
     // [ry]
     //stick1->GetRawAxis(4);
