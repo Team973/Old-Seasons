@@ -2,7 +2,7 @@
 #include "drive.hpp"
 #include <math.h>
 
-Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoid *kickUp_, Encoder *leftEncoder_, Encoder *rightEncoder_, Gyro *gyro_)
+Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoid *kickUp_, Encoder *leftEncoder_, Encoder *rightEncoder_)
 {
     leftDrive = leftDrive_;
     rightDrive = rightDrive_;
@@ -12,8 +12,6 @@ Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoi
 
     leftEncoder = leftEncoder_;
     rightEncoder = rightEncoder_;
-
-    gyro = gyro_;
 
     M_PI = 3.141592;
 
@@ -56,9 +54,8 @@ float Drive::getWheelDistance()
     return (leftDist + rightDist)/2;
 }
 
-void Drive::resetGyro()
+void Drive::resetGyro() //TODO(oliver): Actually reset the gyro
 {
-    gyro->Reset();
 }
 
 float Drive::normalizeAngle(float theta)
@@ -77,7 +74,7 @@ float Drive::normalizeAngle(float theta)
 
 float Drive::getGyroAngle()
 {
-    return normalizeAngle(gyro->GetAngle());
+    return normalizeAngle(0); //TODO(oliver): Add the new gyro get here
 }
 
 void Drive::resetDriveEncoders()
@@ -279,7 +276,6 @@ void Drive::update(double DriveX, double DriveY, bool gear, bool kick, bool quic
 
 void Drive::dashboardUpdate()
 {
-    SmartDashboard::PutNumber("Gyro RAW angle: ", gyro->GetAngle());
     SmartDashboard::PutNumber("Left Encoder RAW Ticks", leftEncoder->Get());
     SmartDashboard::PutNumber("Right Encoder RAW Ticks", rightEncoder->Get());
 }

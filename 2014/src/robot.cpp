@@ -43,11 +43,7 @@ Robot::Robot()
     compressor = new Compressor(1,8);
     compressor->Start();
 
-    gyro = new Gyro(1, 1);
-    gyro->SetSensitivity(0.00703);
-    gyro->Reset();
-
-    drive = new Drive(leftDriveMotors, rightDriveMotors, shiftingSolenoid, kickUpSolenoid, leftDriveEncoder, rightDriveEncoder, gyro);
+    drive = new Drive(leftDriveMotors, rightDriveMotors, shiftingSolenoid, kickUpSolenoid, leftDriveEncoder, rightDriveEncoder);
     arm = new Arm(armMotor, armSensorA);
     intake = new Intake(arm, linearIntakeMotor, crossIntakeMotor, clawSolenoid, intakeBallSensor);
     shooter = new Shooter(arm, intake, winchMotor, winchReleaseSolenoid, winchZeroSensor, winchFullCockSensor, winchEncoder);
