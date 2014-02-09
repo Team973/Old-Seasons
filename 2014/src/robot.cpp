@@ -51,8 +51,8 @@ Robot::Robot()
 
     drive = new Drive(leftDriveMotors, rightDriveMotors, shiftingSolenoid, kickUpSolenoid, leftDriveEncoder, rightDriveEncoder, gyro);
     arm = new Arm(armMotor, armSensorA, armSensorB);
-    shooter = new Shooter(winchMotor, winchReleaseSolenoid, winchZeroSensor, winchFullCockSensor, winchEncoder);
     intake = new Intake(arm, linearIntakeMotor, crossIntakeMotor, clawSolenoid, intakeBallSensor);
+    shooter = new Shooter(arm, intake, winchMotor, winchReleaseSolenoid, winchZeroSensor, winchFullCockSensor, winchEncoder);
 
     autoMode = new AutoManager(drive, shooter, intake, arm);
 

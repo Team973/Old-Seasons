@@ -35,6 +35,11 @@ void Intake::runIntake(float speed)
     intakeSpeed = speed;
 }
 
+void Intake::setFangs(bool state)
+{
+    openClaw->Set(state);
+}
+
 void Intake::update()
 {
     float intakeTime = 1;
