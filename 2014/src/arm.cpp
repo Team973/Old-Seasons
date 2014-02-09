@@ -55,7 +55,7 @@ float Arm::getRawAngle()
 
 void Arm::update()
 {
-    motor->Set(armPID->update(sensorA->Get()));
+    motor->Set(armPID->update(getRawAngle()));
 }
 
 void Arm::dashboardUpdate()
