@@ -103,4 +103,5 @@ void Shooter::update()
 
 void Shooter::dashboardUpdate()
 {
+    SmartDashboard::PutNumber("Winch Encoder Raw Ticks: ", encoder->Get());
 }

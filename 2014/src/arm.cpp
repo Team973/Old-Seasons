@@ -19,7 +19,7 @@ void Arm::setPreset(int preset)
             setTarget(10);
             break;
         case TEST2:
-            setTarget(30);
+            setTarget(20);
             break;
         default:
             setTarget(sensorA->Get());

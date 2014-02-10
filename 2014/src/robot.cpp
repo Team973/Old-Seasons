@@ -62,6 +62,7 @@ void Robot::dashboardUpdate()
 {
     drive->dashboardUpdate();
     arm->dashboardUpdate();
+    shooter->dashboardUpdate();
 }
 
 float Robot::deadband(float axis, float threshold)
