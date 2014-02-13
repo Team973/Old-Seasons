@@ -84,7 +84,7 @@ void Robot::joystick1() // Driver
     //stick1->GetX();
 
     // [rx]
-    DriveX = deadband(stick1->GetRawAxis(3), 0.1);
+    DriveX = -deadband(stick1->GetRawAxis(3), 0.1);
 
     // [ry]
     //stick1->GetRawAxis(4);
