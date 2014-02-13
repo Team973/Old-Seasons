@@ -54,10 +54,6 @@ float Drive::getWheelDistance()
     return (leftDist + rightDist)/2;
 }
 
-void Drive::resetGyro() //TODO(oliver): Actually reset the gyro
-{
-}
-
 float Drive::normalizeAngle(float theta)
 {
     while (theta > 180)

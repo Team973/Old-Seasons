@@ -43,7 +43,7 @@ public:
     float getRightDistance();
     float getWheelDistance();
     void resetDriveEncoders();
-    void resetGyro();
+    //TODO(oliver): Add in the reset gyro function
     float getGyroAngle();
     void resetDrive();
     void setLowGear(bool lowGear);
