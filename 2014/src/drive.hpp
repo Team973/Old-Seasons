@@ -8,13 +8,9 @@ class Drive
 private:
     float limit(float x);
     void setDriveMotors(float left, float right);
-    void CheesyDrive(double throttle, double wheel, bool highGear, bool quickTurn);
     float signSquare(float x);
     void arcade(float move_, float rotate_);
 
-    float oldWheel;
-    float negInertiaAccumulator;
-    float quickStopAccumulator;
     float leftDist;
     float rightDist;
     double M_PI;
