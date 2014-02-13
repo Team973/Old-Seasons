@@ -9,8 +9,12 @@ private:
     float limit(float x);
     void setDriveMotors(float left, float right);
     float signSquare(float x);
+    void CheesyDrive(double throttle, double wheel, bool highGear, bool quickTurn);
     void arcade(float move_, float rotate_);
 
+    float quickStopAccumulator;
+    float negInertiaAccumulator;
+    float oldWheel;
     float leftDist;
     float rightDist;
     double M_PI;

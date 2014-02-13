@@ -266,6 +266,7 @@ void Drive::CheesyDrive(double throttle, double wheel, bool highGear, bool quick
 
 void Drive::update(double DriveX, double DriveY, bool gear, bool kick, bool quickTurn)
 {
+    CheesyDrive(DriveY, DriveX, gear, quickTurn); 
     arcade(DriveY, DriveX);
     setLowGear(gear);
     setKickUp(kick);
