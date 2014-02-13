@@ -17,7 +17,11 @@ Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoi
 
     M_PI = 3.141592;
 
-
+    quickStopAccumulator = 0;
+    negInertiaAccumulator = 0;
+    oldWheel = 0;
+    leftDist = 0;
+    rightDist = 0;
 }
 
 float Drive::limit(float x)
@@ -166,8 +170,6 @@ void Drive::CheesyDrive(double throttle, double wheel, bool highGear, bool quick
 
   double negInertia = wheel - oldWheel;
   oldWheel = wheel;
-
-  double M_PI = 3.141592;
 
   if (highGear) {
     wheelNonLinearity = turnNonlinHigh;
