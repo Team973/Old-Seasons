@@ -42,7 +42,7 @@ void Intake::setFangs(bool state)
 
 void Intake::update()
 {
-    float intakeTime = 1;
+    float intakeTime = 0.5;
     //TODO(oliver): Switch test1 to the actual approved intaking preset
     if ((!hasBall) && (intakeSpeed > 0) && (arm->getPreset() == TEST1))
     {

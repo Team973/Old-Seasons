@@ -141,7 +141,7 @@ void Robot::joystick2() // Co-Driver
     //stick2->GetX();
 
     // [ry]
-    //winchMotor->Set(deadband(stick2->GetRawAxis(3), 0.1));
+    winchMotor->Set(deadband(stick2->GetRawAxis(3), 0.1));
 
     // [rx]
     //stick2->GetRawAxis(4);
