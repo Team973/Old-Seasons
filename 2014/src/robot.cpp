@@ -13,7 +13,9 @@ Robot::Robot()
     this->SetPeriod(0);
 
     leftDriveMotors = new Talon(1);
+    leftDriveMotors->Set(0);
     rightDriveMotors = new Talon(2);
+    rightDriveMotors->Set(0);
     armMotor = new Talon(3);
     winchMotor = new Victor(4);
     linearIntakeMotor = new Victor(6);
@@ -76,7 +78,7 @@ float Robot::deadband(float axis, float threshold)
 void Robot::joystick1() // Driver
 {
     // [y]
-    DriveY = -deadband(stick1->GetY(), 0.1);
+    DriveY = deadband(stick1->GetY(), 0.1);
 
     // [x]
     //stick1->GetX();
@@ -133,13 +135,13 @@ void Robot::joystick1() // Driver
 void Robot::joystick2() // Co-Driver
 {
     // [y]
-    intake->manual(deadband(stick2->GetY(), 0.1));
+    //intake->manual(deadband(stick2->GetY(), 0.1));
 
     // [x]
     //stick2->GetX();
 
     // [ry]
-    //stick2->GetRawAxis(3);
+    //winchMotor->Set(deadband(stick2->GetRawAxis(3), 0.1));
 
     // [rx]
     //stick2->GetRawAxis(4);
