@@ -21,9 +21,6 @@ void Arm::setPreset(int preset)
         case TEST2:
             setTarget(20);
             break;
-        default:
-            setTarget(sensorA->Get());
-            break;
     }
 
     lastPreset = preset;
