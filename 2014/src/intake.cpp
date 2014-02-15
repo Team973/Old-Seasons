@@ -91,10 +91,9 @@ void Intake::update()
         crossMotor->Set(intakeSpeed);
     }
 
-    SmartDashboard::PutNumber("Ball Timer: ", possesionTimer->Get());
 }
 
 void Intake::dashboardUpdate()
 {
-    SmartDashboard::PutBoolean("Has Ball: ", hasBall);
+    SmartDashboard::PutBoolean("Ball Sensor: ", ballSensor->Get());
 }
