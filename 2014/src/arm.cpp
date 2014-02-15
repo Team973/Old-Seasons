@@ -6,7 +6,7 @@ Arm::Arm(Talon *motor_, Encoder *sensorA_)
     motor = motor_;
     sensorA = sensorA_;
 
-    armPID = new PID(0.03, 0, 0);
+    armPID = new PID(0.05, 0, 0);
     armPID->setBounds(-.5, .5);
     armPID->start();
 }

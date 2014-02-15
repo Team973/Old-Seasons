@@ -63,8 +63,6 @@ bool Shooter::performFire() //TODO(oliver): Add the actual arm presets
             return true;
         }
     }
-    else
-        arm->setPreset(TEST2);
 
     return false;
 }
