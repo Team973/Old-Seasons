@@ -13,6 +13,7 @@ public:
     void manual(float speed);
     void runIntake(float speed);
     void setFangs(bool state);
+    void isHasBall(bool ball);
 
 private:
     float limit(float x);
