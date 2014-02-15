@@ -65,6 +65,7 @@ void Robot::dashboardUpdate()
     drive->dashboardUpdate();
     arm->dashboardUpdate();
     shooter->dashboardUpdate();
+    intake->dashboardUpdate();
 }
 
 float Robot::deadband(float axis, float threshold)
@@ -135,7 +136,7 @@ void Robot::joystick1() // Driver
 void Robot::joystick2() // Co-Driver
 {
     // [y]
-    //intake->manual(deadband(stick2->GetY(), 0.1));
+    intake->manual(deadband(stick2->GetY(), 0.1));
 
     // [x]
     //stick2->GetX();
@@ -159,10 +160,16 @@ void Robot::joystick2() // Co-Driver
     }
 
     // [3]
-    //stick2->GetRawButton(3);
+    if (stick2->GetRawButton(3))
+    {
+        intake->isHasBall(true);
+    }
 
     // [4]
-    //stick2->GetRawButton(4);
+    if (stick2->GetRawButton(4))
+    {
+        intake->isHasBall(false);
+    }
 
     // [5]
     //stick2->GetRawButton(5);
