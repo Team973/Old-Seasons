@@ -47,10 +47,10 @@ void Shooter::fire(bool fire)
     firing = fire;
 }
 
-bool Shooter::performFire() //TODO(oliver): Add the actual arm presets
+bool Shooter::performFire()
 {
     fireTimer->Start();
-    if (arm->getPreset() != TEST1)
+    if (arm->getPreset() != INTAKE)
     {
         intake->setFangs(true);
         if (fireTimer->Get() >= 0.5)

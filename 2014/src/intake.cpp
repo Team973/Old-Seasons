@@ -43,7 +43,6 @@ void Intake::setFangs(bool state)
 void Intake::update()
 {
     float intakeTime = 0.5;
-    //TODO(oliver): Switch test1 to the actual approved intaking preset
     if (intakeManualSpeed != 0)
     {
         linearMotor->Set(intakeManualSpeed);
@@ -51,9 +50,9 @@ void Intake::update()
     }
     else
     {
-        if ((!hasBall) && (intakeSpeed > 0) && ((arm->getPreset() == TEST1) || (arm->getPreset() == TEST2)))
+        if ((!hasBall) && (intakeSpeed > 0) && ((arm->getPreset() == INTAKE)))
         {
-            if (ballSensor->Get())
+            if (!ballSensor->Get())
             {
                 if (possesionTimer->Get() == 0)
                 {
@@ -63,7 +62,7 @@ void Intake::update()
                 {
                     possesionTimer->Stop();
                     hasBall = true;
-                    arm->setPreset(TEST2);
+                    arm->setPreset(SHOOTING);
                 }
 
             }

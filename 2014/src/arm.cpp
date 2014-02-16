@@ -7,7 +7,7 @@ Arm::Arm(Talon *motor_, Encoder *sensorA_)
     sensorA = sensorA_;
 
     armPID = new PID(0.05, 0, 0);
-    armPID->setBounds(-.5, .5);
+    armPID->setBounds(-1, 1);
     armPID->start();
 }
 
@@ -15,11 +15,11 @@ void Arm::setPreset(int preset)
 {
     switch (preset)
     {
-        case TEST1:
-            setTarget(10);
+        case INTAKE:
+            setTarget(102.96);
             break;
-        case TEST2:
-            setTarget(20);
+        case SHOOTING:
+            setTarget(34.56);
             break;
     }
 
