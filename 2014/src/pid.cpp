@@ -71,7 +71,7 @@ float PID::update(float actual)
     // Calculate integral
     integral = integral + err * timer->Get();
     iterm = i * integral;
-    if (icap)
+    if (icap != 0)
     {
         if (iterm > icap)
         {
