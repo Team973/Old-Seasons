@@ -154,13 +154,13 @@ void Robot::joystick2() // Co-Driver
     // [1]
     if (stick2->GetRawButton(1))
     {
-        arm->setPreset(TEST1);
+        arm->setPreset(INTAKE);
     }
 
     // [2]
     if (stick2->GetRawButton(2))
     {
-        arm->setPreset(TEST2);
+        arm->setPreset(SHOOTING);
     }
 
     // [3]

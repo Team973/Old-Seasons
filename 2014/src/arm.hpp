@@ -4,8 +4,8 @@
 #ifndef ARM_H
 #define ARM_H
 
-#define TEST1 1
-#define TEST2 2
+#define INTAKE 1
+#define SHOOTING 2
 
 class Arm
 {
