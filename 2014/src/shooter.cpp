@@ -88,11 +88,11 @@ void Shooter::update()
     else
     {
         winchRelease->Set(true);
-        if (currentCockPoint->Get())
+        if (!currentCockPoint->Get())
         {
             winchMotor->Set(0);
         }
-        else if (!currentCockPoint->Get() && (encoder->Get() != dangerPoint))
+        else if (currentCockPoint->Get() && (encoder->Get() != dangerPoint))
         {
             winchMotor->Set(winchPID->update(encoder->Get())); //TODO(oliver): Create the get distance function to pass accurate measurments to the PID
         }
