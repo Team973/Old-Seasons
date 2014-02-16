@@ -48,6 +48,8 @@ private:
     DigitalInput *winchZeroSensor;
     DigitalInput *winchFullCockSensor;
 
+    Encoder *colinGyro;
+
     Solenoid *shiftingSolenoid;
     Solenoid *kickUpSolenoid;
     Solenoid *clawSolenoid;

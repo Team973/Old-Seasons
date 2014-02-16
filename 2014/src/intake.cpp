@@ -40,12 +40,6 @@ void Intake::setFangs(bool state)
     openClaw->Set(state);
 }
 
-//XXX THIS IS A TEST FUNCTION DELETE ME WHEN I AM NO LONGER NEEDED
-void Intake::isHasBall(bool ball)
-{
-    hasBall = ball;
-}
-
 void Intake::update()
 {
     float intakeTime = 0.5;

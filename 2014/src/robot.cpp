@@ -42,6 +42,9 @@ Robot::Robot()
     winchZeroSensor = new DigitalInput(11);
     winchFullCockSensor = new DigitalInput(12);
 
+    colinGyro = new Encoder(13, 14);
+    colinGyro->Start();
+
     compressor = new Compressor(1,8);
     compressor->Start();
 
@@ -66,6 +69,7 @@ void Robot::dashboardUpdate()
     arm->dashboardUpdate();
     shooter->dashboardUpdate();
     intake->dashboardUpdate();
+    SmartDashboard::PutNumber("Gyro: ", colinGyro->Get());
 }
 
 float Robot::deadband(float axis, float threshold)
@@ -91,16 +95,16 @@ void Robot::joystick1() // Driver
     //stick1->GetRawAxis(4);
 
     // [1]
-    //stick1->GetRawButton(1);
+    //stick1->GetRawButton(1)
 
     // [2]
-    //stick1->GetRawButton(2);
+    //stick1->GetRawButton(2)
 
     // [3]
-    //stick1->GetRawButton(3);
+    //stick1->GetRawButton(3)
 
     // [4]
-    //stick1->GetRawButton(4);
+    //stick1->GetRawButton(4)
 
     // [5]
     quickTurn = stick1->GetRawButton(5);
@@ -109,7 +113,7 @@ void Robot::joystick1() // Driver
     lowGear = stick1->GetRawButton(6);
 
     // [7]
-    //stick1->GetRawButton(7);
+    //stick1->GetRawButton(7)
 
     // [8]
     kickUp = stick1->GetRawButton(8);
@@ -160,16 +164,10 @@ void Robot::joystick2() // Co-Driver
     }
 
     // [3]
-    if (stick2->GetRawButton(3))
-    {
-        intake->isHasBall(true);
-    }
+    //stick2->GetRawButton(3)
 
     // [4]
-    if (stick2->GetRawButton(4))
-    {
-        intake->isHasBall(false);
-    }
+    //stick2->GetRawButton(4)
 
     // [5]
     //stick2->GetRawButton(5);
@@ -250,8 +248,8 @@ void Robot::TeleopPeriodic()
 
     drive->update(DriveX, DriveY, lowGear, kickUp, quickTurn);
     arm->update();
-    shooter->update();
-    intake->update();
+    //shooter->update();
+    //intake->update();
 
     dashboardUpdate();
 
