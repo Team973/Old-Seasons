@@ -13,7 +13,7 @@ class Shooter
 {
 public:
     Shooter(Arm *arm_, Intake *intake_, Victor *winchMotor_, Solenoid *winchRelease_, DigitalInput *zeroPoint, DigitalInput *fullCockPoint_, Encoder *encoder_);
-    void cock(int level); // Yes laugh all you want. It's very funny
+    void cock(int level); // Yes, laugh all you want. It's very funny.
     void fire(bool fire);
     void manualCock(bool running);
     void manualFire();
@@ -32,7 +32,6 @@ private:
     Solenoid *winchRelease;
     DigitalInput *zeroPoint;
     DigitalInput *fullCockPoint;
-    DigitalInput *currentCockPoint;
     Encoder *encoder;
 
     Timer *fireTimer;
@@ -43,8 +42,9 @@ private:
     float M_PI;
     bool currZeroPoint;
     bool prevZeroPoint;
-    bool motorRunning;
+    bool fired;
     bool manual;
+    bool STOP;
 };
 
 #endif
