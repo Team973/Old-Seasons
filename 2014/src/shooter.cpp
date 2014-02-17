@@ -19,14 +19,16 @@ Shooter::Shooter(Arm *arm_, Intake *intake_, Victor *winchMotor_, Solenoid *winc
 
     dangerPoint = 10.5;
     firing = false;
+    fired = false;
 
     M_PI = 3.141592;
 
     currZeroPoint = false;
     prevZeroPoint = false;
 
-    motorRunning = false;
     manual = false;
+
+    STOP = false;
 }
 
 void Shooter::setTarget(float target)
@@ -43,7 +45,6 @@ void Shooter::cock(int level)
             break;
         case FULL_COCK:
             setTarget(10);
-            currentCockPoint = fullCockPoint;
             break;
     }
 
@@ -73,11 +74,11 @@ bool Shooter::performFire()
         intake->runIntake(.5);
         if (fireTimer->Get() >= 0.5)
         {
-            winchRelease->Set(false);
-            firing = false;
+            winchRelease->Set(true);
             fireTimer->Stop();
             fireTimer->Reset();
             intake->runIntake(0);
+            firing = false;
 
             return true;
         }
@@ -98,10 +99,12 @@ void Shooter::manualFire()
 
 void Shooter::update()
 {
-    //bool fired;
     currZeroPoint = zeroPoint->Get();
+    if ((currZeroPoint) && (!prevZeroPoint))
+    {
+        encoder->Reset();
+    }
 
-    /*
     if (firing)
     {
         fired = false;
@@ -118,17 +121,18 @@ void Shooter::update()
     }
     else
     {
-        winchRelease->Set(true);
-        if (!currentCockPoint->Get())
+        winchRelease->Set(false);
+        if ((!fullCockPoint->Get()) || (winchDistance() >= dangerPoint))
         {
             winchMotor->Set(0);
+            STOP = true;
         }
-        else if (currentCockPoint->Get() && (encoder->Get() != dangerPoint))
+        else if (fullCockPoint->Get() && (winchDistance() < dangerPoint))
         {
             winchMotor->Set(winchPID->update(winchDistance()));
+            STOP = false;
         }
     }
-    */
 
     if (manual)
     {
@@ -140,11 +144,8 @@ void Shooter::update()
     else
         winchMotor->Set(-.5);
 
-    if ((!currZeroPoint) && (prevZeroPoint))
-    {
-        encoder->Reset();
-    }
     prevZeroPoint = currZeroPoint;
+
 }
 
 void Shooter::dashboardUpdate()
@@ -152,5 +153,5 @@ void Shooter::dashboardUpdate()
     SmartDashboard::PutNumber("Winch Encoder Distance: ", winchDistance());
     SmartDashboard::PutBoolean("Zero Hall Effects: ", zeroPoint->Get());
     SmartDashboard::PutBoolean("Full Cock Hall Effects: ", fullCockPoint->Get());
-    SmartDashboard::PutBoolean("Are Motors Running: ", motorRunning);
+    SmartDashboard::PutBoolean("STOP: ", STOP);
 }
