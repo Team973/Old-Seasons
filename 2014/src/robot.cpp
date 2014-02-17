@@ -146,7 +146,7 @@ void Robot::joystick2() // Co-Driver
     //stick2->GetX();
 
     // [ry]
-    winchMotor->Set(deadband(stick2->GetRawAxis(3), 0.1));
+    //stick2->GetRawAxis(3)
 
     // [rx]
     //stick2->GetRawAxis(4);
@@ -170,15 +170,13 @@ void Robot::joystick2() // Co-Driver
     //stick2->GetRawButton(4)
 
     // [5]
-    if (stick2->GetRawButton(5))
-    {
-        winchMotor->Set(-.5);
-    }
+    shooter->manualCock(stick2->GetRawButton(5));
+    
 
     // [6]
     if (stick2->GetRawButton(6))
     {
-        winchMotor->Set(0);
+        shooter->manualFire();
     }
 
     // [7]
