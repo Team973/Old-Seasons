@@ -17,8 +17,16 @@ Shooter::Shooter(Arm *arm_, Intake *intake_, Victor *winchMotor_, Solenoid *winc
 
     fireTimer = new Timer();
 
-    dangerPoint = 11;
+    dangerPoint = 10.5;
     firing = false;
+
+    M_PI = 3.141592;
+
+    currZeroPoint = false;
+    prevZeroPoint = false;
+
+    motorRunning = false;
+    manual = false;
 }
 
 void Shooter::setTarget(float target)
@@ -47,18 +55,29 @@ void Shooter::fire(bool fire)
     firing = fire;
 }
 
+float Shooter::winchDistance()
+{
+    float encoderTicks = 360;
+    float diameter = 1.4;
+    float gearRatio = 2;
+    float distancePerRevolution = diameter * M_PI;
+    return (encoder->Get() * distancePerRevolution) / (encoderTicks * gearRatio);
+}
+
 bool Shooter::performFire()
 {
-    fireTimer->Start();
     if (arm->getPreset() != INTAKE)
     {
+        fireTimer->Start();
         intake->setFangs(true);
+        intake->runIntake(.5);
         if (fireTimer->Get() >= 0.5)
         {
             winchRelease->Set(false);
             firing = false;
             fireTimer->Stop();
             fireTimer->Reset();
+            intake->runIntake(0);
 
             return true;
         }
@@ -67,10 +86,22 @@ bool Shooter::performFire()
     return false;
 }
 
+void Shooter::manualCock(bool running)
+{
+    manual = running;
+}
+
+void Shooter::manualFire()
+{
+    winchRelease->Set(true);
+}
+
 void Shooter::update()
 {
-    bool fired;
+    //bool fired;
+    currZeroPoint = zeroPoint->Get();
 
+    /*
     if (firing)
     {
         fired = false;
@@ -94,14 +125,32 @@ void Shooter::update()
         }
         else if (currentCockPoint->Get() && (encoder->Get() != dangerPoint))
         {
-            winchMotor->Set(winchPID->update(encoder->Get())); //TODO(oliver): Create the get distance function to pass accurate measurments to the PID
+            winchMotor->Set(winchPID->update(winchDistance()));
         }
     }
+    */
+
+    if (manual)
+    {
+        if (fullCockPoint->Get() != false)
+        {
+            winchMotor->Set(-.5);
+        }
+    }
+    else
+        winchMotor->Set(-.5);
+
+    if ((!currZeroPoint) && (prevZeroPoint))
+    {
+        encoder->Reset();
+    }
+    prevZeroPoint = currZeroPoint;
 }
 
 void Shooter::dashboardUpdate()
 {
-    SmartDashboard::PutNumber("Winch Encoder Raw Ticks: ", encoder->Get());
+    SmartDashboard::PutNumber("Winch Encoder Distance: ", winchDistance());
     SmartDashboard::PutBoolean("Zero Hall Effects: ", zeroPoint->Get());
     SmartDashboard::PutBoolean("Full Cock Hall Effects: ", fullCockPoint->Get());
+    SmartDashboard::PutBoolean("Are Motors Running: ", motorRunning);
 }
