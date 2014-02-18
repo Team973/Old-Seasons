@@ -8,6 +8,10 @@
 #ifndef ROBOT_H
 #define ROBOT_H
 
+class Shooter;
+class Intake;
+class Drive;
+class Arm;
 //XXX: rename class when we decide on a robot name
 class Robot : public IterativeRobot
 {
