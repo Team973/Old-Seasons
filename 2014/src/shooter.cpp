@@ -6,13 +6,14 @@ Shooter::Shooter(Arm *arm_, Intake *intake_, Victor *winchMotor_, Solenoid *winc
     arm = arm_;
     intake = intake_;
     winchMotor = winchMotor_;
+    winchMotor->Set(0);
     winchRelease = winchRelease_;
     zeroPoint = zeroPoint_;
     fullCockPoint = fullCockPoint_;
     encoder = encoder_;
 
-    winchPID = new PID(0, 0, 0);
-    winchPID->setBounds(1, -1);
+    winchPID = new PID(100000, 0, 0);
+    winchPID->setBounds(0, 1);
     winchPID->start();
 
     fireTimer = new Timer();
@@ -25,8 +26,6 @@ Shooter::Shooter(Arm *arm_, Intake *intake_, Victor *winchMotor_, Solenoid *winc
 
     currZeroPoint = false;
     prevZeroPoint = false;
-
-    manual = false;
 
     STOP = false;
 }
@@ -54,6 +53,11 @@ void Shooter::cock(int level)
 void Shooter::fire(bool fire)
 {
     firing = fire;
+}
+
+bool Shooter::isFiring()
+{
+    return firing;
 }
 
 float Shooter::winchDistance()
@@ -87,20 +91,14 @@ bool Shooter::performFire()
     return false;
 }
 
-void Shooter::manualCock(bool running)
-{
-    manual = running;
-}
-
-void Shooter::manualFire()
-{
-    winchRelease->Set(true);
-}
-
 void Shooter::update()
 {
     currZeroPoint = zeroPoint->Get();
     if ((currZeroPoint) && (!prevZeroPoint))
+    {
+        encoder->Reset();
+    }
+    else if ((!currZeroPoint) && (prevZeroPoint))
     {
         encoder->Reset();
     }
@@ -129,20 +127,17 @@ void Shooter::update()
         }
         else if (fullCockPoint->Get() && (winchDistance() < dangerPoint))
         {
+            if (winchDistance() < winchPID->getTarget())
+            {
             winchMotor->Set(winchPID->update(winchDistance()));
+            }
+            else
+            {
+            winchMotor->Set(0);
+            }
             STOP = false;
         }
     }
-
-    if (manual)
-    {
-        if (fullCockPoint->Get() != false)
-        {
-            winchMotor->Set(-.5);
-        }
-    }
-    else
-        winchMotor->Set(-.5);
 
     prevZeroPoint = currZeroPoint;
 

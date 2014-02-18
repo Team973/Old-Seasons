@@ -15,8 +15,7 @@ public:
     Shooter(Arm *arm_, Intake *intake_, Victor *winchMotor_, Solenoid *winchRelease_, DigitalInput *zeroPoint, DigitalInput *fullCockPoint_, Encoder *encoder_);
     void cock(int level); // Yes, laugh all you want. It's very funny.
     void fire(bool fire);
-    void manualCock(bool running);
-    void manualFire();
+    bool isFiring();
     bool performFire();
     void update();
     void dashboardUpdate();
@@ -43,7 +42,6 @@ private:
     bool currZeroPoint;
     bool prevZeroPoint;
     bool fired;
-    bool manual;
     bool STOP;
 };
 
