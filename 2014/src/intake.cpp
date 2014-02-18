@@ -1,7 +1,7 @@
 #include "WPILib.h"
 #include "intake.hpp"
 
-Intake::Intake(Arm *arm_, Victor *linearMotor_, Victor *crossMotor_, Solenoid *openClaw_, DigitalInput *ballSensor_)
+Intake::Intake(Arm *arm_, Shooter *shooter_, Victor *linearMotor_, Victor *crossMotor_, Solenoid *openClaw_, DigitalInput *ballSensor_)
 {
     arm = arm_;
     linearMotor = linearMotor_;
