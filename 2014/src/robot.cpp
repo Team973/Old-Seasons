@@ -164,20 +164,23 @@ void Robot::joystick2() // Co-Driver
     }
 
     // [3]
-    //stick2->GetRawButton(3)
+    if (stick2->GetRawButton(3))
+    {
+        shooter->cock(HALF_COCK);
+    }
 
     // [4]
-    //stick2->GetRawButton(4)
+    if (stick2->GetRawButton(4))
+    {
+        shooter->cock(FULL_COCK);
+    }
 
     // [5]
-    shooter->manualCock(stick2->GetRawButton(5));
+    //(stick2->GetRawButton(5)
     
 
     // [6]
-    if (stick2->GetRawButton(6))
-    {
-        shooter->manualFire();
-    }
+    //stick2->GetRawButton(6)
 
     // [7]
     if (stick2->GetRawButton(7))
