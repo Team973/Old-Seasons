@@ -3,13 +3,14 @@
 #include "shooter.hpp"
 #include "intake.hpp"
 
-Intake::Intake(Arm *arm_, Shooter *shooter_, Victor *linearMotor_, Victor *crossMotor_, Solenoid *openClaw_, DigitalInput *ballSensor_)
+Intake::Intake(Arm *arm_, Shooter *shooter_, Victor *linearMotor_, Victor *crossMotor_, Solenoid *openClaw_, Solenoid *corral_, DigitalInput *ballSensor_)
 {
     arm = arm_;
     shooter = shooter_;
     linearMotor = linearMotor_;
     crossMotor = crossMotor_;
     openClaw = openClaw_;
+    corral = corral_;
     ballSensor = ballSensor_;
 
     intakeManualSpeed = 0;

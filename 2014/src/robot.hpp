@@ -48,10 +48,12 @@ private:
 
     Encoder *colinGyro;
 
+    Solenoid *blockerSolenoid;
     Solenoid *shiftingSolenoid;
     Solenoid *kickUpSolenoid;
     Solenoid *clawSolenoid;
     Solenoid *winchReleaseSolenoid;
+    Solenoid *autoCorralSolenoid;
 
     Compressor *compressor;
 
