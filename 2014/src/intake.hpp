@@ -7,7 +7,7 @@ class Shooter;
 class Intake
 {
 public:
-    Intake(Arm *arm_, Shooter *shooter_, Victor *linearMotor_, Victor *crossMotor_, Solenoid *openClaw_, DigitalInput *ballSensor_);
+    Intake(Arm *arm_, Shooter *shooter_, Victor *linearMotor_, Victor *crossMotor_, Solenoid *openClaw_, Solenoid *corral_, DigitalInput *ballSensor_);
     void update();
     void dashboardUpdate();
     void manual(float speed);
@@ -25,6 +25,7 @@ private:
     Victor *linearMotor;
     Victor *crossMotor;
     Solenoid *openClaw;
+    Solenoid *corral;
     DigitalInput *ballSensor;
 
     Timer *possesionTimer;

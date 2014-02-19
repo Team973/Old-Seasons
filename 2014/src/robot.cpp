@@ -23,10 +23,12 @@ Robot::Robot()
     linearIntakeMotor = new Victor(6);
     crossIntakeMotor = new Victor(7);
 
+    blockerSolenoid = new Solenoid(6);
     shiftingSolenoid = new Solenoid(5);
     kickUpSolenoid = new Solenoid(4);
     clawSolenoid = new Solenoid(3);
     winchReleaseSolenoid = new Solenoid(2);
+    autoCorralSolenoid = new Solenoid(1);
 
 
     leftDriveEncoder = new Encoder(2, 3);
@@ -52,7 +54,7 @@ Robot::Robot()
 
     drive = new Drive(leftDriveMotors, rightDriveMotors, shiftingSolenoid, kickUpSolenoid, leftDriveEncoder, rightDriveEncoder);
     arm = new Arm(armMotor, armSensorA);
-    intake = new Intake(arm, shooter, linearIntakeMotor, crossIntakeMotor, clawSolenoid, intakeBallSensor);
+    intake = new Intake(arm, shooter, linearIntakeMotor, crossIntakeMotor, clawSolenoid, autoCorralSolenoid, intakeBallSensor);
     shooter = new Shooter(arm, intake, winchMotor, winchReleaseSolenoid, winchZeroSensor, winchFullCockSensor, winchEncoder);
 
     autoMode = new AutoManager(drive, shooter, intake, arm);
@@ -97,13 +99,25 @@ void Robot::joystick1() // Driver
     //stick1->GetRawAxis(4);
 
     // [1]
-    //stick1->GetRawButton(1)
+    if (stick1->GetRawButton(1))
+    {
+        leftDriveMotors->Set(1);
+        rightDriveMotors->Set(1);
+    }
 
     // [2]
-    //stick1->GetRawButton(2)
+    if (stick1->GetRawButton(2))
+    {
+        leftDriveMotors->Set(-1);
+        rightDriveMotors->Set(-1);
+    }
 
     // [3]
-    //stick1->GetRawButton(3)
+    if (stick1->GetRawButton(3))
+    {
+        leftDriveMotors->Set(0);
+        rightDriveMotors->Set(0);
+    }
 
     // [4]
     //stick1->GetRawButton(4)
@@ -178,7 +192,10 @@ void Robot::joystick2() // Co-Driver
     }
 
     // [5]
-    //(stick2->GetRawButton(5)
+    if (stick2->GetRawButton(5))
+    {
+        winchReleaseSolenoid->Set(true);
+    }
     
 
     // [6]
@@ -197,10 +214,10 @@ void Robot::joystick2() // Co-Driver
     }
 
     // [9]
-    //stick2->GetRawButton(9);
+    autoCorralSolenoid->Set(stick2->GetRawButton(9));
 
     // [10]
-    //stick2->GetRawButton(10);
+    blockerSolenoid->Set(stick2->GetRawButton(10));
 
     // [11]
     //stick2->GetRawButton(11);
@@ -262,7 +279,7 @@ void Robot::TeleopPeriodic()
     joystick2();
 
     drive->update(DriveX, DriveY, lowGear, kickUp, quickTurn);
-    arm->update();
+    //arm->update();
     shooter->update();
     intake->update();
 

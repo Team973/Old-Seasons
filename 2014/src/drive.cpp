@@ -184,7 +184,6 @@ void Drive::CheesyDrive(double throttle, double wheel, bool highGear, bool quick
   float linearPower;
 
   // Negative inertia!
-  static double negInertiaAccumulator = 0.0;
   double negInertiaScalar;
   if (highGear) {
     negInertiaScalar = negInertiaHigh;
@@ -261,13 +260,14 @@ void Drive::CheesyDrive(double throttle, double wheel, bool highGear, bool quick
     rightPwm = -1.0;
   }
 
+  SmartDashboard::PutNumber("Right Drive Output: ", rightPwm);
   setDriveMotors(leftPwm, rightPwm);
 }
 
 void Drive::update(double DriveX, double DriveY, bool gear, bool kick, bool quickTurn)
 {
     CheesyDrive(DriveY, DriveX, gear, quickTurn); 
-    arcade(DriveY, DriveX);
+    //arcade(DriveY, DriveX);
     setLowGear(gear);
     setKickUp(kick);
 }
