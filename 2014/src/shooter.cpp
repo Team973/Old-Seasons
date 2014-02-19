@@ -1,5 +1,8 @@
 #include "WPILib.h"
 #include "shooter.hpp"
+#include "pid.hpp"
+#include "arm.hpp"
+#include "intake.hpp"
 
 Shooter::Shooter(Arm *arm_, Intake *intake_, Victor *winchMotor_, Solenoid *winchRelease_, DigitalInput *zeroPoint_, DigitalInput *fullCockPoint_, Encoder *encoder_)
 {

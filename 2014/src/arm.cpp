@@ -1,4 +1,5 @@
 #include "WPILib.h"
+#include "pid.hpp"
 #include "arm.hpp"
 
 Arm::Arm(Talon *motor_, Encoder *sensorA_)

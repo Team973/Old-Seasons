@@ -1,10 +1,12 @@
 #include "WPILib.h"
+#include "pid.hpp"
 #include "drive.hpp"
 #include "arm.hpp"
 #include "shooter.hpp"
 #include "intake.hpp"
 #include "autoManager.hpp"
 #include "robot.hpp"
+#include <vector>
 
 #include "NetworkTables/NetworkTable.h"
 

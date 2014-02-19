@@ -1,10 +1,9 @@
-#include "WPILib.h"
 #include "arm.hpp"
-#include "shooter.hpp"
 
 #ifndef INTAKE_H
 #define INTAKE_H
 
+class Shooter;
 class Intake
 {
 public:
@@ -22,6 +21,7 @@ private:
     float intakeSpeed; // for automated pick up
     bool hasBall;
     Arm *arm;
+    Shooter *shooter;
     Victor *linearMotor;
     Victor *crossMotor;
     Solenoid *openClaw;

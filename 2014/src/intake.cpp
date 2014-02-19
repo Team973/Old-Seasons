@@ -1,9 +1,12 @@
 #include "WPILib.h"
+#include "arm.hpp"
+#include "shooter.hpp"
 #include "intake.hpp"
 
 Intake::Intake(Arm *arm_, Shooter *shooter_, Victor *linearMotor_, Victor *crossMotor_, Solenoid *openClaw_, DigitalInput *ballSensor_)
 {
     arm = arm_;
+    shooter = shooter_;
     linearMotor = linearMotor_;
     crossMotor = crossMotor_;
     openClaw = openClaw_;
@@ -76,7 +79,7 @@ void Intake::update()
                 }
             }
         }
-        else if (hasBall) //TODO(oliver): Add the fired boolean whenever that is added to the shooter
+        else if ((hasBall) && (shooter->isFiring()))
         {
             hasBall = false;
         }

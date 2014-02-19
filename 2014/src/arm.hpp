@@ -1,4 +1,3 @@
-#include "WPILib.h"
 #include "pid.hpp"
 
 #ifndef ARM_H
