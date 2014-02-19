@@ -1,9 +1,3 @@
-#include "WPILib.h"
-#include "drive.hpp"
-#include "autoManager.hpp"
-#include "auto/sequentialCommand.hpp"
-#include "auto/autoCommand.hpp"
-#include <vector>
 
 #ifndef ROBOT_H
 #define ROBOT_H

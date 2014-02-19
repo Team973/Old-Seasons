@@ -1,6 +1,4 @@
-#include "WPILib.h"
 #include "pid.hpp"
-#include "arm.hpp"
 #include "intake.hpp"
 
 #ifndef SHOOTER_H
@@ -9,6 +7,7 @@
 #define HALF_COCK 1
 #define FULL_COCK 2
 
+class Arm;
 class Shooter
 {
 public:
