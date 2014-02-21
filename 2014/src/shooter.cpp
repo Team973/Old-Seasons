@@ -95,12 +95,13 @@ bool Shooter::performFire()
 
 void Shooter::update()
 {
+    // Zero the winch whenever we fire
     currZeroPoint = zeroPoint->Get();
-    if ((currZeroPoint) && (!prevZeroPoint))
+    if ((currZeroPoint) && (!prevZeroPoint)) // This handles actual zeroing
     {
         encoder->Reset();
     }
-    else if ((!currZeroPoint) && (prevZeroPoint))
+    else if ((!currZeroPoint) && (prevZeroPoint)) // This is so we actually recock when we want to
     {
         encoder->Reset();
     }
@@ -114,21 +115,22 @@ void Shooter::update()
     }
     else
     {
+        // make sure we are cocked
         winchRelease->Set(false);
         if ((!fullCockPoint->Get()) || (winchDistance() >= dangerPoint))
         {
-            winchMotor->Set(0);
+            winchMotor->Set(0); // Kill everything
             STOP = true;
         }
         else if (fullCockPoint->Get() && (winchDistance() < dangerPoint))
         {
-            if (winchDistance() < winchPID->getTarget())
+            if (winchDistance() < winchPID->getTarget()) // We don't hit the actual distance perfectly and we prefer to be less then more
             {
-            winchMotor->Set(winchPID->update(winchDistance()));
+                winchMotor->Set(winchPID->update(winchDistance()));
             }
             else
             {
-            winchMotor->Set(0);
+                winchMotor->Set(0);
             }
             STOP = false;
         }

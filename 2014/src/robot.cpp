@@ -279,7 +279,7 @@ void Robot::TeleopPeriodic()
     joystick2();
 
     drive->update(DriveX, DriveY, lowGear, kickUp, quickTurn);
-    //arm->update();
+    arm->update();
     shooter->update();
     intake->update();
 

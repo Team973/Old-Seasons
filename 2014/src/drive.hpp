@@ -17,7 +17,7 @@ private:
     float oldWheel;
     float leftDist;
     float rightDist;
-    double M_PI;
+    double M_PI; // Apparently not included in math.h
 
     float normalizeAngle(float theta);
 

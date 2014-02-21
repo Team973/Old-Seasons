@@ -47,6 +47,7 @@ void Intake::setFangs(bool state)
 void Intake::update()
 {
     float intakeTime = 0.5;
+    // Manual overrides everything
     if (intakeManualSpeed != 0)
     {
         linearMotor->Set(intakeManualSpeed);
@@ -54,6 +55,7 @@ void Intake::update()
     }
     else
     {
+        // If we don't have a ball are actively intaking and can actually intake...
         if ((!hasBall) && (intakeSpeed > 0) && ((arm->getPreset() == INTAKE)))
         {
             if (!ballSensor->Get())
@@ -80,7 +82,7 @@ void Intake::update()
                 }
             }
         }
-        else if ((hasBall) && (shooter->isFiring()))
+        else if ((hasBall) && (shooter->isFiring())) // Lets the ball go
         {
             hasBall = false;
         }
