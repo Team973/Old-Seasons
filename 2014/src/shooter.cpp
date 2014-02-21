@@ -23,7 +23,6 @@ Shooter::Shooter(Arm *arm_, Intake *intake_, Victor *winchMotor_, Solenoid *winc
 
     dangerPoint = 10.5;
     firing = false;
-    fired = false;
 
     M_PI = 3.141592;
 
@@ -108,17 +107,10 @@ void Shooter::update()
 
     if (firing)
     {
-        fired = false;
-
         if (performFire())
         {
-            fired = true;
+            cock(HALF_COCK);
         }
-    }
-    else if (fired)
-    {
-        cock(HALF_COCK);
-        fired = false;
     }
     else
     {

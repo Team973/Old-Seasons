@@ -40,7 +40,6 @@ private:
     float M_PI;
     bool currZeroPoint;
     bool prevZeroPoint;
-    bool fired;
     bool STOP;
 };
 
