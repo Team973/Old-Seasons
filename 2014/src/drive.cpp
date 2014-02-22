@@ -260,7 +260,6 @@ void Drive::CheesyDrive(double throttle, double wheel, bool highGear, bool quick
     rightPwm = -1.0;
   }
 
-  SmartDashboard::PutNumber("Right Drive Output: ", rightPwm);
   setDriveMotors(leftPwm, rightPwm);
 }
 
