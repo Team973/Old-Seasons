@@ -68,7 +68,7 @@ void Intake::update()
                 {
                     possesionTimer->Stop();
                     hasBall = true;
-                    openClaw->Set(false);
+                    openClaw->Set(true);
                     arm->setPreset(SHOOTING);
                 }
 

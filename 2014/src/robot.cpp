@@ -192,14 +192,14 @@ void Robot::joystick2() // Co-Driver
     }
 
     // [5]
-    if (stick2->GetRawButton(5))
-    {
-        winchReleaseSolenoid->Set(true);
-    }
+    //stick2->GetRawButton(5)
     
 
     // [6]
-    //stick2->GetRawButton(6)
+    if (stick2->GetRawButton(6))
+    {
+        shooter->fire(true);
+    }
 
     // [7]
     if (stick2->GetRawButton(7))

@@ -28,8 +28,6 @@ Shooter::Shooter(Arm *arm_, Intake *intake_, Victor *winchMotor_, Solenoid *winc
 
     currZeroPoint = false;
     prevZeroPoint = false;
-
-    STOP = false;
 }
 
 void Shooter::setTarget(float target)
@@ -76,11 +74,14 @@ bool Shooter::performFire()
     if (arm->getPreset() != INTAKE)
     {
         fireTimer->Start();
-        intake->setFangs(true);
+        intake->setFangs(false);
         intake->runIntake(.5);
-        if (fireTimer->Get() >= 0.5)
+        if (fireTimer->Get() >= 0.25)
         {
             winchRelease->Set(true);
+        }
+        if (fireTimer->Get() >= 1.5)
+        {
             fireTimer->Stop();
             fireTimer->Reset();
             intake->runIntake(0);
@@ -120,19 +121,20 @@ void Shooter::update()
         if ((!fullCockPoint->Get()) || (winchDistance() >= dangerPoint))
         {
             winchMotor->Set(0); // Kill everything
-            STOP = true;
+            intake->runIntake(0);
         }
         else if (fullCockPoint->Get() && (winchDistance() < dangerPoint))
         {
             if (winchDistance() < winchPID->getTarget()) // We don't hit the actual distance perfectly and we prefer to be less then more
             {
                 winchMotor->Set(winchPID->update(winchDistance()));
+                intake->runIntake(-0.8);
             }
             else
             {
                 winchMotor->Set(0);
+                intake->runIntake(0);
             }
-            STOP = false;
         }
     }
 
@@ -145,5 +147,4 @@ void Shooter::dashboardUpdate()
     SmartDashboard::PutNumber("Winch Encoder Distance: ", winchDistance());
     SmartDashboard::PutBoolean("Zero Hall Effects: ", zeroPoint->Get());
     SmartDashboard::PutBoolean("Full Cock Hall Effects: ", fullCockPoint->Get());
-    SmartDashboard::PutBoolean("STOP: ", STOP);
 }
