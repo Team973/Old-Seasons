@@ -158,13 +158,13 @@ void Robot::joystick2() // Co-Driver
     // [1]
     if (stick2->GetRawButton(1))
     {
-        arm->setPreset(INTAKE);
+        arm->setPreset(STOW);
     }
 
     // [2]
     if (stick2->GetRawButton(2))
     {
-        arm->setPreset(SHOOTING);
+        arm->setPreset(INTAKE);
     }
 
     // [3]
@@ -180,32 +180,35 @@ void Robot::joystick2() // Co-Driver
     }
 
     // [5]
-    //stick2->GetRawButton(5)
-    
+
+    if (stick2->GetRawButton(5))
+    {
+        intake->setFangs(true);
+    }
 
     // [6]
     if (stick2->GetRawButton(6))
     {
-        shooter->fire(true);
+        arm->setPreset(SHOOTING);
     }
 
     // [7]
     if (stick2->GetRawButton(7))
     {
-        intake->setFangs(true);
+        intake->setFangs(false);
     }
 
     // [8]
     if (stick2->GetRawButton(8))
     {
-        intake->setFangs(false);
+        shooter->fire(true);
     }
 
     // [9]
-    autoCorralSolenoid->Set(stick2->GetRawButton(9));
+    //stick2->GetRawButton(9)
 
     // [10]
-    blockerSolenoid->Set(stick2->GetRawButton(10));
+    //stick2->GetRawButton(10)
 
     // [11]
     //stick2->GetRawButton(11);
