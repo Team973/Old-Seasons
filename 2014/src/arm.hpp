@@ -5,6 +5,7 @@
 
 #define INTAKE 1
 #define SHOOTING 2
+#define STOW 3
 
 class Arm
 {
@@ -22,6 +23,8 @@ private:
     Encoder *sensorA;
 
     PID *armPID;
+
+    bool ERR;
 
     int lastPreset;
 };
