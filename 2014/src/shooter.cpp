@@ -128,7 +128,7 @@ void Shooter::update()
             if (winchDistance() < winchPID->getTarget()) // We don't hit the actual distance perfectly and we prefer to be less then more
             {
                 winchMotor->Set(winchPID->update(winchDistance()));
-                intake->runIntake(-0.8);
+                intake->runIntake(0.8);
             }
             else
             {

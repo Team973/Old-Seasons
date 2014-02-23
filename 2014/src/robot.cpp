@@ -99,25 +99,13 @@ void Robot::joystick1() // Driver
     //stick1->GetRawAxis(4);
 
     // [1]
-    if (stick1->GetRawButton(1))
-    {
-        leftDriveMotors->Set(1);
-        rightDriveMotors->Set(1);
-    }
+    //stick1->GetRawButton(1)
 
     // [2]
-    if (stick1->GetRawButton(2))
-    {
-        leftDriveMotors->Set(-1);
-        rightDriveMotors->Set(-1);
-    }
+    //stick1->GetRawButton(2)
 
     // [3]
-    if (stick1->GetRawButton(3))
-    {
-        leftDriveMotors->Set(0);
-        rightDriveMotors->Set(0);
-    }
+    //stick1->GetRawButton(3)
 
     // [4]
     //stick1->GetRawButton(4)
