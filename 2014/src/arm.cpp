@@ -17,7 +17,7 @@ void Arm::setPreset(int preset)
     switch (preset)
     {
         case INTAKE:
-            setTarget(109.00);
+            setTarget(102.09);
             break;
         case SHOOTING:
             setTarget(34.56);
