@@ -1,6 +1,7 @@
 #include "WPILib.h"
 #include "pid.hpp"
 #include "arm.hpp"
+#include <math.h>
 
 Arm::Arm(Talon *motor_, Encoder *sensorA_)
 {
@@ -10,6 +11,7 @@ Arm::Arm(Talon *motor_, Encoder *sensorA_)
     armPID = new PID(0.05, 0, 0);
     armPID->setBounds(-1, 1);
     armPID->start();
+    ERR = false;
 }
 
 void Arm::setPreset(int preset)
@@ -17,10 +19,13 @@ void Arm::setPreset(int preset)
     switch (preset)
     {
         case INTAKE:
-            setTarget(102.09);
+            setTarget(105.0);
             break;
         case SHOOTING:
             setTarget(34.56);
+            break;
+        case STOW:
+            setTarget(68.00);
             break;
     }
 
@@ -52,10 +57,31 @@ float Arm::getRawAngle()
 
 void Arm::update()
 {
-    motor->Set(armPID->update(getRawAngle()));
+
+    if (lastPreset == INTAKE)
+    {
+        if (fabs(getTarget() - getRawAngle()) < 10)
+        {
+            armPID->setBounds(0, 0);
+            motor->Set(-.1);
+            ERR = true;
+        }
+        else
+        {
+            motor->Set(armPID->update(getRawAngle()));
+        }
+    }
+    else
+    {
+        armPID->setBounds(-1, 1);
+        motor->Set(armPID->update(getRawAngle()));
+        ERR = false;
+    }
 }
 
 void Arm::dashboardUpdate()
 {
     SmartDashboard::PutNumber("Arm Angle: ", getRawAngle());
+    SmartDashboard::PutNumber("Arm Error: ", fabs(getTarget() - getRawAngle()));
+    SmartDashboard::PutBoolean("Are We Changing Stuff: ", ERR);
 }
