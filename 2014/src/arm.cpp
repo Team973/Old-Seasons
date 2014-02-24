@@ -19,7 +19,7 @@ void Arm::setPreset(int preset)
     switch (preset)
     {
         case INTAKE:
-            setTarget(105.0);
+            setTarget(103.0);
             break;
         case SHOOTING:
             setTarget(34.56);
@@ -60,10 +60,10 @@ void Arm::update()
 
     if (lastPreset == INTAKE)
     {
-        if (fabs(getTarget() - getRawAngle()) < 10)
+        if (fabs(getTarget() - getRawAngle()) < 3)
         {
             armPID->setBounds(0, 0);
-            motor->Set(-.1);
+            motor->Set(-.2);
             ERR = true;
         }
         else
