@@ -62,13 +62,9 @@ void Arm::update()
     {
         if (fabs(getTarget() - getRawAngle()) < 3)
         {
-            armPID->setBounds(0, 0);
+            armPID->setBounds(-0.0008, 0.0008);
             motor->Set(-.2);
             ERR = true;
-        }
-        else
-        {
-            motor->Set(armPID->update(getRawAngle()));
         }
     }
     else
@@ -77,6 +73,8 @@ void Arm::update()
         motor->Set(armPID->update(getRawAngle()));
         ERR = false;
     }
+
+    motor->Set(armPID->update(getRawAngle()));
 }
 
 void Arm::dashboardUpdate()
