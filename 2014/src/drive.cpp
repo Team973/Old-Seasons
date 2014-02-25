@@ -263,10 +263,16 @@ void Drive::CheesyDrive(double throttle, double wheel, bool highGear, bool quick
   setDriveMotors(leftPwm, rightPwm);
 }
 
-void Drive::update(double DriveX, double DriveY, bool gear, bool kick, bool quickTurn)
+void Drive::update(double DriveX, double DriveY, bool gear, bool kick, bool quickTurn, bool isAuto)
 {
-    //CheesyDrive(DriveY, DriveX, gear, quickTurn);
-    arcade(-DriveY, -DriveX);
+    if (isAuto)
+    {
+        arcade(-DriveY, -DriveX);
+    }
+    else
+    {
+        CheesyDrive(DriveY, DriveX, gear, quickTurn);
+    }
     setLowGear(gear);
     setKickUp(kick);
 }
