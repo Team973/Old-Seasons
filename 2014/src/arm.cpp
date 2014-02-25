@@ -12,6 +12,8 @@ Arm::Arm(Talon *motor_, Encoder *sensorA_)
     armPID->setBounds(-1, 1);
     armPID->start();
     ERR = false;
+
+    errorTarget = 1;
 }
 
 void Arm::setPreset(int preset)
@@ -20,6 +22,7 @@ void Arm::setPreset(int preset)
     {
         case INTAKE:
             setTarget(103.0);
+            errorTarget = 1;
             break;
         case SHOOTING:
             setTarget(34.56);
@@ -57,14 +60,21 @@ float Arm::getRawAngle()
 
 void Arm::update()
 {
+    float error = fabs(getTarget() - getRawAngle());
 
     if (lastPreset == INTAKE)
     {
-        if (fabs(getTarget() - getRawAngle()) < 3)
+        if (error < errorTarget)
         {
-            armPID->setBounds(-0.0008, 0.0008);
-            motor->Set(-.2);
+            errorTarget = 10;
+            armPID->setBounds(-0.5, 0.5);
+            motor->Set(-.1);
             ERR = true;
+        }
+        else
+        {
+            errorTarget = 7;
+            motor->Set(armPID->update(getRawAngle()));
         }
     }
     else
@@ -74,7 +84,6 @@ void Arm::update()
         ERR = false;
     }
 
-    motor->Set(armPID->update(getRawAngle()));
 }
 
 void Arm::dashboardUpdate()

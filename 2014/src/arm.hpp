@@ -27,6 +27,8 @@ private:
     bool ERR;
 
     int lastPreset;
+
+    float errorTarget;
 };
 
 #endif
