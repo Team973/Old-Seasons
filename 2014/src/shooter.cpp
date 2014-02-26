@@ -3,6 +3,7 @@
 #include "pid.hpp"
 #include "arm.hpp"
 #include "intake.hpp"
+#include <math.h>
 
 Shooter::Shooter(Arm *arm_, Intake *intake_, Victor *winchMotor_, Solenoid *winchRelease_, DigitalInput *zeroPoint_, DigitalInput *fullCockPoint_, Encoder *encoder_)
 {
@@ -96,6 +97,8 @@ bool Shooter::performFire()
 
 void Shooter::update()
 {
+    float error = fabs(winchPID->getTarget() - winchDistance());
+
     // Zero the winch whenever we fire
     currZeroPoint = zeroPoint->Get();
     if ((currZeroPoint) && (!prevZeroPoint)) // This handles actual zeroing
@@ -125,7 +128,7 @@ void Shooter::update()
         }
         else if (fullCockPoint->Get() && (winchDistance() < dangerPoint))
         {
-            if (winchDistance() < winchPID->getTarget()) // We don't hit the actual distance perfectly and we prefer to be less then more
+            if (error > 1.5) // We don't hit the actual distance perfectly and we prefer to be less then more
             {
                 winchMotor->Set(winchPID->update(winchDistance()));
                 intake->runIntake(0.8);
