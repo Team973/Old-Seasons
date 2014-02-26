@@ -158,7 +158,7 @@ void Robot::joystick2() // Co-Driver
     // [1]
     if (stick2->GetRawButton(1))
     {
-        arm->setPreset(STOW);
+        arm->setPreset(PSEUDO_INTAKE);
     }
 
     // [2]

@@ -4,8 +4,9 @@
 #define ARM_H
 
 #define INTAKE 1
-#define SHOOTING 2
-#define STOW 3
+#define PSEUDO_INTAKE 2
+#define SHOOTING 3
+#define STOW 4
 
 class Arm
 {
