@@ -21,7 +21,11 @@ void Arm::setPreset(int preset)
     switch (preset)
     {
         case INTAKE:
-            setTarget(103.0);
+            setTarget(106.0);
+            errorTarget = 1;
+            break;
+        case PSEUDO_INTAKE:
+            setTarget(96.0);
             errorTarget = 1;
             break;
         case SHOOTING:
@@ -62,7 +66,7 @@ void Arm::update()
 {
     float error = fabs(getTarget() - getRawAngle());
 
-    if (lastPreset == INTAKE)
+    if ((lastPreset == INTAKE) || (lastPreset == PSEUDO_INTAKE))
     {
         if (error < errorTarget)
         {
@@ -73,7 +77,7 @@ void Arm::update()
         }
         else
         {
-            errorTarget = 7;
+            errorTarget = 1;
             motor->Set(armPID->update(getRawAngle()));
         }
     }
