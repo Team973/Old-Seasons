@@ -1,10 +1,10 @@
-#include "WPILib.h"
 #include "autoCommand.hpp"
-#include "../drive.hpp"
 #include "../pid.hpp"
 
 #ifndef LINEAR_DRIVE_COMMAND_H
 #define LINEAR_DRIVE_COMMAND_H
+
+class Drive;
 
 class LinearDriveCommand : public AutoCommand
 {
