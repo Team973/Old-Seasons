@@ -1,5 +1,3 @@
-#include "WPILib.h"
-#include <vector>
 #include "autoCommand.hpp"
 
 #ifndef CONSECUTIVECOMMAND_H

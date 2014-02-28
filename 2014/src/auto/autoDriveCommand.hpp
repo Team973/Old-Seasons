@@ -1,10 +1,10 @@
-#include "WPILib.h"
-#include "../pid.hpp"
-#include "../drive.hpp"
 #include "autoCommand.hpp"
+#include "../pid.hpp"
 
 #ifndef AUTODRIVECOMMAND_H
 #define AUTODRIVECOMMAND_H
+
+class Drive;
 
 class AutoDriveCommand : public AutoCommand
 {

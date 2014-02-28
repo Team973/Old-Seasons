@@ -2,6 +2,7 @@
 #include "linearDriveCommand.hpp"
 #include "../pid.hpp"
 #include <math.h>
+#include "../drive.hpp"
 
 LinearDriveCommand::LinearDriveCommand(Drive *drive_, float targetDrive_, bool backwards_, float timeout_, float drivePrecision_)
 {
@@ -9,7 +10,7 @@ LinearDriveCommand::LinearDriveCommand(Drive *drive_, float targetDrive_, bool b
     targetDrive = targetDrive_;
     backwards = backwards_;
     drivePrecision = drivePrecision_;
-    targetAngle = drive->getGyroAngle() + 0.0973; // remove compensation when we switch to colin's gyro
+    targetAngle = drive-> getGyroAngle() + 0.0973; // remove compensation when we switch to colin's gyro
 
     setTimeout(timeout_);
 
