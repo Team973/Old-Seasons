@@ -64,6 +64,8 @@ Robot::Robot()
 
     autoComplete = false;
 
+    prevCoDriverDPad = 0;
+
     SmartDashboard::init();
 }
 
@@ -143,6 +145,7 @@ void Robot::joystick1() // Driver
 
 void Robot::joystick2() // Co-Driver
 {
+
     // [y]
     intake->manual(deadband(stick2->GetY(), 0.1));
 
@@ -220,7 +223,19 @@ void Robot::joystick2() // Co-Driver
     //stick2->GetRawAxis(5);
 
     // [haty]
-    //stick2->GetRawAxis(6);
+    float increment = 0.5;
+    double axis = stick2->GetRawAxis(6);
+
+    if (axis > 0.5 && prevCoDriverDPad <= 0.5)
+    {
+        arm->setTarget(arm->getTarget() - increment);
+    }
+    if (axis < -0.5 && prevCoDriverDPad >= -0.5)
+    {
+        arm->setTarget(arm->getTarget() + increment);
+    }
+    prevCoDriverDPad = axis;
+
 }
 
 void Robot::RobotInit()

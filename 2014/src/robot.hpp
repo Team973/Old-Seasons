@@ -75,6 +75,7 @@ private:
     bool quickTurn;
     bool lowGear;
     bool kickUp;
+    float prevCoDriverDPad;
 
 };
 
