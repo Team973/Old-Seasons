@@ -8,7 +8,7 @@ Arm::Arm(Talon *motor_, Encoder *sensorA_)
     motor = motor_;
     sensorA = sensorA_;
 
-    armPID = new PID(0.05, 0, 0);
+    armPID = new PID(0.1, 0, 0);
     armPID->setBounds(-1, 1);
     armPID->start();
     ERR = false;
@@ -29,7 +29,7 @@ void Arm::setPreset(int preset)
             errorTarget = 1;
             break;
         case SHOOTING:
-            setTarget(34.56);
+            setTarget(42.56);
             break;
         case STOW:
             setTarget(68.00);
