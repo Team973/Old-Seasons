@@ -97,7 +97,7 @@ bool Shooter::performFire()
 
 void Shooter::update()
 {
-    float error = fabs(winchPID->getTarget() - winchDistance());
+    //float error = fabs(winchPID->getTarget() - winchDistance());
 
     // Zero the winch whenever we fire
     currZeroPoint = zeroPoint->Get();
@@ -128,7 +128,7 @@ void Shooter::update()
         }
         else if (fullCockPoint->Get() && (winchDistance() < dangerPoint))
         {
-            if (error > 1.5) // We don't hit the actual distance perfectly and we prefer to be less then more
+            if (winchDistance() < winchPID->getTarget()) // We don't hit the actual distance perfectly and we prefer to be less then more
             {
                 winchMotor->Set(winchPID->update(winchDistance()));
                 intake->runIntake(0.8);
