@@ -119,10 +119,13 @@ void Robot::joystick1() // Driver
     lowGear = stick1->GetRawButton(6);
 
     // [7]
-    //stick1->GetRawButton(7)
+    kickUp = stick1->GetRawButton(7);
 
     // [8]
-    kickUp = stick1->GetRawButton(8);
+    if (stick1->GetRawButton(8))
+    {
+        shooter->fire(true);
+    }
 
     // [9]
     //stick1->GetRawButton(9);
@@ -204,10 +207,6 @@ void Robot::joystick2() // Co-Driver
     }
 
     // [8]
-    if (stick2->GetRawButton(8))
-    {
-        shooter->fire(true);
-    }
 
     // [9]
     //stick2->GetRawButton(9)
