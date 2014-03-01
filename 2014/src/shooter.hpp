@@ -6,6 +6,7 @@
 
 #define HALF_COCK 1
 #define FULL_COCK 2
+#define NO_COCK 3
 
 class Arm;
 class Shooter
@@ -42,7 +43,6 @@ private:
     float M_PI;
     bool currZeroPoint;
     bool prevZeroPoint;
-    bool deadShooter;
 };
 
 #endif
