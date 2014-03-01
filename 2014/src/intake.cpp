@@ -15,6 +15,8 @@ Intake::Intake(Victor *linearMotor_, Victor *crossMotor_, Solenoid *openClaw_, S
     hasBall = false;
 
     possesionTimer = new Timer();
+
+    clamped = false;
 }
 
 void Intake::initialize(Arm *arm_, Shooter *shooter_)
@@ -46,6 +48,13 @@ void Intake::runIntake(float speed)
 void Intake::setFangs(bool state)
 {
     openClaw->Set(state);
+
+    clamped = state;
+}
+
+bool Intake::isClamped()
+{
+    return clamped;
 }
 
 void Intake::update()

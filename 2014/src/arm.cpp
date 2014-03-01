@@ -17,7 +17,7 @@ Arm::Arm(Talon *motor_, Encoder *sensorA_)
     errorTarget = 1;
 
     armTimer = new Timer();
-    armTimer->Start();
+    armTimer->Reset();
 }
 
 void Arm::initialize(Intake *intake_)
@@ -102,8 +102,9 @@ void Arm::update()
             motor->Set(armPID->update(getRawAngle()));
         }
     }
-    else if (lastPreset == STOW)
+    else if (((lastPreset == STOW) || (lastPreset == SHOOTING)) && (!intake->isClamped()))
     {
+        armTimer->Start();
         intake->setFangs(true);
         if (armTimer->Get() > 0.25)
         {
@@ -111,7 +112,7 @@ void Arm::update()
         }
         else
         {
-            motor->Set(0)
+            motor->Set(0);
         }
     }
     else
