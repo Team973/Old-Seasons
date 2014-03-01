@@ -56,7 +56,7 @@ float Arm::getTarget()
 
 bool Arm::isCockSafe()
 {
-    float bound = 5;
+    float bound = 20;
     if (getRawAngle() <= bound)
     {
         return false;

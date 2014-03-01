@@ -124,7 +124,7 @@ void Shooter::update()
         encoder->Reset();
     }
 
-    if (firing)
+    if (firing && !arm->isCockSafe())
     {
         if (performFire())
         {
