@@ -16,6 +16,7 @@ public:
     void manual(float speed);
     void runIntake(float speed);
     void setFangs(bool state);
+    bool isClamped();
 
 private:
     float limit(float x);
@@ -23,6 +24,7 @@ private:
     float intakeManualSpeed; // manual control
     float intakeSpeed; // for automated pick up
     bool hasBall;
+    bool clamped;
     Arm *arm;
     Shooter *shooter;
     Victor *linearMotor;
