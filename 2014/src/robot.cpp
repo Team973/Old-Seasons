@@ -128,10 +128,10 @@ void Robot::joystick1() // Driver
     }
 
     // [9]
-    //stick1->GetRawButton(9);
+    //stick1->GetRawButton(9)
 
     // [10]
-    //stick1->GetRawButton(10);
+    //stick1->GetRawButton(10)
 
     // [11]
     //stick1->GetRawButton(11);

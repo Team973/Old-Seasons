@@ -20,6 +20,8 @@ public:
     void killShooter(bool dead);
     void update();
     void dashboardUpdate();
+
+    void testWinch(float speed);
 private:
     void setTarget(float target);
     float winchDistance();
@@ -43,6 +45,8 @@ private:
     float M_PI;
     bool currZeroPoint;
     bool prevZeroPoint;
+
+    float winchSpeed;
 };
 
 #endif
