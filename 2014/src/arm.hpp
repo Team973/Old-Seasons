@@ -19,6 +19,7 @@ public:
     void setPreset(int preset);
     float getRawAngle();
     int getPreset();
+    bool isCockSafe();
 private:
     Talon *motor;
     Encoder *sensorA;
