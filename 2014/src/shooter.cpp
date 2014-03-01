@@ -128,7 +128,8 @@ void Shooter::update()
     {
         if (performFire())
         {
-            cock(HALF_COCK);
+            //cock(HALF_COCK);
+            cock(NO_COCK);
         }
     }
     else
