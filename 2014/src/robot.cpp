@@ -211,7 +211,7 @@ void Robot::joystick2() // Co-Driver
     //stick2->GetRawButton(9)
 
     // [10]
-    //stick2->GetRawButton(10)
+    shooter->killShooter(stick2->GetRawButton(10));
 
     // [11]
     //stick2->GetRawButton(11);
