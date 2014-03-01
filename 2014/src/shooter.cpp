@@ -31,7 +31,6 @@ Shooter::Shooter(Arm *arm_, Intake *intake_, Victor *winchMotor_, Solenoid *winc
     currZeroPoint = false;
     prevZeroPoint = false;
 
-    deadShooter = false;
 }
 
 void Shooter::setTarget(float target)
@@ -48,6 +47,10 @@ void Shooter::cock(int level)
             break;
         case FULL_COCK:
             setTarget(11);
+            break;
+        case NO_COCK:
+            winchMotor->Set(0);
+            intake->runIntake(0);
             break;
     }
 
@@ -75,7 +78,10 @@ float Shooter::winchDistance()
 
 void Shooter::killShooter(bool dead)
 {
-    deadShooter = dead;
+    if (dead)
+    {
+        cock(NO_COCK);
+    }
 }
 
 bool Shooter::performFire()
@@ -118,12 +124,7 @@ void Shooter::update()
         encoder->Reset();
     }
 
-    if (deadShooter)
-    {
-        winchMotor->Set(0);
-        intake->runIntake(0);
-    }
-    else if (firing)
+    if (firing)
     {
         if (performFire())
         {
