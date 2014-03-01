@@ -9,10 +9,13 @@
 #define NO_COCK 3
 
 class Arm;
+class Intake;
+
 class Shooter
 {
 public:
-    Shooter(Arm *arm_, Intake *intake_, Victor *winchMotor_, Solenoid *winchRelease_, DigitalInput *zeroPoint, DigitalInput *fullCockPoint_, Encoder *encoder_);
+    Shooter(Victor *winchMotor_, Solenoid *winchRelease_, DigitalInput *zeroPoint, DigitalInput *fullCockPoint_, Encoder *encoder_);
+    void initialize(Arm *arm_, Intake *intake_);
     void cock(int level); // Yes, laugh all you want. It's very funny.
     void fire(bool fire);
     bool isFiring();

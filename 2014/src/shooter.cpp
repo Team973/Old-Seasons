@@ -5,10 +5,8 @@
 #include "intake.hpp"
 #include <math.h>
 
-Shooter::Shooter(Arm *arm_, Intake *intake_, Victor *winchMotor_, Solenoid *winchRelease_, DigitalInput *zeroPoint_, DigitalInput *fullCockPoint_, Encoder *encoder_)
+Shooter::Shooter(Victor *winchMotor_, Solenoid *winchRelease_, DigitalInput *zeroPoint_, DigitalInput *fullCockPoint_, Encoder *encoder_)
 {
-    arm = arm_;
-    intake = intake_;
     winchMotor = winchMotor_;
     winchMotor->Set(0);
     winchRelease = winchRelease_;
@@ -33,6 +31,12 @@ Shooter::Shooter(Arm *arm_, Intake *intake_, Victor *winchMotor_, Solenoid *winc
 
     winchSpeed = 0;
 
+}
+
+void Shooter::initialize(Arm *arm_, Intake *intake_)
+{
+    arm = arm_;
+    intake = intake_;
 }
 
 void Shooter::setTarget(float target)

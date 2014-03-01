@@ -8,10 +8,13 @@
 #define SHOOTING 3
 #define STOW 4
 
+class Intake;
+
 class Arm
 {
 public:
     Arm(Talon *motor_, Encoder *sensorA_);
+    void initialize(Intake *intake_);
     void update();
     void dashboardUpdate();
     void setTarget(float target);
@@ -24,7 +27,11 @@ private:
     Talon *motor;
     Encoder *sensorA;
 
+    Intake *intake;
+
     PID *armPID;
+
+    Timer *armTimer;
 
     int lastPreset;
 

@@ -1,10 +1,12 @@
 #include "WPILib.h"
 #include "pid.hpp"
 #include "arm.hpp"
+#include "intake.hpp"
 #include <math.h>
 
 Arm::Arm(Talon *motor_, Encoder *sensorA_)
 {
+
     motor = motor_;
     sensorA = sensorA_;
 
@@ -13,6 +15,14 @@ Arm::Arm(Talon *motor_, Encoder *sensorA_)
     armPID->start();
 
     errorTarget = 1;
+
+    armTimer = new Timer();
+    armTimer->Start();
+}
+
+void Arm::initialize(Intake *intake_)
+{
+    intake = intake_;
 }
 
 void Arm::setPreset(int preset)
@@ -92,10 +102,28 @@ void Arm::update()
             motor->Set(armPID->update(getRawAngle()));
         }
     }
+    else if (lastPreset == STOW)
+    {
+        intake->setFangs(true);
+        if (armTimer->Get() > 0.25)
+        {
+            motor->Set(armPID->update(getRawAngle()));
+        }
+        else
+        {
+            motor->Set(0)
+        }
+    }
     else
     {
         armPID->setBounds(-1, 1);
         motor->Set(armPID->update(getRawAngle()));
+
+        if (armTimer->Get() != 0)
+        {
+            armTimer->Stop();
+            armTimer->Reset();
+        }
     }
 
 }
