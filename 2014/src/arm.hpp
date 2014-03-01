@@ -26,8 +26,6 @@ private:
 
     PID *armPID;
 
-    bool ERR;
-
     int lastPreset;
 
     float errorTarget;

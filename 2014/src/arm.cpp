@@ -11,7 +11,6 @@ Arm::Arm(Talon *motor_, Encoder *sensorA_)
     armPID = new PID(0.1, 0, 0);
     armPID->setBounds(-1, 1);
     armPID->start();
-    ERR = false;
 
     errorTarget = 1;
 }
@@ -86,7 +85,6 @@ void Arm::update()
             errorTarget = 5; //10;
             armPID->setBounds(-0.5, 0.5);
             motor->Set(-.1);
-            ERR = true;
         }
         else
         {
@@ -98,7 +96,6 @@ void Arm::update()
     {
         armPID->setBounds(-1, 1);
         motor->Set(armPID->update(getRawAngle()));
-        ERR = false;
     }
 
 }
@@ -107,5 +104,4 @@ void Arm::dashboardUpdate()
 {
     SmartDashboard::PutNumber("Arm Angle: ", getRawAngle());
     SmartDashboard::PutNumber("Arm Error: ", fabs(getTarget() - getRawAngle()));
-    SmartDashboard::PutBoolean("Are We Changing Stuff: ", ERR);
 }

@@ -31,6 +31,8 @@ Shooter::Shooter(Arm *arm_, Intake *intake_, Victor *winchMotor_, Solenoid *winc
     currZeroPoint = false;
     prevZeroPoint = false;
 
+    winchSpeed = 0;
+
 }
 
 void Shooter::setTarget(float target)
@@ -51,10 +53,13 @@ void Shooter::cock(int level)
         case NO_COCK:
             winchMotor->Set(0);
             intake->runIntake(0);
+            cockTimer->Stop();
+            cockTimer->Reset();
             break;
     }
 
     currPresetName = level;
+    cockTimer->Start();
 }
 
 void Shooter::fire(bool fire)
@@ -90,7 +95,7 @@ bool Shooter::performFire()
     {
         fireTimer->Start();
         intake->setFangs(false);
-        intake->runIntake(.5);
+        intake->runIntake(0);
         if (fireTimer->Get() >= 0.25)
         {
             winchRelease->Set(true);
@@ -109,6 +114,11 @@ bool Shooter::performFire()
     return false;
 }
 
+void Shooter::testWinch(float speed)
+{
+    winchSpeed = speed;
+}
+
 void Shooter::update()
 {
     //float error = fabs(winchPID->getTarget() - winchDistance());
@@ -124,7 +134,7 @@ void Shooter::update()
         encoder->Reset();
     }
 
-    if (firing && !arm->isCockSafe())
+    if (firing && arm->isCockSafe())
     {
         if (performFire())
         {
@@ -135,12 +145,9 @@ void Shooter::update()
     {
         // make sure we are cocked
         winchRelease->Set(false);
-        if ((!fullCockPoint->Get()) || (winchDistance() >= dangerPoint) || (!arm->isCockSafe()) || (cockTimer->Get() >= 3))
+        if ((!fullCockPoint->Get()) || (winchDistance() >= dangerPoint) || (!arm->isCockSafe()) || (cockTimer->Get() >= 5))
         {
-            winchMotor->Set(0); // Kill everything
-            intake->runIntake(0);
-            cockTimer->Stop();
-            cockTimer->Reset();
+            cock(NO_COCK);
         }
         else if (fullCockPoint->Get() && (winchDistance() < dangerPoint))
         {
