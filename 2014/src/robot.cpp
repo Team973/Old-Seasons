@@ -198,6 +198,7 @@ void Robot::joystick2() // Co-Driver
     if (stick2->GetRawButton(6))
     {
         arm->setPreset(SHOOTING);
+        intake->setFangs(true);
     }
 
     // [7]
