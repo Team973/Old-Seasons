@@ -54,6 +54,19 @@ float Arm::getTarget()
     return armPID->getTarget();
 }
 
+bool Arm::isCockSafe()
+{
+    float bound = 5;
+    if (getRawAngle() <= bound)
+    {
+        return false;
+    }
+    else
+    {
+        return true;
+    }
+}
+
 float Arm::getRawAngle()
 {
     float degreesPerRevolution = 360;
@@ -70,7 +83,7 @@ void Arm::update()
     {
         if (error < errorTarget)
         {
-            errorTarget = 10;
+            errorTarget = 5; //10;
             armPID->setBounds(-0.5, 0.5);
             motor->Set(-.1);
             ERR = true;

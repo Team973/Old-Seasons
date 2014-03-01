@@ -135,7 +135,7 @@ void Shooter::update()
     {
         // make sure we are cocked
         winchRelease->Set(false);
-        if ((!fullCockPoint->Get()) || (winchDistance() >= dangerPoint) || (cockTimer->Get() >= 3))
+        if ((!fullCockPoint->Get()) || (winchDistance() >= dangerPoint) || (!arm->isCockSafe()) || (cockTimer->Get() >= 3))
         {
             winchMotor->Set(0); // Kill everything
             intake->runIntake(0);
