@@ -16,6 +16,7 @@ public:
     void fire(bool fire);
     bool isFiring();
     bool performFire();
+    void killShooter(bool dead);
     void update();
     void dashboardUpdate();
 private:
@@ -33,6 +34,7 @@ private:
     Encoder *encoder;
 
     Timer *fireTimer;
+    Timer *cockTimer;
 
     int currPresetName;
     bool firing;
@@ -40,6 +42,7 @@ private:
     float M_PI;
     bool currZeroPoint;
     bool prevZeroPoint;
+    bool deadShooter;
 };
 
 #endif

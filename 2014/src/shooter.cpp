@@ -21,6 +21,7 @@ Shooter::Shooter(Arm *arm_, Intake *intake_, Victor *winchMotor_, Solenoid *winc
     winchPID->start();
 
     fireTimer = new Timer();
+    cockTimer = new Timer();
 
     dangerPoint = 10.5;
     firing = false;
@@ -29,6 +30,8 @@ Shooter::Shooter(Arm *arm_, Intake *intake_, Victor *winchMotor_, Solenoid *winc
 
     currZeroPoint = false;
     prevZeroPoint = false;
+
+    deadShooter = false;
 }
 
 void Shooter::setTarget(float target)
@@ -68,6 +71,11 @@ float Shooter::winchDistance()
     float gearRatio = 2;
     float distancePerRevolution = diameter * M_PI;
     return (encoder->Get() * distancePerRevolution) / (encoderTicks * gearRatio);
+}
+
+void Shooter::killShooter(bool dead)
+{
+    deadShooter = dead;
 }
 
 bool Shooter::performFire()
@@ -110,7 +118,12 @@ void Shooter::update()
         encoder->Reset();
     }
 
-    if (firing)
+    if (deadShooter)
+    {
+        winchMotor->Set(0);
+        intake->runIntake(0);
+    }
+    else if (firing)
     {
         if (performFire())
         {
@@ -121,10 +134,12 @@ void Shooter::update()
     {
         // make sure we are cocked
         winchRelease->Set(false);
-        if ((!fullCockPoint->Get()) || (winchDistance() >= dangerPoint))
+        if ((!fullCockPoint->Get()) || (winchDistance() >= dangerPoint) || (cockTimer->Get() >= 3))
         {
             winchMotor->Set(0); // Kill everything
             intake->runIntake(0);
+            cockTimer->Stop();
+            cockTimer->Reset();
         }
         else if (fullCockPoint->Get() && (winchDistance() < dangerPoint))
         {
