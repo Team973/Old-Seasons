@@ -23,7 +23,7 @@ Shooter::Shooter(Arm *arm_, Intake *intake_, Victor *winchMotor_, Solenoid *winc
     fireTimer = new Timer();
     cockTimer = new Timer();
 
-    dangerPoint = 10.5;
+    dangerPoint = 11;
     firing = false;
 
     M_PI = 3.141592;
@@ -47,7 +47,7 @@ void Shooter::cock(int level)
             setTarget(5);
             break;
         case FULL_COCK:
-            setTarget(10);
+            setTarget(11);
             break;
     }
 
