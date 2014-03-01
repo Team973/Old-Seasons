@@ -95,7 +95,7 @@ bool Shooter::performFire()
         {
             winchRelease->Set(true);
         }
-        if (fireTimer->Get() >= 1.5)
+        if (fireTimer->Get() >= 0.5)
         {
             fireTimer->Stop();
             fireTimer->Reset();
@@ -128,8 +128,7 @@ void Shooter::update()
     {
         if (performFire())
         {
-            //cock(HALF_COCK);
-            cock(NO_COCK);
+            cock(FULL_COCK);
         }
     }
     else
