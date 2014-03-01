@@ -4,10 +4,13 @@
 #define INTAKE_H
 
 class Shooter;
+class Arm;
+
 class Intake
 {
 public:
-    Intake(Arm *arm_, Shooter *shooter_, Victor *linearMotor_, Victor *crossMotor_, Solenoid *openClaw_, Solenoid *corral_, DigitalInput *ballSensor_);
+    Intake(Victor *linearMotor_, Victor *crossMotor_, Solenoid *openClaw_, Solenoid *corral_, DigitalInput *ballSensor_);
+    void initialize(Arm *arm_, Shooter *shooter_);
     void update();
     void dashboardUpdate();
     void manual(float speed);

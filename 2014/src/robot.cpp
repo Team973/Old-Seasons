@@ -54,8 +54,12 @@ Robot::Robot()
 
     drive = new Drive(leftDriveMotors, rightDriveMotors, shiftingSolenoid, kickUpSolenoid, leftDriveEncoder, rightDriveEncoder);
     arm = new Arm(armMotor, armSensorA);
-    intake = new Intake(arm, shooter, linearIntakeMotor, crossIntakeMotor, clawSolenoid, autoCorralSolenoid, intakeBallSensor);
-    shooter = new Shooter(arm, intake, winchMotor, winchReleaseSolenoid, winchZeroSensor, winchFullCockSensor, winchEncoder);
+    intake = new Intake(linearIntakeMotor, crossIntakeMotor, clawSolenoid, autoCorralSolenoid, intakeBallSensor);
+    shooter = new Shooter(winchMotor, winchReleaseSolenoid, winchZeroSensor, winchFullCockSensor, winchEncoder);
+
+    shooter->initialize(arm, intake);
+    intake->initialize(arm, shooter);
+    arm->initialize(intake);
 
     autoMode = new AutoManager(drive, shooter, intake, arm);
 
@@ -191,7 +195,7 @@ void Robot::joystick2() // Co-Driver
     if (stick2->GetRawButton(5))
     {
         arm->setPreset(STOW);
-        intake->setFangs(true);
+        //intake->setFangs(true);
     }
 
     // [6]

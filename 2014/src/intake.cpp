@@ -3,10 +3,8 @@
 #include "shooter.hpp"
 #include "intake.hpp"
 
-Intake::Intake(Arm *arm_, Shooter *shooter_, Victor *linearMotor_, Victor *crossMotor_, Solenoid *openClaw_, Solenoid *corral_, DigitalInput *ballSensor_)
+Intake::Intake(Victor *linearMotor_, Victor *crossMotor_, Solenoid *openClaw_, Solenoid *corral_, DigitalInput *ballSensor_)
 {
-    arm = arm_;
-    shooter = shooter_;
     linearMotor = linearMotor_;
     crossMotor = crossMotor_;
     openClaw = openClaw_;
@@ -17,6 +15,12 @@ Intake::Intake(Arm *arm_, Shooter *shooter_, Victor *linearMotor_, Victor *cross
     hasBall = false;
 
     possesionTimer = new Timer();
+}
+
+void Intake::initialize(Arm *arm_, Shooter *shooter_)
+{
+    arm = arm_;
+    shooter = shooter_;
 }
 
 float Intake::limit(float x)
