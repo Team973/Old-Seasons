@@ -80,6 +80,7 @@ void Robot::dashboardUpdate()
     shooter->dashboardUpdate();
     intake->dashboardUpdate();
     SmartDashboard::PutNumber("Gyro: ", colinGyro->Get());
+    SmartDashboard::PutNumber("RY: ", stick2->GetRawAxis(4));
 }
 
 float Robot::deadband(float axis, float threshold)
@@ -88,6 +89,16 @@ float Robot::deadband(float axis, float threshold)
         return 0.0;
     else
         return axis;
+}
+
+float Robot::limit(float x)
+{
+    if (x > 1)
+        return 1;
+    else if (x < -1)
+        return -1;
+    else
+        return x;
 }
 
 void Robot::joystick1() // Driver
@@ -163,7 +174,7 @@ void Robot::joystick2() // Co-Driver
     //stick2->GetRawAxis(3)
 
     // [ry]
-    arm->ballTrapper(deadband(stick2->GetRawAxis(4), 0.1));
+    arm->ballTrapper(deadband(limit(stick2->GetRawAxis(4)*2), 0.1));
 
     // [1]
     if (stick2->GetRawButton(1))

@@ -36,7 +36,7 @@ void Arm::setPreset(int preset)
             errorTarget = 1;
             break;
         case PSEUDO_INTAKE:
-            setTarget(96.0);
+            setTarget(70.0);//96.0);
             errorTarget = 1;
             break;
         case SHOOTING:
@@ -72,7 +72,7 @@ float Arm::getTarget()
 
 bool Arm::isCockSafe()
 {
-    float bound = 20;
+    float bound = 30;
     if (getRawAngle() <= bound)
     {
         return false;
@@ -99,35 +99,44 @@ void Arm::update()
 
     if ((lastPreset == INTAKE) || (lastPreset == PSEUDO_INTAKE))
     {
-        /*
         if (armMoveSpeed != 0)
         {
-            if (isCockSafe() && (getRawAngle() > 107.0))
+            if ((getRawAngle() >= 70) && (getRawAngle() <= 100.0))
+                motor->Set(armMoveSpeed);
+            else if ((armMoveSpeed < 0 && getRawAngle() >= 100.0) || (armMoveSpeed > 0 && (getRawAngle() <= 70)))
                 motor->Set(armMoveSpeed);
             else
                 motor->Set(0);
         }
         else
         {
-        */
-            if (error < errorTarget && lastPreset == INTAKE)
+            if ((error < errorTarget && lastPreset == INTAKE) && (getRawAngle() >= 96))
             {
                 errorTarget = 5; //10;
                 armPID->setBounds(-0.5, 0.5);
                 motor->Set(-.09);
+            }
+            else if (lastPreset == PSEUDO_INTAKE)
+            {
+                armPID->setBounds(-1, 1);
+                motor->Set(armPID->update(getRawAngle()));
             }
             else
             {
                 errorTarget = 1;
                 motor->Set(armPID->update(getRawAngle()));
             }
-            /*
         }
             if (currMoveSpeed == 0 && prevMoveSpeed != 0)
             {
-                setTarget(getRawAngle());
+                if (getRawAngle() >= 100.0)
+                    setPreset(INTAKE);
+                else if ((getRawAngle() <= 70))
+                    setPreset(PSEUDO_INTAKE);
+                else
+                    setTarget(getRawAngle());
             }
-            */
+
     }
     else if (((lastPreset == STOW) || (lastPreset == SHOOTING)) && (!intake->isClamped()))
     {
@@ -142,17 +151,18 @@ void Arm::update()
             {
                 motor->Set(0);
             }
+
+            if (armTimer->Get() != 0 && intake->isClamped())
+            {
+                armTimer->Stop();
+                armTimer->Reset();
+            }
     }
     else
     {
         armPID->setBounds(-1, 1);
         motor->Set(armPID->update(getRawAngle()));
 
-        if (armTimer->Get() != 0)
-        {
-            armTimer->Stop();
-            armTimer->Reset();
-        }
     }
 
     prevMoveSpeed = currMoveSpeed;
