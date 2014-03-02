@@ -45,11 +45,18 @@ void Intake::runIntake(float speed)
     intakeSpeed = speed;
 }
 
-void Intake::setFangs(bool state)
+void Intake::setFangs(bool state, bool overide)
 {
     openClaw->Set(state);
 
-    clamped = state;
+    if (overide)
+    {
+        clamped = true;
+    }
+    else
+    {
+        clamped = state;
+    }
 }
 
 bool Intake::isClamped()
