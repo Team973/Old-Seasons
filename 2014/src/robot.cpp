@@ -160,10 +160,10 @@ void Robot::joystick2() // Co-Driver
     //stick2->GetX();
 
     // [ry]
-    arm->ballTrapper(deadband(stick2->GetRawAxis(3), 0.4));
+    //stick2->GetRawAxis(3)
 
     // [rx]
-    //stick2->GetRawAxis(4);
+    arm->ballTrapper(deadband(stick2->GetRawAxis(4), 0.1));
 
     // [1]
     if (stick2->GetRawButton(1))
