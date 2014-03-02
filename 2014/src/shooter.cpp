@@ -138,32 +138,40 @@ void Shooter::update()
         encoder->Reset();
     }
 
-    if (firing && arm->isCockSafe())
+    if (!arm->isCockSafe())
     {
-        if (performFire())
-        {
-            cock(FULL_COCK);
-        }
+        cock(NO_COCK);
+        firing = false;
     }
     else
     {
-        // make sure we are cocked
-        winchRelease->Set(false);
-        if ((!fullCockPoint->Get()) || (winchDistance() >= dangerPoint) || (!arm->isCockSafe()) || (cockTimer->Get() >= 5))
+        if (firing && arm->isCockSafe())
         {
-            cock(NO_COCK);
-        }
-        else if (fullCockPoint->Get() && (winchDistance() < dangerPoint))
-        {
-            if (winchDistance() < winchPID->getTarget()) // We don't hit the actual distance perfectly and we prefer to be more then less
+            if (performFire())
             {
-                winchMotor->Set(winchPID->update(winchDistance()));
-                intake->runIntake(0.8);
+                cock(FULL_COCK);
             }
-            else
+        }
+        else
+        {
+            // make sure we are cocked
+            winchRelease->Set(false);
+            if ((!fullCockPoint->Get()) || (winchDistance() >= dangerPoint) || (!arm->isCockSafe()) || (cockTimer->Get() >= 3))
             {
-                winchMotor->Set(0);
-                intake->runIntake(0);
+                cock(NO_COCK);
+            }
+            else if (fullCockPoint->Get() && (winchDistance() < dangerPoint))
+            {
+                if (winchDistance() < winchPID->getTarget()) // We don't hit the actual distance perfectly and we prefer to be more then less
+                {
+                    winchMotor->Set(winchPID->update(winchDistance()));
+                    intake->runIntake(0.8);
+                }
+                else
+                {
+                    winchMotor->Set(0);
+                    intake->runIntake(0);
+                }
             }
         }
     }
