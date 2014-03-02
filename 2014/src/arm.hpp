@@ -24,6 +24,7 @@ public:
     int getPreset();
     bool isCockSafe();
     void ballTrapper(float magnitude);
+    float getError();
 private:
     Talon *motor;
     Encoder *sensorA;
@@ -42,6 +43,7 @@ private:
 
     float currMoveSpeed;
     float prevMoveSpeed;
+    float error;
 };
 
 #endif

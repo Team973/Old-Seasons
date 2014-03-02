@@ -20,6 +20,8 @@ Arm::Arm(Talon *motor_, Encoder *sensorA_)
     armTimer->Reset();
 
     armMoveSpeed = 0;
+
+    error = 0;
 }
 
 void Arm::initialize(Intake *intake_)
@@ -40,7 +42,7 @@ void Arm::setPreset(int preset)
             errorTarget = 1;
             break;
         case SHOOTING:
-            setTarget(42.56);
+            setTarget(39.56);
             break;
         case STOW:
             setTarget(32.00);
@@ -91,9 +93,14 @@ float Arm::getRawAngle()
     return sensorA->Get() / (ticksPerRevolution * gearRatio) * degreesPerRevolution;
 }
 
+float Arm::getError()
+{
+    return error;
+}
+
 void Arm::update()
 {
-    float error = fabs(getTarget() - getRawAngle());
+    error = fabs(getTarget() - getRawAngle());
 
     currMoveSpeed = armMoveSpeed;
 
@@ -117,7 +124,7 @@ void Arm::update()
             {
                 errorTarget = 5; //10;
                 armPID->setBounds(-0.5, 0.5);
-                motor->Set(-.09);
+                motor->Set(-.08);
             }
             else if (lastPreset == PSEUDO_INTAKE)
             {
