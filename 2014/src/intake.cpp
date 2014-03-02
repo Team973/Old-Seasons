@@ -59,9 +59,12 @@ void Intake::setFangs(bool state, bool overide)
     }
 }
 
-bool Intake::isClamped()
+bool Intake::isClamped(bool ignore)
 {
-    return clamped;
+    if (ignore)
+        return false;
+    else
+        return clamped;
 }
 
 void Intake::update()
