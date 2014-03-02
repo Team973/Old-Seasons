@@ -18,6 +18,8 @@ Arm::Arm(Talon *motor_, Encoder *sensorA_)
 
     armTimer = new Timer();
     armTimer->Reset();
+
+    armMoveSpeed = 0;
 }
 
 void Arm::initialize(Intake *intake_)
@@ -34,14 +36,14 @@ void Arm::setPreset(int preset)
             errorTarget = 1;
             break;
         case PSEUDO_INTAKE:
-            setTarget(96.0);
+            setTarget(49.0);
             errorTarget = 1;
             break;
         case SHOOTING:
-            setTarget(43.56);
+            setTarget(42.56);
             break;
         case STOW:
-            setTarget(68.00);
+            setTarget(32.00);
             break;
     }
 
@@ -51,6 +53,11 @@ void Arm::setPreset(int preset)
 int Arm::getPreset()
 {
     return lastPreset;
+}
+
+void Arm::ballTrapper(float magnitude)
+{
+    armMoveSpeed = magnitude;
 }
 
 void Arm::setTarget(float target)
@@ -88,18 +95,34 @@ void Arm::update()
 {
     float error = fabs(getTarget() - getRawAngle());
 
+    currMoveSpeed = armMoveSpeed;
+    if (currMoveSpeed == 0 && prevMoveSpeed != 0)
+    {
+        setTarget(getRawAngle());
+    }
+
     if ((lastPreset == INTAKE) || (lastPreset == PSEUDO_INTAKE))
     {
-        if (error < errorTarget)
+        if (armMoveSpeed != 0)
         {
-            errorTarget = 5; //10;
-            armPID->setBounds(-0.5, 0.5);
-            motor->Set(-.1);
+            if (isCockSafe() && (getRawAngle() > 107.0))
+                motor->Set(armMoveSpeed);
+            else
+                motor->Set(0);
         }
         else
         {
-            errorTarget = 1;
-            motor->Set(armPID->update(getRawAngle()));
+            if (error < errorTarget)
+            {
+                errorTarget = 5; //10;
+                armPID->setBounds(-0.5, 0.5);
+                motor->Set(-.09);
+            }
+            else
+            {
+                errorTarget = 1;
+                motor->Set(armPID->update(getRawAngle()));
+            }
         }
     }
     else if (((lastPreset == STOW) || (lastPreset == SHOOTING)) && (!intake->isClamped()))
@@ -126,6 +149,8 @@ void Arm::update()
             armTimer->Reset();
         }
     }
+
+    prevMoveSpeed = currMoveSpeed;
 
 }
 
