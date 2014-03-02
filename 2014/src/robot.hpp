@@ -28,6 +28,8 @@ private:
     void joystick1();
     void joystick2();
 
+    float limit(float x);
+
     Talon *leftDriveMotors;
     Talon *rightDriveMotors;
     Talon *armMotor;
