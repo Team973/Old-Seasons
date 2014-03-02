@@ -106,9 +106,6 @@ void Arm::update()
 
     if ((lastPreset == INTAKE) || (lastPreset == PSEUDO_INTAKE))
     {
-        if (intake->isClamped(true))
-        intake->setFangs(false);
-
         if (armMoveSpeed != 0)
         {
             if ((getRawAngle() >= 70) && (getRawAngle() <= 100.0))
