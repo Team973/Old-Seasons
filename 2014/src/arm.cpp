@@ -96,10 +96,6 @@ void Arm::update()
     float error = fabs(getTarget() - getRawAngle());
 
     currMoveSpeed = armMoveSpeed;
-    if (currMoveSpeed == 0 && prevMoveSpeed != 0)
-    {
-        setTarget(getRawAngle());
-    }
 
     if ((lastPreset == INTAKE) || (lastPreset == PSEUDO_INTAKE))
     {
@@ -112,7 +108,7 @@ void Arm::update()
         }
         else
         {
-            if (error < errorTarget)
+            if (error < errorTarget && (lastPreset != PSEUDO_INTAKE))
             {
                 errorTarget = 5; //10;
                 armPID->setBounds(-0.5, 0.5);
@@ -124,19 +120,28 @@ void Arm::update()
                 motor->Set(armPID->update(getRawAngle()));
             }
         }
+            if (currMoveSpeed == 0 && prevMoveSpeed != 0)
+            {
+                setTarget(getRawAngle());
+            }
     }
-    else if (((lastPreset == STOW) || (lastPreset == SHOOTING)) && (!intake->isClamped()))
+    else if (((lastPreset == STOW) || (lastPreset == SHOOTING)))
     {
         armTimer->Start();
         intake->setFangs(true);
-        if (armTimer->Get() > 0.25)
+        if (!intake->isClamped())
         {
-            motor->Set(armPID->update(getRawAngle()));
+            if (armTimer->Get() > 0.25)
+            {
+                motor->Set(armPID->update(getRawAngle()));
+            }
+            else
+            {
+                motor->Set(0);
+            }
         }
         else
-        {
-            motor->Set(0);
-        }
+            motor->Set(armPID->update(getRawAngle()));
     }
     else
     {
