@@ -185,8 +185,4 @@ void Shooter::dashboardUpdate()
     SmartDashboard::PutNumber("Winch Encoder Distance: ", winchDistance());
     SmartDashboard::PutBoolean("Zero Hall Effects: ", zeroPoint->Get());
     SmartDashboard::PutBoolean("Full Cock Hall Effects: ", fullCockPoint->Get());
-    if (firing)
-        SmartDashboard::PutString("Does it feel good? ", "Ahhhh");
-    else
-        SmartDashboard::PutString("Does it feel good? ", "nope");
 }
