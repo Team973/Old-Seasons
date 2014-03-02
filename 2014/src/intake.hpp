@@ -16,7 +16,7 @@ public:
     void manual(float speed);
     void runIntake(float speed);
     void setFangs(bool state, bool overide=false);
-    bool isClamped();
+    bool isClamped(bool ignore=false);
 
 private:
     float limit(float x);
