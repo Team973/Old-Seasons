@@ -159,10 +159,10 @@ void Robot::joystick2() // Co-Driver
     // [x]
     //stick2->GetX();
 
-    // [ry]
+    // [rx]
     //stick2->GetRawAxis(3)
 
-    // [rx]
+    // [ry]
     arm->ballTrapper(deadband(stick2->GetRawAxis(4), 0.1));
 
     // [1]
