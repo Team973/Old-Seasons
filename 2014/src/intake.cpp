@@ -79,7 +79,7 @@ void Intake::update()
     else
     {
         // If we don't have a ball are actively intaking and can actually intake...
-        if ((!hasBall) && (intakeSpeed > 0) && ((arm->getPreset() == INTAKE)))
+        if ((!hasBall) && (intakeSpeed != 0) && ((arm->getPreset() == INTAKE)))
         {
             if (!ballSensor->Get())
             {
