@@ -23,6 +23,7 @@ public:
     float getRawAngle();
     int getPreset();
     bool isCockSafe();
+    void ballTrapper(float magnitude);
 private:
     Talon *motor;
     Encoder *sensorA;
@@ -36,6 +37,11 @@ private:
     int lastPreset;
 
     float errorTarget;
+
+    float armMoveSpeed;
+
+    float currMoveSpeed;
+    float prevMoveSpeed;
 };
 
 #endif
