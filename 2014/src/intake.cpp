@@ -17,6 +17,7 @@ Intake::Intake(Victor *linearMotor_, Victor *crossMotor_, Solenoid *openClaw_, S
     possesionTimer = new Timer();
 
     clamped = false;
+    dropTheBall = false;
 }
 
 void Intake::initialize(Arm *arm_, Shooter *shooter_)
@@ -57,6 +58,7 @@ void Intake::setFangs(bool state, bool overide)
     {
         clamped = state;
     }
+    dropTheBall = overide;
 }
 
 bool Intake::isClamped(bool ignore)
@@ -76,10 +78,8 @@ void Intake::update()
         linearMotor->Set(intakeManualSpeed);
         crossMotor->Set(intakeManualSpeed);
     }
-    else
-    {
-        // If we don't have a ball are actively intaking and can actually intake...
-        if ((!hasBall) && (intakeSpeed != 0) && ((arm->getPreset() == INTAKE)))
+    // If we don't have a ball are actively intaking and can actually intake...
+    if ((!hasBall) && (intakeManualSpeed != 0) && ((arm->getPreset() == (INTAKE || PSEUDO_INTAKE))))
         {
             if (!ballSensor->Get())
             {
@@ -91,8 +91,7 @@ void Intake::update()
                 {
                     possesionTimer->Stop();
                     hasBall = true;
-                    openClaw->Set(true);
-                    arm->setPreset(SHOOTING);
+                    arm->setPreset(STOW);
                 }
 
             }
@@ -105,18 +104,18 @@ void Intake::update()
                 }
             }
         }
-        else if ((hasBall) && (shooter->isFiring())) // Lets the ball go
+        else if ((hasBall) && (shooter->isFiring() ))//|| isClamped())) // Lets the ball go
         {
             hasBall = false;
         }
 
-        linearMotor->Set(intakeSpeed);
-        crossMotor->Set(intakeSpeed);
-    }
+        //linearMotor->Set(intakeSpeed);
+        //crossMotor->Set(intakeSpeed);
 
 }
 
 void Intake::dashboardUpdate()
 {
     SmartDashboard::PutBoolean("Ball Sensor: ", ballSensor->Get());
+    SmartDashboard::PutBoolean("Has Ball: ", hasBall);
 }

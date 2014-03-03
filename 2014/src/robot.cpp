@@ -193,7 +193,7 @@ void Robot::joystick2() // Co-Driver
     // [3]
     if (stick2->GetRawButton(3))
     {
-        shooter->cock(HALF_COCK);
+        //intake->runIntake(1);
     }
 
     // [4]
