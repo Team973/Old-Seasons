@@ -218,13 +218,13 @@ void Robot::joystick2() // Co-Driver
     // [7]
     if (stick2->GetRawButton(7))
     {
-        intake->setFangs(false, true);
+        intake->setFangs(false);
     }
 
     // [8]
     if (stick2->GetRawButton(8))
     {
-        intake->setFangs(true, true);
+        intake->setFangs(true);
     }
 
     // [9]

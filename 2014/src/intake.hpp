@@ -15,8 +15,8 @@ public:
     void dashboardUpdate();
     void manual(float speed);
     void runIntake(float speed);
-    void setFangs(bool state, bool overide=false);
-    bool isClamped(bool ignore=false);
+    void setFangs(bool state);
+    bool isClamped();
 
 private:
     float limit(float x);
