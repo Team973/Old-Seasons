@@ -70,6 +70,9 @@ Robot::Robot()
 
     prevCoDriverDPad = 0;
 
+    GetWatchdog().SetExpiration(1000);
+    GetWatchdog().SetEnabled(true);
+
     SmartDashboard::init();
 }
 
@@ -268,6 +271,7 @@ void Robot::DisabledInit()
 
 void Robot::DisabledPeriodic()
 {
+    GetWatchdog().Feed();
     dashboardUpdate();
 }
 
@@ -283,6 +287,7 @@ void Robot::AutonomousInit()
 
 void Robot::AutonomousPeriodic()
 {
+    GetWatchdog().Feed();
     float AUTO_WAIT_TIME = 1;
     if (autoTimer->Get() >= AUTO_WAIT_TIME)
     {
@@ -301,6 +306,7 @@ void Robot::TeleopInit()
 
 void Robot::TeleopPeriodic()
 {
+    GetWatchdog().Feed();
     joystick1();
     joystick2();
 
