@@ -46,27 +46,16 @@ void Intake::runIntake(float speed)
     intakeSpeed = speed;
 }
 
-void Intake::setFangs(bool state, bool overide)
+void Intake::setFangs(bool state)
 {
     openClaw->Set(state);
 
-    if (overide)
-    {
-        clamped = true;
-    }
-    else
-    {
-        clamped = state;
-    }
-    dropTheBall = overide;
+    clamped = state;
 }
 
-bool Intake::isClamped(bool ignore)
+bool Intake::isClamped()
 {
-    if (ignore)
-        return false;
-    else
-        return clamped;
+    return clamped;
 }
 
 void Intake::update()

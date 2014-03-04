@@ -13,7 +13,7 @@ IntakeCommand::IntakeCommand(Intake *intake_, Arm *arm_, float timeout_)
 void IntakeCommand::Init()
 {
     timer->Start();
-    timer->Reset():
+    timer->Reset();
 }
 
 bool IntakeCommand::Run()

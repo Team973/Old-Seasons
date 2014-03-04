@@ -148,13 +148,17 @@ void Arm::update()
     else if (((lastPreset == STOW) || (lastPreset == SHOOTING)))
     {
         armPID->setBounds(-1, 1);
-        armTimer->Start();
+
         if (!intake->isClamped())
             intake->setFangs(true);
-        if (armTimer->Get() > 0.25)
+
+        armTimer->Start();
+        if ((armTimer->Get() > 0.25) && !intake->isClamped())
         {
             motor->Set(armPID->update(getRawAngle()));
         }
+        else if (intake->isClamped())
+            motor->Set(armPID->update(getRawAngle()));
         else
         {
             motor->Set(0);
