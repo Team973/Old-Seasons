@@ -44,6 +44,7 @@ private:
     float currMoveSpeed;
     float prevMoveSpeed;
     float error;
+    bool autoClamped;
 };
 
 #endif
