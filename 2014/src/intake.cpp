@@ -46,11 +46,11 @@ void Intake::runIntake(float speed)
     intakeSpeed = speed;
 }
 
-void Intake::setFangs(bool state)
+void Intake::setFangs(bool state, bool overide)
 {
     openClaw->Set(state);
-
     clamped = state;
+    dropTheBall = overide;
 }
 
 bool Intake::isClamped()
@@ -60,15 +60,20 @@ bool Intake::isClamped()
 
 void Intake::update()
 {
-    float intakeTime = 0.5;
+    float intakeTime = 0.25;
     // Manual overrides everything
     if (intakeManualSpeed != 0)
     {
         linearMotor->Set(intakeManualSpeed);
         crossMotor->Set(intakeManualSpeed);
     }
+    else
+    {
+        linearMotor->Set(intakeSpeed);
+        crossMotor->Set(intakeSpeed);
+    }
     // If we don't have a ball are actively intaking and can actually intake...
-    if ((!hasBall) && (intakeManualSpeed != 0) && ((arm->getPreset() == (INTAKE || PSEUDO_INTAKE))))
+    if ((!hasBall) && ((arm->getPreset() != SHOOTING) && !dropTheBall))
         {
             if (!ballSensor->Get())
             {
@@ -93,14 +98,10 @@ void Intake::update()
                 }
             }
         }
-        else if ((hasBall) && (shooter->isFiring() ))//|| isClamped())) // Lets the ball go
+        else if ((hasBall) && (shooter->isFiring() || dropTheBall)) // Lets the ball go
         {
             hasBall = false;
         }
-
-        //linearMotor->Set(intakeSpeed);
-        //crossMotor->Set(intakeSpeed);
-
 }
 
 void Intake::dashboardUpdate()

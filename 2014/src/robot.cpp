@@ -183,14 +183,14 @@ void Robot::joystick2() // Co-Driver
     if (stick2->GetRawButton(1))
     {
         arm->setPreset(PSEUDO_INTAKE);
-        intake->setFangs(false);
+        intake->setFangs(false, false);
     }
 
     // [2]
     if (stick2->GetRawButton(2))
     {
         arm->setPreset(INTAKE);
-        intake->setFangs(false);
+        intake->setFangs(false, false);
     }
 
     // [3]
@@ -221,13 +221,13 @@ void Robot::joystick2() // Co-Driver
     // [7]
     if (stick2->GetRawButton(7))
     {
-        intake->setFangs(false);
+        intake->setFangs(false, true);
     }
 
     // [8]
     if (stick2->GetRawButton(8))
     {
-        intake->setFangs(true);
+        intake->setFangs(true, false);
     }
 
     // [9]

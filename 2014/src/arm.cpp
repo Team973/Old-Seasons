@@ -155,7 +155,7 @@ void Arm::update()
 
         if (!intake->isClamped() && armTimer->Get() == 0 && !autoClamped)
         {
-            intake->setFangs(true);
+            intake->setFangs(true, false);
             autoClamped = true;
             armTimer->Start();
         }
