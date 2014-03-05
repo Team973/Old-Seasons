@@ -83,7 +83,6 @@ void Robot::dashboardUpdate()
     shooter->dashboardUpdate();
     intake->dashboardUpdate();
     SmartDashboard::PutNumber("Gyro: ", colinGyro->Get());
-    SmartDashboard::PutNumber("RY: ", stick2->GetRawAxis(4));
 }
 
 float Robot::deadband(float axis, float threshold)
