@@ -11,6 +11,7 @@
 #define AUTO_MANAGER_H
 
 #define TEST 1
+#define ONE_BALL_SIMPLE 2
 
 class AutoManager : public AutoCommand
 {
