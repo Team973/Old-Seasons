@@ -72,6 +72,7 @@ void Intake::update()
         linearMotor->Set(intakeSpeed);
         crossMotor->Set(intakeSpeed);
     }
+
     // If we don't have a ball are actively intaking and can actually intake...
     if ((!hasBall) && ((arm->getPreset() != SHOOTING) && !dropTheBall))
         {
@@ -101,6 +102,7 @@ void Intake::update()
         else if ((hasBall) && (shooter->isFiring() || dropTheBall)) // Lets the ball go
         {
             hasBall = false;
+            dropTheBall = false;
         }
 }
 
