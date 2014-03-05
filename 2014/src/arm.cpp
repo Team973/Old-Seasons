@@ -32,6 +32,7 @@ void Arm::initialize(Intake *intake_)
 
 void Arm::setPreset(int preset)
 {
+    //TODO subtract 3 from all presets
     switch (preset)
     {
         case INTAKE:
@@ -49,6 +50,9 @@ void Arm::setPreset(int preset)
         case STOW:
             setTarget(32.00);
             autoClamped = false;
+            break;
+        case CLOSE_SHOT:
+            setTarget(12.00);
             break;
     }
 
@@ -77,7 +81,7 @@ float Arm::getTarget()
 
 bool Arm::isCockSafe()
 {
-    float bound = 30;
+    float bound = 11.5;//30;
     if (getRawAngle() <= bound)
     {
         return false;

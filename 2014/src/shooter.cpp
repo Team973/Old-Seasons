@@ -118,6 +118,31 @@ bool Shooter::performFire()
     return false;
 }
 
+bool Shooter::performSoftFire()
+{
+    if (arm->getPreset() != INTAKE)
+    {
+        fireTimer->Start();
+        intake->setFangs(true);
+        intake->runIntake(0);
+        if (fireTimer->Get() >= 0.25)
+        {
+            winchRelease->Set(true);
+        }
+        if (fireTimer->Get() >= 0.5)
+        {
+            fireTimer->Stop();
+            fireTimer->Reset();
+            intake->runIntake(0);
+            firing = false;
+
+            return true;
+        }
+    }
+
+    return false;
+}
+
 void Shooter::testWinch(float speed)
 {
     winchSpeed = speed;
@@ -147,9 +172,19 @@ void Shooter::update()
     {
         if (firing && arm->isCockSafe())
         {
-            if (performFire())
+            if (arm->getPreset() == SHOOTING)
             {
-                cock(FULL_COCK);
+                if (performFire())
+                {
+                    cock(FULL_COCK);
+                }
+            }
+            else if (arm->getPreset() == CLOSE_SHOT)
+            {
+                if (performSoftFire())
+                {
+                    cock(FULL_COCK);
+                }
             }
         }
         else
