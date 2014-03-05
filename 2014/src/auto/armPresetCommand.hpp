@@ -7,7 +7,7 @@
 class ArmPresetCommand : public AutoCommand
 {
 public:
-    ArmPresetCommand(Arm *arm_, int preset_);
+    ArmPresetCommand(Arm *arm_, int preset_, float timeout_);
     virtual void Init();
     virtual bool Run();
 private:
