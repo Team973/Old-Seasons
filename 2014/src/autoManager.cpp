@@ -7,6 +7,9 @@
 #include "auto/consecutiveCommand.hpp"
 #include "auto/turnCommand.hpp"
 #include "auto/linearDriveCommand.hpp"
+#include "auto/fireCommand.hpp"
+#include "auto/armPresetCommand.hpp"
+#include "auto/intakeCommand.hpp"
 #include "auto/waitCommand.hpp"
 #include <vector>
 
@@ -31,6 +34,11 @@ void AutoManager::autoSelect(int autoMode)
             commandSequence.push_back(new LinearDriveCommand(drive, 24, false, 1.5));
             commandSequence.push_back(new TurnCommand(drive, 0, 1.5));
             commandSequence.push_back(new LinearDriveCommand(drive, 24, false, 1.5));
+            break;
+        case ONE_BALL_SIMPLE:
+            commandSequence.push_back(new ArmPresetCommand(arm, SHOOTING, .5));
+            commandSequence.push_back(new FireCommand(shooter, 1));
+            commandSequence.push_back(new LinearDriveCommand(drive, 60, false, 1.5));
             break;
         default:
             break;
