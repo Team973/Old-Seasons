@@ -280,7 +280,7 @@ void Robot::AutonomousInit()
     autoTimer->Start();
 
     drive->resetDrive();
-    autoMode->autoSelect(TEST);
+    autoMode->autoSelect(ONE_BALL_SIMPLE);
     autoMode->Init();
 }
 
