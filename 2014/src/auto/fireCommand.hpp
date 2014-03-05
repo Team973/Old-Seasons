@@ -7,7 +7,7 @@
 class FireCommand : public AutoCommand
 {
 public:
-    FireCommand(Shooter *shooter_);
+    FireCommand(Shooter *shooter_, float timeout_);
     virtual void Init();
     virtual bool Run();
 private:
