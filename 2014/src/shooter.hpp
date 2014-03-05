@@ -20,6 +20,7 @@ public:
     void fire(bool fire);
     bool isFiring();
     bool performFire();
+    bool performSoftFire();
     void killShooter(bool dead);
     void update();
     void dashboardUpdate();

@@ -7,6 +7,7 @@
 #define PSEUDO_INTAKE 2
 #define SHOOTING 3
 #define STOW 4
+#define CLOSE_SHOT 5
 
 class Intake;
 

@@ -195,7 +195,7 @@ void Robot::joystick2() // Co-Driver
     // [3]
     if (stick2->GetRawButton(3))
     {
-        //intake->runIntake(1);
+        arm->setPreset(CLOSE_SHOT);
     }
 
     // [4]
@@ -296,6 +296,9 @@ void Robot::AutonomousPeriodic()
 
     SmartDashboard::PutBoolean("Auto Mode Complete: ", autoComplete);
 
+    arm->update();
+    shooter->update();
+    intake->update();
     dashboardUpdate();
 }
 
