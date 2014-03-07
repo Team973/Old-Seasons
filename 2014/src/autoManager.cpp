@@ -39,6 +39,7 @@ void AutoManager::autoSelect(int autoMode)
             commandSequence.push_back(new ArmPresetCommand(arm, SHOOTING, 2));
             commandSequence.push_back(new FireCommand(shooter, 2));
             commandSequence.push_back(new LinearDriveCommand(drive, 60, false, 5));
+            commandSequence.push_back(new AutoWaitCommand(4));
             break;
         default:
             break;
@@ -48,6 +49,8 @@ void AutoManager::autoSelect(int autoMode)
 void AutoManager::reset()
 {
     commandSequence.erase(commandSequence.begin(), commandSequence.end());
+    //delete AUTO_SEQUENCE;
+    //AUTO_SEQUENCE = NULL;
 }
 
 void AutoManager::Init()
