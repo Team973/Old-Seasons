@@ -34,8 +34,8 @@ float Drive::limit(float x)
 
 void Drive::setDriveMotors(float left, float right)
 {
-    leftDrive->Set(limit(left));
-    rightDrive->Set(-limit(right));
+    leftDrive->Set(-limit(left));
+    rightDrive->Set(limit(right));
 }
 
 float Drive::getLeftDrive()
