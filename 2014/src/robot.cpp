@@ -279,6 +279,16 @@ void Robot::AutonomousInit()
     autoTimer = new Timer();
     autoTimer->Start();
 
+    autoSafetyTimer = new Timer();
+    autoSafetyTimer->Start();
+
+    if (autoSafetyTimer->Get() > 10)
+    {
+        autoMode->reset();
+        autoTimer->Reset();
+        autoSafetyTimer->Reset();
+    }
+
     drive->resetDrive();
     autoMode->autoSelect(ONE_BALL_SIMPLE);
     autoMode->Init();
@@ -300,6 +310,7 @@ void Robot::AutonomousPeriodic()
     shooter->update();
     intake->update();
     dashboardUpdate();
+
 }
 
 void Robot::TeleopInit()

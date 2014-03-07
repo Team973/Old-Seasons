@@ -45,6 +45,11 @@ void AutoManager::autoSelect(int autoMode)
     }
 }
 
+void AutoManager::reset()
+{
+    commandSequence.erase(commandSequence.begin(), commandSequence.end());
+}
+
 void AutoManager::Init()
 {
     AUTO_SEQUENCE = new SequentialCommand(commandSequence);
