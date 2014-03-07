@@ -18,12 +18,12 @@ void SequentialCommand::Init()
 
 bool SequentialCommand::Run()
 {
-    if (commandRunning <= commands.size())
+    if (commandRunning < commands.size())
     {
         if (commands[commandRunning]->Run())
         {
             commandRunning += 1;
-            if (commandRunning > commands.size())
+            if (commandRunning >= commands.size())
                 return true;
             else
                 commands[commandRunning]->Init();
