@@ -58,6 +58,12 @@ bool Intake::isClamped()
     return clamped;
 }
 
+void Intake::stop()
+{
+    linearMotor->Set(0);
+    crossMotor->Set(0);
+}
+
 void Intake::update()
 {
     float intakeTime = 0.25;
