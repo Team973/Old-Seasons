@@ -20,6 +20,7 @@ public:
     virtual void Init();
     virtual bool Run();
     void autoSelect(int autoMode);
+    void reset();
 private:
     Drive *drive;
     Shooter *shooter;

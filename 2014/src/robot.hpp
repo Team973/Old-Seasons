@@ -67,6 +67,7 @@ private:
 
     AutoManager *autoMode;
     bool autoComplete;
+    Timer* autoSafetyTimer;
 
     Joystick *stick1;
     Joystick *stick2;
