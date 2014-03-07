@@ -41,6 +41,9 @@ void AutoManager::autoSelect(int autoMode)
             commandSequence.push_back(new LinearDriveCommand(drive, 60, false, 5));
             commandSequence.push_back(new AutoWaitCommand(4));
             break;
+        case NO_AUTO:
+            commandSequence.push_back(new AutoWaitCommand(10));
+            break;
         default:
             break;
     }
