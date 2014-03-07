@@ -55,6 +55,7 @@ void Shooter::cock(int level)
             setTarget(11);
             break;
         case NO_COCK:
+            setTarget(0);
             winchMotor->Set(0);
             intake->runIntake(0);
             cockTimer->Stop();
@@ -194,6 +195,8 @@ void Shooter::update()
             if ((!fullCockPoint->Get()) || (winchDistance() >= dangerPoint) || (!arm->isCockSafe()) || (cockTimer->Get() >= 3))
             {
                 cock(NO_COCK);
+                cockTimer->Stop();
+                cockTimer->Reset();
             }
             else if (fullCockPoint->Get() && (winchDistance() < dangerPoint))
             {
