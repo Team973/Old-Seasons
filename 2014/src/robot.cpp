@@ -62,6 +62,7 @@ Robot::Robot()
     arm->initialize(intake);
 
     autoMode = new AutoManager(drive, shooter, intake, arm, blockerSolenoid);
+    autoSelectMode = NO_AUTO;
 
     stick1 = new Joystick(1);
     stick2 = new Joystick(2);
@@ -74,6 +75,7 @@ Robot::Robot()
     GetWatchdog().SetEnabled(true);
 
     SmartDashboard::init();
+    dsLCD = DriverStationLCD::GetInstance();
 }
 
 void Robot::dashboardUpdate()
@@ -83,6 +85,7 @@ void Robot::dashboardUpdate()
     shooter->dashboardUpdate();
     intake->dashboardUpdate();
     SmartDashboard::PutNumber("Gyro: ", colinGyro->Get());
+    dsLCD->PrintfLine(DriverStationLCD::kUser_Line2,"Arm Angle: %f", arm->getRawAngle());
 }
 
 float Robot::deadband(float axis, float threshold)
@@ -271,7 +274,41 @@ void Robot::DisabledInit()
 void Robot::DisabledPeriodic()
 {
     GetWatchdog().Feed();
+
+    if (stick2->GetRawButton(4))
+        autoSelectMode += 1;
+    else if (stick2->GetRawButton(2))
+        autoSelectMode -= 1;
+
+    if (autoSelectMode > DRIVE_ONLY)
+        autoSelectMode = TEST;
+    else if (autoSelectMode < TEST)
+        autoSelectMode = DRIVE_ONLY;
+
+    switch(autoSelectMode)
+    {
+    case TEST:
+        dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Auto Mode: %s", "Test");
+        break;
+    case ONE_BALL_SIMPLE:
+        dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Auto Mode: %s", "one ball sit still and shoot");
+        break;
+    case ONE_BALL_IN_MOVEMENT:
+        dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Auto Mode: %s", "one ball move and shoot");
+        break;
+    case DRIVE_ONLY:
+        dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Auto Mode: %s", "move only");
+        break;
+    case NO_AUTO:
+        dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Auto Mode: %s", "no auto");
+        break;
+    default:
+        dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Auto Mode: %s", "no auto");
+        break;
+    }
+
     dashboardUpdate();
+    dsLCD->UpdateLCD();
 }
 
 void Robot::AutonomousInit()
@@ -290,7 +327,7 @@ void Robot::AutonomousInit()
     }
 
     drive->resetDrive();
-    autoMode->autoSelect(ONE_BALL_IN_MOVEMENT);
+    autoMode->autoSelect(autoSelectMode);
     autoMode->Init();
 }
 
@@ -316,7 +353,7 @@ void Robot::AutonomousPeriodic()
 void Robot::TeleopInit()
 {
     shooter->cock(NO_COCK);
-    drive->update(0, 0, false, false, false);
+    drive->update(0, 0, false, false, false, false);
     intake->stop();
     blockerSolenoid->Set(false);
 }
@@ -327,7 +364,7 @@ void Robot::TeleopPeriodic()
     joystick1();
     joystick2();
 
-    drive->update(DriveX, DriveY, lowGear, kickUp, quickTurn);
+    drive->update(DriveX, DriveY, lowGear, kickUp, quickTurn, false);
     arm->update();
     shooter->update();
     intake->update();

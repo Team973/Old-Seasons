@@ -74,12 +74,15 @@ private:
 
     Timer *autoTimer;
 
+    DriverStationLCD *dsLCD;
+
     float DriveY;
     float DriveX;
     bool quickTurn;
     bool lowGear;
     bool kickUp;
     float prevCoDriverDPad;
+    int autoSelectMode;
 
 };
 
