@@ -8,6 +8,7 @@
 #define SHOOTING 3
 #define STOW 4
 #define CLOSE_SHOT 5
+#define HELLAVATOR 6
 
 class Intake;
 
