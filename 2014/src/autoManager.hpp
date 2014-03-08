@@ -14,6 +14,7 @@
 #define ONE_BALL_SIMPLE 2
 #define ONE_BALL_IN_MOVEMENT 3
 #define NO_AUTO 4
+#define DRIVE_ONLY 5
 
 class AutoManager : public AutoCommand
 {

@@ -14,7 +14,7 @@ LinearDriveCommand::LinearDriveCommand(Drive *drive_, float targetDrive_, bool b
 
     setTimeout(timeout_);
 
-    drivePID = new PID(.03, 0.001);
+    drivePID = new PID(.05, 0.001);
     drivePID->setICap(.3);
     anglePID = new PID(.1);
 }
@@ -38,7 +38,7 @@ bool LinearDriveCommand::Run()
 
     if ((timer->Get() >= timeout) || (fabs(driveError) < drivePrecision))
     {
-        drive->update(0, 0, false, false, false);
+        drive->update(0, 0, false, false, false, true);
         return true;
     }
     else
@@ -65,7 +65,7 @@ bool LinearDriveCommand::Run()
         if (backwards)
             driveInput = -driveInput;
 
-        drive->update(turnInput, -driveInput, false, false, false);
+        drive->update(turnInput, -driveInput, false, false, false, true);
     }
 
     return false;
