@@ -267,7 +267,7 @@ void Drive::update(double DriveX, double DriveY, bool gear, bool kick, bool quic
 {
     if (isAuto)
     {
-        arcade(-DriveY, -DriveX);
+        arcade(DriveY, DriveX);
     }
     else
     {
