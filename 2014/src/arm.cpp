@@ -53,6 +53,9 @@ void Arm::setPreset(int preset)
         case CLOSE_SHOT:
             setTarget(9.00);
             break;
+        case HELLAVATOR:
+            setTarget(7.20);
+            break;
     }
 
     lastPreset = preset;
