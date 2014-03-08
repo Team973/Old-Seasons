@@ -1,0 +1,8 @@
+\.[586]$
+(^|/)[568]\.out$
+(^|/)_testmain\.go$
+(^|/)_obj/
+(^|/)_test/
+^frctool/frctool$
+(^|/)PPC603gnu/
+(^|/)\.metadata/
