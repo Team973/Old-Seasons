@@ -327,7 +327,7 @@ void Robot::AutonomousInit()
     }
 
     drive->resetDrive();
-    autoMode->autoSelect(ONE_BALL_IN_MOVEMENT);
+    autoMode->autoSelect(autoSelectMode);
     autoMode->Init();
 }
 
