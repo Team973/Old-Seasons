@@ -41,7 +41,7 @@ Robot::Robot()
 
     intakeBallSensor = new DigitalInput(8);
 
-    winchEncoder = new Encoder(9, 10);
+    winchEncoder = new Encoder(9, 10, false, CounterBase::k1X);
     winchEncoder->Start();
     winchZeroSensor = new DigitalInput(11);
     winchFullCockSensor = new DigitalInput(12);
@@ -290,7 +290,7 @@ void Robot::AutonomousInit()
     }
 
     drive->resetDrive();
-    autoMode->autoSelect(NO_AUTO);
+    autoMode->autoSelect(ONE_BALL_SIMPLE);
     autoMode->Init();
 }
 

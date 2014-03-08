@@ -192,7 +192,7 @@ void Shooter::update()
         {
             // make sure we are cocked
             winchRelease->Set(false);
-            if ((!fullCockPoint->Get()) || (winchDistance() >= dangerPoint) || (!arm->isCockSafe()) || (cockTimer->Get() >= 3))
+            if ((!fullCockPoint->Get()) || (winchDistance() >= dangerPoint) || (!arm->isCockSafe()) || (cockTimer->Get() >= 4))
             {
                 cock(NO_COCK);
                 cockTimer->Stop();

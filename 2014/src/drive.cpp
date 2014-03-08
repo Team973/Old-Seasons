@@ -271,8 +271,8 @@ void Drive::update(double DriveX, double DriveY, bool gear, bool kick, bool quic
     }
     else
     {
-        CheesyDrive(DriveY, DriveX, gear, quickTurn);
-        //arcade(-DriveY, -DriveX);
+        //CheesyDrive(DriveY, DriveX, gear, quickTurn);
+        arcade(-DriveY, -DriveX);
     }
     setLowGear(gear);
     setKickUp(kick);
