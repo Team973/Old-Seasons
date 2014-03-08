@@ -61,7 +61,7 @@ Robot::Robot()
     intake->initialize(arm, shooter);
     arm->initialize(intake);
 
-    autoMode = new AutoManager(drive, shooter, intake, arm);
+    autoMode = new AutoManager(drive, shooter, intake, arm, blockerSolenoid);
 
     stick1 = new Joystick(1);
     stick2 = new Joystick(2);
@@ -318,6 +318,7 @@ void Robot::TeleopInit()
     shooter->cock(NO_COCK);
     drive->update(0, 0, false, false, false);
     intake->stop();
+    blockerSolenoid->Set(false);
 }
 
 void Robot::TeleopPeriodic()

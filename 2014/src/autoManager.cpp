@@ -11,14 +11,16 @@
 #include "auto/armPresetCommand.hpp"
 #include "auto/intakeCommand.hpp"
 #include "auto/waitCommand.hpp"
+#include "auto/hellavator.hpp"
 #include <vector>
 
-AutoManager::AutoManager(Drive *drive_, Shooter *shooter_, Intake* intake_, Arm* arm_)
+AutoManager::AutoManager(Drive *drive_, Shooter *shooter_, Intake* intake_, Arm* arm_, Solenoid* hellavator_)
 {
     drive = drive_;
     shooter = shooter_;
     intake = intake_;
     arm = arm_;
+    hellavator = hellavator_;
 }
 
 //XXX Always put a wait at the end of auto to make sure we don't double fire
@@ -54,6 +56,16 @@ void AutoManager::autoSelect(int autoMode)
             break;
         case DRIVE_ONLY:
             commandSequence.push_back(new LinearDriveCommand(drive, 96, false, 4));
+            commandSequence.push_back(new AutoWaitCommand(10));
+            break;
+        case HELLAVATOR_FOREWARD:
+            commandSequence.push_back(new Hellavator(hellavator, 1));
+            commandSequence.push_back(new LinearDriveCommand(drive, 108, false, 4));
+            commandSequence.push_back(new AutoWaitCommand(10));
+            break;
+        case HELLAVATOR_BACKWARD:
+            commandSequence.push_back(new Hellavator(hellavator, 1));
+            commandSequence.push_back(new LinearDriveCommand(drive, -108, false, 4));
             commandSequence.push_back(new AutoWaitCommand(10));
             break;
         default:
