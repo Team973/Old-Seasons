@@ -21,6 +21,7 @@ AutoManager::AutoManager(Drive *drive_, Shooter *shooter_, Intake* intake_, Arm*
     arm = arm_;
 }
 
+//XXX Always put a wait at the end of auto to make sure we don't double fire
 void AutoManager::autoSelect(int autoMode)
 {
     switch (autoMode)
@@ -40,6 +41,13 @@ void AutoManager::autoSelect(int autoMode)
             commandSequence.push_back(new FireCommand(shooter, 2));
             commandSequence.push_back(new LinearDriveCommand(drive, 60, false, 5));
             commandSequence.push_back(new AutoWaitCommand(4));
+            break;
+        case ONE_BALL_IN_MOVEMENT:
+            commandSequence.push_back(new ArmPresetCommand(arm, SHOOTING, 1));
+            commandSequence.push_back(new LinearDriveCommand(drive, 36, false, 1));
+            commandSequence.push_back(new FireCommand(shooter, 1.5));
+            commandSequence.push_back(new LinearDriveCommand(drive, 24, false, 5));
+            commandSequence.push_back(new AutoWaitCommand(10));
             break;
         case NO_AUTO:
             commandSequence.push_back(new AutoWaitCommand(10));
