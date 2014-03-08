@@ -63,6 +63,7 @@ Robot::Robot()
 
     autoMode = new AutoManager(drive, shooter, intake, arm, blockerSolenoid);
     autoSelectMode = NO_AUTO;
+    controlTimer= new Timer();
 
     stick1 = new Joystick(1);
     stick2 = new Joystick(2);
@@ -274,11 +275,18 @@ void Robot::DisabledInit()
 void Robot::DisabledPeriodic()
 {
     GetWatchdog().Feed();
+    controlTimer->Start();
 
-    if (stick2->GetRawButton(4))
+    if (stick2->GetRawButton(4) && controlTimer->Get() >= .5)
+    {
         autoSelectMode += 1;
-    else if (stick2->GetRawButton(2))
+        controlTimer->Reset();
+    }
+    else if (stick2->GetRawButton(2) && controlTimer->Get() >= .5)
+    {
         autoSelectMode -= 1;
+        controlTimer->Reset();
+    }
 
     if (autoSelectMode > DRIVE_ONLY)
         autoSelectMode = TEST;
@@ -302,6 +310,12 @@ void Robot::DisabledPeriodic()
     case NO_AUTO:
         dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Auto Mode: %s", "no auto");
         break;
+    case HELLAVATOR_FOREWARD:
+        dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Auto Mode: %s", "hellavator and move foreward");
+        break;
+    case HELLAVATOR_BACKWARD:
+        dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Auto Mode: %s", "hellavator and move backward");
+        break;
     default:
         dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Auto Mode: %s", "no auto");
         break;
@@ -313,6 +327,8 @@ void Robot::DisabledPeriodic()
 
 void Robot::AutonomousInit()
 {
+    controlTimer->Stop();
+
     autoTimer = new Timer();
     autoTimer->Start();
 
