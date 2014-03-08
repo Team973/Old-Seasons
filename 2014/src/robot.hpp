@@ -73,6 +73,7 @@ private:
     Joystick *stick2;
 
     Timer *autoTimer;
+    Timer *controlTimer;
 
     DriverStationLCD *dsLCD;
 
