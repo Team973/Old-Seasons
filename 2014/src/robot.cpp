@@ -336,8 +336,8 @@ void Robot::DisabledPeriodic()
     dsLCD->PrintfLine(DriverStationLCD::kUser_Line2,"Auto Dist: %f", hellaDistance);
 
     // Test the drive encoders
-    dsLCD->PrintfLine(DriverStationLCD::kUser_Line3,"Left Dist: %f", drive->getLeftDistance());
-    dsLCD->PrintfLine(DriverStationLCD::kUser_Line4,"Right Dist: %f", drive->getRightDistance());
+    dsLCD->PrintfLine(DriverStationLCD::kUser_Line4,"Left Dist: %f", drive->getLeftDistance());
+    dsLCD->PrintfLine(DriverStationLCD::kUser_Line5,"Right Dist: %f", drive->getRightDistance());
 
 
     dashboardUpdate();
