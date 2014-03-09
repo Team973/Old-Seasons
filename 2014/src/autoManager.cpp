@@ -59,15 +59,17 @@ void AutoManager::autoSelect(int autoMode)
             commandSequence.push_back(new AutoWaitCommand(10));
             break;
         case HELLAVATOR_FOREWARD:
-            commandSequence.push_back(new ArmPresetCommand(arm, HELLAVATOR, 1));
-            commandSequence.push_back(new Hellavator(hellavator, 1));
-            commandSequence.push_back(new LinearDriveCommand(drive, 108, false, 6));
+            consecutiveSequence.push_back(new ArmPresetCommand(arm, HELLAVATOR, 1));
+            consecutiveSequence.push_back(new Hellavator(hellavator, 1));
+            consecutiveSequence.push_back(new LinearDriveCommand(drive, 108, false, 6));
+            commandSequence.push_back(new ConsecutiveCommand(consecutiveCommand));
             commandSequence.push_back(new AutoWaitCommand(10));
             break;
         case HELLAVATOR_BACKWARD:
-            commandSequence.push_back(new ArmPresetCommand(arm, HELLAVATOR, 1));
-            commandSequence.push_back(new Hellavator(hellavator, 1));
-            commandSequence.push_back(new LinearDriveCommand(drive, -108, false, 6));
+            consecutiveSequence.push_back(new ArmPresetCommand(arm, HELLAVATOR, 1));
+            consecutiveSequence.push_back(new Hellavator(hellavator, 1));
+            consecutiveSequence.push_back(new LinearDriveCommand(drive, -108, false, 6));
+            commandSequence.push_back(new ConsecutiveCommand(consecutiveCommand));
             commandSequence.push_back(new AutoWaitCommand(10));
             break;
         default:

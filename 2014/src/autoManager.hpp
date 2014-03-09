@@ -33,6 +33,7 @@ private:
     Arm *arm;
     Solenoid *hellavator;
     std::vector<AutoCommand*> commandSequence;
+    std::vector<AutoCommand*> consecutiveSequence;
     SequentialCommand *AUTO_SEQUENCE;
 };
 
