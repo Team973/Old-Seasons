@@ -43,7 +43,7 @@ bool LinearDriveCommand::Run()
     }
     else
     {
-        drivePID->setBounds(-.7, .7);
+        drivePID->setBounds(-.9, .9);
         drivePID->setTarget(targetDrive);
         anglePID->setBounds(-.5, .5);
         anglePID->setTarget(targetAngle);

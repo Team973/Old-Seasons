@@ -396,12 +396,8 @@ void Robot::AutonomousInit()
 void Robot::AutonomousPeriodic()
 {
     GetWatchdog().Feed();
-    float AUTO_WAIT_TIME = 1;
-    if (autoTimer->Get() >= AUTO_WAIT_TIME)
-    {
-       if (autoMode->Run())
-           autoComplete = true;
-    }
+   if (autoMode->Run())
+       autoComplete = true;
 
 
     arm->update();
