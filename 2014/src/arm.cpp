@@ -197,4 +197,5 @@ void Arm::update()
 
 void Arm::dashboardUpdate()
 {
+    SmartDashboard::PutNumber("Arm Angle: ", getRawAngle());
 }
