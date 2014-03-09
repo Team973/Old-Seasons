@@ -8,6 +8,8 @@
 #include "robot.hpp"
 #include <vector>
 
+#include "NetworkTables/NetworkTable.h"
+
 Robot::Robot()
 {
     this->SetPeriod(0);
@@ -75,6 +77,7 @@ Robot::Robot()
     GetWatchdog().SetEnabled(true);
 
     dsLCD = DriverStationLCD::GetInstance();
+    SmartDashboard::init();
 }
 
 void Robot::dashboardUpdate()
@@ -83,6 +86,8 @@ void Robot::dashboardUpdate()
     arm->dashboardUpdate();
     shooter->dashboardUpdate();
     intake->dashboardUpdate();
+    SmartDashboard::PutNumber("Arm Angle: ", arm->getRawAngle());
+    SmartDashboard::PutNumber("Arm Target: ", arm->getTarget());
     dsLCD->PrintfLine(DriverStationLCD::kUser_Line3,"Arm Angle: %f", arm->getRawAngle());
     dsLCD->UpdateLCD();
 }
