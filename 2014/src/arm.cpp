@@ -131,7 +131,7 @@ void Arm::update()
             {
                 errorTarget = 5; //10;
                 armPID->setBounds(-0.5, 0.5);
-                motor->Set(-.08);
+                motor->Set(-.06);
             }
             else if (lastPreset == PSEUDO_INTAKE)
             {
