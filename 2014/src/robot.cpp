@@ -89,6 +89,8 @@ void Robot::dashboardUpdate()
     SmartDashboard::PutNumber("Arm Angle: ", arm->getRawAngle());
     SmartDashboard::PutNumber("Arm Target: ", arm->getTarget());
     dsLCD->PrintfLine(DriverStationLCD::kUser_Line3,"Arm Angle: %f", arm->getRawAngle());
+    dsLCD->PrintfLine(DriverStationLCD::kUser_Line4,"Left Dist: %f", drive->getLeftDistance());
+    dsLCD->PrintfLine(DriverStationLCD::kUser_Line5,"Right Dist: %f", drive->getRightDistance());
     dsLCD->UpdateLCD();
 }
 
@@ -363,11 +365,6 @@ void Robot::DisabledPeriodic()
     }
 
     dsLCD->PrintfLine(DriverStationLCD::kUser_Line2,"Auto Dist: %f", hellaDistance);
-
-    // Test the drive encoders
-    dsLCD->PrintfLine(DriverStationLCD::kUser_Line4,"Left Dist: %f", drive->getLeftDistance());
-    dsLCD->PrintfLine(DriverStationLCD::kUser_Line5,"Right Dist: %f", drive->getRightDistance());
-
 
     dashboardUpdate();
     dsLCD->UpdateLCD();
