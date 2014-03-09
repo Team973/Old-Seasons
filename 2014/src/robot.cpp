@@ -8,8 +8,6 @@
 #include "robot.hpp"
 #include <vector>
 
-#include "NetworkTables/NetworkTable.h"
-
 Robot::Robot()
 {
     this->SetPeriod(0);
@@ -75,7 +73,6 @@ Robot::Robot()
     GetWatchdog().SetExpiration(1000);
     GetWatchdog().SetEnabled(true);
 
-    SmartDashboard::init();
     dsLCD = DriverStationLCD::GetInstance();
 }
 
@@ -85,7 +82,6 @@ void Robot::dashboardUpdate()
     arm->dashboardUpdate();
     shooter->dashboardUpdate();
     intake->dashboardUpdate();
-    SmartDashboard::PutNumber("Gyro: ", colinGyro->Get());
     dsLCD->PrintfLine(DriverStationLCD::kUser_Line2,"Arm Angle: %f", arm->getRawAngle());
 }
 
@@ -357,7 +353,6 @@ void Robot::AutonomousPeriodic()
            autoComplete = true;
     }
 
-    SmartDashboard::PutBoolean("Auto Mode Complete: ", autoComplete);
 
     arm->update();
     shooter->update();

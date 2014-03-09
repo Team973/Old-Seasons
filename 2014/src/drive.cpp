@@ -280,8 +280,6 @@ void Drive::update(double DriveX, double DriveY, bool gear, bool kick, bool quic
 
 void Drive::dashboardUpdate()
 {
-    SmartDashboard::PutNumber("Left Encoder Distance ", getLeftDistance());
-    SmartDashboard::PutNumber("Right Encoder Distance ", getRightDistance());
 }
 
 void Drive::resetDrive()
