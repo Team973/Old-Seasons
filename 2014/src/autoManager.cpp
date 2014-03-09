@@ -21,6 +21,8 @@ AutoManager::AutoManager(Drive *drive_, Shooter *shooter_, Intake* intake_, Arm*
     intake = intake_;
     arm = arm_;
     hellavator = hellavator_;
+
+    driveDistance = 0;
 }
 
 void AutoManager::setHellaDistance(float dist)
