@@ -86,7 +86,6 @@ void Robot::dashboardUpdate()
     arm->dashboardUpdate();
     shooter->dashboardUpdate();
     intake->dashboardUpdate();
-    SmartDashboard::PutNumber("Arm Angle: ", arm->getRawAngle());
     SmartDashboard::PutNumber("Arm Target: ", arm->getTarget());
     dsLCD->PrintfLine(DriverStationLCD::kUser_Line3,"Arm Angle: %f", arm->getRawAngle());
     dsLCD->PrintfLine(DriverStationLCD::kUser_Line4,"Left Dist: %f", drive->getLeftDistance());
