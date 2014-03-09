@@ -62,6 +62,7 @@ Robot::Robot()
     autoMode = new AutoManager(drive, shooter, intake, arm, blockerSolenoid);
     autoSelectMode = NO_AUTO;
     controlTimer= new Timer();
+    hellaDistance = 4;
 
     stick1 = new Joystick(1);
     stick2 = new Joystick(2);
@@ -82,7 +83,7 @@ void Robot::dashboardUpdate()
     arm->dashboardUpdate();
     shooter->dashboardUpdate();
     intake->dashboardUpdate();
-    dsLCD->PrintfLine(DriverStationLCD::kUser_Line2,"Arm Angle: %f", arm->getRawAngle());
+    dsLCD->PrintfLine(DriverStationLCD::kUser_Line3,"Arm Angle: %f", arm->getRawAngle());
 }
 
 float Robot::deadband(float axis, float threshold)
@@ -289,6 +290,21 @@ void Robot::DisabledPeriodic()
     else if (autoSelectMode < TEST)
         autoSelectMode = DRIVE_ONLY;
 
+    if (stick2->GetRawButton(1) && controlTimer->Get() >= .5)
+        hellaDistance += .5;
+    else if (stick2->GetRawButton(3) && controlTimer->Get() >= .5)
+        hellaDistance -= .5;
+
+    if (stick2->GetRawButton(5) && controlTimer->Get() >= .5)
+        hellaDistance += 2;
+    else if (stick2->GetRawButton(6) && controlTimer->Get() >= .5)
+        hellaDistance -= 2;
+
+    if (stick2->GetRawButton(7) && controlTimer->Get() >= .5)
+        hellaDistance += 5;
+    else if (stick2->GetRawButton(8) && controlTimer->Get() >= .5)
+        hellaDistance -= 5;
+
     switch(autoSelectMode)
     {
     case TEST:
@@ -317,6 +333,9 @@ void Robot::DisabledPeriodic()
         break;
     }
 
+    dsLCD->PrintfLine(DriverStationLCD::kUser_Line2,"Auto Dist: %f", hellaDistance);
+
+
     dashboardUpdate();
     dsLCD->UpdateLCD();
 }
@@ -337,6 +356,8 @@ void Robot::AutonomousInit()
         autoTimer->Reset();
         autoSafetyTimer->Reset();
     }
+
+    autoMode->setHellaDistance(hellaDistance);
 
     drive->resetDrive();
     autoMode->autoSelect(autoSelectMode);

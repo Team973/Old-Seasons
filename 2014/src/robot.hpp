@@ -84,6 +84,7 @@ private:
     bool kickUp;
     float prevCoDriverDPad;
     int autoSelectMode;
+    float hellaDistance;
 
 };
 

@@ -22,7 +22,7 @@ class AutoManager : public AutoCommand
 {
 public:
     AutoManager(Drive *drive_, Shooter* shooter_, Intake* intake_, Arm *arm_, Solenoid* hellavator_);
-    void setHellaDistance(float dist)
+    void setHellaDistance(float dist);
     virtual void Init();
     virtual bool Run();
     void autoSelect(int autoMode);
@@ -36,6 +36,7 @@ private:
     std::vector<AutoCommand*> commandSequence;
     std::vector<AutoCommand*> consecutiveSequence;
     SequentialCommand *AUTO_SEQUENCE;
+    float driveDistance;
 };
 
 #endif
