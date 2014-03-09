@@ -27,7 +27,7 @@ AutoManager::AutoManager(Drive *drive_, Shooter *shooter_, Intake* intake_, Arm*
 
 void AutoManager::setHellaDistance(float dist)
 {
-    driveDistance = dist;
+    driveDistance = dist/12;
 }
 
 //XXX Always put a wait at the end of auto to make sure we don't double fire
