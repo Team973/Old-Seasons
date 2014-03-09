@@ -299,10 +299,10 @@ void Robot::DisabledPeriodic()
         dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Auto Mode: %s", "Test");
         break;
     case ONE_BALL_SIMPLE:
-        dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Auto Mode: %s", "one ball sit still and shoot");
+        dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Auto Mode: %s", "one ball ss");
         break;
     case ONE_BALL_IN_MOVEMENT:
-        dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Auto Mode: %s", "one ball move and shoot");
+        dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Auto Mode: %s", "one ball ms");
         break;
     case DRIVE_ONLY:
         dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Auto Mode: %s", "move only");
@@ -311,10 +311,10 @@ void Robot::DisabledPeriodic()
         dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Auto Mode: %s", "no auto");
         break;
     case HELLAVATOR_FOREWARD:
-        dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Auto Mode: %s", "hellavator and move foreward");
+        dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Auto Mode: %s", "h fore");
         break;
     case HELLAVATOR_BACKWARD:
-        dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Auto Mode: %s", "hellavator and move backward");
+        dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Auto Mode: %s", "h back");
         break;
     default:
         dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Auto Mode: %s", "no auto");
