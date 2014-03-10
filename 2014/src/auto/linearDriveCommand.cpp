@@ -17,6 +17,8 @@ LinearDriveCommand::LinearDriveCommand(Drive *drive_, float targetDrive_, bool b
     drivePID = new PID(.05, 0.001);
     drivePID->setICap(.3);
     anglePID = new PID(.1);
+
+    driveTimer = new Timer();
 }
 
 void LinearDriveCommand::Init()
@@ -28,6 +30,7 @@ void LinearDriveCommand::Init()
 
     timer->Start();
     timer->Reset();
+
 }
 
 bool LinearDriveCommand::Run()
@@ -38,8 +41,33 @@ bool LinearDriveCommand::Run()
 
     if ((timer->Get() >= timeout) || (fabs(driveError) < drivePrecision))
     {
-        drive->update(0, 0, false, false, false, true);
-        return true;
+        driveTimer->Start();
+        float driveInput;
+        float turnInput;
+
+        if (driveTimer->Get() < 2)
+        {
+            if (fabs(driveError) < drivePrecision)
+            {
+                driveInput = 0;
+                turnInput = 0;
+            }
+            else
+            {
+                driveInput = drivePID->update(drive->getWheelDistance());
+                turnInput = anglePID->update(currGyro);
+            }
+            /*
+            if (backwards)
+                driveInput = -driveInput;
+                */
+
+            drive->update(turnInput, -driveInput, false, false, false, true);
+        }
+        else
+        {
+            return true;
+        }
     }
     else
     {
@@ -53,6 +81,7 @@ bool LinearDriveCommand::Run()
 
         if (fabs(driveError) < drivePrecision)
         {
+            driveTimer->Start();
             driveInput = 0;
             turnInput = 0;
         }
@@ -62,8 +91,10 @@ bool LinearDriveCommand::Run()
             turnInput = anglePID->update(currGyro);
         }
 
+        /*
         if (backwards)
             driveInput = -driveInput;
+            */
 
         drive->update(turnInput, -driveInput, false, false, false, true);
     }
