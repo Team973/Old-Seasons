@@ -19,6 +19,7 @@ private:
     bool backwards;
     float drivePrecision;
 
+    Timer *driveTimer;
     PID *drivePID;
     PID *anglePID;
 };

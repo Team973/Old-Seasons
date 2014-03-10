@@ -367,6 +367,7 @@ void Robot::DisabledPeriodic()
 
     dashboardUpdate();
     dsLCD->UpdateLCD();
+    autoMode->setHellaDistance(hellaDistance);
 }
 
 void Robot::AutonomousInit()
@@ -385,8 +386,6 @@ void Robot::AutonomousInit()
         autoTimer->Reset();
         autoSafetyTimer->Reset();
     }
-
-    autoMode->setHellaDistance(hellaDistance);
 
     drive->resetDrive();
     autoMode->autoSelect(autoSelectMode);

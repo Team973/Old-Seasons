@@ -28,7 +28,7 @@ AutoManager::AutoManager(Drive *drive_, Shooter *shooter_, Intake* intake_, Arm*
 
 void AutoManager::setHellaDistance(float dist)
 {
-    driveDistance = fabs(dist/12);
+    driveDistance = dist*12;
 }
 
 //XXX Always put a wait at the end of auto to make sure we don't double fire
@@ -69,13 +69,13 @@ void AutoManager::autoSelect(int autoMode)
         case HELLAVATOR_FOREWARD:
             commandSequence.push_back(new Hellavator(hellavator, 0));
             commandSequence.push_back(new ArmPresetCommand(arm, HELLAVATOR, 0));
-            commandSequence.push_back(new LinearDriveCommand(drive, 108, false, 6.5));
+            commandSequence.push_back(new LinearDriveCommand(drive, driveDistance, false, 4));
             commandSequence.push_back(new AutoWaitCommand(10));
             break;
         case HELLAVATOR_BACKWARD:
             commandSequence.push_back(new Hellavator(hellavator, 0));
             commandSequence.push_back(new ArmPresetCommand(arm, HELLAVATOR, 0));
-            commandSequence.push_back(new LinearDriveCommand(drive, -108, false, 6.5));
+            commandSequence.push_back(new LinearDriveCommand(drive, -driveDistance, true, 4));
             commandSequence.push_back(new AutoWaitCommand(10));
             break;
         default:

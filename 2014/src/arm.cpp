@@ -54,7 +54,7 @@ void Arm::setPreset(int preset)
             setTarget(9.00);
             break;
         case HELLAVATOR:
-            setTarget(7.20);
+            setTarget(2.5);
             break;
     }
 
