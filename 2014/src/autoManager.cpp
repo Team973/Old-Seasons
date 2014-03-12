@@ -85,9 +85,9 @@ void AutoManager::autoSelect(int autoMode)
 
 void AutoManager::reset()
 {
-    commandSequence.erase(commandSequence.begin(), commandSequence.end());
-    //delete AUTO_SEQUENCE;
-    //AUTO_SEQUENCE = NULL;
+    commandSequence.clear();
+    delete AUTO_SEQUENCE;
+    AUTO_SEQUENCE = NULL;
 }
 
 void AutoManager::Init()
