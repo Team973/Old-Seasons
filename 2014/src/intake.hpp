@@ -24,9 +24,7 @@ private:
 
     float intakeManualSpeed; // manual control
     float intakeSpeed; // for automated pick up
-    bool hasBall;
     bool clamped;
-    bool dropTheBall;
     Arm *arm;
     Shooter *shooter;
     Victor *linearMotor;

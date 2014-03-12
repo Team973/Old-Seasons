@@ -12,12 +12,10 @@ Intake::Intake(Victor *linearMotor_, Victor *crossMotor_, Solenoid *openClaw_, S
     ballSensor = ballSensor_;
 
     intakeManualSpeed = 0;
-    hasBall = false;
 
     possesionTimer = new Timer();
 
     clamped = false;
-    dropTheBall = false;
 }
 
 void Intake::initialize(Arm *arm_, Shooter *shooter_)
@@ -50,7 +48,6 @@ void Intake::setFangs(bool state, bool overide)
 {
     openClaw->Set(state);
     clamped = state;
-    dropTheBall = overide;
 }
 
 bool Intake::isClamped()
@@ -80,7 +77,7 @@ void Intake::update()
     }
 
     // If we don't have a ball are actively intaking and can actually intake...
-    if ((!hasBall) && ((arm->getPreset() != SHOOTING) && !dropTheBall))
+    if (arm->getPreset() == (INTAKE || PSEUDO_INTAKE))
         {
             if (!ballSensor->Get())
             {
@@ -91,7 +88,6 @@ void Intake::update()
                 else if (possesionTimer->Get() >= intakeTime)
                 {
                     possesionTimer->Stop();
-                    hasBall = true;
                     arm->setPreset(STOW);
                 }
 
@@ -104,11 +100,6 @@ void Intake::update()
                     possesionTimer->Reset();
                 }
             }
-        }
-        else if ((hasBall) && (shooter->isFiring() || dropTheBall)) // Lets the ball go
-        {
-            hasBall = false;
-            dropTheBall = false;
         }
 }
 
