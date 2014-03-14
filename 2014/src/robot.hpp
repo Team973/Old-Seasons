@@ -72,6 +72,8 @@ private:
     Joystick *stick1;
     Joystick *stick2;
 
+    Joystick *autoControl;
+
     Timer *autoTimer;
     Timer *controlTimer;
 
