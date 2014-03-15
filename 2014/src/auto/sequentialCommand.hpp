@@ -8,6 +8,7 @@ class SequentialCommand : public AutoCommand
 public:
     virtual void Init();
     virtual bool Run();
+    int getCurrentCommand();
     SequentialCommand(std::vector<AutoCommand*> cmd_);
 
     // objects
