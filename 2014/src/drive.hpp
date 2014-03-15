@@ -37,7 +37,7 @@ private:
 
     Solenoid *shifters;
     Solenoid *kickUp;
-    
+
     // Drive calculation variables
     void calculateDrive();
     void storeDriveCalculations();
