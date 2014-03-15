@@ -22,6 +22,26 @@ Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoi
     rightDist = 0;
 }
 
+float Drive::getWaypoint(int dist)
+{
+    float point = 0;
+
+    switch(dist)
+    {
+        case FAR:
+            point = -6;
+            break;
+        case MID:
+            point = -4;
+            break;
+        case CLOSE:
+            point = -2;
+            break;
+    }
+
+    return point;
+}
+
 float Drive::limit(float x)
 {
     if (x > 1)

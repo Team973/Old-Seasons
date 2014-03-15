@@ -5,12 +5,9 @@
 
 // Auto waypoints
 #define FIRE_POINT 9
-#define FAR_LEFT -6
-#define MID_LEFT -4
-#define CLOSE_LEFT -2
-#define FAR_RIGHT 6
-#define MID_RIGHT 4
-#define CLOSE_RIGHT 2
+#define FAR 1
+#define MID 2
+#define CLOSE 3
 
 class Drive
 {
@@ -57,6 +54,8 @@ public:
     void resetDrive();
     void setLowGear(bool lowGear);
     void setKickUp(bool kick);
+
+    bool getWayPoint(int dist);
 
 
     // Drive calculation variables
