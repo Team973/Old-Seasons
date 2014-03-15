@@ -3,6 +3,15 @@
 #ifndef DRIVE_H
 #define DRIVE_H
 
+// Auto waypoints
+#define FIRE_POINT 9
+#define FAR_LEFT -6
+#define MID_LEFT -4
+#define CLOSE_LEFT -2
+#define FAR_RIGHT 6
+#define MID_RIGHT 4
+#define CLOSE_RIGHT 2
+
 class Drive
 {
 private:
@@ -48,6 +57,29 @@ public:
     void resetDrive();
     void setLowGear(bool lowGear);
     void setKickUp(bool kick);
+
+
+    // Drive calculation variables
+    void calculateDrive();
+    void storeDriveCalculations();
+    float getX();
+    float getY();
+    float currGyro;
+    float currTheta;
+    float theta;
+    float currLeft;
+    float currRight;
+    float magnitude;
+    float deltaX;
+    float deltaY;
+    float currX;
+    float currY;
+    float prevGyro;
+    float prevTheta;
+    float prevLeft;
+    float prevRight;
+    float prevX;
+    float prevY;
 };
 
 #endif

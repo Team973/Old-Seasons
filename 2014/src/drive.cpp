@@ -93,6 +93,41 @@ float Drive::getRightDistance()
     return rightDist;
 }
 
+
+void Drive::calculateDrive()
+{
+    currGyro = getGyroAngle();
+    currTheta = prevTheta + (currGyro - prevGyro);
+    theta = (currTheta + prevTheta) / 2;
+    currLeft =  getLeftDistance();
+    currRight = getRightDistance();
+    magnitude = (currLeft + currRight - prevLeft - prevRight) / 2;
+    deltaX = -magnitude * sin(theta / 180 * M_PI);
+    deltaY = magnitude * cos(theta / 180 * M_PI);
+    currX = prevX + deltaX;
+    currY = prevY + deltaY;
+}
+
+void Drive::storeDriveCalculations()
+{
+    prevGyro = currGyro;
+    prevTheta = currTheta;
+    prevLeft = currLeft;
+    prevRight = currRight;
+    prevX = currX;
+    prevY = currY;
+}
+
+float Drive::getX()
+{
+    return currX;
+}
+
+float Drive::getY()
+{
+    return currY;
+}
+
 float Drive::signSquare(float x)
 {
     if (x < 0)
@@ -265,6 +300,8 @@ void Drive::CheesyDrive(double throttle, double wheel, bool highGear, bool quick
 
 void Drive::update(double DriveX, double DriveY, bool gear, bool kick, bool quickTurn, bool isAuto)
 {
+    calculateDrive();
+
     if (isAuto)
     {
         arcade(DriveY, DriveX);
@@ -276,6 +313,8 @@ void Drive::update(double DriveX, double DriveY, bool gear, bool kick, bool quic
     }
     setLowGear(gear);
     setKickUp(kick);
+
+    storeDriveCalculations();
 }
 
 void Drive::dashboardUpdate()
