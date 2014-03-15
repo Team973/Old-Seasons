@@ -37,27 +37,7 @@ private:
 
     Solenoid *shifters;
     Solenoid *kickUp;
-
-public:
-    Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoid *kickUp_, Encoder *leftEncoder_, Encoder *rightEncoder_);
-    void update(double DriveX, double DriveY, bool gear, bool kick, bool quickTurn, bool isAuto=false);
-    void dashboardUpdate();
-
-    float getLeftDrive();
-    float getRightDrive();
-    float getLeftDistance();
-    float getRightDistance();
-    float getWheelDistance();
-    void resetDriveEncoders();
-    //TODO(oliver): Add in the reset gyro function
-    float getGyroAngle();
-    void resetDrive();
-    void setLowGear(bool lowGear);
-    void setKickUp(bool kick);
-
-    bool getWayPoint(int dist);
-
-
+    
     // Drive calculation variables
     void calculateDrive();
     void storeDriveCalculations();
@@ -79,6 +59,25 @@ public:
     float prevRight;
     float prevX;
     float prevY;
+
+public:
+    Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoid *kickUp_, Encoder *leftEncoder_, Encoder *rightEncoder_);
+    void update(double DriveX, double DriveY, bool gear, bool kick, bool quickTurn, bool isAuto=false);
+    void dashboardUpdate();
+
+    float getLeftDrive();
+    float getRightDrive();
+    float getLeftDistance();
+    float getRightDistance();
+    float getWheelDistance();
+    void resetDriveEncoders();
+    //TODO(oliver): Add in the reset gyro function
+    float getGyroAngle();
+    void resetDrive();
+    void setLowGear(bool lowGear);
+    void setKickUp(bool kick);
+
+    float getWaypoint(int dist);
 };
 
 #endif
