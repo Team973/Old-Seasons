@@ -11,6 +11,11 @@ SequentialCommand::SequentialCommand(std::vector<AutoCommand*> cmd_)
     commandRunning = 0;
 }
 
+int SequentialCommand::getCurrentCommand()
+{
+    return commandRunning;
+}
+
 void SequentialCommand::Init()
 {
     commands[0]->Init();
