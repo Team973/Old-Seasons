@@ -52,7 +52,7 @@ Robot::Robot()
     compressor = new Compressor(1,1);
     compressor->Start();
 
-    drive = new Drive(leftDriveMotors, rightDriveMotors, shiftingSolenoid, kickUpSolenoid, leftDriveEncoder, rightDriveEncoder);
+    drive = new Drive(leftDriveMotors, rightDriveMotors, shiftingSolenoid, kickUpSolenoid, leftDriveEncoder, rightDriveEncoder, colinGyro);
     arm = new Arm(armMotor, armSensorA);
     intake = new Intake(linearIntakeMotor, crossIntakeMotor, clawSolenoid, autoCorralSolenoid, intakeBallSensor);
     shooter = new Shooter(winchMotor, winchReleaseSolenoid, winchZeroSensor, winchFullCockSensor, winchEncoder);
@@ -89,6 +89,7 @@ void Robot::dashboardUpdate()
     shooter->dashboardUpdate();
     intake->dashboardUpdate();
     SmartDashboard::PutNumber("Arm Target: ", arm->getTarget());
+    SmartDashboard::PutNumber("Gyro: ", drive->getGyroAngle());
     dsLCD->PrintfLine(DriverStationLCD::kUser_Line3,"Arm Angle: %f", arm->getRawAngle());
     dsLCD->PrintfLine(DriverStationLCD::kUser_Line4,"Left Dist: %f", drive->getLeftDistance());
     dsLCD->PrintfLine(DriverStationLCD::kUser_Line5,"Right Dist: %f", drive->getRightDistance());

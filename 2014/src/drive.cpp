@@ -2,7 +2,7 @@
 #include "drive.hpp"
 #include <math.h>
 
-Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoid *kickUp_, Encoder *leftEncoder_, Encoder *rightEncoder_)
+Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoid *kickUp_, Encoder *leftEncoder_, Encoder *rightEncoder_, Encoder *gyro_)
 {
     leftDrive = leftDrive_;
     rightDrive = rightDrive_;
@@ -12,6 +12,8 @@ Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoi
 
     leftEncoder = leftEncoder_;
     rightEncoder = rightEncoder_;
+
+    gyro = gyro_;
 
     M_PI = 3.141592;
 
@@ -94,7 +96,8 @@ float Drive::normalizeAngle(float theta)
 
 float Drive::getGyroAngle()
 {
-    return normalizeAngle(0); //TODO(oliver): Add the new gyro get here
+    float ticks = 1024;
+    return normalizeAngle(-gyro->Get() * (360 / ticks));
 }
 
 void Drive::resetDriveEncoders()
