@@ -37,14 +37,9 @@ void AutoManager::autoSelect(int autoMode)
     switch (autoMode)
     {
         case TEST:
-            commandSequence.push_back(new TurnCommand(drive, -90, 1.5));
-            commandSequence.push_back(new LinearDriveCommand(drive, 24, false, 1.5));
-            commandSequence.push_back(new TurnCommand(drive, 0, 1.5));
-            commandSequence.push_back(new AutoWaitCommand(2));
-            commandSequence.push_back(new TurnCommand(drive, -90, 1.5));
-            commandSequence.push_back(new LinearDriveCommand(drive, 24, false, 1.5));
-            commandSequence.push_back(new TurnCommand(drive, 0, 1.5));
-            commandSequence.push_back(new LinearDriveCommand(drive, 24, false, 1.5));
+            //commandSequence.push_back(new AutoDriveCommand(drive, 0, 24, false, 2));
+            commandSequence.push_back(new LinearDriveCommand(drive, 12, false, 3));
+            commandSequence.push_back(new AutoWaitCommand(10));
             break;
         case ONE_BALL_SIMPLE:
             commandSequence.push_back(new ArmPresetCommand(arm, SHOOTING, 2));
@@ -77,6 +72,8 @@ void AutoManager::autoSelect(int autoMode)
             commandSequence.push_back(new ArmPresetCommand(arm, HELLAVATOR, 0));
             commandSequence.push_back(new LinearDriveCommand(drive, -driveDistance, true, 4));
             commandSequence.push_back(new AutoWaitCommand(10));
+            break;
+        case TWO_BALL:
             break;
         default:
             break;
