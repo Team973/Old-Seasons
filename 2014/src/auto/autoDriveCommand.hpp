@@ -39,8 +39,6 @@ private:
 
     Drive *drive;
 
-    Timer *driveTimer;
-
     PID* drivePID;
     PID* rotatePID;
     PID* anglePID;

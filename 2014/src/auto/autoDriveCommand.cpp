@@ -27,8 +27,6 @@ AutoDriveCommand::AutoDriveCommand(Drive* drive_, float targetX_,float targetY_,
 
     PI = 3.14159;
 
-    driveTimer = new Timer();
-
     resetDrive();
 }
 
@@ -82,6 +80,7 @@ void AutoDriveCommand::storeDriveCalculations()
 
 void AutoDriveCommand::Init()
 {
+    drive->holdPosition(false);
     resetDrive();
     timer->Start();
     timer->Reset();
@@ -94,52 +93,7 @@ bool AutoDriveCommand::Run()
 
     if ((timer->Get() >= timeout) || ((fabs(robotLinearError) < drivePercision) && (fabs(angleError) > turnPercision)))
     {
-        /*
-        driveTimer->Start();
-        float driveInput = 0;
-        float turnInput = 0;
-
-        float driveError = sqrt(pow((targetX - currX), 2) + pow((targetY - currY), 2));
-        float targetAngle = atan2(currX - targetX, targetY - currY) / PI * 180;
-        if (backward)
-            targetAngle = targetAngle + 180;
-        while (targetAngle > 180)
-            targetAngle = targetAngle - 360;
-
-        robotLinearError = (targetY - currY) * cos(currGyro / 180 * PI) - (targetX - currX) * sin(currGyro / 180 * PI);
-
-        angleError = targetAngle - currGyro;
-
-        if (driveTimer->Get() < 2)
-        {
-            if (fabs(angleError) < turnPercision)
-            {
-                if (fabs(robotLinearError) < drivePercision)
-                {
-                    driveInput = turnInput = 0;
-                }
-                else
-                {
-                    driveInput = -drivePID->update(driveError);
-                    turnInput = anglePID->update(angleError);
-                }
-
-            }
-            else
-            {
-                driveInput = 0;
-                turnInput = rotatePID->update(angleError); // only this one gets a pid output
-            }
-
-            if (backward)
-            {
-                driveInput = -driveInput;
-            }
-
-            drive->update(driveInput, turnInput, true, false, false, true);
-        }
-        else
-        */
+        drive->holdPosition(true);
         return true;
     }
     else
