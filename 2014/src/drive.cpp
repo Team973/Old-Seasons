@@ -119,6 +119,11 @@ float Drive::getGyroAngle()
     return normalizeAngle(-gyro->Get() * (360 / ticks));
 }
 
+void Drive::resetGyro()
+{
+    gyro->Reset();
+}
+
 void Drive::resetDriveEncoders()
 {
     leftEncoder->Reset();
@@ -377,4 +382,5 @@ void Drive::dashboardUpdate()
 void Drive::resetDrive()
 {
     resetDriveEncoders();
+    resetGyro();
 }
