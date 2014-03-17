@@ -9,6 +9,7 @@
 #define MID 2
 #define CLOSE 3
 
+class PID;
 class Drive
 {
 private:
@@ -27,6 +28,9 @@ private:
 
     float normalizeAngle(float theta);
 
+    PID *positionPID;
+    PID *anglePID;
+
     // Talons
     Talon *leftDrive;
     Talon *rightDrive;
@@ -39,6 +43,8 @@ private:
 
     Solenoid *shifters;
     Solenoid *kickUp;
+
+    bool isHolding;
 
     // Drive calculation variables
     void calculateDrive();
@@ -78,6 +84,7 @@ public:
     void resetDrive();
     void setLowGear(bool lowGear);
     void setKickUp(bool kick);
+    void holdPosition(bool hold);
 
     float getWaypoint(int dist);
 };

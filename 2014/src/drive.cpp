@@ -1,6 +1,7 @@
 #include "WPILib.h"
 #include "drive.hpp"
 #include <math.h>
+#include "pid.hpp"
 
 Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoid *kickUp_, Encoder *leftEncoder_, Encoder *rightEncoder_, Encoder *gyro_)
 {
@@ -17,11 +18,19 @@ Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoi
 
     M_PI = 3.141592;
 
+    positionPID = new PID(0.05, 0.001, 0);
+    positionPID->setICap(0.3);
+    positionPID->start();
+    anglePID = new PID(0.1);
+    anglePID->start();
+
     quickStopAccumulator = 0;
     negInertiaAccumulator = 0;
     oldWheel = 0;
     leftDist = 0;
     rightDist = 0;
+
+    isHolding = false;
 }
 
 float Drive::getWaypoint(int dist)
@@ -52,6 +61,16 @@ float Drive::limit(float x)
         return -1;
 
     return x;
+}
+
+void Drive::holdPosition(bool hold)
+{
+    isHolding = hold;
+    if (isHolding)
+    {
+        positionPID->setTarget(getWheelDistance());
+        anglePID->setTarget(getGyroAngle());
+    }
 }
 
 void Drive::setDriveMotors(float left, float right)
@@ -327,7 +346,18 @@ void Drive::update(double DriveX, double DriveY, bool gear, bool kick, bool quic
 
     if (isAuto)
     {
-        arcade(DriveY, DriveX);
+        float driveInput = 0;
+        float turnInput = 0;
+        if (isHolding)
+        {
+            driveInput = positionPID->update(getWheelDistance());
+            turnInput = anglePID->update(getGyroAngle());
+            arcade(driveInput, turnInput);
+        }
+        else
+        {
+            arcade(DriveY, DriveX);
+        }
     }
     else
     {
