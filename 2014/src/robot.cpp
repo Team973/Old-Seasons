@@ -90,6 +90,7 @@ void Robot::dashboardUpdate()
     intake->dashboardUpdate();
     SmartDashboard::PutNumber("Arm Target: ", arm->getTarget());
     SmartDashboard::PutNumber("Gyro: ", drive->getGyroAngle());
+    SmartDashboard::PutNumber("Drive Distance: ", drive->getWheelDistance());
     dsLCD->PrintfLine(DriverStationLCD::kUser_Line3,"Arm Angle: %f", arm->getRawAngle());
     dsLCD->PrintfLine(DriverStationLCD::kUser_Line4,"Left Dist: %f", drive->getLeftDistance());
     dsLCD->PrintfLine(DriverStationLCD::kUser_Line5,"Right Dist: %f", drive->getRightDistance());

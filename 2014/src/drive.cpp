@@ -30,6 +30,8 @@ Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoi
     leftDist = 0;
     rightDist = 0;
 
+    driveInput = 0;
+    turnInput = 0;
     isHolding = false;
 }
 
@@ -351,13 +353,11 @@ void Drive::update(double DriveX, double DriveY, bool gear, bool kick, bool quic
 
     if (isAuto)
     {
-        float driveInput = 0;
-        float turnInput = 0;
         if (isHolding)
         {
             driveInput = positionPID->update(getWheelDistance());
             turnInput = anglePID->update(getGyroAngle());
-            arcade(driveInput, turnInput);
+            arcade(-driveInput, turnInput);
         }
         else
         {
