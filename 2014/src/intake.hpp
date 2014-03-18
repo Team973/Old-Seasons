@@ -18,6 +18,7 @@ public:
     void setFangs(bool state, bool overide=false);
     bool isClamped();
     void stop();
+    bool gotBall();
 
 private:
     float limit(float x);
@@ -34,6 +35,8 @@ private:
     DigitalInput *ballSensor;
 
     Timer *possesionTimer;
+
+    bool hasBall;
 };
 
 #endif

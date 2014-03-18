@@ -16,6 +16,7 @@ Intake::Intake(Victor *linearMotor_, Victor *crossMotor_, Solenoid *openClaw_, S
     possesionTimer = new Timer();
 
     clamped = false;
+    hasBall = false;
 }
 
 void Intake::initialize(Arm *arm_, Shooter *shooter_)
@@ -61,6 +62,11 @@ void Intake::stop()
     crossMotor->Set(0);
 }
 
+bool Intake::gotBall()
+{
+    return hasBall;
+}
+
 void Intake::update()
 {
     float intakeTime = 0.25;
@@ -76,8 +82,12 @@ void Intake::update()
         crossMotor->Set(intakeSpeed);
     }
 
+    if (hasBall && shooter->isFiring())
+    {
+        hasBall = false;
+    }
     // If we don't have a ball are actively intaking and can actually intake...
-    if (arm->getPreset() == (INTAKE || PSEUDO_INTAKE))
+    else if (arm->getPreset() == (INTAKE || PSEUDO_INTAKE))
         {
             if (!ballSensor->Get())
             {
@@ -89,6 +99,7 @@ void Intake::update()
                 {
                     possesionTimer->Stop();
                     arm->setPreset(STOW);
+                    hasBall = true;
                 }
 
             }
