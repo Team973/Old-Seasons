@@ -14,9 +14,19 @@ void IntakeCommand::Init()
 {
     timer->Start();
     timer->Reset();
+
+    arm->setPreset(INTAKE);
 }
 
 bool IntakeCommand::Run()
 {
-    return true;
+    if (intake->gotBall() || timer->Get() >= timeout)
+    {
+        return true;
+    }
+    else
+    {
+        intake->runIntake(-1);
+        return false;
+    }
 }
