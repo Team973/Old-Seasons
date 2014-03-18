@@ -45,6 +45,8 @@ private:
     Solenoid *kickUp;
 
     bool isHolding;
+    float driveInput;
+    float turnInput;
 
     // Drive calculation variables
     void calculateDrive();
