@@ -80,7 +80,7 @@ void AutoDriveCommand::storeDriveCalculations()
 
 void AutoDriveCommand::Init()
 {
-    drive->holdPosition(false);
+    drive->holdPosition(false, 0, 0, 0);
     resetDrive();
     timer->Start();
     timer->Reset();
@@ -93,7 +93,8 @@ bool AutoDriveCommand::Run()
 
     if ((timer->Get() >= timeout) || ((fabs(robotLinearError) < drivePercision) && (fabs(angleError) > turnPercision)))
     {
-        drive->holdPosition(true);
+        drive->update(0, 0, false, false, false, true);
+        drive->holdPosition(true, drivePID->getTarget(), drivePercision, turnPercision);
         return true;
     }
     else
