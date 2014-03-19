@@ -20,8 +20,10 @@ Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoi
 
     positionPID = new PID(0.05, 0.002, 0);
     positionPID->setICap(0.3);
+    positionPID->setBounds(-0.9, 0.9);
     positionPID->start();
     anglePID = new PID(0.1);
+    anglePID->setBounds(-0.7, 0.7);
     anglePID->start();
 
     quickStopAccumulator = 0;
@@ -368,13 +370,14 @@ void Drive::update(double DriveX, double DriveY, bool gear, bool kick, bool quic
 
 void Drive::positionUpdate()
 {
-    float error = fabs(positionPID->getTarget() - getWheelDistance());
+    float linearError = fabs(positionPID->getTarget() - getWheelDistance());
+    float angleError = fabs(anglePID->getTarget() - fabs(getGyroAngle()));
     if (isHolding)
     {
         driveInput = positionPID->update(getWheelDistance());
-        //turnInput = anglePID->update(getGyroAngle());
-        if (error > 2)
-            arcade(-driveInput, 0);//turnInput);
+        turnInput = anglePID->update(getGyroAngle());
+        if (linearError > 2 && angleError > 2)
+            arcade(-driveInput, turnInput);
         else
             arcade(0, 0);
     }
