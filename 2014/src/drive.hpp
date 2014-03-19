@@ -88,6 +88,7 @@ public:
     void setLowGear(bool lowGear);
     void setKickUp(bool kick);
     void holdPosition(bool hold);
+    void positionUpdate();
 
     float getWaypoint(int dist);
 };

@@ -18,7 +18,7 @@ Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoi
 
     M_PI = 3.141592;
 
-    positionPID = new PID(0.05, 0.001, 0);
+    positionPID = new PID(0.05, 0.002, 0);
     positionPID->setICap(0.3);
     positionPID->start();
     anglePID = new PID(0.1);
@@ -353,16 +353,7 @@ void Drive::update(double DriveX, double DriveY, bool gear, bool kick, bool quic
 
     if (isAuto)
     {
-        if (isHolding)
-        {
-            driveInput = positionPID->update(getWheelDistance());
-            turnInput = anglePID->update(getGyroAngle());
-            arcade(-driveInput, turnInput);
-        }
-        else
-        {
-            arcade(DriveY, DriveX);
-        }
+        arcade(DriveY, DriveX);
     }
     else
     {
@@ -373,6 +364,20 @@ void Drive::update(double DriveX, double DriveY, bool gear, bool kick, bool quic
     setKickUp(kick);
 
     storeDriveCalculations();
+}
+
+void Drive::positionUpdate()
+{
+    float error = fabs(positionPID->getTarget() - getWheelDistance());
+    if (isHolding)
+    {
+        driveInput = positionPID->update(getWheelDistance());
+        //turnInput = anglePID->update(getGyroAngle());
+        if (error > 2)
+            arcade(-driveInput, 0);//turnInput);
+        else
+            arcade(0, 0);
+    }
 }
 
 void Drive::dashboardUpdate()
