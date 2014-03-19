@@ -35,6 +35,8 @@ Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoi
     driveInput = 0;
     turnInput = 0;
     isHolding = false;
+    drivePercision = 0;
+    turnPercision = 0;
 }
 
 float Drive::getWaypoint(int dist)
@@ -67,14 +69,19 @@ float Drive::limit(float x)
     return x;
 }
 
-void Drive::holdPosition(bool hold)
+void Drive::holdPosition(bool hold, float target, float drivePercision_, float turnPercision_)
 {
     isHolding = hold;
     if (isHolding)
     {
-        positionPID->setTarget(getWheelDistance());
+        positionPID->setTarget(target);
         anglePID->setTarget(getGyroAngle());
     }
+    if (!drivePercision_) {drivePercision = 0;}
+    else {drivePercision = drivePercision_;}
+
+    if (!turnPercision_) {turnPercision = 0;}
+    else {turnPercision = turnPercision_;}
 }
 
 void Drive::setDriveMotors(float left, float right)
@@ -371,12 +378,12 @@ void Drive::update(double DriveX, double DriveY, bool gear, bool kick, bool quic
 void Drive::positionUpdate()
 {
     float linearError = fabs(positionPID->getTarget() - getWheelDistance());
-    float angleError = fabs(anglePID->getTarget() - fabs(getGyroAngle()));
+    float angleError = fabs(anglePID->getTarget() - getGyroAngle());
     if (isHolding)
     {
         driveInput = positionPID->update(getWheelDistance());
         turnInput = anglePID->update(getGyroAngle());
-        if (linearError > 2 && angleError > 2)
+        if (linearError > drivePercision || angleError > turnPercision)
             arcade(-driveInput, turnInput);
         else
             arcade(0, 0);

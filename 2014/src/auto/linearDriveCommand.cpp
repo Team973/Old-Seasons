@@ -30,7 +30,7 @@ void LinearDriveCommand::Init()
     timer->Start();
     timer->Reset();
 
-    drive->holdPosition(false);
+    drive->holdPosition(false, 0, 0, 0);
 }
 
 bool LinearDriveCommand::Run()
@@ -42,7 +42,7 @@ bool LinearDriveCommand::Run()
     if ((timer->Get() >= timeout) || (fabs(driveError) < drivePrecision))
     {
         drive->update(0, 0, false, false, false, true);
-        drive->holdPosition(true);
+        drive->holdPosition(true, drivePID->getTarget(), drivePrecision, 2);
         return true;
     }
     else

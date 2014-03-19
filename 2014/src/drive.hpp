@@ -47,6 +47,8 @@ private:
     bool isHolding;
     float driveInput;
     float turnInput;
+    float drivePercision;
+    float turnPercision;
 
     // Drive calculation variables
     void calculateDrive();
@@ -87,7 +89,7 @@ public:
     void resetDrive();
     void setLowGear(bool lowGear);
     void setKickUp(bool kick);
-    void holdPosition(bool hold);
+    void holdPosition(bool hold, float target=0, float drivePercision=5, float turnPercision=2);
     void positionUpdate();
 
     float getWaypoint(int dist);
