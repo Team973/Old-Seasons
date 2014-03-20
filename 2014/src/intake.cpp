@@ -67,6 +67,11 @@ bool Intake::gotBall()
     return hasBall;
 }
 
+void Intake::dropCorral(bool trap)
+{
+    corral->Set(trap);
+}
+
 void Intake::update()
 {
     float intakeTime = 0.25;
