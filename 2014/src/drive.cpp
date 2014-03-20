@@ -20,10 +20,10 @@ Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoi
 
     positionPID = new PID(0.05, 0.001, 0);
     positionPID->setICap(0.3);
-    positionPID->setBounds(-0.5, 0.5);
+    positionPID->setBounds(-0.3, 0.3);
     positionPID->start();
     anglePID = new PID(0, 0, 0);//.1);
-    anglePID->setBounds(-0.5, 0.5);
+    anglePID->setBounds(-0.3, 0.3);
     anglePID->start();
 
     quickStopAccumulator = 0;
