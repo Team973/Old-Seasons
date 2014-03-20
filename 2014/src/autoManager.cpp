@@ -50,9 +50,8 @@ void AutoManager::autoSelect(int autoMode)
             break;
         case ONE_BALL_IN_MOVEMENT:
             commandSequence.push_back(new ArmPresetCommand(arm, SHOOTING, 1));
-            commandSequence.push_back(new LinearDriveCommand(drive, 48, false, 1.5));
+            commandSequence.push_back(new LinearDriveCommand(drive, 62, false, 1.5));
             commandSequence.push_back(new FireCommand(shooter, 1.5));
-            commandSequence.push_back(new LinearDriveCommand(drive, 60, false, 1));
             commandSequence.push_back(new AutoWaitCommand(10));
             break;
         case NO_AUTO:
@@ -78,7 +77,7 @@ void AutoManager::autoSelect(int autoMode)
             commandSequence.push_back(new LinearDriveCommand(drive, 12, false, 1, 5));
             commandSequence.push_back(new CorralCommand(intake, true));
             commandSequence.push_back(new ArmPresetCommand(arm, SHOOTING, 0));
-            commandSequence.push_back(new LinearDriveCommand(drive, 48, false, 1.7));
+            commandSequence.push_back(new LinearDriveCommand(drive, 62, false, 1.7));
             commandSequence.push_back(new FireCommand(shooter, 1));
             commandSequence.push_back(new ArmPresetCommand(arm, INTAKE, 1));
             commandSequence.push_back(new IntakeCommand(intake, arm, 2));
