@@ -343,13 +343,13 @@ void Robot::DisabledPeriodic()
     switch(autoSelectMode)
     {
     case TEST:
-        dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Auto Mode: %s", "Test");
+        dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Auto Mode: %s", "test");
         break;
     case ONE_BALL_SIMPLE:
-        dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Auto Mode: %s", "one ball ss");
+        dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Auto Mode: %s", "1 ball ss");
         break;
     case ONE_BALL_IN_MOVEMENT:
-        dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Auto Mode: %s", "one ball ms");
+        dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Auto Mode: %s", "1 ball ms");
         break;
     case DRIVE_ONLY:
         dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Auto Mode: %s", "move only");
