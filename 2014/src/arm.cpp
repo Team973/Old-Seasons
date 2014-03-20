@@ -43,7 +43,7 @@ void Arm::setPreset(int preset)
             errorTarget = 1;
             break;
         case SHOOTING:
-            setTarget(27.0);//30);
+            setTarget(25.0);//27);
             autoClamped = false;
             break;
         case STOW:
