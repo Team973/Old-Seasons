@@ -77,10 +77,10 @@ void Drive::holdPosition(bool hold, float target, float drivePercision_, float t
         positionPID->setTarget(target);
         anglePID->setTarget(getGyroAngle());
     }
-    if (!drivePercision_) {drivePercision = 0;}
+    if (!drivePercision_) {drivePercision = 2;}
     else {drivePercision = drivePercision_;}
 
-    if (!turnPercision_) {turnPercision = 0;}
+    if (!turnPercision_) {turnPercision = 2;}
     else {turnPercision = turnPercision_;}
 }
 
