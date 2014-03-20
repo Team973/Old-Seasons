@@ -18,12 +18,12 @@ Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoi
 
     M_PI = 3.141592;
 
-    positionPID = new PID(0.05, 0.002, 0);
+    positionPID = new PID(0.05, 0.001, 0);
     positionPID->setICap(0.3);
-    positionPID->setBounds(-0.9, 0.9);
+    positionPID->setBounds(-0.5, 0.5);
     positionPID->start();
-    anglePID = new PID(0.1);
-    anglePID->setBounds(-0.7, 0.7);
+    anglePID = new PID(0, 0, 0);//.1);
+    anglePID->setBounds(-0.5, 0.5);
     anglePID->start();
 
     quickStopAccumulator = 0;
