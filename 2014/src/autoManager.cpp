@@ -75,6 +75,17 @@ void AutoManager::autoSelect(int autoMode)
             break;
         case TWO_BALL:
             break;
+        case TEST_FUNCTIONAL:
+            commandSequence.push_back(new LinearDriveCommand(drive, 24, false, 3, 2));
+            commandSequence.push_back(new LinearDriveCommand(drive, -24, false, 3, 2));
+            commandSequence.push_back(new ArmPresetCommand(arm, SHOOTING, 1));
+            commandSequence.push_back(new ArmPresetCommand(arm, PSEUDO_INTAKE, 1));
+            commandSequence.push_back(new ArmPresetCommand(arm, INTAKE, 1));
+            commandSequence.push_back(new ArmPresetCommand(arm, STOW, 1));
+            commandSequence.push_back(new IntakeCommand(intake, arm, 4));
+            commandSequence.push_back(new FireCommand(shooter, 1.5));
+            commandSequence.push_back(new AutoWaitCommand(10));
+            break;
         default:
             break;
     }

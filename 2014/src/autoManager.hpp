@@ -17,7 +17,8 @@
 #define HELLAVATOR_FOREWARD 5
 #define HELLAVATOR_BACKWARD 6
 #define TWO_BALL 7
-#define DRIVE_ONLY 8
+#define TEST_FUNCTIONAL 8
+#define DRIVE_ONLY 9
 
 class AutoManager : public AutoCommand
 {
