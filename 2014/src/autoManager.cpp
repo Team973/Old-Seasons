@@ -49,8 +49,8 @@ void AutoManager::autoSelect(int autoMode)
             commandSequence.push_back(new AutoWaitCommand(4));
             break;
         case ONE_BALL_IN_MOVEMENT:
-            commandSequence.push_back(new ArmPresetCommand(arm, SHOOTING, 1));
-            commandSequence.push_back(new LinearDriveCommand(drive, 96, false, 3));
+            commandSequence.push_back(new ArmPresetCommand(arm, SHOOTING, 0));
+            commandSequence.push_back(new LinearDriveCommand(drive, 96, false, 5));
             commandSequence.push_back(new FireCommand(shooter, 1.5));
             commandSequence.push_back(new AutoWaitCommand(10));
             break;
