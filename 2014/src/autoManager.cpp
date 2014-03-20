@@ -12,6 +12,7 @@
 #include "auto/intakeCommand.hpp"
 #include "auto/waitCommand.hpp"
 #include "auto/hellavator.hpp"
+#include "auto/corralCommand.hpp"
 #include <vector>
 #include <math.h>
 
@@ -74,6 +75,16 @@ void AutoManager::autoSelect(int autoMode)
             commandSequence.push_back(new AutoWaitCommand(10));
             break;
         case TWO_BALL:
+            commandSequence.push_back(new LinearDriveCommand(drive, 12, false, 1, 5));
+            commandSequence.push_back(new CorralCommand(intake, true));
+            commandSequence.push_back(new ArmPresetCommand(arm, SHOOTING, 0));
+            commandSequence.push_back(new LinearDriveCommand(drive, 48, false, 1.7));
+            commandSequence.push_back(new FireCommand(shooter, 1));
+            commandSequence.push_back(new ArmPresetCommand(arm, INTAKE, 1));
+            commandSequence.push_back(new IntakeCommand(intake, arm, 2));
+            commandSequence.push_back(new ArmPresetCommand(arm, SHOOTING, 1));
+            commandSequence.push_back(new FireCommand(shooter, 1));
+            commandSequence.push_back(new AutoWaitCommand(10));
             break;
         case TEST_FUNCTIONAL:
             commandSequence.push_back(new LinearDriveCommand(drive, 24, false, 3, 2));
