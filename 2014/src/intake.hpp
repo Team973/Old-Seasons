@@ -19,6 +19,7 @@ public:
     bool isClamped();
     void stop();
     bool gotBall();
+    void dropCorral(bool trap);
 
 private:
     float limit(float x);
