@@ -87,7 +87,7 @@ void Intake::update()
         crossMotor->Set(intakeSpeed);
     }
 
-    if (hasBall && shooter->isFiring())
+    if (hasBall && shooter->isFiring()) // This is for Auto only do not overide
     {
         hasBall = false;
     }
