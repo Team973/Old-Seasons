@@ -62,7 +62,7 @@ Robot::Robot()
     arm->initialize(intake);
 
     autoMode = new AutoManager(drive, shooter, intake, arm, blockerSolenoid);
-    autoSelectMode = NO_AUTO;
+    autoSelectMode = ONE_BALL_IN_MOVEMENT;
     controlTimer= new Timer();
     hellaDistance = 4;
 
@@ -362,9 +362,6 @@ void Robot::DisabledPeriodic()
         break;
     case HELLAVATOR_BACKWARD:
         dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Auto Mode: %s", "h back");
-        break;
-    default:
-        dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Auto Mode: %s", "no auto");
         break;
     }
 
