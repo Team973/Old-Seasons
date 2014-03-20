@@ -72,7 +72,8 @@ private:
     Joystick *stick1;
     Joystick *stick2;
 
-    Joystick *autoControl;
+    KinectStick *leftAutoControl;
+    KinectStick *rightAutoControl;
 
     Timer *autoTimer;
     Timer *controlTimer;

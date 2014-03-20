@@ -69,7 +69,8 @@ Robot::Robot()
     stick1 = new Joystick(1);
     stick2 = new Joystick(2);
 
-    autoControl = new Joystick(3);
+    leftAutoControl = new KinectStick(1);
+    rightAutoControl = new KinectStick(2);
 
     autoComplete = false;
 
