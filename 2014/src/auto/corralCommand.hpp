@@ -7,11 +7,12 @@ class Intake;
 class CorralCommand : public AutoCommand
 {
 public:
-    CorralCommand(Intake *intake);
+    CorralCommand(Intake *intake, bool trap_);
     virtual void Init();
     virtual bool Run();
 private:
     Intake *intake;
+    bool trap;
 };
 
 #endif
