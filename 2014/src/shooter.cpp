@@ -220,4 +220,6 @@ void Shooter::update()
 
 void Shooter::dashboardUpdate()
 {
+    SmartDashboard::PutBoolean("Full Cock Point: ", fullCockPoint->Get());
+    SmartDashboard::PutBoolean("Zero Point: ", zeroPoint->Get());
 }
