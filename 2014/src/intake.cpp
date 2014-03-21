@@ -103,7 +103,7 @@ void Intake::update()
                 else if (possesionTimer->Get() >= intakeTime)
                 {
                     possesionTimer->Stop();
-                    arm->setPreset(SHOOTING);
+                    setFangs(true, false);
                     hasBall = true;
                 }
 
