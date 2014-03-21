@@ -87,12 +87,12 @@ void Intake::update()
         crossMotor->Set(intakeSpeed);
     }
 
-    if (hasBall && shooter->isFiring()) // This is for Auto only do not overide
+    if (hasBall && (shooter->isFiring() || !isClamped())) // This is for Auto only do not overide
     {
         hasBall = false;
     }
     // If we don't have a ball are actively intaking and can actually intake...
-    else if (arm->getPreset() == (INTAKE || PSEUDO_INTAKE))
+    else if ( !hasBall && arm->getPreset() == (INTAKE || PSEUDO_INTAKE) && intakeManualSpeed > 0)
         {
             if (!ballSensor->Get())
             {
@@ -121,4 +121,5 @@ void Intake::update()
 
 void Intake::dashboardUpdate()
 {
+    SmartDashboard::PutBoolean("Ball Sensor: ", ballSensor->Get());
 }
