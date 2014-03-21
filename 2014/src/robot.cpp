@@ -96,6 +96,9 @@ void Robot::dashboardUpdate()
     dsLCD->PrintfLine(DriverStationLCD::kUser_Line4,"Left Dist: %f", drive->getLeftDistance());
     dsLCD->PrintfLine(DriverStationLCD::kUser_Line5,"Right Dist: %f", drive->getRightDistance());
     dsLCD->UpdateLCD();
+
+    SmartDashboard::PutBoolean("Left Hand: ", getLeftHand());
+    SmartDashboard::PutBoolean("Right Hand: ", getRightHand());
 }
 
 float Robot::deadband(float axis, float threshold)
@@ -114,6 +117,26 @@ float Robot::limit(float x)
         return -1;
     else
         return x;
+}
+
+float Robot::kinectDeadband(float x, float limit)
+{
+    if (x > limit)
+    {
+        return false;
+    }
+    else
+        return true;
+}
+
+bool Robot::getLeftHand()
+{
+    return (kinectDeadband(leftAutoControl->GetY(), 0.5));
+}
+
+bool Robot::getRightHand()
+{
+    return (kinectDeadband(rightAutoControl->GetY(), 0.5));
 }
 
 void Robot::joystick1() // Driver

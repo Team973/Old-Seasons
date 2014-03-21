@@ -21,6 +21,9 @@ public:
     virtual void TeleopPeriodic();
     virtual void TestInit();
     virtual void TestPeriodic();
+    float kinectDeadband(float x, float limit);
+    bool getLeftHand();
+    bool getRightHand();
 
 private:
     void dashboardUpdate();
