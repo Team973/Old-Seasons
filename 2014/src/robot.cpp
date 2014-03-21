@@ -7,6 +7,7 @@
 #include "autoManager.hpp"
 #include "robot.hpp"
 #include <vector>
+#include "kinectHandler.hpp"
 
 #include "NetworkTables/NetworkTable.h"
 
@@ -71,6 +72,7 @@ Robot::Robot()
 
     leftAutoControl = new KinectStick(1);
     rightAutoControl = new KinectStick(2);
+    kinect = new KinectHandler(leftAutoControl, rightAutoControl);
 
     autoComplete = false;
 
@@ -97,8 +99,8 @@ void Robot::dashboardUpdate()
     dsLCD->PrintfLine(DriverStationLCD::kUser_Line5,"Right Dist: %f", drive->getRightDistance());
     dsLCD->UpdateLCD();
 
-    SmartDashboard::PutBoolean("Left Hand: ", getLeftHand());
-    SmartDashboard::PutBoolean("Right Hand: ", getRightHand());
+    SmartDashboard::PutBoolean("Left Hand: ", kinect->getLeftHand());
+    SmartDashboard::PutBoolean("Right Hand: ", kinect->getRightHand());
 }
 
 float Robot::deadband(float axis, float threshold)
@@ -117,26 +119,6 @@ float Robot::limit(float x)
         return -1;
     else
         return x;
-}
-
-float Robot::kinectDeadband(float x, float limit)
-{
-    if (x > limit)
-    {
-        return false;
-    }
-    else
-        return true;
-}
-
-bool Robot::getLeftHand()
-{
-    return (kinectDeadband(leftAutoControl->GetY(), 0.5));
-}
-
-bool Robot::getRightHand()
-{
-    return (kinectDeadband(rightAutoControl->GetY(), 0.5));
 }
 
 void Robot::joystick1() // Driver

@@ -6,6 +6,7 @@ class Shooter;
 class Intake;
 class Drive;
 class Arm;
+class KinectHandler;
 
 //XXX: rename class when we decide on a robot name
 class Robot : public IterativeRobot
@@ -21,9 +22,6 @@ public:
     virtual void TeleopPeriodic();
     virtual void TestInit();
     virtual void TestPeriodic();
-    float kinectDeadband(float x, float limit);
-    bool getLeftHand();
-    bool getRightHand();
 
 private:
     void dashboardUpdate();
@@ -77,6 +75,7 @@ private:
 
     KinectStick *leftAutoControl;
     KinectStick *rightAutoControl;
+    KinectHandler *kinect;
 
     Timer *autoTimer;
     Timer *controlTimer;
