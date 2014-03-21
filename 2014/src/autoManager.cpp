@@ -81,6 +81,7 @@ void AutoManager::autoSelect(int autoMode)
             commandSequence.push_back(new Hellavator(hellavator, 0));
             commandSequence.push_back(new ArmPresetCommand(arm, HELLAVATOR, 0));
             commandSequence.push_back(new LinearDriveCommand(drive, -driveDistance, true, 4));
+            commandSequence.push_back(new KinectSense(kinect, drive));
             commandSequence.push_back(new AutoWaitCommand(10));
             break;
         case TWO_BALL:
