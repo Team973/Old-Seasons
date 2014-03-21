@@ -71,7 +71,7 @@ bool LinearDriveCommand::Run()
             driveInput = -driveInput;
             */
 
-        drive->update(turnInput, -driveInput, false, false, false, true);
+        drive->update(-turnInput, -driveInput, false, false, false, true);
     }
 
     return false;
