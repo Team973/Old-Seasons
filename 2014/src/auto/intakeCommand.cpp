@@ -22,12 +22,14 @@ bool IntakeCommand::Run()
 {
     if (intake->gotBall() || timer->Get() >= timeout)
     {
+        intake->manual(0);
         arm->setPreset(SHOOTING);
+        intake->manual(0);
         return true;
     }
     else
     {
-        intake->runIntake(-1);
+        intake->manual(1);
         return false;
     }
 }
