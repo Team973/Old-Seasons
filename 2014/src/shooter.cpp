@@ -96,24 +96,21 @@ void Shooter::killShooter(bool dead)
 
 bool Shooter::performFire()
 {
-    if (arm->getPreset() != INTAKE)
+    fireTimer->Start();
+    intake->setFangs(false);
+    intake->runIntake(0);
+    if (fireTimer->Get() >= 0.1)
     {
-        fireTimer->Start();
-        intake->setFangs(false);
+        winchRelease->Set(true);
+    }
+    if (fireTimer->Get() >= 0.35)
+    {
+        fireTimer->Stop();
+        fireTimer->Reset();
         intake->runIntake(0);
-        if (fireTimer->Get() >= 0.1)
-        {
-            winchRelease->Set(true);
-        }
-        if (fireTimer->Get() >= 0.35)
-        {
-            fireTimer->Stop();
-            fireTimer->Reset();
-            intake->runIntake(0);
-            firing = false;
+        firing = false;
 
-            return true;
-        }
+        return true;
     }
 
     return false;
@@ -121,24 +118,21 @@ bool Shooter::performFire()
 
 bool Shooter::performSoftFire()
 {
-    if (arm->getPreset() != INTAKE)
+    fireTimer->Start();
+    intake->setFangs(true);
+    intake->runIntake(0);
+    if (fireTimer->Get() >= 0.25)
     {
-        fireTimer->Start();
-        intake->setFangs(true);
+        winchRelease->Set(true);
+    }
+    if (fireTimer->Get() >= 0.5)
+    {
+        fireTimer->Stop();
+        fireTimer->Reset();
         intake->runIntake(0);
-        if (fireTimer->Get() >= 0.25)
-        {
-            winchRelease->Set(true);
-        }
-        if (fireTimer->Get() >= 0.5)
-        {
-            fireTimer->Stop();
-            fireTimer->Reset();
-            intake->runIntake(0);
-            firing = false;
+        firing = false;
 
-            return true;
-        }
+        return true;
     }
 
     return false;
@@ -173,19 +167,9 @@ void Shooter::update()
     {
         if (firing && arm->isCockSafe())
         {
-            if (arm->getPreset() == SHOOTING)
+            if (performFire())
             {
-                if (performFire())
-                {
-                    cock(FULL_COCK);
-                }
-            }
-            else if (arm->getPreset() == CLOSE_SHOT)
-            {
-                if (performSoftFire())
-                {
-                    cock(FULL_COCK);
-                }
+                cock(FULL_COCK);
             }
         }
         else
