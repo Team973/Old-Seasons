@@ -38,8 +38,12 @@ void AutoManager::autoSelect(int autoMode)
     switch (autoMode)
     {
         case TEST:
-            //commandSequence.push_back(new AutoDriveCommand(drive, 0, 24, false, 2));
+            commandSequence.push_back(new CorralCommand(intake, true));
             commandSequence.push_back(new LinearDriveCommand(drive, 24, false, 3, 2));
+            commandSequence.push_back(new AutoWaitCommand(0.5));
+            commandSequence.push_back(new ArmPresetCommand(arm, INTAKE, 0));
+            commandSequence.push_back(new CorralCommand(intake, false));
+            commandSequence.push_back(new IntakeCommand(intake, arm, 2));
             commandSequence.push_back(new AutoWaitCommand(10));
             break;
         case ONE_BALL_SIMPLE:
