@@ -13,23 +13,26 @@ KinectSense::KinectSense(KinectHandler *kinect_, Drive *drive_)
 
 void KinectSense::Init()
 {
+    drive->holdPosition(false, 0, 0, 0);
 }
 
 bool KinectSense::Run()
 {
     if (kinect->getLeftHand())
     {
-        movement = -1;
+        drive->holdPosition(false, 0, 0, 0);
+        movement = -.5;
     }
     else if (kinect->getRightHand())
     {
-        movement = 1;
+        drive->holdPosition(false, 0, 0, 0);
+        movement = .5;
     }
-    else
+    else if (!kinect->getRightHand() && !kinect->getLeftHand())
     {
         drive->holdPosition(true, drive->getWheelDistance(), 4, 2);
     }
 
-    drive->update(0, movement, false, false, false, true);
+    drive->update(0, -movement, false, false, false, true);
     return false;
 }
