@@ -55,7 +55,7 @@ void AutoManager::autoSelect(int autoMode)
             break;
         case ONE_BALL_IN_MOVEMENT:
             commandSequence.push_back(new ArmPresetCommand(arm, SHOOTING, 0));
-            commandSequence.push_back(new LinearDriveCommand(drive, 120, false, 5));
+            commandSequence.push_back(new LinearDriveCommand(drive, 108, false, 5));
             commandSequence.push_back(new AutoWaitCommand(1));
             commandSequence.push_back(new FireCommand(shooter, 1.5));
             commandSequence.push_back(new AutoWaitCommand(10));
@@ -82,7 +82,7 @@ void AutoManager::autoSelect(int autoMode)
         case TWO_BALL:
             commandSequence.push_back(new ArmPresetCommand(arm, SHOOTING, 0));
             commandSequence.push_back(new CorralCommand(intake, true));
-            commandSequence.push_back(new LinearDriveCommand(drive, 120, false, 3.5));
+            commandSequence.push_back(new LinearDriveCommand(drive, 108, false, 3.5));
             commandSequence.push_back(new FireCommand(shooter, 1));
             commandSequence.push_back(new ArmPresetCommand(arm, INTAKE, 0.5));
             commandSequence.push_back(new CorralCommand(intake, false));
