@@ -20,10 +20,12 @@
 #define DRIVE_ONLY 8
 #define TEST_FUNCTIONAL 10
 
+class KinectHandler;
+
 class AutoManager : public AutoCommand
 {
 public:
-    AutoManager(Drive *drive_, Shooter* shooter_, Intake* intake_, Arm *arm_, Solenoid* hellavator_);
+    AutoManager(Drive *drive_, Shooter* shooter_, Intake* intake_, Arm *arm_, KinectHandler *kinect_, Solenoid* hellavator_);
     void setHellaDistance(float dist);
     virtual void Init();
     virtual bool Run();
@@ -34,6 +36,7 @@ private:
     Shooter *shooter;
     Intake *intake;
     Arm *arm;
+    KinectHandler *kinect;
     Solenoid *hellavator;
     std::vector<AutoCommand*> commandSequence;
     std::vector<AutoCommand*> consecutiveSequence;
