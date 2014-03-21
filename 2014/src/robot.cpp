@@ -363,6 +363,8 @@ void Robot::DisabledPeriodic()
     case HELLAVATOR_BACKWARD:
         dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Auto Mode: %s", "h back");
         break;
+    case TWO_BALL:
+        dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Auto Mode: %s", "2 ball");
     }
 
     dsLCD->PrintfLine(DriverStationLCD::kUser_Line2,"Auto Dist: %f", hellaDistance);
