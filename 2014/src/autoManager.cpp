@@ -13,15 +13,18 @@
 #include "auto/waitCommand.hpp"
 #include "auto/hellavator.hpp"
 #include "auto/corralCommand.hpp"
+#include "kinectHandler.hpp"
+#include "auto/kinectSense.hpp"
 #include <vector>
 #include <math.h>
 
-AutoManager::AutoManager(Drive *drive_, Shooter *shooter_, Intake* intake_, Arm* arm_, Solenoid* hellavator_)
+AutoManager::AutoManager(Drive *drive_, Shooter *shooter_, Intake* intake_, Arm* arm_, KinectHandler *kinect_, Solenoid* hellavator_)
 {
     drive = drive_;
     shooter = shooter_;
     intake = intake_;
     arm = arm_;
+    kinect = kinect_;
     hellavator = hellavator_;
 
     driveDistance = 0;
@@ -71,6 +74,7 @@ void AutoManager::autoSelect(int autoMode)
             commandSequence.push_back(new Hellavator(hellavator, 0));
             commandSequence.push_back(new ArmPresetCommand(arm, HELLAVATOR, 0));
             commandSequence.push_back(new LinearDriveCommand(drive, driveDistance, false, 4));
+            commandSequence.push_back(new KinectSense(kinect, drive));
             commandSequence.push_back(new AutoWaitCommand(10));
             break;
         case HELLAVATOR_BACKWARD:

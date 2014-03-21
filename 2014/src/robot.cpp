@@ -62,17 +62,17 @@ Robot::Robot()
     intake->initialize(arm, shooter);
     arm->initialize(intake);
 
-    autoMode = new AutoManager(drive, shooter, intake, arm, blockerSolenoid);
-    autoSelectMode = ONE_BALL_IN_MOVEMENT;
-    controlTimer= new Timer();
-    hellaDistance = 4;
-
     stick1 = new Joystick(1);
     stick2 = new Joystick(2);
 
     leftAutoControl = new KinectStick(1);
     rightAutoControl = new KinectStick(2);
     kinect = new KinectHandler(leftAutoControl, rightAutoControl);
+
+    autoMode = new AutoManager(drive, shooter, intake, arm, kinect, blockerSolenoid);
+    autoSelectMode = ONE_BALL_IN_MOVEMENT;
+    controlTimer= new Timer();
+    hellaDistance = 4;
 
     autoComplete = false;
 
