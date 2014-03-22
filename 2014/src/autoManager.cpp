@@ -52,7 +52,7 @@ void AutoManager::autoSelect(int autoMode)
             commandSequence.push_back(new IntakeCommand(intake, arm, 2));
             commandSequence.push_back(new AutoWaitCommand(10));
             */
-            commandSequence.push_back(new KinectJuke(kinect, drive, 5));
+            commandSequence.push_back(new KinectJuke(kinect, drive, 3));
             commandSequence.push_back(new AutoWaitCommand(10));
             break;
         case ONE_BALL_SIMPLE:
