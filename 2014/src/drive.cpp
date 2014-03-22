@@ -69,13 +69,13 @@ float Drive::limit(float x)
     return x;
 }
 
-void Drive::holdPosition(bool hold, float target, float drivePercision_, float turnPercision_)
+void Drive::holdPosition(bool hold, float linearTarget, float angleTarget, float drivePercision_, float turnPercision_)
 {
     isHolding = hold;
     if (isHolding)
     {
-        positionPID->setTarget(target);
-        anglePID->setTarget(getGyroAngle());
+        positionPID->setTarget(linearTarget);
+        anglePID->setTarget(angleTarget);
     }
     if (!drivePercision_) {drivePercision = 2;}
     else {drivePercision = drivePercision_;}
@@ -384,7 +384,7 @@ void Drive::positionUpdate()
         driveInput = positionPID->update(getWheelDistance());
         turnInput = anglePID->update(getGyroAngle());
         if (linearError > drivePercision || angleError > turnPercision)
-            arcade(-driveInput, turnInput);
+            arcade(-driveInput, -turnInput);
         else
             arcade(0, 0);
     }
