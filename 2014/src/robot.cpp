@@ -248,10 +248,17 @@ void Robot::joystick2() // Co-Driver
     }
 
     // [9]
-    //stick2->GetRawButton(9)
+    if (stick2->GetRawButton(9) && stick2->GetRawButton(10))
+    {
+        arm->reset();
+    }
+    else if (stick2->GetRawButton(9) && stick2->GetRawButton(10) && stick2->GetRawButton(7))
+    {
+        arm->zeroEncoder();
+    }
 
     // [10]
-    shooter->killShooter(stick2->GetRawButton(10));
+    //shooter->killShooter(stick2->GetRawButton(10));
 
     // [11]
     //stick2->GetRawButton(11);
