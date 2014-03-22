@@ -9,7 +9,7 @@ class Drive;
 class KinectSense : public AutoCommand
 {
 public:
-    KinectSense(KinectHandler *kinect_, Drive *drive_);
+    KinectSense(KinectHandler *kinect_, Drive *drive_, int autoMode_, float timeout_);
     virtual void Init();
     virtual bool Run();
 private:
@@ -17,6 +17,7 @@ private:
     Drive *drive;
 
     float movement;
+    int autoMode;
 };
 
 #endif

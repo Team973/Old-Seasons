@@ -74,14 +74,14 @@ void AutoManager::autoSelect(int autoMode)
             commandSequence.push_back(new Hellavator(hellavator, 0));
             commandSequence.push_back(new ArmPresetCommand(arm, HELLAVATOR, 0));
             commandSequence.push_back(new LinearDriveCommand(drive, driveDistance, false, 4));
-            commandSequence.push_back(new KinectSense(kinect, drive));
+            commandSequence.push_back(new KinectSense(kinect, drive, HELLAVATOR_FOREWARD, 10));
             commandSequence.push_back(new AutoWaitCommand(10));
             break;
         case HELLAVATOR_BACKWARD:
             commandSequence.push_back(new Hellavator(hellavator, 0));
             commandSequence.push_back(new ArmPresetCommand(arm, HELLAVATOR, 0));
             commandSequence.push_back(new LinearDriveCommand(drive, -driveDistance, true, 4));
-            commandSequence.push_back(new KinectSense(kinect, drive));
+            commandSequence.push_back(new KinectSense(kinect, drive, HELLAVATOR_BACKWARD, 10));
             commandSequence.push_back(new AutoWaitCommand(10));
             break;
         case TWO_BALL:
@@ -94,6 +94,7 @@ void AutoManager::autoSelect(int autoMode)
             commandSequence.push_back(new CorralCommand(intake, false));
             commandSequence.push_back(new IntakeCommand(intake, arm, 2));
             commandSequence.push_back(new ArmPresetCommand(arm, SHOOTING, 1));
+            commandSequence.push_back(new AutoWaitCommand(.5));
             commandSequence.push_back(new FireCommand(shooter, 1));
             commandSequence.push_back(new AutoWaitCommand(10));
             break;
