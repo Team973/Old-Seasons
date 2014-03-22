@@ -22,7 +22,7 @@ Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoi
     positionPID->setICap(0.3);
     positionPID->setBounds(-0.2, 0.2);
     positionPID->start();
-    anglePID = new PID(0, 0, 0);//.1);
+    anglePID = new PID(.03, 0, 0);//.1);
     anglePID->setBounds(-0.2, 0.2);
     anglePID->start();
 

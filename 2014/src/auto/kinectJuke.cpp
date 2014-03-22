@@ -40,12 +40,12 @@ bool KinectJuke::Run()
     {
         if (kinect->getLeftHand())
         {
-            cmd = new TurnCommand(drive, 30, 1);
+            cmd = new TurnCommand(drive, -30, 1);
         }
 
         if (kinect->getRightHand())
         {
-            cmd = new TurnCommand(drive, -30, 1);
+            cmd = new TurnCommand(drive, 30, 1);
         }
     }
     return false;
