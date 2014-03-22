@@ -2,6 +2,7 @@
 #include "kinectJuke.hpp"
 #include "../drive.hpp"
 #include "turnCommand.hpp"
+#include "waitCommand.hpp"
 #include "../kinectHandler.hpp"
 
 KinectJuke::KinectJuke(KinectHandler *kinect_, Drive *drive_, float timeout_)
@@ -9,7 +10,7 @@ KinectJuke::KinectJuke(KinectHandler *kinect_, Drive *drive_, float timeout_)
     kinect = kinect_;
     drive = drive_;
     setTimeout(timeout_);
-    cmd = new TurnCommand(drive, 30, 1);
+    cmd = new AutoWaitCommand(0);
     init = false;
 }
 
