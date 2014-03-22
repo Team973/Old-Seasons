@@ -41,7 +41,7 @@ bool KinectSense::Run()
         }
         else if (!kinect->getRightHand() && !kinect->getLeftHand())
         {
-            drive->holdPosition(true, drive->getWheelDistance(), 4, 2);
+            drive->holdPosition(true, drive->getWheelDistance(), 2, 2);
         }
         drive->update(0, -movement, false, false, false, true);
     //}
