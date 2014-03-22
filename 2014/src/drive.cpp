@@ -86,7 +86,7 @@ void Drive::holdPosition(bool hold, float target, float drivePercision_, float t
 
 void Drive::setDriveMotors(float left, float right)
 {
-    leftDrive->Set(-limit(left));
+    leftDrive->Set(-limit(left-0.01));
     rightDrive->Set(limit(right));
 }
 
