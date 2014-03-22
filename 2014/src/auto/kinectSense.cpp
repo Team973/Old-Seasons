@@ -20,7 +20,7 @@ void KinectSense::Init()
     timer->Start();
     timer->Reset();
 
-    drive->holdPosition(false, 0, 0, 0);
+    drive->holdPosition(false, 0, 0, 0, 0);
 }
 
 bool KinectSense::Run()
@@ -31,17 +31,17 @@ bool KinectSense::Run()
     */
         if (kinect->getLeftHand())
         {
-            drive->holdPosition(false, 0, 0, 0);
+            drive->holdPosition(false, 0, 0, 0, 0);
             movement = -.6;
         }
         else if (kinect->getRightHand())
         {
-            drive->holdPosition(false, 0, 0, 0);
+            drive->holdPosition(false, 0, 0, 0, 0);
             movement = .6;
         }
         else if (!kinect->getRightHand() && !kinect->getLeftHand())
         {
-            drive->holdPosition(true, drive->getWheelDistance(), 2, 2);
+            drive->holdPosition(true, drive->getWheelDistance(), drive->getGyroAngle(), 2, 2);
         }
         drive->update(0, -movement, false, false, false, true);
     //}

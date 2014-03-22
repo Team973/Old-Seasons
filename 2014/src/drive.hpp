@@ -89,7 +89,7 @@ public:
     void resetDrive();
     void setLowGear(bool lowGear);
     void setKickUp(bool kick);
-    void holdPosition(bool hold, float target=0, float drivePercision=5, float turnPercision=2);
+    void holdPosition(bool hold, float linearTarget=0, float angleTarget=0, float drivePercision=5, float turnPercision=2);
     void positionUpdate();
 
     float getWaypoint(int dist);
