@@ -25,25 +25,28 @@ void KinectSense::Init()
 
 bool KinectSense::Run()
 {
+    /*
     if (autoMode == (HELLAVATOR_FOREWARD || HELLAVATOR_BACKWARD))
     {
+    */
         if (kinect->getLeftHand())
         {
             drive->holdPosition(false, 0, 0, 0);
-            movement = -.9;
+            movement = -.6;
         }
         else if (kinect->getRightHand())
         {
             drive->holdPosition(false, 0, 0, 0);
-            movement = .9;
+            movement = .6;
         }
         else if (!kinect->getRightHand() && !kinect->getLeftHand())
         {
             drive->holdPosition(true, drive->getWheelDistance(), 4, 2);
         }
         drive->update(0, -movement, false, false, false, true);
-    }
+    //}
 
+    /*
     if (autoMode == (TWO_BALL))
     {
         if (kinect->getLeftHand())
@@ -53,5 +56,6 @@ bool KinectSense::Run()
         {
         }
     }
+    */
     return false;
 }
