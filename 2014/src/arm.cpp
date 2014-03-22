@@ -23,6 +23,8 @@ Arm::Arm(Talon *motor_, Encoder *sensorA_)
 
     error = 0;
     autoClamped = false;
+    zero = false;
+    completeZero = false;
 }
 
 void Arm::initialize(Intake *intake_)
@@ -107,13 +109,33 @@ float Arm::getError()
     return error;
 }
 
+void Arm::reset()
+{
+    zero = true;
+}
+
+void Arm::zeroEncoder()
+{
+    completeZero = true;
+}
+
 void Arm::update()
 {
     error = fabs(getTarget() - getRawAngle());
 
     currMoveSpeed = armMoveSpeed;
 
-    if ((lastPreset == INTAKE) || (lastPreset == PSEUDO_INTAKE))
+    if (zero)
+    {
+        motor->Set(0);
+        if (completeZero)
+        {
+            sensorA->Reset();
+            completeZero = false;
+            zero = false;
+        }
+    }
+    else if ((lastPreset == INTAKE) || (lastPreset == PSEUDO_INTAKE))
     {
         autoClamped = false;
         if (armMoveSpeed != 0)
