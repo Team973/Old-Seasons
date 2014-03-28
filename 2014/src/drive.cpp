@@ -37,11 +37,26 @@ Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoi
     isHolding = false;
     drivePercision = 0;
     turnPercision = 0;
+
+    point = 0;
 }
 
-float Drive::getWaypoint(int dist)
+void Drive::nextWaypoint()
 {
-    float point = 0;
+    switch(dist)
+    {
+        case FAR:
+            point = -point;
+    }
+}
+
+float Drive::getWaypoint()
+{
+    return point;
+}
+
+void Drive::setWaypoint(int dist)
+{
 
     switch(dist)
     {
@@ -55,8 +70,6 @@ float Drive::getWaypoint(int dist)
             point = -2;
             break;
     }
-
-    return point;
 }
 
 float Drive::limit(float x)
