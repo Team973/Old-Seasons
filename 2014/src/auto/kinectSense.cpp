@@ -32,7 +32,11 @@ bool KinectSense::Run()
     {
         case BLOCKER:
 
-            if (kinect->getLeftHand())
+            if ((!kinect->getRightHand() && !kinect->getLeftHand()) || (kinect->getRightHand() && kinect->getLeftHand()))
+            {
+                drive->holdPosition(true, drive->getWheelDistance(), drive->getGyroAngle(), 2, 2);
+            }
+            else if (kinect->getLeftHand())
             {
                 drive->holdPosition(false, 0, 0, 0, 0);
                 movement = -.6;
@@ -42,10 +46,7 @@ bool KinectSense::Run()
                 drive->holdPosition(false, 0, 0, 0, 0);
                 movement = .6;
             }
-            else if (!kinect->getRightHand() && !kinect->getLeftHand())
-            {
-                drive->holdPosition(true, drive->getWheelDistance(), drive->getGyroAngle(), 2, 2);
-            }
+
             drive->update(0, -movement, false, false, false, true);
 
             // This purposly never returns true because we never want to stop denying points
