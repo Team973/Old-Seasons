@@ -2,7 +2,8 @@
 #include "kinectSense.hpp"
 #include "../kinectHandler.hpp"
 #include "../drive.hpp"
-#include "../autoManager.hpp"
+#include "waitCommand.hpp"
+#include "sequentialCommand.hpp" // for later
 
 KinectSense::KinectSense(KinectHandler *kinect_, Drive *drive_, int autoMode_, float timeout_)
 {
@@ -27,37 +28,34 @@ void KinectSense::Init()
 
 bool KinectSense::Run()
 {
-    /*
-    if (autoMode == (HELLAVATOR_FOREWARD || HELLAVATOR_BACKWARD))
+    switch (autoMode)
     {
-    */
-        if (kinect->getLeftHand())
-        {
-            drive->holdPosition(false, 0, 0, 0, 0);
-            movement = -.6;
-        }
-        else if (kinect->getRightHand())
-        {
-            drive->holdPosition(false, 0, 0, 0, 0);
-            movement = .6;
-        }
-        else if (!kinect->getRightHand() && !kinect->getLeftHand())
-        {
-            drive->holdPosition(true, drive->getWheelDistance(), drive->getGyroAngle(), 2, 2);
-        }
-        drive->update(0, -movement, false, false, false, true);
-    //}
+        case HELLAVATOR:
 
-    /*
-    if (autoMode == (TWO_BALL))
-    {
-        if (kinect->getLeftHand())
-        {
-        }
-        else if (kinect->getRightHand())
-        {
-        }
+            if (kinect->getLeftHand())
+            {
+                drive->holdPosition(false, 0, 0, 0, 0);
+                movement = -.6;
+            }
+            else if (kinect->getRightHand())
+            {
+                drive->holdPosition(false, 0, 0, 0, 0);
+                movement = .6;
+            }
+            else if (!kinect->getRightHand() && !kinect->getLeftHand())
+            {
+                drive->holdPosition(true, drive->getWheelDistance(), drive->getGyroAngle(), 2, 2);
+            }
+            drive->update(0, -movement, false, false, false, true);
+
+            // This purposly never returns true because we never want to stop denying points
+
+            break;
+
+        case MULTI_BALL:
+
+            break;
     }
-    */
+
     return false;
 }
