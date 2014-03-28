@@ -43,11 +43,7 @@ Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoi
 
 void Drive::nextWaypoint()
 {
-    switch(dist)
-    {
-        case FAR:
-            point = -point;
-    }
+    point = -point;
 }
 
 float Drive::getWaypoint()

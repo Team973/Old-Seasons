@@ -95,7 +95,7 @@ public:
     void positionUpdate();
 
     float getWaypoint();
-    void setWaypoint();
+    void setWaypoint(int dist);
     void nextWaypoint();
 };
 
