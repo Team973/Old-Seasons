@@ -72,6 +72,8 @@ private:
     float prevX;
     float prevY;
 
+    float point;
+
 public:
     Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoid *kickUp_, Encoder *leftEncoder_, Encoder *rightEncoder_, Encoder *gyro_);
     void update(double DriveX, double DriveY, bool gear, bool kick, bool quickTurn, bool isAuto=false);
@@ -92,7 +94,9 @@ public:
     void holdPosition(bool hold, float linearTarget=0, float angleTarget=0, float drivePercision=5, float turnPercision=2);
     void positionUpdate();
 
-    float getWaypoint(int dist);
+    float getWaypoint();
+    void setWaypoint();
+    void nextWaypoint();
 };
 
 #endif
