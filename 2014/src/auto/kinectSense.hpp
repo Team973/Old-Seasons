@@ -15,9 +15,11 @@ public:
 private:
     KinectHandler *kinect;
     Drive *drive;
+    AutoCommand *cmd;
 
     float movement;
     int autoMode;
+    bool init;
 };
 
 #endif
