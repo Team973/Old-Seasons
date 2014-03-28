@@ -4,7 +4,7 @@
 #define KINECT_SENSE_H
 
 #define MULTI_BALL 1
-#define HELLAVATOR 2
+#define BLOCKER 2
 
 class KinectHandler;
 class Drive;
