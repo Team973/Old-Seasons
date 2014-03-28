@@ -30,7 +30,7 @@ bool KinectSense::Run()
 {
     switch (autoMode)
     {
-        case HELLAVATOR:
+        case BLOCKER:
 
             if (kinect->getLeftHand())
             {
