@@ -48,7 +48,7 @@ void Drive::nextWaypoint()
 
 float Drive::getWaypoint()
 {
-    return point;
+    return point*12;
 }
 
 void Drive::setWaypoint(int dist)
