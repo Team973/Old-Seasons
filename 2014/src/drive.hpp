@@ -94,6 +94,8 @@ public:
     void holdPosition(bool hold, float linearTarget=0, float angleTarget=0, float drivePercision=5, float turnPercision=2);
     void positionUpdate();
 
+    float generateDriveTime();
+
     float getWaypoint();
     void setWaypoint(int dist);
     void nextWaypoint();

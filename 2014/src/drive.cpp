@@ -68,6 +68,18 @@ void Drive::setWaypoint(int dist)
     }
 }
 
+float Drive::generateDriveTime()
+{
+    float t = 1 + ((getWaypoint() - getY()) * 0.067);
+
+    if (t <= 0)
+        return 0;
+    else if (t > 6)
+        return 6;
+    else
+        return t;
+}
+
 float Drive::limit(float x)
 {
     if (x > 1)
