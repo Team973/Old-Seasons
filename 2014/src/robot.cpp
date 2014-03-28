@@ -70,7 +70,7 @@ Robot::Robot()
     kinect = new KinectHandler(leftAutoControl, rightAutoControl);
 
     autoMode = new AutoManager(drive, shooter, intake, arm, kinect, blockerSolenoid);
-    autoSelectMode = ONE_BALL_IN_MOVEMENT;
+    autoSelectMode = ONE_BALL_SIMPLE;
     controlTimer= new Timer();
     hellaDistance = 4;
 
@@ -358,10 +358,7 @@ void Robot::DisabledPeriodic()
         dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Auto Mode: %s", "test");
         break;
     case ONE_BALL_SIMPLE:
-        dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Auto Mode: %s", "1 ball ss");
-        break;
-    case ONE_BALL_IN_MOVEMENT:
-        dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Auto Mode: %s", "1 ball ms");
+        dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Auto Mode: %s", "1 ball");
         break;
     case DRIVE_ONLY:
         dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Auto Mode: %s", "move only");
