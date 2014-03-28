@@ -13,6 +13,8 @@ KinectSense::KinectSense(KinectHandler *kinect_, Drive *drive_, int autoMode_, f
     movement = 0;
 
     setTimeout(timeout_);
+    cmd = new AutoWaitCommand(0);
+    init = false;
 }
 
 void KinectSense::Init()

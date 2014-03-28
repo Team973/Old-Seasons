@@ -15,9 +15,7 @@ public:
 private:
     KinectHandler *kinect;
     Drive *drive;
-    AutoCommand *cmd;
 
-    bool init;
 };
 
 #endif

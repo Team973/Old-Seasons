@@ -10,8 +10,6 @@ KinectJuke::KinectJuke(KinectHandler *kinect_, Drive *drive_, float timeout_)
     kinect = kinect_;
     drive = drive_;
     setTimeout(timeout_);
-    cmd = new AutoWaitCommand(0);
-    init = false;
 }
 
 void KinectJuke::Init()
