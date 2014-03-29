@@ -3,9 +3,10 @@
 #include "../kinectHandler.hpp"
 #include "../drive.hpp"
 #include "waitCommand.hpp"
+#include "autoDriveCommand.hpp"
 #include "sequentialCommand.hpp" // for later
 
-KinectSense::KinectSense(KinectHandler *kinect_, Drive *drive_, int autoMode_, float timeout_)
+KinectSense::KinectSense(KinectHandler *kinect_, Drive *drive_, int autoMode_, bool instantExecution_, float timeout_)
 {
     drive = drive_;
     kinect = kinect_;
@@ -13,8 +14,12 @@ KinectSense::KinectSense(KinectHandler *kinect_, Drive *drive_, int autoMode_, f
     autoMode = autoMode_;
     movement = 0;
 
+    finalY = 144;
+
+    instantExecution = instantExecution_;
+
     setTimeout(timeout_);
-    cmd = new AutoWaitCommand(0);
+    cmd = new AutoDriveCommand(drive, drive->getWaypoint(), finalY, false, drive->generateDriveTime());
     init = false;
 }
 
@@ -54,6 +59,23 @@ bool KinectSense::Run()
             break;
 
         case MULTI_BALL:
+
+            if (kinect->getLeftHand())
+            {
+            }
+
+            if (timer->Get() > timeout || instantExecution)
+            {
+                if (!init)
+                {
+                    cmd->Init();
+                }
+
+                if (cmd->Run())
+                {
+                    return true;
+                }
+            }
 
             break;
     }

@@ -73,6 +73,9 @@ private:
     float prevY;
 
     float point;
+    float endPoint;
+
+    float AUTO_END_Y;
 
 public:
     Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoid *kickUp_, Encoder *leftEncoder_, Encoder *rightEncoder_, Encoder *gyro_);
