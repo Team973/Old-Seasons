@@ -32,6 +32,7 @@ public:
     virtual bool Run();
     void autoSelect(int autoMode);
     void reset();
+    void inject(Timer *timer);
 private:
     Drive *drive;
     Shooter *shooter;

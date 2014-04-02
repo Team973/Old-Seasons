@@ -12,7 +12,8 @@ public:
     void setTimeout(double timeout_);
 
     double timeout;
-    Timer* timer;
+    Timer* timer; // for internal timeouts
+    Timer* autoTimer; // for overall auto timing
 
     virtual ~AutoCommand() {};
 };

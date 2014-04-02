@@ -389,6 +389,7 @@ void Robot::AutonomousInit()
 
     autoTimer = new Timer();
     autoTimer->Start();
+    autoMode->inject(autoTimer);
 
     autoSafetyTimer = new Timer();
     autoSafetyTimer->Start();
