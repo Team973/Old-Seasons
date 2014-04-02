@@ -18,7 +18,7 @@ public:
 private:
     KinectHandler *kinect;
     Drive *drive;
-    AutoCommand *cmd;
+    std::vector<*AutoCommand> cmd
 
     float movement;
     int autoMode;
