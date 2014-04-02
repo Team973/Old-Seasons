@@ -28,6 +28,13 @@ AutoManager::AutoManager(Drive *drive_, Shooter *shooter_, Intake* intake_, Arm*
     hellavator = hellavator_;
 
     driveDistance = 0;
+
+
+}
+
+void AutoManager::inject(Timer *timer)
+{
+    injectTimer(timer);
 }
 
 void AutoManager::setHellaDistance(float dist)
