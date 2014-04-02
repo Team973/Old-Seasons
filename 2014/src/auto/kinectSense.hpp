@@ -20,8 +20,6 @@ private:
     Drive *drive;
     AutoCommand *cmd;
 
-    float finalY;
-
     float movement;
     int autoMode;
     bool init;
