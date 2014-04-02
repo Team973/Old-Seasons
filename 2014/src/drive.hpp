@@ -76,6 +76,7 @@ private:
     float endPoint;
 
     float AUTO_END_Y;
+    float destination;
 
 public:
     Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoid *kickUp_, Encoder *leftEncoder_, Encoder *rightEncoder_, Encoder *gyro_);
@@ -101,7 +102,9 @@ public:
 
     float getWaypoint();
     void setWaypoint(int dist);
-    void nextWaypoint();
+    void goLeft();
+    void goRight();
+    float getFinalY();
 };
 
 #endif

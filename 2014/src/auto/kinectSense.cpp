@@ -14,12 +14,10 @@ KinectSense::KinectSense(KinectHandler *kinect_, Drive *drive_, int autoMode_, b
     autoMode = autoMode_;
     movement = 0;
 
-    finalY = 144;
-
     instantExecution = instantExecution_;
 
     setTimeout(timeout_);
-    cmd = new AutoDriveCommand(drive, drive->getWaypoint(), finalY, false, drive->generateDriveTime());
+    cmd = new AutoDriveCommand(drive, drive->getWaypoint(), drive->getFinalY(), false, drive->generateDriveTime());
     init = false;
 }
 

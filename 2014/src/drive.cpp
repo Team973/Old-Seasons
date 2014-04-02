@@ -44,14 +44,19 @@ Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoi
     endPoint = 0;
 }
 
-void Drive::nextWaypoint()
+void Drive::goLeft()
 {
-    endPoint = -endPoint;
+    destination = -endPoint;
+}
+
+void Drive::goRight()
+{
+    destination = endPoint;
 }
 
 float Drive::getWaypoint()
 {
-    return endPoint*12;
+    return destination*12;
 }
 
 void Drive::setWaypoint(int dist)
@@ -60,15 +65,20 @@ void Drive::setWaypoint(int dist)
     switch(dist)
     {
         case FAR:
-            endPoint = -6;
+            endPoint = 6;
             break;
         case MID:
-            endPoint = -4;
+            endPoint = 4;
             break;
         case CLOSE:
-            endPoint = -2;
+            endPoint = 2;
             break;
     }
+}
+
+float Drive::getFinalY()
+{
+    return AUTO_END_Y;
 }
 
 float Drive::generateDriveTime()
