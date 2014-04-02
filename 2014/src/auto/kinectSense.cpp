@@ -5,6 +5,9 @@
 #include "waitCommand.hpp"
 #include "autoDriveCommand.hpp"
 #include "sequentialCommand.hpp" // for later
+#include "turnCommand.hpp"
+#include <math.h>
+#include <vector>
 
 KinectSense::KinectSense(KinectHandler *kinect_, Drive *drive_, int autoMode_, bool instantExecution_, float timeout_)
 {
@@ -17,7 +20,7 @@ KinectSense::KinectSense(KinectHandler *kinect_, Drive *drive_, int autoMode_, b
     instantExecution = instantExecution_;
 
     setTimeout(timeout_);
-    cmd = new AutoDriveCommand(drive, drive->getWaypoint(), drive->getFinalY(), false, drive->generateDriveTime());
+    cmd.push_back( new AutoDriveCommand(drive, drive->getWaypoint(), drive->getFinalY(), false, drive->generateDriveTime()));
     init = false;
 }
 
@@ -60,6 +63,25 @@ bool KinectSense::Run()
 
             if (kinect->getLeftHand())
             {
+                if (fabs(drive->getY() - drive->getFinalY()) < 5) // if we have reached our destination then let the juking begin
+                {
+                    cmd = new TurnCommand(drive, 30, .8);
+                }
+                else
+                {
+                    drive->goLeft();
+                }
+            }
+            else if (kinect->getRightHand())
+            {
+                if (fabs(drive->getY() - drive->getFinalY()) < 5)
+                {
+                    cmd = new TurnCommand(drive, -30, .8);
+                }
+                else
+                {
+                    drive->goRight();
+                }
             }
 
             if (timer->Get() > timeout || instantExecution)
