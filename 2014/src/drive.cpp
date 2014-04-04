@@ -76,6 +76,19 @@ void Drive::setWaypoint(int dist)
     }
 }
 
+float Drive::generateTurnWaypoint()
+{
+    if (destination < 0)
+    {
+        return getX()-12;
+    }
+    else if (destination > 0)
+    {
+        return getX()+12;
+    }
+    return 0;
+}
+
 float Drive::getFinalY()
 {
     return AUTO_END_Y;
@@ -83,7 +96,7 @@ float Drive::getFinalY()
 
 float Drive::generateDriveTime()
 {
-    float t = 1 + (((getWaypoint() - getX()) + (AUTO_END_Y - getY())) * 0.046);
+    float t = (((getWaypoint() - getX()) + (AUTO_END_Y - getY())) * 0.034);
 
     if (t <= 0)
         return 0;
