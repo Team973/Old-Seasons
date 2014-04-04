@@ -20,8 +20,9 @@ KinectSense::KinectSense(KinectHandler *kinect_, Drive *drive_, int autoMode_, b
     instantExecution = instantExecution_;
 
     setTimeout(timeout_);
+
+    sequence.push_back( new AutoDriveCommand(drive, drive->generateTurnWaypoint(), drive->getY()+12, drive->generateDriveTime()));
     sequence.push_back( new AutoDriveCommand(drive, drive->getWaypoint(), drive->getFinalY(), false, drive->generateDriveTime()));
-    sequence.push_back( new AutoDriveCommand(drive, drive->generateTurnWaypoint(), drive->getY()+12, ));
     init = false;
 }
 
