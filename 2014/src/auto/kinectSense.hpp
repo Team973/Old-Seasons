@@ -8,6 +8,7 @@
 
 class KinectHandler;
 class Drive;
+class SequentialCommand;
 
 class KinectSense : public AutoCommand
 {
@@ -16,9 +17,13 @@ public:
     virtual void Init();
     virtual bool Run();
 private:
+    void clear();
+
+
     KinectHandler *kinect;
     Drive *drive;
-    std::vector<*AutoCommand> cmd
+    std::vector<AutoCommand*> sequence;
+    SequentialCommand *cmd;
 
     float movement;
     int autoMode;

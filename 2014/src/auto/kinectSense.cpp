@@ -20,16 +20,20 @@ KinectSense::KinectSense(KinectHandler *kinect_, Drive *drive_, int autoMode_, b
     instantExecution = instantExecution_;
 
     setTimeout(timeout_);
-    cmd.push_back( new AutoDriveCommand(drive, drive->getWaypoint(), drive->getFinalY(), false, drive->generateDriveTime()));
+    sequence.push_back( new AutoDriveCommand(drive, drive->getWaypoint(), drive->getFinalY(), false, drive->generateDriveTime()));
+    sequence.push_back( new AutoDriveCommand(drive, drive->generateTurnWaypoint(), drive->getY()+12, ));
     init = false;
+}
+
+void KinectSense::clear()
+{
+    sequence.clear();
 }
 
 void KinectSense::Init()
 {
     timer->Start();
     timer->Reset();
-
-    drive->holdPosition(false, 0, 0, 0, 0);
 }
 
 bool KinectSense::Run()
@@ -65,7 +69,9 @@ bool KinectSense::Run()
             {
                 if (fabs(drive->getY() - drive->getFinalY()) < 5) // if we have reached our destination then let the juking begin
                 {
-                    cmd = new TurnCommand(drive, 30, .8);
+                    clear();
+                    sequence.push_back(new TurnCommand(drive, 30, .8));
+                    init = false;
                 }
                 else
                 {
@@ -76,7 +82,9 @@ bool KinectSense::Run()
             {
                 if (fabs(drive->getY() - drive->getFinalY()) < 5)
                 {
-                    cmd = new TurnCommand(drive, -30, .8);
+                    clear();
+                    sequence.push_back(new TurnCommand(drive, -30, .8));
+                    init = false;
                 }
                 else
                 {
@@ -88,7 +96,9 @@ bool KinectSense::Run()
             {
                 if (!init)
                 {
+                    cmd = new SequentialCommand(sequence);
                     cmd->Init();
+                    init = true;
                 }
 
                 if (cmd->Run())
