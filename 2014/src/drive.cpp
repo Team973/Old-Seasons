@@ -286,7 +286,7 @@ void Drive::setKickUp(bool kick)
 
 void Drive::CheesyDrive(double throttle, double wheel, bool highGear, bool quickTurn) {
   bool isQuickTurn = quickTurn;
-  float turnNonlinHigh = 0.9;
+  float turnNonlinHigh = 1.5;//0.9;
   float turnNonlinLow = 0.8;
   float negInertiaHigh = 0.5;
   float senseHigh = 1.2;
@@ -413,8 +413,8 @@ void Drive::update(double DriveX, double DriveY, bool gear, bool kick, bool quic
     }
     else
     {
-        //CheesyDrive(DriveY, DriveX, gear, quickTurn);
-        arcade(-DriveY, -DriveX);
+        CheesyDrive(DriveY, DriveX, gear, quickTurn);
+        //arcade(-DriveY, -DriveX);
     }
     setLowGear(gear);
     setKickUp(kick);
