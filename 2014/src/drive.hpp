@@ -53,8 +53,6 @@ private:
     // Drive calculation variables
     void calculateDrive();
     void storeDriveCalculations();
-    float getX();
-    float getY();
     float currGyro;
     float currTheta;
     float theta;
@@ -101,10 +99,13 @@ public:
     float generateDriveTime();
 
     float getWaypoint();
+    float generateTurnWaypoint();
     void setWaypoint(int dist);
     void goLeft();
     void goRight();
     float getFinalY();
+    float getX();
+    float getY();
 };
 
 #endif
