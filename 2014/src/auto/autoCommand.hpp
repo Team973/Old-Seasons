@@ -10,6 +10,7 @@ public:
     virtual void Init();
     virtual bool Run();
     void setTimeout(double timeout_);
+    void injectTimer(Timer *autoTimer_);
 
     double timeout;
     Timer* timer; // for internal timeouts
