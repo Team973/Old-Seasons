@@ -40,6 +40,7 @@ private:
     Encoder *rightEncoder;
 
     Encoder *gyro;
+    Gyro *testGyro;
 
     Solenoid *shifters;
     Solenoid *kickUp;
@@ -77,7 +78,7 @@ private:
     float destination;
 
 public:
-    Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoid *kickUp_, Encoder *leftEncoder_, Encoder *rightEncoder_, Encoder *gyro_);
+    Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoid *kickUp_, Encoder *leftEncoder_, Encoder *rightEncoder_, Encoder *gyro_, Gyro *testGyro_);
     void update(double DriveX, double DriveY, bool gear, bool kick, bool quickTurn, bool isAuto=false);
     void dashboardUpdate();
 
