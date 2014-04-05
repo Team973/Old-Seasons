@@ -175,9 +175,9 @@ float Drive::normalizeAngle(float theta)
 //TODO: Switch back to the real gyro
 float Drive::getGyroAngle()
 {
-    float ticks = 1024;
+    //float ticks = 1024;
     //return normalizeAngle(-gyro->Get() * (360 / ticks));
-    return normalizeAngle(-testGyro->GetAngle() * (360 / ticks));
+    return normalizeAngle(-testGyro->GetAngle());
 }
 
 void Drive::resetGyro()
@@ -443,7 +443,6 @@ void Drive::positionUpdate()
 
 void Drive::dashboardUpdate()
 {
-    SmartDashboard::PutNumber("Test Gyro: ", getGyroAngle());
 }
 
 void Drive::resetDrive()
