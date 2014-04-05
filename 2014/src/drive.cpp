@@ -286,9 +286,9 @@ void Drive::setKickUp(bool kick)
 
 void Drive::CheesyDrive(double throttle, double wheel, bool highGear, bool quickTurn) {
   bool isQuickTurn = quickTurn;
-  float turnNonlinHigh = 1.5;//0.9;
+  float turnNonlinHigh = 0.2; // smaller is more responsive bigger is less responsive
   float turnNonlinLow = 0.8;
-  float negInertiaHigh = 0.5;
+  float negInertiaHigh = 1.2; // bigger is more responsive
   float senseHigh = 1.2;
   float senseLow = 0.6;
   float senseCutoff = 0.1;
@@ -297,7 +297,7 @@ void Drive::CheesyDrive(double throttle, double wheel, bool highGear, bool quick
   float negInertiaLowLess = 3.0;
   float quickStopTimeConstant = 0.1;
   float quickStopLinearPowerThreshold = 0.2;
-  float quickStopStickScalar = 5.0;
+  float quickStopStickScalar = 0.8; //Bigger for faster stopping
 
   double wheelNonLinearity;
 
