@@ -134,7 +134,7 @@ void Drive::holdPosition(bool hold, float linearTarget, float angleTarget, float
 
 void Drive::setDriveMotors(float left, float right)
 {
-    leftDrive->Set(-limit(left-0.01));
+    leftDrive->Set(-limit(left));
     rightDrive->Set(limit(right));
 }
 
