@@ -50,7 +50,7 @@ Robot::Robot()
     colinGyro = new Encoder(13, 14);
     colinGyro->Start();
 
-    testGyro = new Gyro(14);
+    testGyro = new Gyro(1,1);
 
     compressor = new Compressor(1,1);
     compressor->Start();
@@ -95,6 +95,7 @@ void Robot::dashboardUpdate()
     intake->dashboardUpdate();
     SmartDashboard::PutNumber("Arm Target: ", arm->getTarget());
     SmartDashboard::PutNumber("Gyro: ", drive->getGyroAngle());
+    SmartDashboard::PutNumber(" Test Gyro: ", testGyro->GetAngle());
     SmartDashboard::PutNumber("Drive Distance: ", drive->getWheelDistance());
     dsLCD->PrintfLine(DriverStationLCD::kUser_Line3,"Arm Angle: %f", arm->getRawAngle());
     dsLCD->PrintfLine(DriverStationLCD::kUser_Line4,"Left Dist: %f", drive->getLeftDistance());
