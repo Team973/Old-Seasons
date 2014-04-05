@@ -50,10 +50,12 @@ Robot::Robot()
     colinGyro = new Encoder(13, 14);
     colinGyro->Start();
 
+    testGyro = new Gyro(14);
+
     compressor = new Compressor(1,1);
     compressor->Start();
 
-    drive = new Drive(leftDriveMotors, rightDriveMotors, shiftingSolenoid, kickUpSolenoid, leftDriveEncoder, rightDriveEncoder, colinGyro);
+    drive = new Drive(leftDriveMotors, rightDriveMotors, shiftingSolenoid, kickUpSolenoid, leftDriveEncoder, rightDriveEncoder, colinGyro, testGyro);
     arm = new Arm(armMotor, armSensorA);
     intake = new Intake(linearIntakeMotor, crossIntakeMotor, clawSolenoid, autoCorralSolenoid, intakeBallSensor);
     shooter = new Shooter(winchMotor, winchReleaseSolenoid, winchZeroSensor, winchFullCockSensor, winchEncoder);

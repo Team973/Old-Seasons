@@ -3,7 +3,7 @@
 #include <math.h>
 #include "pid.hpp"
 
-Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoid *kickUp_, Encoder *leftEncoder_, Encoder *rightEncoder_, Encoder *gyro_)
+Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoid *kickUp_, Encoder *leftEncoder_, Encoder *rightEncoder_, Encoder *gyro_, Gyro *testGyro_)
 {
     leftDrive = leftDrive_;
     rightDrive = rightDrive_;
@@ -15,6 +15,7 @@ Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoi
     rightEncoder = rightEncoder_;
 
     gyro = gyro_;
+    testGyro = testGyro_;
 
     M_PI = 3.141592;
 
@@ -171,15 +172,18 @@ float Drive::normalizeAngle(float theta)
     return theta;
 }
 
+//TODO: Switch back to the real gyro
 float Drive::getGyroAngle()
 {
     float ticks = 1024;
-    return normalizeAngle(-gyro->Get() * (360 / ticks));
+    //return normalizeAngle(-gyro->Get() * (360 / ticks));
+    return normalizeAngle(-testGyro->GetAngle() * (360 / ticks));
 }
 
 void Drive::resetGyro()
 {
     gyro->Reset();
+    testGyro->Reset();
 }
 
 void Drive::resetDriveEncoders()
@@ -439,6 +443,7 @@ void Drive::positionUpdate()
 
 void Drive::dashboardUpdate()
 {
+    SmartDashboard::PutNumber("Test Gyro: ", getGyroAngle());
 }
 
 void Drive::resetDrive()

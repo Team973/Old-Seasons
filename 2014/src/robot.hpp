@@ -51,6 +51,7 @@ private:
     DigitalInput *winchFullCockSensor;
 
     Encoder *colinGyro;
+    Gyro *testGyro;
 
     Solenoid *blockerSolenoid;
     Solenoid *shiftingSolenoid;
