@@ -43,7 +43,7 @@ private:
     PID* rotatePID;
     PID* anglePID;
 public:
-    AutoDriveCommand(Drive* drive_, float targetX_, float targetY_, bool backward_=false, double timeout_ = 0.0, float drivePercision_=6, float turnPercision_=5, float driveCap_=0.5, float turnCap_=0.7, float arcCap_=0.3);
+    AutoDriveCommand(Drive* drive_, float targetX_, float targetY_, bool backward_=false, double timeout_ = 0.0, float drivePercision_=6, float turnPercision_=5, float driveCap_=0.9, float turnCap_=0.7, float arcCap_=0.3);
     void resetDrive();
     void calculateDrive();
     void storeDriveCalculations();
