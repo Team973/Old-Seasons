@@ -19,10 +19,10 @@ AutoDriveCommand::AutoDriveCommand(Drive* drive_, float targetX_,float targetY_,
     turnCap = turnCap_;
     arcCap = arcCap_;
 
-    drivePID = new PID(.03, 0.001);
+    drivePID = new PID(.05, 0.001);
     drivePID->setICap(.3);
     anglePID = new PID(.1);
-    rotatePID = new PID(.15, .01, 0.005);
+    rotatePID = new PID(.05, .01, 0.005);
     rotatePID->setICap(.1);
 
     PI = 3.14159;
@@ -80,8 +80,7 @@ void AutoDriveCommand::storeDriveCalculations()
 
 void AutoDriveCommand::Init()
 {
-    drive->holdPosition(false, 0, 0, 0);
-    resetDrive();
+    drive->holdPosition(false, 0, 0, 0, 0);
     timer->Start();
     timer->Reset();
 }
@@ -94,7 +93,7 @@ bool AutoDriveCommand::Run()
     if ((timer->Get() >= timeout) || ((fabs(robotLinearError) < drivePercision) && (fabs(angleError) > turnPercision)))
     {
         drive->update(0, 0, false, false, false, true);
-        drive->holdPosition(true, drivePID->getTarget(), drivePercision, turnPercision);
+        drive->holdPosition(true, drivePID->getTarget(), anglePID->getTarget(), drivePercision, turnPercision);
         return true;
     }
     else
@@ -102,7 +101,7 @@ bool AutoDriveCommand::Run()
         if (!drivePercision) { drivePercision = 6;} // inches
         if (!turnPercision) { turnPercision = 5;} // degrees
 
-        if (!driveCap) { driveCap = 0.5;}
+        if (!driveCap) { driveCap = 0.9;}
         if (!arcCap) { arcCap = 0.3;}
         if (!turnCap) { turnCap = 0.7;}
 
@@ -135,7 +134,7 @@ bool AutoDriveCommand::Run()
             else
             {
                 driveInput = -drivePID->update(driveError);
-                turnInput = anglePID->update(angleError);
+                //turnInput = anglePID->update(angleError);
             }
 
         }
@@ -152,7 +151,7 @@ bool AutoDriveCommand::Run()
         }
         */
 
-        drive->update(driveInput, turnInput, true, false, false, true);
+        drive->update(-turnInput, -driveInput, true, false, false, true);
 
         storeDriveCalculations();
 

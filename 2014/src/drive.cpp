@@ -21,10 +21,10 @@ Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoi
 
     positionPID = new PID(0.05, 0.001, 0);
     positionPID->setICap(0.3);
-    positionPID->setBounds(-0.2, 0.2);
+    positionPID->setBounds(-0, 0);
     positionPID->start();
     anglePID = new PID(.03, 0, 0);//.1);
-    anglePID->setBounds(-0.2, 0.2);
+    anglePID->setBounds(-0, 0);
     anglePID->start();
 
     quickStopAccumulator = 0;
@@ -435,7 +435,9 @@ void Drive::positionUpdate()
         driveInput = positionPID->update(getWheelDistance());
         turnInput = anglePID->update(getGyroAngle());
         if (linearError > drivePercision || angleError > turnPercision)
-            arcade(-driveInput, -turnInput);
+        {
+            //arcade(-driveInput, -turnInput);
+        }
         else
             arcade(0, 0);
     }
