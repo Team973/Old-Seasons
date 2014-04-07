@@ -19,25 +19,11 @@ Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoi
 
     M_PI = 3.141592;
 
-    positionPID = new PID(0.05, 0.001, 0);
-    positionPID->setICap(0.3);
-    positionPID->setBounds(-0, 0);
-    positionPID->start();
-    anglePID = new PID(.03, 0, 0);//.1);
-    anglePID->setBounds(-0, 0);
-    anglePID->start();
-
     quickStopAccumulator = 0;
     negInertiaAccumulator = 0;
     oldWheel = 0;
     leftDist = 0;
     rightDist = 0;
-
-    driveInput = 0;
-    turnInput = 0;
-    isHolding = false;
-    drivePercision = 0;
-    turnPercision = 0;
 
     AUTO_END_Y = 144;
 
@@ -115,21 +101,6 @@ float Drive::limit(float x)
         return -1;
 
     return x;
-}
-
-void Drive::holdPosition(bool hold, float linearTarget, float angleTarget, float drivePercision_, float turnPercision_)
-{
-    isHolding = hold;
-    if (isHolding)
-    {
-        positionPID->setTarget(linearTarget);
-        anglePID->setTarget(angleTarget);
-    }
-    if (!drivePercision_) {drivePercision = 2;}
-    else {drivePercision = drivePercision_;}
-
-    if (!turnPercision_) {turnPercision = 2;}
-    else {turnPercision = turnPercision_;}
 }
 
 void Drive::setDriveMotors(float left, float right)
@@ -424,23 +395,6 @@ void Drive::update(double DriveX, double DriveY, bool gear, bool kick, bool quic
     setKickUp(kick);
 
     storeDriveCalculations();
-}
-
-void Drive::positionUpdate()
-{
-    float linearError = fabs(positionPID->getTarget() - getWheelDistance());
-    float angleError = fabs(anglePID->getTarget() - getGyroAngle());
-    if (isHolding)
-    {
-        driveInput = positionPID->update(getWheelDistance());
-        turnInput = anglePID->update(getGyroAngle());
-        if (linearError > drivePercision || angleError > turnPercision)
-        {
-            //arcade(-driveInput, -turnInput);
-        }
-        else
-            arcade(0, 0);
-    }
 }
 
 void Drive::dashboardUpdate()

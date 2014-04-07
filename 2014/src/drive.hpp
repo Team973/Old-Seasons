@@ -28,9 +28,6 @@ private:
 
     float normalizeAngle(float theta);
 
-    PID *positionPID;
-    PID *anglePID;
-
     // Talons
     Talon *leftDrive;
     Talon *rightDrive;
@@ -44,12 +41,6 @@ private:
 
     Solenoid *shifters;
     Solenoid *kickUp;
-
-    bool isHolding;
-    float driveInput;
-    float turnInput;
-    float drivePercision;
-    float turnPercision;
 
     // Drive calculation variables
     void calculateDrive();
@@ -94,8 +85,6 @@ public:
     void resetDrive();
     void setLowGear(bool lowGear);
     void setKickUp(bool kick);
-    void holdPosition(bool hold, float linearTarget=0, float angleTarget=0, float drivePercision=5, float turnPercision=2);
-    void positionUpdate();
 
     float generateDriveTime();
 
