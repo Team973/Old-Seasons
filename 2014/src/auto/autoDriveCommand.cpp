@@ -80,7 +80,6 @@ void AutoDriveCommand::storeDriveCalculations()
 
 void AutoDriveCommand::Init()
 {
-    drive->holdPosition(false, 0, 0, 0, 0);
     timer->Start();
     timer->Reset();
 }
@@ -90,20 +89,12 @@ bool AutoDriveCommand::Run()
     float robotLinearError = 0;
     float angleError = 0;
 
-    if ((timer->Get() >= timeout) || ((fabs(robotLinearError) < drivePercision) && (fabs(angleError) > turnPercision)))
+    if ((timer->Get() >= timeout-2) || ((fabs(robotLinearError) < drivePercision) && (fabs(angleError) < turnPercision)))
     {
-        drive->update(0, 0, false, false, false, true);
-        drive->holdPosition(true, drivePID->getTarget(), anglePID->getTarget(), drivePercision, turnPercision);
         return true;
     }
     else
     {
-        if (!drivePercision) { drivePercision = 6;} // inches
-        if (!turnPercision) { turnPercision = 5;} // degrees
-
-        if (!driveCap) { driveCap = 0.9;}
-        if (!arcCap) { arcCap = 0.3;}
-        if (!turnCap) { turnCap = 0.7;}
 
         drivePID->setBounds(-driveCap, driveCap);
         anglePID->setBounds(-arcCap, arcCap);
