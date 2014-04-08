@@ -45,16 +45,13 @@ bool KinectSense::Run()
 
             if ((!kinect->getRightHand() && !kinect->getLeftHand()) || (kinect->getRightHand() && kinect->getLeftHand()))
             {
-                drive->holdPosition(true, drive->getWheelDistance(), drive->getGyroAngle(), 2, 2);
             }
             else if (kinect->getLeftHand())
             {
-                drive->holdPosition(false, 0, 0, 0, 0);
                 movement = -.6;
             }
             else if (kinect->getRightHand())
             {
-                drive->holdPosition(false, 0, 0, 0, 0);
                 movement = .6;
             }
 
