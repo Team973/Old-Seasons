@@ -86,66 +86,58 @@ void AutoDriveCommand::Init()
 
 bool AutoDriveCommand::Run()
 {
+
     float robotLinearError = 0;
     float angleError = 0;
 
-    if ((timer->Get() >= timeout-2) || ((fabs(robotLinearError) < drivePercision) && (fabs(angleError) < turnPercision)))
+    drivePID->setBounds(-driveCap, driveCap);
+    anglePID->setBounds(-arcCap, arcCap);
+    rotatePID->setBounds(-turnCap, turnCap);
+
+    calculateDrive();
+
+    float driveError = sqrt(pow((targetX - currX), 2) + pow((targetY - currY), 2));
+    float targetAngle = atan2(currX - targetX, targetY - currY) / PI * 180;
+    if (backward)
+        targetAngle = targetAngle + 180;
+    while (targetAngle > 180)
+        targetAngle = targetAngle - 360;
+
+    robotLinearError = (targetY - currY) * cos(currGyro / 180 * PI) - (targetX - currX) * sin(currGyro / 180 * PI);
+
+    angleError = targetAngle - currGyro;
+
+    float driveInput = 0;
+    float turnInput = 0;
+
+    if (fabs(angleError) < turnPercision)
     {
-        return true;
-    }
-    else
-    {
-
-        drivePID->setBounds(-driveCap, driveCap);
-        anglePID->setBounds(-arcCap, arcCap);
-        rotatePID->setBounds(-turnCap, turnCap);
-
-        calculateDrive();
-
-        float driveError = sqrt(pow((targetX - currX), 2) + pow((targetY - currY), 2));
-        float targetAngle = atan2(currX - targetX, targetY - currY) / PI * 180;
-        if (backward)
-            targetAngle = targetAngle + 180;
-        while (targetAngle > 180)
-            targetAngle = targetAngle - 360;
-
-        robotLinearError = (targetY - currY) * cos(currGyro / 180 * PI) - (targetX - currX) * sin(currGyro / 180 * PI);
-
-        angleError = targetAngle - currGyro;
-
-        float driveInput = 0;
-        float turnInput = 0;
-
-        if (fabs(angleError) < turnPercision)
+        if (fabs(robotLinearError) < drivePercision)
         {
-            if (fabs(robotLinearError) < drivePercision)
-            {
-                driveInput = turnInput = 0;
-            }
-            else
-            {
-                driveInput = -drivePID->update(driveError);
-                //turnInput = anglePID->update(angleError);
-            }
-
+            driveInput = turnInput = 0;
         }
         else
         {
-            driveInput = 0;
-            turnInput = rotatePID->update(angleError); // only this one gets a pid output
+            driveInput = -drivePID->update(driveError);
+            turnInput = anglePID->update(angleError);
         }
-
-        /*
-        if (backward)
-        {
-            driveInput = -driveInput;
-        }
-        */
-
-        drive->update(-turnInput, -driveInput, true, false, false, true);
-
-        storeDriveCalculations();
 
     }
-    return false;
+    else
+    {
+        driveInput = 0;
+        turnInput = rotatePID->update(angleError); // only this one gets a pid output
+    }
+
+    drive->update(-turnInput, -driveInput, false, false, false, true);
+
+    storeDriveCalculations();
+
+    if (timer->Get() >= timeout || ((fabs(angleError) < turnPercision) && (fabs(robotLinearError) < turnPercision)))
+    {
+        drive->update(0, 0, false, false, false, true);
+        return true;
+    }
+    else
+        return false;
 }

@@ -419,7 +419,6 @@ void Robot::AutonomousPeriodic()
     arm->update();
     shooter->update();
     intake->update();
-    drive->positionUpdate();
     dashboardUpdate();
 
 }
