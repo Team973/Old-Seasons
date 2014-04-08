@@ -58,8 +58,8 @@ void AutoManager::autoSelect(int autoMode)
             commandSequence.push_back(new IntakeCommand(intake, arm, 2));
             commandSequence.push_back(new AutoWaitCommand(10));
             */
-            //commandSequence.push_back(new AutoDriveCommand(drive, 0, 24, false, 10));
-            commandSequence.push_back(new TurnCommand(drive, 90, 3));
+            commandSequence.push_back(new AutoDriveCommand(drive, 0, 24, false, 10));
+            //commandSequence.push_back(new TurnCommand(drive, 90, 3));
             commandSequence.push_back(new AutoWaitCommand(10));
             break;
         case ONE_BALL_SIMPLE:
@@ -139,8 +139,6 @@ void AutoManager::autoSelect(int autoMode)
 void AutoManager::reset()
 {
     commandSequence.clear();
-    delete AUTO_SEQUENCE;
-    AUTO_SEQUENCE = NULL;
 }
 
 void AutoManager::Init()

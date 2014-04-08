@@ -78,6 +78,8 @@ Robot::Robot()
 
     autoComplete = false;
 
+    deBugMode = false;
+
     prevCoDriverDPad = 0;
 
     GetWatchdog().SetExpiration(1000);
@@ -381,6 +383,16 @@ void Robot::DisabledPeriodic()
 
     dsLCD->PrintfLine(DriverStationLCD::kUser_Line2,"Auto Dist: %f", hellaDistance);
 
+    if (stick1->GetRawButton(9) && stick1->GetRawButton(10))
+    {
+        deBugMode = true;
+    }
+
+    if (deBugMode)
+    {
+        SmartDashboard::PutNumber("Right Drive: ", rightDriveMotors->Get());
+    }
+
     dashboardUpdate();
     dsLCD->UpdateLCD();
     autoMode->setHellaDistance(hellaDistance);
@@ -392,19 +404,16 @@ void Robot::AutonomousInit()
 
     autoTimer = new Timer();
     autoTimer->Start();
+    autoTimer->Reset();
     autoMode->inject(autoTimer);
 
     autoSafetyTimer = new Timer();
     autoSafetyTimer->Start();
+    autoSafetyTimer->Reset();
 
-    if (autoSafetyTimer->Get() > 10)
-    {
-        autoMode->reset();
-        autoTimer->Reset();
-        autoSafetyTimer->Reset();
-    }
 
     drive->resetDrive();
+    autoMode->reset();
     autoMode->autoSelect(autoSelectMode);
     autoMode->Init();
 }
