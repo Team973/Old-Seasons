@@ -27,6 +27,9 @@ Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoi
 
     AUTO_END_Y = 144;
 
+    brakeTimer = new Timer();
+    isBraking = false;
+
     point = 0;
     endPoint = 0;
 }
@@ -101,6 +104,12 @@ float Drive::limit(float x)
         return -1;
 
     return x;
+}
+
+void Drive::brake()
+{
+    brakeTimer->Start();
+    isBraking = true;
 }
 
 void Drive::setDriveMotors(float left, float right)
@@ -395,6 +404,26 @@ void Drive::update(double DriveX, double DriveY, bool gear, bool kick, bool quic
     setKickUp(kick);
 
     storeDriveCalculations();
+}
+
+void Drive::brakeUpdate()
+{
+    if (isBraking)
+    {
+        if (brakeTimer->Get() < 1 && brakeTimer->Get() > 0)
+        {
+            if (getWheelDistance() > 0)
+                setDriveMotors(-.1, -.1);
+            else if (getWheelDistance() < 0)
+                setDriveMotors(.1, .1);
+        }
+        else
+        {
+            brakeTimer->Stop();
+            brakeTimer->Reset();
+            isBraking = false;
+        }
+    }
 }
 
 void Drive::dashboardUpdate()

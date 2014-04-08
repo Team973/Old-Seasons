@@ -58,7 +58,7 @@ void AutoManager::autoSelect(int autoMode)
             commandSequence.push_back(new IntakeCommand(intake, arm, 2));
             commandSequence.push_back(new AutoWaitCommand(10));
             */
-            commandSequence.push_back(new AutoDriveCommand(drive, 0, 24, false, 10));
+            commandSequence.push_back(new AutoDriveCommand(drive, -24, 24, false, 10));
             //commandSequence.push_back(new TurnCommand(drive, 90, 3));
             commandSequence.push_back(new AutoWaitCommand(10));
             break;
