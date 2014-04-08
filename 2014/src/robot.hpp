@@ -92,6 +92,8 @@ private:
     int autoSelectMode;
     float hellaDistance;
 
+    bool deBugMode;
+
 };
 
 #endif
