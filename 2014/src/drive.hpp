@@ -42,6 +42,9 @@ private:
     Solenoid *shifters;
     Solenoid *kickUp;
 
+    Timer *brakeTimer;
+    bool isBraking;
+
     // Drive calculation variables
     void calculateDrive();
     void storeDriveCalculations();
@@ -87,6 +90,9 @@ public:
     void setKickUp(bool kick);
 
     float generateDriveTime();
+
+    void brake();
+    void brakeUpdate();
 
     float getWaypoint();
     float generateTurnWaypoint();

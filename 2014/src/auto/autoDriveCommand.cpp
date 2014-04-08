@@ -25,6 +25,8 @@ AutoDriveCommand::AutoDriveCommand(Drive* drive_, float targetX_,float targetY_,
     rotatePID = new PID(.05, .01, 0.005);
     rotatePID->setICap(.1);
 
+    driveTimer = new Timer();
+
     PI = 3.14159;
 
     resetDrive();
@@ -131,12 +133,16 @@ bool AutoDriveCommand::Run()
 
     drive->update(-turnInput, -driveInput, false, false, false, true);
 
+    if (fabs(angleError) > turnPercision)
+    {
+        if (fabs(robotLinearError) < drivePercision || timer->Get() >= timeout)
+        {
+            drive->update(0, -driveInput, false, false, false, true);
+            return fabs(robotLinearError) < drivePercision;
+        }
+    }
+
     storeDriveCalculations();
 
-    if (timer->Get() >= timeout || fabs(angleError) > turnPercision)
-    {
-        return fabs(robotLinearError) < drivePercision;
-    }
-    else
-        return false;
+    return false;
 }
