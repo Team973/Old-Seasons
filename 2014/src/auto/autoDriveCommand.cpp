@@ -133,10 +133,9 @@ bool AutoDriveCommand::Run()
 
     storeDriveCalculations();
 
-    if (timer->Get() >= timeout || ((fabs(angleError) < turnPercision) && (fabs(robotLinearError) < turnPercision)))
+    if (timer->Get() >= timeout || fabs(angleError) > turnPercision)
     {
-        drive->update(0, 0, false, false, false, true);
-        return true;
+        return fabs(robotLinearError) < drivePercision;
     }
     else
         return false;
