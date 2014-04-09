@@ -114,7 +114,7 @@ void Drive::brake()
 
 void Drive::setDriveMotors(float left, float right)
 {
-    leftDrive->Set(-limit(left));
+    leftDrive->Set(-limit(left-0.01));
     rightDrive->Set(limit(right));
 }
 
@@ -419,6 +419,7 @@ void Drive::brakeUpdate()
         }
         else
         {
+            setDriveMotors(0, 0);
             brakeTimer->Stop();
             brakeTimer->Reset();
             isBraking = false;
