@@ -43,6 +43,7 @@ void AutoManager::setHellaDistance(float dist)
 }
 
 //XXX Always put a wait at the end of auto to make sure we don't double fire
+//XXX On a DriveToPoint command make the angular percision at least 5
 void AutoManager::autoSelect(int autoMode)
 {
     switch (autoMode)
