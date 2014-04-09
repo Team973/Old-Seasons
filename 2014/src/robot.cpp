@@ -106,6 +106,16 @@ void Robot::dashboardUpdate()
 
     SmartDashboard::PutBoolean("Left Hand: ", kinect->getLeftHand());
     SmartDashboard::PutBoolean("Right Hand: ", kinect->getRightHand());
+
+    if (deBugMode)
+    {
+        SmartDashboard::PutNumber("Right Drive: ", rightDriveMotors->Get());
+        SmartDashboard::PutNumber("Left Drive: ", leftDriveMotors->Get());
+        SmartDashboard::PutNumber("Left Distance: ", drive->getLeftDistance());
+        SmartDashboard::PutNumber("Right Distance: ", drive->getRightDistance());
+        SmartDashboard::PutNumber("X: ", drive->getX());
+        SmartDashboard::PutNumber("Y: ", drive->getY());
+    }
 }
 
 float Robot::deadband(float axis, float threshold)
@@ -386,16 +396,6 @@ void Robot::DisabledPeriodic()
     if (stick1->GetRawButton(9) && stick1->GetRawButton(10))
     {
         deBugMode = true;
-    }
-
-    if (deBugMode)
-    {
-        SmartDashboard::PutNumber("Right Drive: ", rightDriveMotors->Get());
-        SmartDashboard::PutNumber("Left Drive: ", leftDriveMotors->Get());
-        SmartDashboard::PutNumber("Left Distance: ", drive->getLeftDistance());
-        SmartDashboard::PutNumber("Right Distance: ", drive->getRightDistance());
-        SmartDashboard::PutNumber("X: ", drive->getX());
-        SmartDashboard::PutNumber("Y: ", drive->getY());
     }
 
     dashboardUpdate();
