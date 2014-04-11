@@ -412,10 +412,16 @@ void Drive::brakeUpdate()
     {
         if (brakeTimer->Get() < 1 && brakeTimer->Get() > 0)
         {
-            if (getWheelDistance() > 0)
-                setDriveMotors(-.1, -.1);
-            else if (getWheelDistance() < 0)
-                setDriveMotors(.1, .1);
+            float diameter = 4.8;
+            float encoderTicks = 360;
+            float leftEncoderPeriod = leftEncoder->GetPeriod();
+            float rightEncoderPeriod = rightEncoder->GetPeriod();
+            float leftVelocity = 2 * M_PI^2 * (diameter / encoderTicks * leftEncoderPeriod);
+            float rightVelocity = 2 * M_PI^2 * (diameter / encoderTicks * rightEncoderPeriod);
+
+            float left = leftVelocity
+
+            setDriveMotors(left, right);
         }
         else
         {
