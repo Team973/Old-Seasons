@@ -130,7 +130,7 @@ float Drive::getRightDrive()
 
 float Drive::getWheelDistance()
 {
-    float diameter = 4.8;
+    float diameter = 4.1;
     float encoderTicks = 360;
     float distancePerRevolution = M_PI * diameter;
     leftDist = (leftEncoder->Get() / encoderTicks) * distancePerRevolution;
@@ -425,12 +425,12 @@ void Drive::brakeUpdate()
             if (leftVelocity > 0)
                 left = -.2;
             else if (leftVelocity < 0)
-                left = .2;
+                left = .4;
 
             if (rightVelocity > 0)
-                right = -.2;
+                right = 0.0;
             else if (rightVelocity < 0)
-                right = .2;
+                right = -0.4;
 
             setDriveMotors(left, right);
         }
