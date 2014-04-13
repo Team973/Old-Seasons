@@ -18,8 +18,6 @@
 #define TWO_BALL 7
 #define DRIVE_ONLY 8
 #define TEST_FUNCTIONAL 10
-#define TWO_LEFT 11
-#define TWO_RIGHT 12
 
 class KinectHandler;
 

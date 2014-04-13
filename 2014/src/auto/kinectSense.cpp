@@ -45,6 +45,10 @@ bool KinectSense::Run()
 
             if ((!kinect->getRightHand() && !kinect->getLeftHand()) || (kinect->getRightHand() && kinect->getLeftHand()))
             {
+                if (drive->getWheelDistance() > 0)
+                    movement = -.2;
+                else if (drive->getWheelDistance() < 0)
+                    movement = .2;
             }
             else if (kinect->getLeftHand())
             {

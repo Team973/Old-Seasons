@@ -107,22 +107,6 @@ void AutoManager::autoSelect(int autoMode)
             commandSequence.push_back(new FireCommand(shooter, 1));
             commandSequence.push_back(new AutoWaitCommand(10));
             break;
-        case TWO_LEFT:
-            commandSequence.push_back(new ArmPresetCommand(arm, SHOOTING, 0));
-            commandSequence.push_back(new CorralCommand(intake, true));
-            commandSequence.push_back(new LinearDriveCommand(drive, 144, 0, false, 6));
-            commandSequence.push_back(new AutoWaitCommand(1));
-            commandSequence.push_back(new FireCommand(shooter, 1));
-            commandSequence.push_back(new ArmPresetCommand(arm, INTAKE, 0.5));
-            commandSequence.push_back(new CorralCommand(intake, false));
-            commandSequence.push_back(new IntakeCommand(intake, arm, 2));
-            commandSequence.push_back(new ArmPresetCommand(arm, SHOOTING, 1));
-            commandSequence.push_back(new AutoWaitCommand(.5));
-            commandSequence.push_back(new FireCommand(shooter, 1));
-            commandSequence.push_back(new AutoWaitCommand(10));
-            break;
-        case TWO_RIGHT:
-            break;
         case TEST_FUNCTIONAL:
             commandSequence.push_back(new LinearDriveCommand(drive, 24, 0, false, 3, 2));
             commandSequence.push_back(new LinearDriveCommand(drive, -24, 0, false, 3, 2));
