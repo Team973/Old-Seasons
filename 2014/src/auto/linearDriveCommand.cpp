@@ -4,18 +4,21 @@
 #include <math.h>
 #include "../drive.hpp"
 
-LinearDriveCommand::LinearDriveCommand(Drive *drive_, float targetDrive_, bool backwards_, float timeout_, float drivePrecision_)
+LinearDriveCommand::LinearDriveCommand(Drive *drive_, float targetDrive_, float targetAngle_, bool backwards_, float timeout_, float drivePrecision_)
 {
     drive = drive_;
     targetDrive = targetDrive_;
     backwards = backwards_;
     drivePrecision = drivePrecision_;
-    targetAngle = drive->getGyroAngle(); // remove compensation when we switch to colin's gyro
+    if (targetAngle_ == 0)
+        targetAngle = drive->getGyroAngle();
+    else
+        targetAngle = targetAngle_;
 
     setTimeout(timeout_);
 
     drivePID = new PID(.02, 0, 0.08);
-    anglePID = new PID(.02);
+    anglePID = new PID(.05, 0, 0.05);
 
 }
 
@@ -34,17 +37,17 @@ bool LinearDriveCommand::Run()
 {
     float currGyro = drive->getGyroAngle();
     float driveError = targetDrive - drive->getWheelDistance();
+    float angleError = targetAngle - currGyro;
 
     if ((timer->Get() >= timeout) || (fabs(driveError) < drivePrecision))
     {
-        //drive->update(0, 0, false, false, false, true);
-        //return true;
+        drive->update(0, 0, false, false, false, true);
+        return true;
     }
 
     drivePID->setBounds(-.9, .9);
-    drivePID->setTarget(targetDrive);
+
     anglePID->setBounds(-.7, .7);
-    anglePID->setTarget(targetAngle);
 
     float driveInput;
     float turnInput;
@@ -56,12 +59,20 @@ bool LinearDriveCommand::Run()
     }
     else
     {
-        driveInput = drivePID->update(drive->getWheelDistance());
-        turnInput = anglePID->update(currGyro);
+        driveInput = -drivePID->update(driveError);
+        turnInput = anglePID->update(angleError);
     }
     SmartDashboard::PutNumber("Drive Error: ", driveError);
+    SmartDashboard::PutNumber("Angle Error: ", angleError);
 
-    drive->update(-turnInput, -driveInput, false, false, false, true);
+    if (fabs(driveError) < drivePrecision)
+    {
+        drive->update(0, -driveInput, false, false, false, true);
+    }
+    else
+    {
+        drive->update(-turnInput, -driveInput, false, false, false, true);
+    }
 
     return false;
 }

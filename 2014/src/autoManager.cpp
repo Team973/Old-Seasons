@@ -62,12 +62,12 @@ void AutoManager::autoSelect(int autoMode)
             //commandSequence.push_back(new AutoDriveCommand(drive, -48, 48, false, 10, 5, 8));
             //commandSequence.push_back(new AutoDriveCommand(drive, 0, 48, false, 10, 5, 8));
             //commandSequence.push_back(new TurnCommand(drive, 90, 10));
-            commandSequence.push_back(new LinearDriveCommand(drive, 120, false, 5));
+            commandSequence.push_back(new LinearDriveCommand(drive, 120, -5, false, 5));
             commandSequence.push_back(new AutoWaitCommand(10));
             break;
         case ONE_BALL_SIMPLE:
             commandSequence.push_back(new ArmPresetCommand(arm, SHOOTING, 0));
-            commandSequence.push_back(new LinearDriveCommand(drive, 108, false, 5));
+            commandSequence.push_back(new LinearDriveCommand(drive, 108, 0, false, 5));
             commandSequence.push_back(new AutoWaitCommand(1));
             commandSequence.push_back(new FireCommand(shooter, 1.5));
             commandSequence.push_back(new AutoWaitCommand(10));
@@ -76,27 +76,27 @@ void AutoManager::autoSelect(int autoMode)
             commandSequence.push_back(new AutoWaitCommand(10));
             break;
         case DRIVE_ONLY:
-            commandSequence.push_back(new LinearDriveCommand(drive, 48, false, 4));
+            commandSequence.push_back(new LinearDriveCommand(drive, 48, 0, false, 4));
             commandSequence.push_back(new AutoWaitCommand(10));
             break;
         case HELLAVATOR_FOREWARD:
             commandSequence.push_back(new Hellavator(hellavator, 0));
             commandSequence.push_back(new ArmPresetCommand(arm, HELLAVATOR, 0));
-            commandSequence.push_back(new LinearDriveCommand(drive, driveDistance, false, 4));
+            commandSequence.push_back(new LinearDriveCommand(drive, driveDistance, 0, false, 4));
             commandSequence.push_back(new KinectSense(kinect, drive, BLOCKER, false, 10));
             commandSequence.push_back(new AutoWaitCommand(10));
             break;
         case HELLAVATOR_BACKWARD:
             commandSequence.push_back(new Hellavator(hellavator, 0));
             commandSequence.push_back(new ArmPresetCommand(arm, HELLAVATOR, 0));
-            commandSequence.push_back(new LinearDriveCommand(drive, -driveDistance, true, 4));
+            commandSequence.push_back(new LinearDriveCommand(drive, -driveDistance, 0, true, 4));
             commandSequence.push_back(new KinectSense(kinect, drive, BLOCKER, false, 10));
             commandSequence.push_back(new AutoWaitCommand(10));
             break;
         case TWO_BALL:
             commandSequence.push_back(new ArmPresetCommand(arm, SHOOTING, 0));
             commandSequence.push_back(new CorralCommand(intake, true));
-            commandSequence.push_back(new LinearDriveCommand(drive, 144, false, 6));
+            commandSequence.push_back(new LinearDriveCommand(drive, 144, 0, false, 6));
             commandSequence.push_back(new AutoWaitCommand(1));
             commandSequence.push_back(new FireCommand(shooter, 1));
             commandSequence.push_back(new ArmPresetCommand(arm, INTAKE, 0.5));
@@ -110,7 +110,7 @@ void AutoManager::autoSelect(int autoMode)
         case TWO_LEFT:
             commandSequence.push_back(new ArmPresetCommand(arm, SHOOTING, 0));
             commandSequence.push_back(new CorralCommand(intake, true));
-            commandSequence.push_back(new LinearDriveCommand(drive, 144, false, 6));
+            commandSequence.push_back(new LinearDriveCommand(drive, 144, 0, false, 6));
             commandSequence.push_back(new AutoWaitCommand(1));
             commandSequence.push_back(new FireCommand(shooter, 1));
             commandSequence.push_back(new ArmPresetCommand(arm, INTAKE, 0.5));
@@ -124,8 +124,8 @@ void AutoManager::autoSelect(int autoMode)
         case TWO_RIGHT:
             break;
         case TEST_FUNCTIONAL:
-            commandSequence.push_back(new LinearDriveCommand(drive, 24, false, 3, 2));
-            commandSequence.push_back(new LinearDriveCommand(drive, -24, false, 3, 2));
+            commandSequence.push_back(new LinearDriveCommand(drive, 24, 0, false, 3, 2));
+            commandSequence.push_back(new LinearDriveCommand(drive, -24, 0, false, 3, 2));
             commandSequence.push_back(new ArmPresetCommand(arm, SHOOTING, 1));
             commandSequence.push_back(new ArmPresetCommand(arm, PSEUDO_INTAKE, 1));
             commandSequence.push_back(new ArmPresetCommand(arm, INTAKE, 1));
