@@ -47,10 +47,12 @@ void Arm::setPreset(int preset)
         case SHOOTING:
             setTarget(33.5);//27.5);
             autoClamped = false;
+            SmartDashboard::PutBoolean("Shot Angle: ", true);
             break;
         case STOW:
             setTarget(29.00);
             autoClamped = false;
+            SmartDashboard::PutBoolean("Shot Angle: ", false);
             break;
         case CLOSE_SHOT:
             setTarget(9.00);
