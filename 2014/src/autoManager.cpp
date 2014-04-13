@@ -96,7 +96,7 @@ void AutoManager::autoSelect(int autoMode)
         case TWO_BALL:
             commandSequence.push_back(new ArmPresetCommand(arm, SHOOTING, 0));
             commandSequence.push_back(new CorralCommand(intake, true));
-            commandSequence.push_back(new LinearDriveCommand(drive, 144, 0, false, 6));
+            commandSequence.push_back(new LinearDriveCommand(drive, 120, 0, false, 6));
             commandSequence.push_back(new AutoWaitCommand(1));
             commandSequence.push_back(new FireCommand(shooter, 1));
             commandSequence.push_back(new ArmPresetCommand(arm, INTAKE, 0.5));
