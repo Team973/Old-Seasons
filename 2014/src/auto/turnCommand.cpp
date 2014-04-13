@@ -15,8 +15,7 @@ TurnCommand::TurnCommand(Drive* drive_, float targetAngle_, float timeout_, floa
 
     turnInput = 0;
 
-    rotatePID = new PID(.01, .01, 0.005);
-    rotatePID->setICap(.1);
+    rotatePID = new PID(.005, 0, 0.01);
 }
 
 void TurnCommand::Init()
@@ -43,14 +42,15 @@ bool TurnCommand::Run()
         turnInput = rotatePID->update(angleError);
     }
 
+    SmartDashboard::PutNumber("Turn Error: ", angleError);
+
     drive->update(turnInput, 0, false, false, true);
 
     if ((fabs(angleError) < turnPrecision) || (timer->Get() >= timeout))
     {
         SmartDashboard::PutBoolean("Turn End Condition: ", true);
-        drive->update(0, 0, false, false, true);
-        drive->brake();
-        return true;
+        //drive->update(0, 0, false, false, true);
+        //return true;
     }
 
     return false;
