@@ -60,7 +60,9 @@ void AutoManager::autoSelect(int autoMode)
             commandSequence.push_back(new AutoWaitCommand(10));
             */
             //commandSequence.push_back(new AutoDriveCommand(drive, -48, 48, false, 10, 5, 8));
-            commandSequence.push_back(new TurnCommand(drive, 90, 10));
+            //commandSequence.push_back(new AutoDriveCommand(drive, 0, 48, false, 10, 5, 8));
+            //commandSequence.push_back(new TurnCommand(drive, 90, 10));
+            commandSequence.push_back(new LinearDriveCommand(drive, 120, false, 5));
             commandSequence.push_back(new AutoWaitCommand(10));
             break;
         case ONE_BALL_SIMPLE:

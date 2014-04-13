@@ -49,6 +49,7 @@ bool TurnCommand::Run()
     {
         SmartDashboard::PutBoolean("Turn End Condition: ", true);
         drive->update(0, 0, false, false, true);
+        drive->brake();
         return true;
     }
 

@@ -19,10 +19,10 @@ AutoDriveCommand::AutoDriveCommand(Drive* drive_, float targetX_,float targetY_,
     turnCap = turnCap_;
     arcCap = arcCap_;
 
-    drivePID = new PID(.05, 0.001);
+    drivePID = new PID(0.03, 0, 0);//.1, 0.001);
     drivePID->setICap(.3);
-    anglePID = new PID(0.1);
-    rotatePID = new PID(.03, .02, 0.005);
+    anglePID = new PID(0, 0, 0);//0.1);
+    rotatePID = new PID(0, 0, 0);//.03, .02, 0.005);
     rotatePID->setICap(.1);
 
     driveTimer = new Timer();
