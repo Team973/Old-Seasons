@@ -430,7 +430,6 @@ void Robot::AutonomousPeriodic()
        autoComplete = true;
 
 
-    drive->brakeUpdate();
     arm->update();
     shooter->update();
     intake->update();
