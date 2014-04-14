@@ -432,7 +432,7 @@ void Drive::brakeUpdate()
             else if (rightVelocity < 0)
                 right = -0.4;
 
-            setDriveMotors(left, right);
+            //setDriveMotors(left, right);
         }
         else
         {
