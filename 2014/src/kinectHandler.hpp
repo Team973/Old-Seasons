@@ -9,6 +9,7 @@ public:
     bool getLeftHand();
     bool getRightHand();
     std::string getScheduledHand();
+    bool override(); // this is for over-riding stuff you know
 private:
     KinectStick *left;
     KinectStick *right;
