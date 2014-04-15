@@ -96,6 +96,18 @@ float Drive::generateDriveTime()
         return t;
 }
 
+float Drive::generateDistanceTime(float x)
+{
+    float t = ((x - getWheelDistance()) * 0.034);
+
+    if (t <= 0)
+        return 0;
+    else if (t > 6)
+        return 6;
+    else
+        return t;
+}
+
 float Drive::limit(float x)
 {
     if (x > 1)

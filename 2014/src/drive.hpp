@@ -90,6 +90,7 @@ public:
     void setKickUp(bool kick);
 
     float generateDriveTime();
+    float generateDistanceTime();
 
     void brake();
     void brakeUpdate();
