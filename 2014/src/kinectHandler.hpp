@@ -8,9 +8,12 @@ public:
     float kinectDeadband(float x, float limit);
     bool getLeftHand();
     bool getRightHand();
+    std::string getScheduledHand();
 private:
     KinectStick *left;
     KinectStick *right;
+
+    std::string lastHand;
 };
 
 #endif
