@@ -99,19 +99,12 @@ bool Shooter::performFire()
     fireTimer->Start();
     intake->setFangs(false);
     intake->runIntake(0);
+    winchMotor->Set(0);
     if (fireTimer->Get() >= 0.1)
     {
         winchRelease->Set(true);
-        winchMotor->Set(1);
     }
-    if (fireTimer->Get() >= 0.2)
-    {
-        winchMotor->Set(-1);
-    }
-    if (fireTimer->Get() >= 0.25)
-    {
-        winchMotor->Set(0);
-    }
+
     if (fireTimer->Get() >= 0.35)
     {
         fireTimer->Stop();
