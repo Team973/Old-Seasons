@@ -19,6 +19,14 @@ float KinectHandler::kinectDeadband(float x, float limit)
         return true;
 }
 
+bool KinectHandler::override()
+{
+    if (getLeftHand() && getRightHand())
+        return true;
+    else
+        return false;
+}
+
 std::string KinectHandler::getScheduledHand()
 {
     return lastHand;
