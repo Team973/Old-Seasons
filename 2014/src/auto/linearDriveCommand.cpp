@@ -17,7 +17,7 @@ LinearDriveCommand::LinearDriveCommand(Drive *drive_, float targetDrive_, float 
 
     setTimeout(timeout_);
 
-    drivePID = new PID(.02, 0, 0.3);
+    drivePID = new PID(.02, 0, 0.08);
     anglePID = new PID(.05, 0, 0.05);
 
 }
