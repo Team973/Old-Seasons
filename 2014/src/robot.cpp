@@ -8,6 +8,7 @@
 #include "robot.hpp"
 #include <vector>
 #include "kinectHandler.hpp"
+#include "hellaBlocker.hpp"
 
 #include "NetworkTables/NetworkTable.h"
 
@@ -55,6 +56,8 @@ Robot::Robot()
     compressor = new Compressor(1,1);
     compressor->Start();
 
+    blocker = new HellaBlocker(blockerSolenoid, autoCorralSolenoid);
+
     drive = new Drive(leftDriveMotors, rightDriveMotors, shiftingSolenoid, kickUpSolenoid, leftDriveEncoder, rightDriveEncoder, colinGyro, testGyro);
     arm = new Arm(armMotor, armSensorA);
     intake = new Intake(linearIntakeMotor, crossIntakeMotor, clawSolenoid, autoCorralSolenoid, intakeBallSensor);
@@ -71,7 +74,7 @@ Robot::Robot()
     rightAutoControl = new KinectStick(2);
     kinect = new KinectHandler(leftAutoControl, rightAutoControl);
 
-    autoMode = new AutoManager(drive, shooter, intake, arm, kinect, blockerSolenoid);
+    autoMode = new AutoManager(drive, shooter, intake, arm, kinect, blocker);
     autoSelectMode = ONE_BALL_SIMPLE;
     controlTimer= new Timer();
     hellaDistance = 4;

@@ -20,11 +20,12 @@
 #define TEST_FUNCTIONAL 10
 
 class KinectHandler;
+class HellaBlocker;
 
 class AutoManager : public AutoCommand
 {
 public:
-    AutoManager(Drive *drive_, Shooter* shooter_, Intake* intake_, Arm *arm_, KinectHandler *kinect_, Solenoid* hellavator_);
+    AutoManager(Drive *drive_, Shooter* shooter_, Intake* intake_, Arm *arm_, KinectHandler *kinect_, HellaBlocker *blocker_);
     void setHellaDistance(float dist);
     virtual void Init();
     virtual bool Run();
@@ -37,7 +38,7 @@ private:
     Intake *intake;
     Arm *arm;
     KinectHandler *kinect;
-    Solenoid *hellavator;
+    HellaBlocker *blocker;
     std::vector<AutoCommand*> commandSequence;
     std::vector<AutoCommand*> consecutiveSequence;
     SequentialCommand *AUTO_SEQUENCE;
