@@ -7,6 +7,7 @@ class Intake;
 class Drive;
 class Arm;
 class KinectHandler;
+class HellaBlocker;
 
 //XXX: rename class when we decide on a robot name
 class Robot : public IterativeRobot
@@ -61,6 +62,8 @@ private:
     Solenoid *autoCorralSolenoid;
 
     Compressor *compressor;
+
+    HellaBlocker *blocker;
 
     Drive *drive;
     Arm *arm;

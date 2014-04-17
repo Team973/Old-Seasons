@@ -56,11 +56,3 @@ void HellaBlocker::reset()
         rotator->Set(false);
     }
 }
-
-/* stuff in the blocker
- * 2 solenoids 
- *  blocker / corral arms
- *  blocker is extending
- *  corral is rotation
- *
-*/
