@@ -86,7 +86,7 @@ float Drive::getFinalY()
 
 float Drive::generateDriveTime()
 {
-    float t = (((getWaypoint() - getX()) + (AUTO_END_Y - getY())) * 0.034);
+    float t = fabs(((getWaypoint() - getX()) + (AUTO_END_Y - getY())) * 0.034);
 
     if (t <= 0)
         return 0;
@@ -98,7 +98,7 @@ float Drive::generateDriveTime()
 
 float Drive::generateDistanceTime(float x)
 {
-    float t = ((x - getWheelDistance()) * 0.034);
+    float t = fabs((x - getWheelDistance()) * 0.034);
 
     if (t <= 0)
         return 0;
