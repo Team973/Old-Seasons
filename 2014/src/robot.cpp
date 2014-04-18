@@ -77,7 +77,9 @@ Robot::Robot()
     autoMode = new AutoManager(drive, shooter, intake, arm, kinect, blocker);
     autoSelectMode = ONE_BALL_SIMPLE;
     controlTimer= new Timer();
-    hellaDistance = 4;
+    initialAutoDistance = 4;
+    finalAutoDistance = -4;
+    autoDriveTime = 4.5;
 
     autoComplete = false;
 
@@ -102,9 +104,7 @@ void Robot::dashboardUpdate()
     SmartDashboard::PutNumber("Gyro: ", drive->getGyroAngle());
     SmartDashboard::PutNumber(" Test Gyro: ", testGyro->GetAngle());
     SmartDashboard::PutNumber("Drive Distance: ", drive->getWheelDistance());
-    dsLCD->PrintfLine(DriverStationLCD::kUser_Line3,"Arm Angle: %f", arm->getRawAngle());
-    dsLCD->PrintfLine(DriverStationLCD::kUser_Line4,"Left Dist: %f", drive->getLeftDistance());
-    dsLCD->PrintfLine(DriverStationLCD::kUser_Line5,"Right Dist: %f", drive->getRightDistance());
+    dsLCD->PrintfLine(DriverStationLCD::kUser_Line5,"Arm Angle: %f", arm->getRawAngle());
     dsLCD->UpdateLCD();
 
     SmartDashboard::PutBoolean("Left Hand: ", kinect->getLeftHand());
@@ -316,12 +316,12 @@ void Robot::DisabledPeriodic()
     GetWatchdog().Feed();
     controlTimer->Start();
 
-    if (stick2->GetRawButton(4) && controlTimer->Get() >= .5)
+    if (stick2->GetRawButton(4) && controlTimer->Get() >= .25)
     {
         autoSelectMode += 1;
         controlTimer->Reset();
     }
-    else if (stick2->GetRawButton(2) && controlTimer->Get() >= .5)
+    else if (stick2->GetRawButton(2) && controlTimer->Get() >= .25)
     {
         autoSelectMode -= 1;
         controlTimer->Reset();
@@ -334,67 +334,73 @@ void Robot::DisabledPeriodic()
 
     if (stick2->GetRawButton(1) && controlTimer->Get() >= .5)
     {
-        hellaDistance += .5;
+        initialAutoDistance += .5;
         controlTimer->Reset();
     }
     else if (stick2->GetRawButton(3) && controlTimer->Get() >= .5)
     {
-        hellaDistance -= .5;
+        initialAutoDistance -= .5;
         controlTimer->Reset();
     }
 
     if (stick2->GetRawButton(5) && controlTimer->Get() >= .5)
     {
-        hellaDistance += 2;
+        finalAutoDistance += .5;
         controlTimer->Reset();
     }
     else if (stick2->GetRawButton(6) && controlTimer->Get() >= .5)
     {
-        hellaDistance -= 2;
+        finalAutoDistance -= .5;
         controlTimer->Reset();
     }
 
-    if (stick2->GetRawButton(7) && controlTimer->Get() >= .5)
+    if (initialAutoDistance >= 8)
     {
-        hellaDistance += 5;
-        controlTimer->Reset();
+        initialAutoDistance = 7.5;
+        autoSelectMode = BLOCK_LOW_GOAL;
     }
-    else if (stick2->GetRawButton(8) && controlTimer->Get() >= .5)
+    else if (initialAutoDistance <= -8)
     {
-        hellaDistance -= 5;
-        controlTimer->Reset();
+        initialAutoDistance = -7.5;
+        autoSelectMode = BLOCK_LOW_GOAL;
     }
-
-    if (hellaDistance > 27)
-        hellaDistance = 0;
-    else if (hellaDistance < 0)
-        hellaDistance = 27;
 
     switch(autoSelectMode)
     {
-    case TEST:
-        dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Auto Mode: %s", "test");
-        break;
-    case ONE_BALL_SIMPLE:
-        dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Auto Mode: %s", "1 ball");
-        break;
-    case DRIVE_ONLY:
-        dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Auto Mode: %s", "move only");
-        break;
-    case NO_AUTO:
-        dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Auto Mode: %s", "no auto");
-        break;
-    case HELLAVATOR_FOREWARD:
-        dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Auto Mode: %s", "h fore");
-        break;
-    case HELLAVATOR_BACKWARD:
-        dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Auto Mode: %s", "h back");
-        break;
-    case TWO_BALL:
-        dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Auto Mode: %s", "2 ball");
+        case TEST:
+            dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Mode: %s", "test");
+            break;
+        case ONE_BALL_SIMPLE:
+            dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Mode: %s", "1 ball");
+            break;
+        case DRIVE_ONLY:
+            dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Mode: %s", "move only");
+            break;
+        case NO_AUTO:
+            dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Mode: %s", "no auto");
+            break;
+        case BLOCK_SIMPLE:
+            dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Mode: %s", "b simple");
+            break;
+        case BLOCK_HOT:
+            dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Mode: %s", "b hot");
+            break;
+        case BLOCK_DOUBLE:
+            dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Mode: %s", "b double");
+            break;
+        case BLOCK_DOUBLE_HOT:
+            dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Mode: %s", "b hot double");
+            break;
+        case BLOCK_LOW_GOAL:
+            dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Mode: %s", "b low goal");
+            break;
+        case TWO_BALL:
+            dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Mode: %s", "2 ball");
     }
 
-    dsLCD->PrintfLine(DriverStationLCD::kUser_Line2,"Auto Dist: %f", hellaDistance);
+    dsLCD->PrintfLine(DriverStationLCD::kUser_Line2,"Initial Dist: %f", initialAutoDistance);
+    dsLCD->PrintfLine(DriverStationLCD::kUser_Line3,"Final Dist: %f", finalAutoDistance);
+    dsLCD->PrintfLine(DriverStationLCD::kUser_Line4,"Switch Time: %f", autoDriveTime);
 
     if (stick1->GetRawButton(9) && stick1->GetRawButton(10))
     {
@@ -403,7 +409,6 @@ void Robot::DisabledPeriodic()
 
     dashboardUpdate();
     dsLCD->UpdateLCD();
-    autoMode->setHellaDistance(hellaDistance);
 }
 
 void Robot::AutonomousInit()
@@ -422,6 +427,8 @@ void Robot::AutonomousInit()
 
     drive->resetDrive();
     autoMode->reset();
+    autoMode->setInitialDistance(initialAutoDistance);
+    autoMode->setFinalDistance(finalAutoDistance);
     autoMode->autoSelect(autoSelectMode);
     autoMode->Init();
 }

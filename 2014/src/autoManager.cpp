@@ -15,6 +15,7 @@
 #include "auto/corralCommand.hpp"
 #include "kinectHandler.hpp"
 #include "auto/kinectSense.hpp"
+#include "auto/kinectBlock.hpp"
 #include <vector>
 #include <math.h>
 
@@ -27,7 +28,9 @@ AutoManager::AutoManager(Drive *drive_, Shooter *shooter_, Intake* intake_, Arm*
     kinect = kinect_;
     blocker = blocker_;
 
-    driveDistance = 0;
+    initialDistance = 0;
+    finalDistance = 0;
+    driveTime = 0;
 
 }
 
@@ -36,9 +39,19 @@ void AutoManager::inject(Timer *timer)
     injectTimer(timer);
 }
 
-void AutoManager::setHellaDistance(float dist)
+void AutoManager::setInitialDistance(float dist)
 {
-    driveDistance = dist*12;
+    initialDistance = dist*12;
+}
+
+void AutoManager::setFinalDistance(float dist)
+{
+    finalDistance = dist*12;
+}
+
+void AutoManager::setDriveTime(float time)
+{
+    driveTime = time;
 }
 
 //XXX Always put a wait at the end of auto to make sure we don't double fire
@@ -78,16 +91,24 @@ void AutoManager::autoSelect(int autoMode)
             commandSequence.push_back(new LinearDriveCommand(drive, 48, 0, false, 4));
             commandSequence.push_back(new AutoWaitCommand(10));
             break;
-        case HELLAVATOR_FOREWARD:
-            commandSequence.push_back(new ArmPresetCommand(arm, HELLAVATOR, 0));
-            commandSequence.push_back(new LinearDriveCommand(drive, driveDistance, 0, false, 4));
-            commandSequence.push_back(new KinectSense(kinect, drive, BLOCKER, false, 10));
+        case BLOCK_SIMPLE:
+            commandSequence.push_back(new KinectBlock(kinect, drive, blocker, SIMPLE, initialDistance, finalDistance, driveTime));
             commandSequence.push_back(new AutoWaitCommand(10));
             break;
-        case HELLAVATOR_BACKWARD:
-            commandSequence.push_back(new ArmPresetCommand(arm, HELLAVATOR, 0));
-            commandSequence.push_back(new LinearDriveCommand(drive, -driveDistance, 0, true, 4));
-            commandSequence.push_back(new KinectSense(kinect, drive, BLOCKER, false, 10));
+        case BLOCK_HOT:
+            commandSequence.push_back(new KinectBlock(kinect, drive, blocker, HOT_SIMPLE, initialDistance, finalDistance, driveTime));
+            commandSequence.push_back(new AutoWaitCommand(10));
+            break;
+        case BLOCK_DOUBLE:
+            commandSequence.push_back(new KinectBlock(kinect, drive, blocker, DOUBLE_TROUBLE, initialDistance, finalDistance, driveTime));
+            commandSequence.push_back(new AutoWaitCommand(10));
+            break;
+        case BLOCK_DOUBLE_HOT:
+            commandSequence.push_back(new KinectBlock(kinect, drive, blocker, HOT_DOUBLE_TROUBLE, initialDistance, finalDistance, driveTime));
+            commandSequence.push_back(new AutoWaitCommand(10));
+            break;
+        case BLOCK_LOW_GOAL:
+            commandSequence.push_back(new KinectBlock(kinect, drive, blocker, LOW_GOAL, initialDistance, finalDistance, driveTime));
             commandSequence.push_back(new AutoWaitCommand(10));
             break;
         case TWO_BALL:

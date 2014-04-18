@@ -13,11 +13,14 @@
 #define TEST 1
 #define ONE_BALL_SIMPLE 2
 #define NO_AUTO 4
-#define HELLAVATOR_FOREWARD 5
-#define HELLAVATOR_BACKWARD 6
-#define TWO_BALL 7
-#define DRIVE_ONLY 8
-#define TEST_FUNCTIONAL 10
+#define BLOCK_SIMPLE 5
+#define BLOCK_HOT 6
+#define BLOCK_DOUBLE 7
+#define BLOCK_DOUBLE_HOT 8
+#define BLOCK_LOW_GOAL 9
+#define TWO_BALL 10
+#define DRIVE_ONLY 11
+#define TEST_FUNCTIONAL 42
 
 class KinectHandler;
 class HellaBlocker;
@@ -26,7 +29,9 @@ class AutoManager : public AutoCommand
 {
 public:
     AutoManager(Drive *drive_, Shooter* shooter_, Intake* intake_, Arm *arm_, KinectHandler *kinect_, HellaBlocker *blocker_);
-    void setHellaDistance(float dist);
+    void setInitialDistance(float dist);
+    void setFinalDistance(float dist);
+    void setDriveTime(float time);
     virtual void Init();
     virtual bool Run();
     void autoSelect(int autoMode);
@@ -42,7 +47,9 @@ private:
     std::vector<AutoCommand*> commandSequence;
     std::vector<AutoCommand*> consecutiveSequence;
     SequentialCommand *AUTO_SEQUENCE;
-    float driveDistance;
+    float initialDistance;
+    float finalDistance;
+    float driveTime;
 };
 
 #endif
