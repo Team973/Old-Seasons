@@ -93,7 +93,9 @@ private:
     bool kickUp;
     float prevCoDriverDPad;
     int autoSelectMode;
-    float hellaDistance;
+    float initialAutoDistance;
+    float finalAutoDistance;
+    float autoDriveTime;
 
     bool deBugMode;
 
