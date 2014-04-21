@@ -443,6 +443,7 @@ void Robot::AutonomousPeriodic()
     arm->update();
     shooter->update();
     intake->update();
+    kinect->update();
     dashboardUpdate();
 
 }
