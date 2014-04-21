@@ -32,6 +32,7 @@ public:
     void setInitialDistance(float dist);
     void setFinalDistance(float dist);
     void setDriveTime(float time);
+    void setAutoSide(std::string side_);
     virtual void Init();
     virtual bool Run();
     void autoSelect(int autoMode);
@@ -50,6 +51,7 @@ private:
     float initialDistance;
     float finalDistance;
     float driveTime;
+    std::string side;
 };
 
 #endif

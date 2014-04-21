@@ -32,6 +32,8 @@ AutoManager::AutoManager(Drive *drive_, Shooter *shooter_, Intake* intake_, Arm*
     finalDistance = 0;
     driveTime = 0;
 
+    side = "none";
+
 }
 
 void AutoManager::inject(Timer *timer)
@@ -52,6 +54,11 @@ void AutoManager::setFinalDistance(float dist)
 void AutoManager::setDriveTime(float time)
 {
     driveTime = time;
+}
+
+void AutoManager::setAutoSide(std::string side_)
+{
+    side = side_;
 }
 
 //XXX Always put a wait at the end of auto to make sure we don't double fire
