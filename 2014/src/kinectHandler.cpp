@@ -43,3 +43,14 @@ bool KinectHandler::getRightHand()
     lastHand = "right";
     return (kinectDeadband(right->GetY(), 0.5));
 }
+
+void KinectHandler::clearLastHand()
+{
+    lastHand = "none";
+}
+
+void KinectHandler::update()
+{
+    getLeftHand();
+    getRightHand();
+}
