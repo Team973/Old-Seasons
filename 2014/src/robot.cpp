@@ -80,6 +80,7 @@ Robot::Robot()
     initialAutoDistance = 4;
     finalAutoDistance = -4;
     autoDriveTime = 4.5;
+    autoSide = "left";
 
     autoComplete = false;
 
@@ -104,7 +105,7 @@ void Robot::dashboardUpdate()
     SmartDashboard::PutNumber("Gyro: ", drive->getGyroAngle());
     SmartDashboard::PutNumber(" Test Gyro: ", testGyro->GetAngle());
     SmartDashboard::PutNumber("Drive Distance: ", drive->getWheelDistance());
-    dsLCD->PrintfLine(DriverStationLCD::kUser_Line5,"Arm Angle: %f", arm->getRawAngle());
+    dsLCD->PrintfLine(DriverStationLCD::kUser_Line6,"Arm Angle: %f", arm->getRawAngle());
     dsLCD->UpdateLCD();
 
     SmartDashboard::PutBoolean("Left Hand: ", kinect->getLeftHand());
@@ -365,6 +366,17 @@ void Robot::DisabledPeriodic()
         autoSelectMode = BLOCK_LOW_GOAL;
     }
 
+    if (stick2->GetRawButton(9))
+    {
+        dsLCD->PrintfLine(DriverStationLCD::kUser_Line5,"Side: %s", "left");
+        autoSide = "left";
+    }
+    else if (stick2->GetRawButton(10))
+    {
+        dsLCD->PrintfLine(DriverStationLCD::kUser_Line5,"Side: %s", "right");
+        autoSide = "right";
+    }
+
     switch(autoSelectMode)
     {
         case TEST:
@@ -393,6 +405,15 @@ void Robot::DisabledPeriodic()
             break;
         case BLOCK_LOW_GOAL:
             dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Mode: %s", "b low goal");
+            break;
+        case HOT_CENTER_TWO_BALL:
+            dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Mode: %s", "h 2 ball c");
+            break;
+        case HOT_CENTER_ONE_BALL:
+            dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Mode: %s", "h 1 ball c");
+            break;
+        case HOT_SIDE_ONE_BALL:
+            dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Mode: %s", "h 1 ball s");
             break;
         case TWO_BALL:
             dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Mode: %s", "2 ball");
@@ -427,6 +448,8 @@ void Robot::AutonomousInit()
 
     drive->resetDrive();
     autoMode->reset();
+    autoMode->setDriveTime(autoDriveTime);
+    autoMode->setAutoSide(autoSide);
     autoMode->setInitialDistance(initialAutoDistance);
     autoMode->setFinalDistance(finalAutoDistance);
     autoMode->autoSelect(autoSelectMode);
