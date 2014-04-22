@@ -2,9 +2,6 @@
 #include "kinectSense.hpp"
 #include "../kinectHandler.hpp"
 #include "../drive.hpp"
-#include "../arm.hpp"
-#include "../shooter.hpp"
-#include "../intake.hpp"
 #include "waitCommand.hpp"
 #include "autoDriveCommand.hpp"
 #include "sequentialCommand.hpp"
@@ -16,13 +13,13 @@
 #include <math.h>
 #include <vector>
 
-KinectSense::KinectSense(KinectHandler *kinect_, Drive *drive_, Shooter *shooter_, Arm *arm_, Intake *intake_, int autoMode_, std::string side_)
+KinectSense::KinectSense(KinectHandler *kinect_, Drive *drive_, int autoMode_, float timeout_, std::string side_, bool doubleTime_)
 {
     drive = drive_;
     kinect = kinect_;
-    shooter = shooter_;
-    arm = arm_;
-    intake = intake_;
+    side = side_;
+
+    setTimeout(timeout_);
 
     autoMode = autoMode_;
     movement = 0;
@@ -31,10 +28,12 @@ KinectSense::KinectSense(KinectHandler *kinect_, Drive *drive_, Shooter *shooter
     init = false;
 
     movementSelected = false;
-    finalSequence = true;
+    finalSequence = false;
 
     left = false;
     right = false;
+
+    doubleTime = doubleTime_;
 
     // Turn Distances
     jukeTurn = 5;
@@ -61,43 +60,20 @@ bool KinectSense::Run()
 
             if (!movementSelected)
             {
-                clear();
-                sequence.push_back(new ArmPresetCommand(arm, SHOOTING, 0));
-                sequence.push_back(new LinearDriveCommand(drive, 108, 0, false, 2));
                 if (left)
                 {
-                    sequence.push_back(new TurnCommand(drive, centerTurn, 1, 2));
-                    kinect->clearLastHand();
+                    clear();
+                    sequence.push_back(new TurnCommand(drive, centerTurn, .9, 2));
+                    init = false;
+                    movementSelected = true;
                 }
                 else
                 {
-                    sequence.push_back(new TurnCommand(drive, -centerTurn, 1, 2));
-                    kinect->clearLastHand();
+                    clear();
+                    sequence.push_back(new TurnCommand(drive, -centerTurn, .9, 2));
+                    init = false;
+                    movementSelected = true;
                 }
-                init = false;
-                movementSelected = true;
-            }
-
-            if (left && !finalSequence)
-            {
-                clear();
-                sequence.push_back(new TurnCommand(drive, centerTurn+3, 1, 2));
-                sequence.push_back(new AutoWaitCommand(1));
-                sequence.push_back(new FireCommand(shooter, 1.5));
-                sequence.push_back(new AutoWaitCommand(10));
-                kinect->clearLastHand();
-                init = false;
-                finalSequence = true;
-            }
-            else if (right && !finalSequence)
-            {
-                sequence.push_back(new TurnCommand(drive, -(centerTurn+3), 1, 2));
-                sequence.push_back(new AutoWaitCommand(1));
-                sequence.push_back(new FireCommand(shooter, 1.5));
-                sequence.push_back(new AutoWaitCommand(10));
-                kinect->clearLastHand();
-                init = false;
-                finalSequence = true;
             }
 
             break;
@@ -106,82 +82,77 @@ bool KinectSense::Run()
 
             if (!movementSelected)
             {
-                clear();
-                sequence.push_back(new ArmPresetCommand(arm, SHOOTING, 0));
-                sequence.push_back(new LinearDriveCommand(drive, 108, 0, false, 2));
                 if (kinect->getScheduledHand() == side)
                 {
+                    clear();
                     sequence.push_back(new AutoWaitCommand(0));
-                    kinect->clearLastHand();
+                    init = false;
+                    movementSelected = true;
                 }
                 else
                 {
-                    sequence.push_back(new AutoWaitCommand(3));
-                    kinect->clearLastHand();
+                    clear();
+                    sequence.push_back(new AutoWaitCommand(3.5));
+                    init = false;
+                    movementSelected = true;
                 }
-                init = false;
-                movementSelected = true;
-            }
-
-            if (left && !finalSequence)
-            {
-                clear();
-                sequence.push_back(new TurnCommand(drive, jukeTurn, 1, 2));
-                sequence.push_back(new AutoWaitCommand(1));
-                sequence.push_back(new FireCommand(shooter, 1.5));
-                sequence.push_back(new AutoWaitCommand(10));
-                kinect->clearLastHand();
-                init = false;
-                finalSequence = true;
-            }
-            else if (right && !finalSequence)
-            {
-                sequence.push_back(new TurnCommand(drive, -jukeTurn, 1, 2));
-                sequence.push_back(new AutoWaitCommand(1));
-                sequence.push_back(new FireCommand(shooter, 1.5));
-                sequence.push_back(new AutoWaitCommand(10));
-                kinect->clearLastHand();
-                init = false;
-                finalSequence = true;
-            }
-            else if (!finalSequence)
-            {
-                sequence.push_back(new AutoWaitCommand(1));
-                sequence.push_back(new FireCommand(shooter, 1.5));
-                sequence.push_back(new AutoWaitCommand(10));
-                init = false;
-                finalSequence = true;
             }
 
             break;
 
         case HOT_TWO_BALL_CENTER:
 
-            if (!movementSelected)
+            if (!movementSelected && !doubleTime)
             {
-                sequence.push_back(new ArmPresetCommand(arm, SHOOTING, 0));
-                sequence.push_back(new CorralCommand(intake, true));
-                sequence.push_back(new LinearDriveCommand(drive, 120, 0, false, 6));
-                init = false;
-                movementSelected = true;
+                if (left)
+                {
+                    clear();
+                    sequence.push_back(new TurnCommand(drive, centerTurn, .9, 2));
+                    init = false;
+                    movementSelected = true;
+                }
+                else
+                {
+                    clear();
+                    sequence.push_back(new TurnCommand(drive, -centerTurn, .9, 2));
+                    init = false;
+                    movementSelected = true;
+                }
+            }
+            else if (!movementSelected)
+            {
+                if (drive->getGyroAngle() > 0)
+                {
+                    clear();
+                    sequence.push_back(new TurnCommand(drive, -centerTurn, .9, 2));
+                    init = false;
+                    movementSelected = true;
+                }
+                else
+                {
+                    clear();
+                    sequence.push_back(new TurnCommand(drive, centerTurn, .9, 2));
+                    init = false;
+                    movementSelected = true;
+                }
             }
 
             break;
     }
 
-    if (!init)
+    if (timer->Get() >= timeout)
     {
-        cmd = new SequentialCommand(sequence);
-        cmd->Init();
-        init = true;
-    }
-    else
-    {
-        if (cmd->Run())
+        if (!init)
         {
-            if (movementSelected)
+            cmd = new SequentialCommand(sequence);
+            cmd->Init();
+            init = true;
+        }
+        else
+        {
+            if (cmd->Run())
             {
-                finalSequence = false;
+                return true;
             }
         }
     }
