@@ -9,15 +9,12 @@
 
 class KinectHandler;
 class Drive;
-class Shooter;
-class Arm;
-class Intake;
 class SequentialCommand;
 
 class KinectSense : public AutoCommand
 {
 public:
-    KinectSense(KinectHandler *kinect_, Drive *drive_, Shooter *shooter_, Arm *arm_, Intake *intake_, int autoMode_, std::string side_="none");
+    KinectSense::KinectSense(KinectHandler *kinect_, Drive *drive_, int autoMode_, float timeout_, std::string side_, bool doubleTime_=false);
     virtual void Init();
     virtual bool Run();
 private:
@@ -26,9 +23,6 @@ private:
 
     KinectHandler *kinect;
     Drive *drive;
-    Shooter *shooter;
-    Arm *arm;
-    Intake *intake;
     std::vector<AutoCommand*> sequence;
     SequentialCommand *cmd;
 
@@ -45,6 +39,7 @@ private:
     float centerTurn;
 
     std::string side;
+    bool doubleTime;
 };
 
 #endif
