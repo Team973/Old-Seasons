@@ -12,17 +12,17 @@
 
 #define TEST 1
 #define ONE_BALL_SIMPLE 2
-#define NO_AUTO 4
-#define BLOCK_SIMPLE 5
-#define BLOCK_HOT 6
-#define BLOCK_DOUBLE 7
-#define BLOCK_DOUBLE_HOT 8
-#define BLOCK_LOW_GOAL 9
-#define TWO_BALL 10
-#define HOT_CENTER_TWO_BALL 11
-#define HOT_CENTER_ONE_BALL 12
-#define HOT_SIDE_ONE_BALL 13
-#define DRIVE_ONLY 14
+#define NO_AUTO 3
+#define BLOCK_SIMPLE 4
+#define BLOCK_HOT 5
+#define BLOCK_DOUBLE 6
+#define BLOCK_DOUBLE_HOT 7
+#define BLOCK_LOW_GOAL 8
+#define TWO_BALL 9
+#define HOT_CENTER_TWO_BALL 10
+#define HOT_CENTER_ONE_BALL 11
+#define HOT_SIDE_ONE_BALL 12
+#define DRIVE_ONLY 13
 #define TEST_FUNCTIONAL 42
 
 class KinectHandler;
