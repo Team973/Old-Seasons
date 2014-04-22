@@ -88,7 +88,7 @@ void AutoManager::autoSelect(int autoMode)
         case ONE_BALL_SIMPLE:
             commandSequence.push_back(new ArmPresetCommand(arm, SHOOTING, 0));
             commandSequence.push_back(new LinearDriveCommand(drive, 108, 0, false, 5));
-            commandSequence.push_back(new KinectJuke(kinect, drive, .5));
+            //commandSequence.push_back(new KinectJuke(kinect, drive, .5));
             commandSequence.push_back(new FireCommand(shooter, 1.5));
             commandSequence.push_back(new AutoWaitCommand(10));
             break;
@@ -123,13 +123,13 @@ void AutoManager::autoSelect(int autoMode)
             commandSequence.push_back(new ArmPresetCommand(arm, SHOOTING, 0));
             commandSequence.push_back(new CorralCommand(intake, true));
             commandSequence.push_back(new LinearDriveCommand(drive, 120, 0, false, 6));
-            commandSequence.push_back(new KinectJuke(kinect, drive, 1));
+            //commandSequence.push_back(new KinectJuke(kinect, drive, 1));
             commandSequence.push_back(new FireCommand(shooter, 1));
             commandSequence.push_back(new ArmPresetCommand(arm, INTAKE, 0.5));
             commandSequence.push_back(new CorralCommand(intake, false));
             commandSequence.push_back(new IntakeCommand(intake, arm, 2));
             commandSequence.push_back(new ArmPresetCommand(arm, SHOOTING, 1));
-            commandSequence.push_back(new KinectJuke(kinect, drive, .5));
+            //commandSequence.push_back(new KinectJuke(kinect, drive, .5));
             commandSequence.push_back(new FireCommand(shooter, 1));
             commandSequence.push_back(new AutoWaitCommand(10));
             break;
@@ -138,14 +138,14 @@ void AutoManager::autoSelect(int autoMode)
             commandSequence.push_back(new CorralCommand(intake, true));
             commandSequence.push_back(new LinearDriveCommand(drive, 120, 0, false, 6));
             commandSequence.push_back(new KinectSense(kinect, drive, HOT_TWO_BALL_CENTER, 1));
-            commandSequence.push_back(new KinectJuke(kinect, drive, 1));
+            //commandSequence.push_back(new KinectJuke(kinect, drive, 1));
             commandSequence.push_back(new FireCommand(shooter, 1));
             commandSequence.push_back(new ArmPresetCommand(arm, INTAKE, 0.5));
             commandSequence.push_back(new CorralCommand(intake, false));
             commandSequence.push_back(new IntakeCommand(intake, arm, 2));
             commandSequence.push_back(new ArmPresetCommand(arm, SHOOTING, 1));
             commandSequence.push_back(new KinectSense(kinect, drive, HOT_TWO_BALL_CENTER, 1, "none", true));
-            commandSequence.push_back(new KinectJuke(kinect, drive, .5));
+            //commandSequence.push_back(new KinectJuke(kinect, drive, .5));
             commandSequence.push_back(new FireCommand(shooter, 1));
             commandSequence.push_back(new AutoWaitCommand(10));
             break;
@@ -161,7 +161,7 @@ void AutoManager::autoSelect(int autoMode)
             commandSequence.push_back(new LinearDriveCommand(drive, 108, 0, false, 5));
             commandSequence.push_back(new KinectSense(kinect, drive, HOT_ONE_BALL_SIDE, 1, side));
             commandSequence.push_back(new AutoWaitCommand(.5));
-            commandSequence.push_back(new KinectJuke(kinect, drive, .5));
+            //commandSequence.push_back(new KinectJuke(kinect, drive, .5));
             commandSequence.push_back(new FireCommand(shooter, 1.5));
             commandSequence.push_back(new AutoWaitCommand(10));
             break;
