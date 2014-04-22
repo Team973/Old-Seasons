@@ -19,7 +19,10 @@
 #define BLOCK_DOUBLE_HOT 8
 #define BLOCK_LOW_GOAL 9
 #define TWO_BALL 10
-#define DRIVE_ONLY 11
+#define HOT_CENTER_TWO_BALL 11
+#define HOT_CENTER_ONE_BALL 12
+#define HOT_SIDE_ONE_BALL 13
+#define DRIVE_ONLY 14
 #define TEST_FUNCTIONAL 42
 
 class KinectHandler;
