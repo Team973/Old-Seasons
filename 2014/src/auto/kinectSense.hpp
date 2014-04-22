@@ -14,7 +14,7 @@ class SequentialCommand;
 class KinectSense : public AutoCommand
 {
 public:
-    KinectSense::KinectSense(KinectHandler *kinect_, Drive *drive_, int autoMode_, float timeout_, std::string side_, bool doubleTime_=false);
+    KinectSense::KinectSense(KinectHandler *kinect_, Drive *drive_, int autoMode_, float timeout_, std::string side_="none", bool doubleTime_=false);
     virtual void Init();
     virtual bool Run();
 private:

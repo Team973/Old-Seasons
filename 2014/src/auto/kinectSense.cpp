@@ -37,7 +37,7 @@ KinectSense::KinectSense(KinectHandler *kinect_, Drive *drive_, int autoMode_, f
 
     // Turn Distances
     jukeTurn = 5;
-    centerTurn = 10;
+    centerTurn = 7;
 }
 
 void KinectSense::clear()
@@ -64,6 +64,7 @@ bool KinectSense::Run()
                 {
                     clear();
                     sequence.push_back(new TurnCommand(drive, centerTurn, .9, 2));
+                    sequence.push_back(new AutoWaitCommand(.5));
                     init = false;
                     movementSelected = true;
                 }
@@ -71,6 +72,7 @@ bool KinectSense::Run()
                 {
                     clear();
                     sequence.push_back(new TurnCommand(drive, -centerTurn, .9, 2));
+                    sequence.push_back(new AutoWaitCommand(.5));
                     init = false;
                     movementSelected = true;
                 }
@@ -108,6 +110,7 @@ bool KinectSense::Run()
                 {
                     clear();
                     sequence.push_back(new TurnCommand(drive, centerTurn, .9, 2));
+                    sequence.push_back(new AutoWaitCommand(.5));
                     init = false;
                     movementSelected = true;
                 }
@@ -115,6 +118,7 @@ bool KinectSense::Run()
                 {
                     clear();
                     sequence.push_back(new TurnCommand(drive, -centerTurn, .9, 2));
+                    sequence.push_back(new AutoWaitCommand(.5));
                     init = false;
                     movementSelected = true;
                 }
@@ -125,6 +129,7 @@ bool KinectSense::Run()
                 {
                     clear();
                     sequence.push_back(new TurnCommand(drive, -centerTurn, .9, 2));
+                    sequence.push_back(new AutoWaitCommand(.5));
                     init = false;
                     movementSelected = true;
                 }
@@ -132,6 +137,7 @@ bool KinectSense::Run()
                 {
                     clear();
                     sequence.push_back(new TurnCommand(drive, centerTurn, .9, 2));
+                    sequence.push_back(new AutoWaitCommand(.5));
                     init = false;
                     movementSelected = true;
                 }
