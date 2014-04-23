@@ -6,18 +6,29 @@
 #include "autoDriveCommand.hpp"
 #include "sequentialCommand.hpp"
 #include "turnCommand.hpp"
-#include "armPresetCommand.hpp"
 #include "linearDriveCommand.hpp"
-#include "fireCommand.hpp"
-#include "corralCommand.hpp"
 #include <math.h>
 #include <vector>
 
-KinectSense::KinectSense(KinectHandler *kinect_, Drive *drive_, int autoMode_, float timeout_, std::string side_, bool doubleTime_)
+KinectSense::KinectSense(KinectHandler *kinect_, Drive *drive_, int autoMode_, float timeout_, std::string side_, std::string lane_, bool doubleTime_)
 {
     drive = drive_;
     kinect = kinect_;
     side = side_;
+    lane = lane_;
+
+    if (lane == "far")
+    {
+        movement = 6*12;
+    }
+    else if (lane == "mid")
+    {
+        movement = 4*12;
+    }
+    else if (lane == "close")
+    {
+        movement = 2*12;
+    }
 
     setTimeout(timeout_);
 
@@ -54,6 +65,7 @@ void KinectSense::Init()
 
 bool KinectSense::Run()
 {
+
     switch (autoMode)
     {
         case HOT_ONE_BALL_CENTER:
@@ -141,6 +153,50 @@ bool KinectSense::Run()
                     init = false;
                     movementSelected = true;
                 }
+            }
+
+            break;
+
+        case HOT_ONE_BALL_LANES:
+
+            if (left)
+            {
+                movement = movement;
+            }
+            else
+            {
+                movement = -movement;
+            }
+
+            if (!movementSelected)
+            {
+                sequence.push_back(new AutoDriveCommand(drive, movement, 108, false, 5, 2, 5));
+                sequence.push_back(new TurnCommand(drive, 0, 1.5));
+                sequence.push_back(new AutoWaitCommand(.5));
+                init = false;
+                movementSelected = true;
+            }
+
+            break;
+
+        case HOT_TWO_BALL_LANES:
+
+            if (left)
+            {
+                movement = movement;
+            }
+            else
+            {
+                movement = -movement;
+            }
+
+            if (!movementSelected)
+            {
+                sequence.push_back(new AutoDriveCommand(drive, movement, 120, false, 5, 2, 5));
+                sequence.push_back(new TurnCommand(drive, 0, 1.5));
+                sequence.push_back(new AutoWaitCommand(.5));
+                init = false;
+                movementSelected = true;
             }
 
             break;
