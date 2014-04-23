@@ -167,7 +167,7 @@ float Drive::normalizeAngle(float theta)
 float Drive::getGyroAngle()
 {
     float ticks = 1024;
-    return normalizeAngle(-gyro->Get() * (360 / ticks));
+    return normalizeAngle(gyro->Get() * (360 / ticks));
 }
 
 void Drive::resetGyro()
