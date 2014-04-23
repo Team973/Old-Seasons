@@ -62,6 +62,11 @@ void AutoManager::setAutoSide(std::string side_)
     side = side_;
 }
 
+void AutoManager::setAutoLane(std::string lane_)
+{
+    lane = lane_;
+}
+
 //XXX Always put a wait at the end of auto to make sure we don't double fire
 //XXX On a DriveToPoint command make the angular percision at least 5
 void AutoManager::autoSelect(int autoMode)
@@ -144,7 +149,7 @@ void AutoManager::autoSelect(int autoMode)
             commandSequence.push_back(new CorralCommand(intake, false));
             commandSequence.push_back(new IntakeCommand(intake, arm, 2));
             commandSequence.push_back(new ArmPresetCommand(arm, SHOOTING, 1));
-            commandSequence.push_back(new KinectSense(kinect, drive, HOT_TWO_BALL_CENTER, 1, "none", true));
+            commandSequence.push_back(new KinectSense(kinect, drive, HOT_TWO_BALL_CENTER, 1, "none", "none", true));
             //commandSequence.push_back(new KinectJuke(kinect, drive, .5));
             commandSequence.push_back(new FireCommand(shooter, 1));
             commandSequence.push_back(new AutoWaitCommand(10));

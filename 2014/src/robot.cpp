@@ -81,6 +81,7 @@ Robot::Robot()
     finalAutoDistance = -4;
     autoDriveTime = 4.5;
     autoSide = "left";
+    autoLane = "mid";
 
     autoComplete = false;
 
@@ -105,8 +106,6 @@ void Robot::dashboardUpdate()
     SmartDashboard::PutNumber("Gyro: ", drive->getGyroAngle());
     SmartDashboard::PutNumber(" Test Gyro: ", testGyro->GetAngle());
     SmartDashboard::PutNumber("Drive Distance: ", drive->getWheelDistance());
-    dsLCD->PrintfLine(DriverStationLCD::kUser_Line6,"Arm Angle: %f", arm->getRawAngle());
-    dsLCD->UpdateLCD();
 
     SmartDashboard::PutBoolean("Left Hand: ", kinect->getLeftHand());
     SmartDashboard::PutBoolean("Right Hand: ", kinect->getRightHand());
@@ -377,6 +376,22 @@ void Robot::DisabledPeriodic()
         autoSide = "right";
     }
 
+    if (stick1->GetRawButton(1))
+    {
+        dsLCD->PrintfLine(DriverStationLCD::kUser_Line6,"Lane: %f", "close");
+        autoLane = "close";
+    }
+    else if (stick1->GetRawButton(2))
+    {
+        dsLCD->PrintfLine(DriverStationLCD::kUser_Line6,"Lane: %f", "mid");
+        autoLane = "mid";
+    }
+    else if (stick1->GetRawButton(3))
+    {
+        dsLCD->PrintfLine(DriverStationLCD::kUser_Line6,"Lane: %f", "far");
+        autoLane = "far";
+    }
+
     switch(autoSelectMode)
     {
         case TEST:
@@ -450,6 +465,7 @@ void Robot::AutonomousInit()
     autoMode->reset();
     autoMode->setDriveTime(autoDriveTime);
     autoMode->setAutoSide(autoSide);
+    autoMode->setAutoLane(autoLane);
     autoMode->setInitialDistance(initialAutoDistance);
     autoMode->setFinalDistance(finalAutoDistance);
     autoMode->autoSelect(autoSelectMode);
@@ -491,6 +507,8 @@ void Robot::TeleopPeriodic()
     intake->update();
 
     dashboardUpdate();
+    dsLCD->PrintfLine(DriverStationLCD::kUser_Line6,"Arm Angle: %f", arm->getRawAngle());
+    dsLCD->UpdateLCD();
 
 }
 

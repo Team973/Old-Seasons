@@ -97,6 +97,7 @@ private:
     float finalAutoDistance;
     float autoDriveTime;
     std::string autoSide;
+    std::string autoLane;
 
     bool deBugMode;
 
