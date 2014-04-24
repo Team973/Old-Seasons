@@ -4,12 +4,11 @@
 #include <math.h>
 #include "../drive.hpp"
 
-LinearDriveCommand::LinearDriveCommand(Drive *drive_, float targetDrive_, float targetAngle_, bool backwards_, float timeout_, float drivePrecision_)
+LinearDriveCommand::LinearDriveCommand(Drive *drive_, float targetDrive_, float targetAngle_, bool backwards_, float timeout_)
 {
     drive = drive_;
     targetDrive = targetDrive_;
     backwards = backwards_;
-    drivePrecision = drivePrecision_;
     if (targetAngle_ == 0)
         targetAngle = drive->getGyroAngle();
     else
@@ -39,40 +38,25 @@ bool LinearDriveCommand::Run()
     float driveError = targetDrive - drive->getWheelDistance();
     float angleError = targetAngle - currGyro;
 
-    if ((timer->Get() >= timeout) || (fabs(driveError) < drivePrecision))
+    if ((timer->Get() >= timeout) || (fabs(driveError) <= 0.1))
     {
         drive->update(0, 0, false, false, false, true);
         return true;
     }
 
     drivePID->setBounds(-.9, .9);
-
     anglePID->setBounds(-.7, .7);
 
     float driveInput;
     float turnInput;
 
-    if (fabs(driveError) < drivePrecision)
-    {
-        driveInput = 0;
-        turnInput = 0;
-    }
-    else
-    {
-        driveInput = -drivePID->update(driveError);
-        turnInput = anglePID->update(angleError);
-    }
+    driveInput = driveError;
+    turnInput = angleError;
+
     SmartDashboard::PutNumber("Drive Error: ", driveError);
     SmartDashboard::PutNumber("Angle Error: ", angleError);
 
-    if (fabs(driveError) <= drivePrecision)
-    {
-        drive->update(0, -driveInput, false, false, false, true);
-    }
-    else
-    {
-        drive->update(-turnInput, -driveInput, false, false, false, true);
-    }
+    drive->update(turnInput, driveInput, false, false, false, true);
 
     return false;
 }

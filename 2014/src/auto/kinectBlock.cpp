@@ -58,7 +58,7 @@ bool KinectBlock::Run()
             if (!goalSelected)
             {
                 clear();
-                sequence.push_back( new LinearDriveCommand(drive, initialDistance, autoAngle, false, drive->generateDistanceTime(initialDistance), 1));
+                sequence.push_back( new LinearDriveCommand(drive, initialDistance, autoAngle, false, drive->generateDistanceTime(initialDistance)));
                 init = false;
                 goalSelected = true;
             }
@@ -72,14 +72,14 @@ bool KinectBlock::Run()
                 if (kinect->getScheduledHand() == "left" || kinect->getLeftHand())
                 {
                     clear();
-                    sequence.push_back( new LinearDriveCommand(drive, initialDistance, 5, false, drive->generateDistanceTime(initialDistance), 1));
+                    sequence.push_back( new LinearDriveCommand(drive, initialDistance, 5, false, drive->generateDistanceTime(initialDistance)));
                     init = false;
                     goalSelected = true;
                 }
                 else if (kinect->getScheduledHand() == "right" || kinect->getRightHand())
                 {
                     clear();
-                    sequence.push_back( new LinearDriveCommand(drive, -initialDistance, -5, false, drive->generateDistanceTime(initialDistance), 1));
+                    sequence.push_back( new LinearDriveCommand(drive, -initialDistance, -5, false, drive->generateDistanceTime(initialDistance)));
                     init = false;
                     goalSelected = true;
                 }
@@ -97,14 +97,14 @@ bool KinectBlock::Run()
             if (!goalSelected && autoTimer->Get() >= driveTime)
             {
                 clear();
-                sequence.push_back( new LinearDriveCommand(drive, finalDistance, autoAngle, false, drive->generateDistanceTime(finalDistance), 1));
+                sequence.push_back( new LinearDriveCommand(drive, finalDistance, autoAngle, false, drive->generateDistanceTime(finalDistance)));
                 init = false;
                 goalSelected = true;
             }
             else if (!goalSelected)
             {
                 clear();
-                sequence.push_back( new LinearDriveCommand(drive, initialDistance, autoAngle, false, drive->generateDistanceTime(initialDistance), 1));
+                sequence.push_back( new LinearDriveCommand(drive, initialDistance, autoAngle, false, drive->generateDistanceTime(initialDistance)));
                 init = false;
                 goalSelected = true;
             }
@@ -116,7 +116,7 @@ bool KinectBlock::Run()
             if (!goalSelected && autoTimer->Get() >= driveTime)
             {
                 clear();
-                sequence.push_back( new LinearDriveCommand(drive, finalDistance, autoAngle, false, drive->generateDistanceTime(finalDistance), 1));
+                sequence.push_back( new LinearDriveCommand(drive, finalDistance, autoAngle, false, drive->generateDistanceTime(finalDistance)));
                 init = false;
                 goalSelected = true;
             }
@@ -125,14 +125,14 @@ bool KinectBlock::Run()
                 if (kinect->getScheduledHand() == "left" || kinect->getLeftHand())
                 {
                     clear();
-                    sequence.push_back( new LinearDriveCommand(drive, initialDistance, 5, false, drive->generateDistanceTime(initialDistance), 1));
+                    sequence.push_back( new LinearDriveCommand(drive, initialDistance, 5, false, drive->generateDistanceTime(initialDistance)));
                     init = false;
                     goalSelected = true;
                 }
                 else if (kinect->getScheduledHand() == "right" || kinect->getRightHand())
                 {
                     clear();
-                    sequence.push_back( new LinearDriveCommand(drive, -initialDistance, -5, false, drive->generateDistanceTime(initialDistance), 1));
+                    sequence.push_back( new LinearDriveCommand(drive, -initialDistance, -5, false, drive->generateDistanceTime(initialDistance)));
                     init = false;
                     goalSelected = true;
                 }
@@ -156,7 +156,7 @@ bool KinectBlock::Run()
             if (!goalSelected)
             {
                 clear();
-                sequence.push_back( new LinearDriveCommand(drive, initialDistance, autoAngle, false, drive->generateDistanceTime(initialDistance), 1));
+                sequence.push_back( new LinearDriveCommand(drive, initialDistance, autoAngle, false, drive->generateDistanceTime(initialDistance)));
                 init = false;
                 goalSelected = true;
             }

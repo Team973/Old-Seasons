@@ -30,6 +30,14 @@ Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoi
     brakeTimer = new Timer();
     isBraking = false;
 
+    drivePID = new PID(.02, 0, 0.08);
+    drivePID->start();
+    anglePID = new PID(.05, 0, 0.05);
+    anglePID->start();
+
+    drivePID->setBounds(-.9, .9);
+    anglePID->setBounds(-.7, .7);
+
     point = 0;
     endPoint = 0;
 }
@@ -402,7 +410,8 @@ void Drive::update(double DriveX, double DriveY, bool gear, bool kick, bool quic
 
     if (isAuto)
     {
-        arcade(DriveY, DriveX);
+        driveInput = drivePID->update(DriveY);
+        turnInput = -anglePID->update(DriveX);
     }
     else
     {
@@ -413,6 +422,11 @@ void Drive::update(double DriveX, double DriveY, bool gear, bool kick, bool quic
     setKickUp(kick);
 
     storeDriveCalculations();
+}
+
+void Drive::PIDupdate()
+{
+    arcade(driveInput, turnInput);
 }
 
 void Drive::brakeUpdate()
