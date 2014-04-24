@@ -30,7 +30,7 @@ Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoi
     brakeTimer = new Timer();
     isBraking = false;
 
-    drivePID = new PID(.02, 0, 0.08);
+    drivePID = new PID(.015, 0, 0.08);
     drivePID->start();
     anglePID = new PID(.05, 0, 0.05);
     anglePID->start();
