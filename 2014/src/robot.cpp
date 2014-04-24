@@ -478,6 +478,7 @@ void Robot::AutonomousPeriodic()
    if (autoMode->Run())
        autoComplete = true;
 
+    GetWatchdog().Feed();
 
     arm->update();
     shooter->update();
@@ -485,7 +486,7 @@ void Robot::AutonomousPeriodic()
     kinect->update();
     drive->PIDupdate();
     dashboardUpdate();
-
+    GetWatchdog().Feed();
 }
 
 void Robot::TeleopInit()

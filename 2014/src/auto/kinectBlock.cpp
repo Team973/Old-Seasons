@@ -38,11 +38,13 @@ void KinectBlock::clear()
 
 void KinectBlock::Init()
 {
+    clear();
     kinect->clearLastHand();
 }
 
 bool KinectBlock::Run()
 {
+    /*
     if (autoTimer->Get() >= driveTime)
     {
         if (finalDistance > 0)
@@ -50,7 +52,17 @@ bool KinectBlock::Run()
         else
             autoAngle = -5;
     }
+    */
 
+    if (!goalSelected)
+    {
+        clear();
+        sequence.push_back( new LinearDriveCommand(drive, initialDistance, 0, false, drive->generateDistanceTime(initialDistance)));
+        init = false;
+        goalSelected = true;
+    }
+
+    /*
     switch (autoMode)
     {
         case SIMPLE:
@@ -58,7 +70,7 @@ bool KinectBlock::Run()
             if (!goalSelected)
             {
                 clear();
-                sequence.push_back( new LinearDriveCommand(drive, initialDistance, autoAngle, false, drive->generateDistanceTime(initialDistance)));
+                sequence.push_back( new LinearDriveCommand(drive, initialDistance, 0, false, drive->generateDistanceTime(initialDistance)));
                 init = false;
                 goalSelected = true;
             }
@@ -163,6 +175,7 @@ bool KinectBlock::Run()
 
             break;
     }
+*/
 
     if (!init)
     {
@@ -174,12 +187,11 @@ bool KinectBlock::Run()
     {
         if (cmd->Run())
         {
+            drive->killPID(true);
+
             if ((!kinect->getRightHand() && !kinect->getLeftHand()) || (kinect->getRightHand() && kinect->getLeftHand()))
             {
-                if (drive->getWheelDistance() > 0)
-                    movement = -.2;
-                else if (drive->getWheelDistance() < 0)
-                    movement = .2;
+                movement = 0;
             }
             else if (kinect->getLeftHand())
             {
