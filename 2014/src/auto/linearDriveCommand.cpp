@@ -29,6 +29,7 @@ LinearDriveCommand::LinearDriveCommand(Drive *drive_, float targetDrive_, float 
 
 void LinearDriveCommand::Init()
 {
+    drive->killPID(false);
     timer->Start();
     timer->Reset();
 
