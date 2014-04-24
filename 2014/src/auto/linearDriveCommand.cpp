@@ -4,7 +4,7 @@
 #include <math.h>
 #include "../drive.hpp"
 
-LinearDriveCommand::LinearDriveCommand(Drive *drive_, float targetDrive_, float targetAngle_, bool backwards_, float timeout_)
+LinearDriveCommand::LinearDriveCommand(Drive *drive_, float targetDrive_, float targetAngle_, bool backwards_, float timeout_, int driveMode_)
 {
     drive = drive_;
     targetDrive = targetDrive_;
@@ -14,7 +14,16 @@ LinearDriveCommand::LinearDriveCommand(Drive *drive_, float targetDrive_, float 
     else
         targetAngle = targetAngle_;
 
-    setTimeout(timeout_);
+    setTimeout(timeout_); 
+
+    if (driveMode_ == BLOCK)
+    {
+        drive->setPIDupdate(BLOCK, targetAngle, targetDrive);
+    }
+    else
+    {
+        drive->setPIDupdate(LINEAR, targetAngle, targetDrive);
+    }
 
 }
 
@@ -23,7 +32,6 @@ void LinearDriveCommand::Init()
     timer->Start();
     timer->Reset();
 
-    drive->setPIDupdate(LINEAR, targetAngle, targetDrive);
 }
 
 bool LinearDriveCommand::Run()

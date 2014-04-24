@@ -12,6 +12,7 @@
 #define LINEAR 21
 #define POINT 22
 #define TURN 23
+#define BLOCK 24
 
 class PID;
 class Drive

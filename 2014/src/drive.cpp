@@ -446,7 +446,11 @@ void Drive::PIDupdate()
             turnInput = -rotatePID->update(angleError);
             break;
         case BLOCK:
-            drivePID = PID()
+            drivePID = new PID(0.05, 0.001);
+            drivePID->setICap(.3);
+            driveError = driveTargetY - getWheelDistance();
+            angleError = driveTargetX - currGyro;
+            turnInput = -anglePID->update(angleError);
             break;
     }
 
@@ -483,13 +487,6 @@ void Drive::update(double DriveX, double DriveY, bool gear, bool kick, bool quic
     setLowGear(gear);
     setKickUp(kick);
 
-}
-
-void Drive::setPIDupdate(int driveType_, float driveTargetX_, float driveTargetY_)
-{
-    driveType = driveType_;
-    driveTargetX = driveTargetX_;
-    driveTargetY = driveTargetY_;
 }
 
 void Drive::brakeUpdate()
