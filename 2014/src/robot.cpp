@@ -491,7 +491,7 @@ void Robot::AutonomousPeriodic()
 void Robot::TeleopInit()
 {
     shooter->cock(NO_COCK);
-    drive->update(0, 0, false, false, false, false);
+    drive->update(0, 0, true, false, false, false);
     intake->stop();
     blockerSolenoid->Set(false);
 }
