@@ -130,6 +130,7 @@ void AutoManager::autoSelect(int autoMode)
             commandSequence.push_back(new CorralCommand(intake, true));
             commandSequence.push_back(new LinearDriveCommand(drive, 120, 0, false, 6));
             //commandSequence.push_back(new KinectJuke(kinect, drive, 1));
+            commandSequence.push_back(new AutoWaitCommand(1));
             commandSequence.push_back(new FireCommand(shooter, 1));
             commandSequence.push_back(new ArmPresetCommand(arm, INTAKE, 0.5));
             commandSequence.push_back(new CorralCommand(intake, false));
