@@ -96,7 +96,7 @@ bool KinectSense::Run()
 
             if (!movementSelected)
             {
-                if (kinect->getLeftHand() || kinect->getRightHand())
+                if ((left || right) || (left && right))
                 {
                     clear();
                     sequence.push_back(new AutoWaitCommand(0));
@@ -106,7 +106,7 @@ bool KinectSense::Run()
                 else
                 {
                     clear();
-                    sequence.push_back(new AutoWaitCommand(3.5));
+                    sequence.push_back(new AutoWaitCommand(4));
                     init = false;
                     movementSelected = true;
                 }
