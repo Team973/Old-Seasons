@@ -65,7 +65,7 @@ bool LinearDriveCommand::Run()
     SmartDashboard::PutNumber("Drive Error: ", driveError);
     SmartDashboard::PutNumber("Angle Error: ", angleError);
 
-    if (fabs(driveError) < drivePrecision)
+    if (fabs(driveError) <= drivePrecision)
     {
         drive->update(0, -driveInput, false, false, false, true);
     }
