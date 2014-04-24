@@ -96,7 +96,7 @@ bool KinectSense::Run()
 
             if (!movementSelected)
             {
-                if (kinect->getScheduledHand() == side)
+                if (kinect->getLeftHand() || kinect->getRightHand())
                 {
                     clear();
                     sequence.push_back(new AutoWaitCommand(0));
