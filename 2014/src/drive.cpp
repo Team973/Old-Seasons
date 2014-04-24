@@ -419,6 +419,12 @@ void Drive::setPIDupdate(int driveType_, float driveTargetX_, float driveTargetY
     driveType = driveType_;
     driveTargetX = driveTargetX_;
     driveTargetY = driveTargetY_;
+    if (driveType == BLOCK)
+    {
+        drivePID = new PID(0.05, 0.001);
+        drivePID->setICap(.3);
+        drivePID->start();
+    }
 }
 
 void Drive::PIDupdate()
@@ -446,8 +452,6 @@ void Drive::PIDupdate()
             turnInput = -rotatePID->update(angleError);
             break;
         case BLOCK:
-            drivePID = new PID(0.05, 0.001);
-            drivePID->setICap(.3);
             driveError = driveTargetY - getWheelDistance();
             angleError = driveTargetX - currGyro;
             turnInput = -anglePID->update(angleError);
