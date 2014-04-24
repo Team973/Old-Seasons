@@ -9,7 +9,7 @@ class Drive;
 class LinearDriveCommand : public AutoCommand
 {
 public:
-    LinearDriveCommand(Drive *drive_, float targetDrive_, float targetAngle_=0, bool backwards_=false, float timeout_=0);
+    LinearDriveCommand(Drive *drive_, float targetDrive_, float targetAngle_=0, bool backwards_=false, float timeout_=0, int driveMode_=24);
     virtual void Init();
     virtual bool Run();
 private:
