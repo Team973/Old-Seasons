@@ -22,6 +22,8 @@ void LinearDriveCommand::Init()
 {
     timer->Start();
     timer->Reset();
+
+    drive->setPIDupdate(LINEAR, targetAngle, targetDrive);
 }
 
 bool LinearDriveCommand::Run()
@@ -30,9 +32,8 @@ bool LinearDriveCommand::Run()
     float driveError = targetDrive - drive->getWheelDistance();
     float angleError = targetAngle - currGyro;
 
-    if ((timer->Get() >= timeout) || (fabs(driveError) <= 0.1))
+    if ((timer->Get() >= timeout) || (fabs(driveError) <= 1))
     {
-        drive->update(0, 0, false, false, false, true);
         return true;
     }
 

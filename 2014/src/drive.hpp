@@ -9,6 +9,10 @@
 #define MID 2
 #define CLOSE 3
 
+#define LINEAR 21
+#define POINT 22
+#define TURN 23
+
 class PID;
 class Drive
 {
@@ -44,6 +48,7 @@ private:
 
     PID *drivePID;
     PID *anglePID;
+    PID *rotatePID;
 
     Timer *brakeTimer;
     bool isBraking;
@@ -76,12 +81,16 @@ private:
 
     float driveInput;
     float turnInput;
+    int driveType;
+    float driveTargetX;
+    float driveTargetY;
 
 public:
     Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoid *kickUp_, Encoder *leftEncoder_, Encoder *rightEncoder_, Encoder *gyro_, Gyro *testGyro_);
     void update(double DriveX, double DriveY, bool gear, bool kick, bool quickTurn, bool isAuto=false);
     void dashboardUpdate();
     void PIDupdate();
+    void setPIDupdate(int driveType_, float driveTargetX_, float driveTargetY_);
 
     float getLeftDrive();
     float getRightDrive();

@@ -34,9 +34,12 @@ Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoi
     drivePID->start();
     anglePID = new PID(.05, 0, 0.05);
     anglePID->start();
+    rotatePID = new PID(.005, 0, 0.01);
+    rotatePID->start();
 
     drivePID->setBounds(-.9, .9);
     anglePID->setBounds(-.7, .7);
+    rotatePID->setBounds(-.9, .9);
 
     point = 0;
     endPoint = 0;
@@ -406,7 +409,6 @@ void Drive::CheesyDrive(double throttle, double wheel, bool highGear, bool quick
 
 void Drive::update(double DriveX, double DriveY, bool gear, bool kick, bool quickTurn, bool isAuto)
 {
-    calculateDrive();
 
     if (isAuto)
     {
@@ -421,12 +423,46 @@ void Drive::update(double DriveX, double DriveY, bool gear, bool kick, bool quic
     setLowGear(gear);
     setKickUp(kick);
 
-    storeDriveCalculations();
+}
+
+void Drive::setPIDupdate(int driveType_, float driveTargetX_, float driveTargetY_)
+{
+    driveType = driveType_;
+    driveTargetX = driveTargetX_;
+    driveTargetY = driveTargetY_;
 }
 
 void Drive::PIDupdate()
 {
+    calculateDrive();
+    float currGyro = getGyroAngle();
+    float driveError = 0;
+    float angleError = 0;
+
+    switch (driveType)
+    {
+        case LINEAR:
+            driveError = driveTargetY - getWheelDistance();
+            angleError = driveTargetX - currGyro;
+            turnInput = -anglePID->update(angleError);
+            break;
+        case POINT:
+            float targetAngle = atan2(currX - driveTargetX, driveTargetY - currY) / M_PI * 180;
+            driveError = sqrt(pow((driveTargetX - currX), 2) + pow((driveTargetY - currY), 2));
+            angleError = targetAngle - currGyro;
+            turnInput = -anglePID->update(angleError);
+            break;
+        case TURN:
+            angleError = targetAngle - currGyro;
+            turnInput = -rotatePID->update(angleError);
+            break;
+    }
+
+    driveInput = drivePID->update(driveError);
+
     arcade(driveInput, turnInput);
+
+    storeDriveCalculations();
 }
 
 void Drive::brakeUpdate()
