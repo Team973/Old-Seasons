@@ -49,6 +49,7 @@ private:
     PID *drivePID;
     PID *anglePID;
     PID *rotatePID;
+    bool deadPID;
 
     Timer *brakeTimer;
     bool isBraking;
@@ -91,6 +92,7 @@ public:
     void dashboardUpdate();
     void PIDupdate();
     void setPIDupdate(int driveType_, float driveTargetX_, float driveTargetY_);
+    void killPID(bool death);
 
     float getLeftDrive();
     float getRightDrive();

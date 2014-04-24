@@ -37,6 +37,8 @@ Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoi
     rotatePID = new PID(.005, 0, 0.01);
     rotatePID->start();
 
+    deadPID = false;
+
     drivePID->setBounds(-.9, .9);
     anglePID->setBounds(-.7, .7);
     rotatePID->setBounds(-.9, .9);
@@ -407,22 +409,9 @@ void Drive::CheesyDrive(double throttle, double wheel, bool highGear, bool quick
   setDriveMotors(leftPwm, rightPwm);
 }
 
-void Drive::update(double DriveX, double DriveY, bool gear, bool kick, bool quickTurn, bool isAuto)
+void Drive::killPID(bool death)
 {
-
-    if (isAuto)
-    {
-        driveInput = drivePID->update(DriveY);
-        turnInput = -anglePID->update(DriveX);
-    }
-    else
-    {
-        CheesyDrive(DriveY, DriveX, gear, quickTurn);
-        //arcade(-DriveY, -DriveX);
-    }
-    setLowGear(gear);
-    setKickUp(kick);
-
+    deadPID = death;
 }
 
 void Drive::setPIDupdate(int driveType_, float driveTargetX_, float driveTargetY_)
@@ -456,13 +445,51 @@ void Drive::PIDupdate()
             angleError = targetAngle - currGyro;
             turnInput = -rotatePID->update(angleError);
             break;
+        case BLOCK:
+            drivePID = PID()
+            break;
     }
 
     driveInput = drivePID->update(driveError);
 
-    arcade(driveInput, turnInput);
+    if (!deadPID)
+    {
+        arcade(driveInput, turnInput);
+    }
 
     storeDriveCalculations();
+}
+
+void Drive::update(double DriveX, double DriveY, bool gear, bool kick, bool quickTurn, bool isAuto)
+{
+
+    if (isAuto)
+    {
+        if (!deadPID)
+        {
+            driveInput = drivePID->update(DriveY);
+            turnInput = -anglePID->update(DriveX);
+        }
+        else
+        {
+            arcade(DriveY, DriveX);
+        }
+    }
+    else
+    {
+        CheesyDrive(DriveY, DriveX, gear, quickTurn);
+        //arcade(-DriveY, -DriveX);
+    }
+    setLowGear(gear);
+    setKickUp(kick);
+
+}
+
+void Drive::setPIDupdate(int driveType_, float driveTargetX_, float driveTargetY_)
+{
+    driveType = driveType_;
+    driveTargetX = driveTargetX_;
+    driveTargetY = driveTargetY_;
 }
 
 void Drive::brakeUpdate()
