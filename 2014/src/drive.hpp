@@ -42,6 +42,9 @@ private:
     Solenoid *shifters;
     Solenoid *kickUp;
 
+    PID *drivePID;
+    PID *anglePID;
+
     Timer *brakeTimer;
     bool isBraking;
 
@@ -71,10 +74,14 @@ private:
     float AUTO_END_Y;
     float destination;
 
+    float driveInput;
+    float turnInput;
+
 public:
     Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoid *kickUp_, Encoder *leftEncoder_, Encoder *rightEncoder_, Encoder *gyro_, Gyro *testGyro_);
     void update(double DriveX, double DriveY, bool gear, bool kick, bool quickTurn, bool isAuto=false);
     void dashboardUpdate();
+    void PIDupdate();
 
     float getLeftDrive();
     float getRightDrive();

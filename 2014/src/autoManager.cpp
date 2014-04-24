@@ -87,12 +87,12 @@ void AutoManager::autoSelect(int autoMode)
             //commandSequence.push_back(new AutoDriveCommand(drive, -48, 48, false, 10, 5, 8));
             //commandSequence.push_back(new AutoDriveCommand(drive, 0, 48, false, 10, 5, 8));
             //commandSequence.push_back(new TurnCommand(drive, 90, 10));
-            commandSequence.push_back(new LinearDriveCommand(drive, 24, 0, false, 10, 0));
+            commandSequence.push_back(new LinearDriveCommand(drive, 24, 0, false, 10));
             commandSequence.push_back(new AutoWaitCommand(10));
             break;
         case ONE_BALL_SIMPLE:
             commandSequence.push_back(new ArmPresetCommand(arm, SHOOTING, 0));
-            commandSequence.push_back(new LinearDriveCommand(drive, 108, 0, false, 5, 0));
+            commandSequence.push_back(new LinearDriveCommand(drive, 108, 0, false, 5));
             //commandSequence.push_back(new KinectJuke(kinect, drive, .5));
             commandSequence.push_back(new AutoWaitCommand(1));
             commandSequence.push_back(new FireCommand(shooter, 1.5));
@@ -172,8 +172,8 @@ void AutoManager::autoSelect(int autoMode)
             commandSequence.push_back(new AutoWaitCommand(10));
             break;
         case TEST_FUNCTIONAL:
-            commandSequence.push_back(new LinearDriveCommand(drive, 24, 0, false, 3, 2));
-            commandSequence.push_back(new LinearDriveCommand(drive, -24, 0, false, 3, 2));
+            commandSequence.push_back(new LinearDriveCommand(drive, 24, 0, false, 3));
+            commandSequence.push_back(new LinearDriveCommand(drive, -24, 0, false, 3));
             commandSequence.push_back(new ArmPresetCommand(arm, SHOOTING, 1));
             commandSequence.push_back(new ArmPresetCommand(arm, PSEUDO_INTAKE, 1));
             commandSequence.push_back(new ArmPresetCommand(arm, INTAKE, 1));

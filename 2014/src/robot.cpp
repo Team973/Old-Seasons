@@ -483,6 +483,7 @@ void Robot::AutonomousPeriodic()
     shooter->update();
     intake->update();
     kinect->update();
+    drive->PIDupdate();
     dashboardUpdate();
 
 }
