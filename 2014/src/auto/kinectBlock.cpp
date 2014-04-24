@@ -54,15 +54,6 @@ bool KinectBlock::Run()
     }
     */
 
-    if (!goalSelected)
-    {
-        clear();
-        sequence.push_back( new LinearDriveCommand(drive, initialDistance, 0, false, drive->generateDistanceTime(initialDistance)));
-        init = false;
-        goalSelected = true;
-    }
-
-    /*
     switch (autoMode)
     {
         case SIMPLE:
@@ -175,7 +166,6 @@ bool KinectBlock::Run()
 
             break;
     }
-*/
 
     if (!init)
     {
