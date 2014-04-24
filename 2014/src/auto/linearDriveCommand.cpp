@@ -16,18 +16,10 @@ LinearDriveCommand::LinearDriveCommand(Drive *drive_, float targetDrive_, float 
 
     setTimeout(timeout_);
 
-    drivePID = new PID(.02, 0, 0.08);
-    anglePID = new PID(.05, 0, 0.05);
-
 }
 
 void LinearDriveCommand::Init()
 {
-    drivePID->start();
-    drivePID->reset();
-    anglePID->start();
-    anglePID->reset();
-
     timer->Start();
     timer->Reset();
 }
@@ -43,9 +35,6 @@ bool LinearDriveCommand::Run()
         drive->update(0, 0, false, false, false, true);
         return true;
     }
-
-    drivePID->setBounds(-.9, .9);
-    anglePID->setBounds(-.7, .7);
 
     float driveInput;
     float turnInput;

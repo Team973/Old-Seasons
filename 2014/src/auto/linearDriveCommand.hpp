@@ -17,9 +17,6 @@ private:
     float targetDrive;
     float targetAngle;
     bool backwards;
-
-    PID *drivePID;
-    PID *anglePID;
 };
 
 #endif
