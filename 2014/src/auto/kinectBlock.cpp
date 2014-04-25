@@ -28,6 +28,8 @@ KinectBlock::KinectBlock(KinectHandler *kinect_, Drive *drive_, HellaBlocker *bl
     goalSelected = false;
     init = false;
 
+    turn = 0;
+
     sequence.push_back(new AutoWaitCommand(0)); // pass a dummy command
 }
 
@@ -179,20 +181,34 @@ bool KinectBlock::Run()
         {
             drive->killPID(true);
 
-            if ((!kinect->getRightHand() && !kinect->getLeftHand()) || (kinect->getRightHand() && kinect->getLeftHand()))
+            if (kinect->getRightHand() && kinect->getLeftHand() && autoMode == LOW_GOAL)
+            {
+                if (drive->getWheelDistance() > 0)
+                {
+                    turn = -.4;
+                }
+                else
+                {
+                    turn = .4;
+                }
+            }
+            else if ((!kinect->getRightHand() && !kinect->getLeftHand()))
             {
                 movement = 0;
+                turn = 0;
             }
             else if (kinect->getLeftHand())
             {
                 movement = -.6;
+                turn = 0;
             }
             else if (kinect->getRightHand())
             {
                 movement = .6;
+                turn = 0;
             }
 
-            drive->update(0, -movement, false, false, false, true);
+            drive->update(turn, -movement, false, false, false, true);
         }
     }
 
