@@ -87,7 +87,9 @@ void AutoManager::autoSelect(int autoMode)
             //commandSequence.push_back(new AutoDriveCommand(drive, -48, 48, false, 10, 5, 8));
             //commandSequence.push_back(new AutoDriveCommand(drive, 0, 48, false, 10, 5, 8));
             //commandSequence.push_back(new TurnCommand(drive, 90, 10));
-            commandSequence.push_back(new LinearDriveCommand(drive, 24, 0, false, 10));
+            commandSequence.push_back(new LinearDriveCommand(drive, 24, 0, false, 3));
+            commandSequence.push_back(new KinectSense(kinect, drive, HOT_ONE_BALL_SIDE, 1, side));
+            commandSequence.push_back(new CorralCommand(intake, true));
             commandSequence.push_back(new AutoWaitCommand(10));
             break;
         case ONE_BALL_SIMPLE:
@@ -134,6 +136,7 @@ void AutoManager::autoSelect(int autoMode)
             commandSequence.push_back(new FireCommand(shooter, 1));
             commandSequence.push_back(new ArmPresetCommand(arm, INTAKE, 0.5));
             commandSequence.push_back(new CorralCommand(intake, false));
+            commandSequence.push_back(new LinearDriveCommand(drive, 114, 0, false, 6));
             commandSequence.push_back(new IntakeCommand(intake, arm, 2));
             commandSequence.push_back(new ArmPresetCommand(arm, SHOOTING, 1));
             //commandSequence.push_back(new KinectJuke(kinect, drive, .5));
