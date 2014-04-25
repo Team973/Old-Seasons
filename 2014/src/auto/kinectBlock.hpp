@@ -32,6 +32,7 @@ private:
     bool init;
     float autoAngle;
     float driveTime;
+    float turn;
 
     void clear();
 
