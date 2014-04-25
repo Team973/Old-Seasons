@@ -480,7 +480,7 @@ void Drive::update(double DriveX, double DriveY, bool gear, bool kick, bool quic
         }
         else
         {
-            arcade(DriveY, 0);//turnInput);
+            arcade(DriveY, turnInput);
         }
     }
     else
