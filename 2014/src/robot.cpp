@@ -460,6 +460,7 @@ void Robot::AutonomousInit()
     autoSafetyTimer->Start();
     autoSafetyTimer->Reset();
 
+    blocker->reset();
 
     drive->resetDrive();
     autoMode->reset();

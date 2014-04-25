@@ -7,11 +7,11 @@ public:
     HellaBlocker(Solenoid *extender_, Solenoid *rotator_);
     void back();
     void front();
+    void reset();
 private:
     Solenoid *extender;
     Solenoid *rotator;
 
-    void reset();
 
     std::string position;
 
