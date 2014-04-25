@@ -181,15 +181,23 @@ bool KinectBlock::Run()
         {
             drive->killPID(true);
 
-            if (kinect->getRightHand() && kinect->getLeftHand() && autoMode == LOW_GOAL)
+            if (kinect->getRightHand() && kinect->getLeftHand())
             {
-                if (drive->getWheelDistance() > 0)
+                if (autoMode == LOW_GOAL)
                 {
-                    turn = -.4;
+                    if (drive->getWheelDistance() > 0)
+                    {
+                        turn = -.4;
+                    }
+                    else
+                    {
+                        turn = .4;
+                    }
                 }
                 else
                 {
-                    turn = .4;
+                    movement = 0;
+                    turn = 0;
                 }
             }
             else if ((!kinect->getRightHand() && !kinect->getLeftHand()))

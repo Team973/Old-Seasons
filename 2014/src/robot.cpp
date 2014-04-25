@@ -316,12 +316,12 @@ void Robot::DisabledPeriodic()
     GetWatchdog().Feed();
     controlTimer->Start();
 
-    if (stick2->GetRawButton(4) && controlTimer->Get() >= .25)
+    if (stick2->GetRawButton(4) && controlTimer->Get() >= .15)
     {
         autoSelectMode += 1;
         controlTimer->Reset();
     }
-    else if (stick2->GetRawButton(2) && controlTimer->Get() >= .25)
+    else if (stick2->GetRawButton(2) && controlTimer->Get() >= .15)
     {
         autoSelectMode -= 1;
         controlTimer->Reset();
@@ -332,23 +332,23 @@ void Robot::DisabledPeriodic()
     else if (autoSelectMode < TEST)
         autoSelectMode = DRIVE_ONLY;
 
-    if (stick2->GetRawButton(1) && controlTimer->Get() >= .5)
+    if (stick2->GetRawButton(1) && controlTimer->Get() >= .15)
     {
         initialAutoDistance += .5;
         controlTimer->Reset();
     }
-    else if (stick2->GetRawButton(3) && controlTimer->Get() >= .5)
+    else if (stick2->GetRawButton(3) && controlTimer->Get() >= .15)
     {
         initialAutoDistance -= .5;
         controlTimer->Reset();
     }
 
-    if (stick2->GetRawButton(5) && controlTimer->Get() >= .5)
+    if (stick2->GetRawButton(5) && controlTimer->Get() >= .15)
     {
         finalAutoDistance += .5;
         controlTimer->Reset();
     }
-    else if (stick2->GetRawButton(6) && controlTimer->Get() >= .5)
+    else if (stick2->GetRawButton(6) && controlTimer->Get() >= .15)
     {
         finalAutoDistance -= .5;
         controlTimer->Reset();
