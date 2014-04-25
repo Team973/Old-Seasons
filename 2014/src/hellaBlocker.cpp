@@ -26,22 +26,13 @@ void HellaBlocker::front()
     extender->Set(false);
     rotationTimer->Start();
 
-    /*
-    if (rotationTimer->Get() >= 1)
+    if (rotationTimer->Get() >= 2.5)
     {
         extender->Set(true);
-        rotationTimer->Stop();
-        rotationTimer->Reset();
         position = "front";
     }
-    */
 
-    extender->Set(true);
-
-    if (rotationTimer->Get() >= 0.5)
-    {
-        rotator->Set(true);
-    }
+    rotator->Set(true);
 }
 
 void HellaBlocker::reset()
@@ -49,15 +40,11 @@ void HellaBlocker::reset()
     extender->Set(false);
     rotationTimer->Start();
 
-    if (rotationTimer->Get() >= 1)
+    if (rotationTimer->Get() >= 2.5)
     {
         extender->Set(true);
-        rotationTimer->Stop();
-        rotationTimer->Reset();
         position = "back";
     }
-    if (rotationTimer->Get() >= 0.5)
-    {
-        rotator->Set(false);
-    }
+
+    rotator->Set(false);
 }
