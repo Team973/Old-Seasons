@@ -149,19 +149,17 @@ bool KinectBlock::Run()
 
             if (initialDistance > 0)
             {
-                initialDistance = 7.5;
                 blocker->front();
             }
             else
             {
-                initialDistance = -7.5;
                 blocker->back();
             }
 
             if (!goalSelected)
             {
                 clear();
-                sequence.push_back( new LinearDriveCommand(drive, initialDistance, autoAngle, false, drive->generateDistanceTime(initialDistance)));
+                sequence.push_back( new LinearDriveCommand(drive, initialDistance, autoAngle, false, 5, BLOCK));
                 init = false;
                 goalSelected = true;
             }
