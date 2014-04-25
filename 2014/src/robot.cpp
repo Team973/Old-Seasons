@@ -495,6 +495,7 @@ void Robot::TeleopInit()
     drive->update(0, 0, true, false, false, false);
     intake->stop();
     blockerSolenoid->Set(false);
+    autoCorralSolenoid->Set(false);
 }
 
 void Robot::TeleopPeriodic()
