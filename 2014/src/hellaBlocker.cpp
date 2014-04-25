@@ -13,12 +13,7 @@ HellaBlocker::HellaBlocker(Solenoid *extender_, Solenoid *rotator_)
 
 void HellaBlocker::back()
 {
-    if (position == "front")
-    {
-        reset();
-    }
     extender->Set(true);
-    position = "back";
 }
 
 void HellaBlocker::front()
@@ -29,7 +24,6 @@ void HellaBlocker::front()
     if (rotationTimer->Get() >= 2.5)
     {
         extender->Set(true);
-        position = "front";
     }
 
     rotator->Set(true);
@@ -37,14 +31,6 @@ void HellaBlocker::front()
 
 void HellaBlocker::reset()
 {
-    extender->Set(false);
-    rotationTimer->Start();
-
-    if (rotationTimer->Get() >= 2.5)
-    {
-        extender->Set(true);
-        position = "back";
-    }
-
-    rotator->Set(false);
+    rotationTimer->Stop();
+    rotationTimer->Reset();
 }
