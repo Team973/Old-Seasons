@@ -137,6 +137,7 @@ void AutoManager::autoSelect(int autoMode)
             commandSequence.push_back(new IntakeCommand(intake, arm, 2));
             commandSequence.push_back(new ArmPresetCommand(arm, SHOOTING, 1));
             //commandSequence.push_back(new KinectJuke(kinect, drive, .5));
+            commandSequence.push_back(new AutoWaitCommand(1));
             commandSequence.push_back(new FireCommand(shooter, 1));
             commandSequence.push_back(new AutoWaitCommand(10));
             break;
