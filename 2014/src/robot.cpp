@@ -110,6 +110,8 @@ void Robot::dashboardUpdate()
     SmartDashboard::PutBoolean("Left Hand: ", kinect->getLeftHand());
     SmartDashboard::PutBoolean("Right Hand: ", kinect->getRightHand());
 
+    SmartDashboard::PutString("Last Hand: ", kinect->getScheduledHand());
+
     if (deBugMode)
     {
         SmartDashboard::PutNumber("Right Drive: ", rightDriveMotors->Get());

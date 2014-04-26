@@ -34,13 +34,11 @@ std::string KinectHandler::getScheduledHand()
 
 bool KinectHandler::getLeftHand()
 {
-    lastHand = "left";
     return (kinectDeadband(left->GetY(), 0.5));
 }
 
 bool KinectHandler::getRightHand()
 {
-    lastHand = "right";
     return (kinectDeadband(right->GetY(), 0.5));
 }
 
@@ -51,6 +49,12 @@ void KinectHandler::clearLastHand()
 
 void KinectHandler::update()
 {
-    getLeftHand();
-    getRightHand();
+    if (getLeftHand())
+    {
+        lastHand = "left";
+    }
+    else if (getRightHand())
+    {
+        lastHand = "right";
+    }
 }
