@@ -21,7 +21,7 @@ void HellaBlocker::front()
     extender->Set(false);
     rotationTimer->Start();
 
-    if (rotationTimer->Get() >= 2.5)
+    if (rotationTimer->Get() >= 1.5)
     {
         extender->Set(true);
     }
