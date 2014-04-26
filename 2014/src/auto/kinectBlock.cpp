@@ -149,7 +149,8 @@ bool KinectBlock::Run()
 
             if (initialDistance > 0)
             {
-                blocker->front();
+                //blocker->front();
+                blocker->back();
             }
             else
             {
