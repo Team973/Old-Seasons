@@ -60,7 +60,7 @@ void KinectSense::Init()
 {
     timer->Start();
     timer->Reset();
-    kinect->clearLastHand();
+    //kinect->clearLastHand();
 }
 
 bool KinectSense::Run()
