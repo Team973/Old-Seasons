@@ -75,7 +75,7 @@ Robot::Robot()
     kinect = new KinectHandler(leftAutoControl, rightAutoControl);
 
     autoMode = new AutoManager(drive, shooter, intake, arm, kinect, blocker);
-    autoSelectMode = ONE_BALL_SIMPLE;
+    autoSelectMode = BLOCK_SIMPLE;
     controlTimer= new Timer();
     initialAutoDistance = 4;
     finalAutoDistance = -4;
