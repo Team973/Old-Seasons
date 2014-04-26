@@ -159,7 +159,7 @@ bool KinectBlock::Run()
             if (!goalSelected)
             {
                 clear();
-                sequence.push_back( new LinearDriveCommand(drive, initialDistance, autoAngle, false, 5, BLOCK));
+                sequence.push_back( new LinearDriveCommand(drive, initialDistance, autoAngle, false, 0, BLOCK));
                 init = false;
                 goalSelected = true;
             }
