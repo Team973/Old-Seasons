@@ -3,7 +3,7 @@
 #include "trapProfile.hpp"
 #include <math.h>
 
-TrapProfile::TrapProfile(float xTarget, float vMax, float aMax, float dMax, float loopTime)
+TrapProfile::TrapProfile(float xTarget, float vMax, float aMax, float dMax, int loopTime)
 {
     float t1 = vMax/aMax;
     float t23 = vMax/dMax;
@@ -14,7 +14,7 @@ TrapProfile::TrapProfile(float xTarget, float vMax, float aMax, float dMax, floa
     float x2 = x1 + x12;
     float t2 = t1 + t12;
     float t3 = t2 + t23;
-    float indexSize = ciel(t3/loopTime) + 1;
+    int indexSize = ceil(t3/loopTime) + 1;
 
     float profile[indexSize][4];
 
@@ -24,6 +24,7 @@ TrapProfile::TrapProfile(float xTarget, float vMax, float aMax, float dMax, floa
 #define A 3
 
     if ( x12 > 0)
+    {
         for (int n=0; n<indexSize; n++)
         {
             float t = n*loopTime;
@@ -57,6 +58,7 @@ TrapProfile::TrapProfile(float xTarget, float vMax, float aMax, float dMax, floa
                 profile[n][A] = 0;
             }
         }
+    }
     else
     {
         float vPeak = sqrt((2*xTarget)/(1/aMax+1/dMax));
@@ -65,31 +67,31 @@ TrapProfile::TrapProfile(float xTarget, float vMax, float aMax, float dMax, floa
         t1 = vPeak/aMax;
         t12 = vPeak/dMax;
         t2 = t1 + t12;
-        float indexSize = ciel(t3/loopTime) + 1;
+        float indexSize = ceil(t3/loopTime) + 1;
         for (int i=0; i<indexSize; i++)
         {
-            float t = n*loopTime;
+            float t = i*loopTime;
 
             if (t < t1)
             {
-                profile[n][T] = t;
-                profile[n][X] = (.5)*aMax*(t*t);
-                profile[n][V] = aMax*t;
-                profile[n][A] = aMax;
+                profile[i][T] = t;
+                profile[i][X] = (.5)*aMax*(t*t);
+                profile[i][V] = aMax*t;
+                profile[i][A] = aMax;
             }
             else if (t < t2)
             {
-                profile[n][T] = t;
-                profile[n][X] = x1 + vPeak * (t - t1) - (.5)*dMax*pow((t-t1), 2);
-                profile[n][V] = vPeak - dMax * (t - t1);
-                profile[n][A] = 0;
+                profile[i][T] = t;
+                profile[i][X] = x1 + vPeak * (t - t1) - (.5)*dMax*pow((t-t1), 2);
+                profile[i][V] = vPeak - dMax * (t - t1);
+                profile[i][A] = 0;
             }
             else
             {
-                profile[n][T] = t;
-                profile[n][X] = xTarget;
-                profile[n][V] = 0;
-                profile[n][A] = 0;
+                profile[i][T] = t;
+                profile[i][X] = xTarget;
+                profile[i][V] = 0;
+                profile[i][A] = 0;
             }
         }
     }
