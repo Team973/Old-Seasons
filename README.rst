@@ -9,7 +9,8 @@ Lua`_, with the exception of ``2010-boss``.
 
 Subdirectories
 ================
-
+''2013-cpp''
+   The 2013 off-season code where we switched to using cpp
 ``2013``
    The 2013 season code
 ``2013-vision``
