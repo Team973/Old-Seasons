@@ -6,9 +6,10 @@
 #include "intake.hpp"
 #include "autoManager.hpp"
 #include "robot.hpp"
-#include <vector>
 #include "kinectHandler.hpp"
 #include "hellaBlocker.hpp"
+#include "dataLog.hpp"
+#include <vector>
 
 #include "NetworkTables/NetworkTable.h"
 
@@ -91,6 +92,9 @@ Robot::Robot()
 
     GetWatchdog().SetExpiration(1000);
     GetWatchdog().SetEnabled(true);
+
+    robotLog = new DataLog("robotLog");
+    robotLog->log("This is a log");
 
     dsLCD = DriverStationLCD::GetInstance();
     SmartDashboard::init();
