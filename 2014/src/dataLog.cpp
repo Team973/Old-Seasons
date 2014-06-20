@@ -1,6 +1,8 @@
 #include "WPILib.h"
 #include "stdio.h"
 #include "dataLog.hpp"
+#include <time.h>
+#include <string>
 
 DataLog::DataLog(std::string filename_)
 {
@@ -21,9 +23,20 @@ DataLog::DataLog(std::string filename_)
     fclose(file);
 }
 
+void DataLog::currTime()
+{
+    time_t t;
+    t = time(NULL);
+    float min = t/60;
+    float hours = min/60;
+    float sec = t - hours - min;
+
+    timeStamp = std::to_string(hours) + ":" + std::to_string(min) + ":" + std::to_string(sec) + " ";
+}
+
 void DataLog::log(std::string data)
 {
-    data = data + "\n";
+    data =timeStamp + data + "\n";
     FILE *file;
     file = fopen(filename.c_str(), "a");
     fputs(data.c_str(), file);
