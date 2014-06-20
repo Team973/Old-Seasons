@@ -95,6 +95,8 @@ Robot::Robot()
 
     robotLog = new DataLog("robotLog");
     robotLog->log("This is a log");
+    robotLog->log("This is another log");
+    robotLog->log("This is the final log");
 
     dsLCD = DriverStationLCD::GetInstance();
     SmartDashboard::init();
