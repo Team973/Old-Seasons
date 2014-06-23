@@ -3,6 +3,7 @@
 #include "dataLog.hpp"
 #include <time.h>
 #include <string>
+#include <sstream>
 
 DataLog::DataLog(std::string filename_)
 {
@@ -23,6 +24,14 @@ DataLog::DataLog(std::string filename_)
     fclose(file);
 }
 
+template<typename T>
+std::string DataLog::asString(T in)
+{
+    std::stringstream ss;
+    ss << in;
+    return ss.str();
+}
+
 void DataLog::currTime()
 {
     time_t t;
@@ -31,12 +40,12 @@ void DataLog::currTime()
     float hours = min/60;
     float sec = t - hours - min;
 
-    timeStamp = std::to_string(hours) + ":" + std::to_string(min) + ":" + std::to_string(sec) + " ";
+    timeStamp = asString(hours) + ":" + asString(min) + ":" + asString(sec) + " ";
 }
 
 void DataLog::log(std::string data)
 {
-    data =timeStamp + data + "\n";
+    data = timeStamp + data + "\n";
     FILE *file;
     file = fopen(filename.c_str(), "a");
     fputs(data.c_str(), file);
