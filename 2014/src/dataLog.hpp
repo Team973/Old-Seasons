@@ -9,9 +9,8 @@ public:
     template<typename T>
     std::string asString(T in);
 private:
-    void currTime();
+    std::string currTime();
     std::string filename;
-    std::string timeStamp;
 };
 
 #endif
