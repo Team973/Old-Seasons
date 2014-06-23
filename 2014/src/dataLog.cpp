@@ -32,7 +32,7 @@ std::string DataLog::asString(T in)
     return ss.str();
 }
 
-void DataLog::currTime()
+std::string DataLog::currTime()
 {
     time_t t;
     t = time(NULL);
@@ -40,12 +40,12 @@ void DataLog::currTime()
     float hours = min/60;
     float sec = t - hours - min;
 
-    timeStamp = asString(hours) + ":" + asString(min) + ":" + asString(sec) + " ";
+    return asString(hours) + ":" + asString(min) + ":" + asString(sec) + " ";
 }
 
 void DataLog::log(std::string data)
 {
-    data = timeStamp + data + "\n";
+    data = currTime() + data + "\n";
     FILE *file;
     file = fopen(filename.c_str(), "a");
     fputs(data.c_str(), file);
