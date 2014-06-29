@@ -52,12 +52,16 @@ std::string DataLog::currSystemTime()
     float hours = min/60;
     float sec = t - hours - min;
 
-    return asString(hours) + ":" + asString(min) + ":" + asString(sec) + " ";
+    return asString(hours) + ":" + asString(min) + ":" + asString(sec) + ", ";
 }
 
-void DataLog::log(std::string data)
+void DataLog::log(std::string data, bool attachTime)
 {
-    data = currSystemTime() + data + "\n";
+    if (attachTime)
+        data = currSystemTime() + data + "\n";
+    else
+        data = data + "\n";
+
     FILE *file;
     file = fopen(filename.c_str(), "a");
     fputs(data.c_str(), file);
