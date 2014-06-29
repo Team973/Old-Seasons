@@ -86,8 +86,10 @@ private:
     Timer *controlTimer;
 
     DriverStationLCD *dsLCD;
+    DriverStation *ds;
 
     DataLog *robotLog;
+    DataLog *voltageLog;
 
     float DriveY;
     float DriveX;
