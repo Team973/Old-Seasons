@@ -5,7 +5,7 @@ class DataLog
 {
 public:
     DataLog(std::string filename_);
-    void log(std::string data);
+    void log(std::string data, bool attachTime = true);
     template<typename T>
     std::string asString(T in);
 private:

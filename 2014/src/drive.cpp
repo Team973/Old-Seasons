@@ -48,8 +48,11 @@ Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoi
     endPoint = 0;
 
     encoderVelLog = new DataLog("encoderVel");
+    encoderVelLog->log("time, left, right");
     encoderPosLog = new DataLog("encoderPos");
+    encoderPosLog->log("time, left, right");
     gyroLog = new DataLog("gyro");
+    gyroLog->log("time, angle");
 }
 
 void Drive::goLeft()
@@ -504,11 +507,9 @@ void Drive::update(double DriveX, double DriveY, bool gear, bool kick, bool quic
     setLowGear(gear);
     setKickUp(kick);
 
-    encoderPosLog->log("Left: " + encoderPosLog->asString(getLeftDistance()));
-    encoderPosLog->log("Right: " + encoderPosLog->asString(getRightDistance()));
-    encoderVelLog->log("Left: " + encoderPosLog->asString(getVelocity(leftEncoder)));
-    encoderVelLog->log("Right: " + encoderPosLog->asString(getVelocity(rightEncoder)));
-    gyroLog->log("angle: " + gyroLog->asString(getGyroAngle()));
+    encoderPosLog->log(encoderPosLog->asString(getLeftDistance()) + ", " + encoderPosLog->asString(getRightDistance()));
+    encoderVelLog->log(encoderPosLog->asString(getVelocity(leftEncoder)) + ", " + encoderPosLog->asString(getVelocity(rightEncoder)));
+    gyroLog->log(gyroLog->asString(getGyroAngle()));
 
 }
 

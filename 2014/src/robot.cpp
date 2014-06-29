@@ -99,6 +99,7 @@ Robot::Robot()
     robotLog->log("This is the final log");
 
     voltageLog = new DataLog("voltage");
+    voltageLog->log("time, voltage", false);
 
     ds = DriverStation::GetInstance();
     dsLCD = DriverStationLCD::GetInstance();
@@ -457,7 +458,7 @@ void Robot::DisabledPeriodic()
     dashboardUpdate();
     dsLCD->UpdateLCD();
 
-    voltageLog->log("voltage: " + voltageLog->asString(ds->GetBatteryVoltage()));
+    voltageLog->log(voltageLog->asString(ds->GetBatteryVoltage()));
 }
 
 void Robot::AutonomousInit()
@@ -526,6 +527,7 @@ void Robot::TeleopPeriodic()
     dashboardUpdate();
     dsLCD->PrintfLine(DriverStationLCD::kUser_Line6,"Arm Angle: %f", arm->getRawAngle());
     dsLCD->UpdateLCD();
+    voltageLog->log(voltageLog->asString(ds->GetBatteryVoltage()));
 
 }
 
