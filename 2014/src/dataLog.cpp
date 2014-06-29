@@ -5,6 +5,18 @@
 #include <string>
 #include <sstream>
 
+std::string DataLog::currDateTime()
+{
+    time_t t;
+    struct tm * timeInfo;
+    char buffer[80];
+
+    time(&t);
+    timeInfo = localtime(&t);
+    strftime(buffer, 80, "%c", timeInfo);
+    return buffer;
+}
+
 DataLog::DataLog(std::string filename_)
 {
     filename = filename_ + "_LOG.txt";
@@ -14,7 +26,7 @@ DataLog::DataLog(std::string filename_)
     tmp = fopen(filename.c_str(), "r");
     if (tmp != NULL)
     {
-        std::string filePath = "logs/" + filename;
+        std::string filePath = "logs/" + currDateTime() + filename;
         rename(filename.c_str(), filePath.c_str());
     }
     fclose(tmp);
@@ -32,7 +44,7 @@ std::string DataLog::asString(T in)
     return ss.str();
 }
 
-std::string DataLog::currTime()
+std::string DataLog::currSystemTime()
 {
     time_t t;
     t = time(NULL);
@@ -45,7 +57,7 @@ std::string DataLog::currTime()
 
 void DataLog::log(std::string data)
 {
-    data = currTime() + data + "\n";
+    data = currSystemTime() + data + "\n";
     FILE *file;
     file = fopen(filename.c_str(), "a");
     fputs(data.c_str(), file);
