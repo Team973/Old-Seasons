@@ -98,6 +98,9 @@ Robot::Robot()
     robotLog->log("This is another log");
     robotLog->log("This is the final log");
 
+    voltageLog = new DataLog("voltage");
+
+    ds = DriverStation::GetInstance();
     dsLCD = DriverStationLCD::GetInstance();
     SmartDashboard::init();
 }
@@ -453,6 +456,8 @@ void Robot::DisabledPeriodic()
 
     dashboardUpdate();
     dsLCD->UpdateLCD();
+
+    voltageLog->log("voltage: " + voltageLog->asString(ds->GetBatteryVoltage()));
 }
 
 void Robot::AutonomousInit()
