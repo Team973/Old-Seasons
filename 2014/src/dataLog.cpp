@@ -7,7 +7,7 @@
 
 DataLog::DataLog(std::string filename_)
 {
-    filename = filename_ + ".txt";
+    filename = filename_ + "_LOG.txt";
 
     // create the file or move and erase the last file
     FILE *tmp;
