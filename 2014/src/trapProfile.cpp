@@ -1,6 +1,7 @@
 #include "WPILib.h"
 #include "trapProfile.hpp"
 #include <math.h>
+#include <vector>
 
 TrapProfile::TrapProfile(float xTarget_, float vMax_, float aMax_, float dMax_)
 {
@@ -10,7 +11,7 @@ TrapProfile::TrapProfile(float xTarget_, float vMax_, float aMax_, float dMax_)
     dMax = dMax_;
 }
 
-float TrapProfile::getProfile(float loopTime)
+std::vector<float> TrapProfile::getProfile(float loopTime)
 {
     float t1 = vMax/aMax;
     float t23 = vMax/dMax;
@@ -22,7 +23,7 @@ float TrapProfile::getProfile(float loopTime)
     float t2 = t1 + t12;
     float t3 = t2 + t23;
 
-    float profile[4];
+    std::vector<float> profile(4);
 
 #define T 0
 #define X 1
@@ -95,5 +96,5 @@ float TrapProfile::getProfile(float loopTime)
         }
     }
 
-    return *profile;
+    return profile;
 }
