@@ -15,7 +15,9 @@
 #define BLOCK 24
 
 class PID;
-class Drive
+class DataLog;
+
+class Drive //keep space between the class of the file and the classes in the file
 {
 private:
     float limit(float x);
@@ -54,6 +56,12 @@ private:
 
     Timer *brakeTimer;
     bool isBraking;
+
+    DataLog *encoderPosLog;
+    DataLog *encoderVelLog;
+    DataLog *gyroLog;
+
+    float getVelocity(Encoder *e);
 
     // Drive calculation variables
     void calculateDrive();

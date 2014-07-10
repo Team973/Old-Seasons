@@ -2,6 +2,7 @@
 #include "drive.hpp"
 #include <math.h>
 #include "pid.hpp"
+#include "dataLog.hpp"
 
 Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoid *kickUp_, Encoder *leftEncoder_, Encoder *rightEncoder_, Encoder *gyro_, Gyro *testGyro_)
 {
@@ -45,6 +46,13 @@ Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoi
 
     point = 0;
     endPoint = 0;
+
+    encoderVelLog = new DataLog("encoderVel");
+    encoderVelLog->log("time, left, right");
+    encoderPosLog = new DataLog("encoderPos");
+    encoderPosLog->log("time, left, right");
+    gyroLog = new DataLog("gyro");
+    gyroLog->log("time, angle");
 }
 
 void Drive::goLeft()
@@ -468,9 +476,17 @@ void Drive::PIDupdate()
     storeDriveCalculations();
 }
 
+float Drive::getVelocity(Encoder *e)
+{
+    float diameter = 4.8;
+    float encoderTicks = 360;
+    float encoderPeriod = e->GetPeriod();
+    float vel = 2 * pow(M_PI,2) * (diameter / encoderTicks * encoderPeriod);
+    return vel;
+}
+
 void Drive::update(double DriveX, double DriveY, bool gear, bool kick, bool quickTurn, bool isAuto)
 {
-
     if (isAuto)
     {
         if (!deadPID)
@@ -490,6 +506,10 @@ void Drive::update(double DriveX, double DriveY, bool gear, bool kick, bool quic
     }
     setLowGear(gear);
     setKickUp(kick);
+
+    encoderPosLog->log(encoderPosLog->asString(getLeftDistance()) + ", " + encoderPosLog->asString(getRightDistance()));
+    encoderVelLog->log(encoderPosLog->asString(getVelocity(leftEncoder)) + ", " + encoderPosLog->asString(getVelocity(rightEncoder)));
+    gyroLog->log(gyroLog->asString(getGyroAngle()));
 
 }
 

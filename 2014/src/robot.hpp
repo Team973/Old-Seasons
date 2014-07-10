@@ -8,6 +8,7 @@ class Drive;
 class Arm;
 class KinectHandler;
 class HellaBlocker;
+class DataLog;
 
 //XXX: rename class when we decide on a robot name
 class Robot : public IterativeRobot
@@ -85,6 +86,10 @@ private:
     Timer *controlTimer;
 
     DriverStationLCD *dsLCD;
+    DriverStation *ds;
+
+    DataLog *robotLog;
+    DataLog *voltageLog;
 
     float DriveY;
     float DriveX;
