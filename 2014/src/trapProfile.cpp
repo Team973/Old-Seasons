@@ -1,7 +1,7 @@
-//This is the right one
 #include "WPILib.h"
 #include "trapProfile.hpp"
 #include <math.h>
+#include <vector>
 
 TrapProfile::TrapProfile(float xTarget_, float vMax_, float aMax_, float dMax_)
 {
@@ -11,7 +11,7 @@ TrapProfile::TrapProfile(float xTarget_, float vMax_, float aMax_, float dMax_)
     dMax = dMax_;
 }
 
-float TrapProfile::getProfile(float loopTime)
+std::vector<float> TrapProfile::getProfile(float loopTime)
 {
     float t1 = vMax/aMax;
     float t23 = vMax/dMax;
@@ -22,9 +22,8 @@ float TrapProfile::getProfile(float loopTime)
     float x2 = x1 + x12;
     float t2 = t1 + t12;
     float t3 = t2 + t23;
-    int size = 1;
 
-    float profile[size][4];
+    std::vector<float> profile(4);
 
 #define T 0
 #define X 1
@@ -37,31 +36,31 @@ float TrapProfile::getProfile(float loopTime)
 
         if (t < t1)
         {
-            profile[size][T] = t;
-            profile[size][X] = (.5)*aMax*(t*t);
-            profile[size][V] = aMax*t;
-            profile[size][A] = aMax;
+            profile[T] = t;
+            profile[X] = (.5)*aMax*(t*t);
+            profile[V] = aMax*t;
+            profile[A] = aMax;
         }
         else if (t < t2)
         {
-            profile[size][T] = t;
-            profile[size][X] = x1 + vMax * (t - t1);
-            profile[size][V] = vMax;
-            profile[size][A] = 0;
+            profile[T] = t;
+            profile[X] = x1 + vMax * (t - t1);
+            profile[V] = vMax;
+            profile[A] = 0;
         }
         else if (t < t3)
         {
-            profile[size][T] = t;
-            profile[size][X] = x2 + vMax * (t - t2) - (.5)*dMax*pow((t-t2), 2);
-            profile[size][V] = vMax - dMax *(t-t2);
-            profile[size][A] = -dMax;
+            profile[T] = t;
+            profile[X] = x2 + vMax * (t - t2) - (.5)*dMax*pow((t-t2), 2);
+            profile[V] = vMax - dMax *(t-t2);
+            profile[A] = -dMax;
         }
         else
         {
-            profile[size][T] = t;
-            profile[size][X] = xTarget;
-            profile[size][V] = 0;
-            profile[size][A] = 0;
+            profile[T] = t;
+            profile[X] = xTarget;
+            profile[V] = 0;
+            profile[A] = 0;
         }
     }
     else
@@ -76,24 +75,24 @@ float TrapProfile::getProfile(float loopTime)
 
         if (t < t1)
         {
-            profile[size][T] = t;
-            profile[size][X] = (.5)*aMax*(t*t);
-            profile[size][V] = aMax*t;
-            profile[size][A] = aMax;
+            profile[T] = t;
+            profile[X] = (.5)*aMax*(t*t);
+            profile[V] = aMax*t;
+            profile[A] = aMax;
         }
         else if (t < t2)
         {
-            profile[size][T] = t;
-            profile[size][X] = x1 + vPeak * (t - t1) - (.5)*dMax*pow((t-t1), 2);
-            profile[size][V] = vPeak - dMax * (t - t1);
-            profile[size][A] = 0;
+            profile[T] = t;
+            profile[X] = x1 + vPeak * (t - t1) - (.5)*dMax*pow((t-t1), 2);
+            profile[V] = vPeak - dMax * (t - t1);
+            profile[A] = 0;
         }
         else
         {
-            profile[size][T] = t;
-            profile[size][X] = xTarget;
-            profile[size][V] = 0;
-            profile[size][A] = 0;
+            profile[T] = t;
+            profile[X] = xTarget;
+            profile[V] = 0;
+            profile[A] = 0;
         }
     }
 
