@@ -85,7 +85,7 @@ std::vector<float> TrapProfile::getProfile(float loopTime)
             profile[T] = t;
             profile[X] = x1 + vPeak * (t - t1) - (.5)*dMax*pow((t-t1), 2);
             profile[V] = vPeak - dMax * (t - t1);
-            profile[A] = 0;
+            profile[A] = -dMax;
         }
         else
         {
