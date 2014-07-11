@@ -35,7 +35,7 @@ GreyJoy::GreyJoy(int port)
     for (int b=1;b<13;b++)
     {
         buttons[b].oldValue = buttons[b].newValue = buttons[b].toggle = false;
-        buttons[b].spamTimer.Start();
+        //buttons[b].spamTimer.Start();
     }
 }
 
@@ -82,10 +82,10 @@ void GreyJoy::update()
     {
         sticks[a].newValue = joy->GetRawAxis(a);
         // this alleviates some of the touchyness that the drivers complained about
-        if (fabs(sticks[a].oldValue - sticks[a].newValue) > .05)
-        {
+        //if (fabs(sticks[a].oldValue - sticks[a].newValue) > .05)
+        //{
             sticks[a].oldValue = sticks[a].newValue;
-        }
+        //}
     }
 
     // update the buttons
