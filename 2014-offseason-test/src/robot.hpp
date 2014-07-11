@@ -1,6 +1,9 @@
 #ifndef TEST_ROBOT_H
 #define TEST_ROBOT_H
 
+class Drive;
+class GreyJoy;
+
 class TestRobot : public IterativeRobot
 {
 public:
@@ -15,6 +18,14 @@ public:
         void TestInit();
         void TestPeriodic();
 private:
+        Talon *leftDriveMotors;
+        Talon *rightDriveMotors;
+        Solenoid *shiftingSolenoid;
+
+        Drive *drive;
+
+        GreyJoy *driver;
+        GreyJoy *coDriver;
 };
 
 #endif
