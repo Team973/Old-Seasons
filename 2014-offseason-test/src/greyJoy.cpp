@@ -39,20 +39,25 @@ GreyJoy::GreyJoy(int port)
     }
 }
 
-bool GreyJoy::getButton(std::string key, bool wantToggle)
+bool GreyJoy::getButton(std::string key)
 {
     for (int n=1;n<13;n++)
     {
         if (buttons[n].name == key)
         {
-            if (wantToggle)
-            {
-                return buttons[n].toggle;
-            }
-            else
-            {
-                return buttons[n].oldValue;
-            }
+            return buttons[n].oldValue;
+        }
+    }
+    return false;
+}
+
+bool GreyJoy::getToggle(std::string key)
+{
+    for (int n=1;n<13;n++)
+    {
+        if (buttons[n].name == key)
+        {
+            return buttons[n].toggle;
         }
     }
     return false;
@@ -72,7 +77,7 @@ float GreyJoy::getAxis(std::string key)
 
 void GreyJoy::update()
 {
-    // update the axi
+    // update the axes
     for (int a=1;a<7;a++)
     {
         sticks[a].newValue = joy->GetRawAxis(a);
