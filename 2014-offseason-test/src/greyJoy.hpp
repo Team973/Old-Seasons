@@ -5,7 +5,8 @@ class GreyJoy
 {
 public:
     GreyJoy(int port);
-    bool getButton(std::string key, bool wantToggle = false);
+    bool getButton(std::string key);
+    bool getToggle(std::string key);
     float getAxis(std::string key);
     void update();
 private:
