@@ -34,6 +34,7 @@ public:
     void setICap(float icap_);
     void setBounds(float min_, float max_);
     float update(float actual);
+    float update(float actual, Timer *t);
 };
 
 #endif
