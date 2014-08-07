@@ -100,3 +100,40 @@ float PID::update(float actual)
 
     return output;
 }
+
+float PID::update(float actual, Timer *t)
+{
+    err = target - actual;
+
+    // Calculate integral
+    integral = integral + err * t->Get();
+    iterm = i * integral;
+    if (icap != 0)
+    {
+        if (iterm > icap)
+        {
+            iterm = icap;
+        }
+        else if (iterm < -icap)
+        {
+            iterm = -icap;
+        }
+    }
+
+    // Calculate derivative
+    derivative = (err - prevErr) / t->Get();
+
+    output = (p * err) + iterm + (d * derivative);
+    prevErr = err;
+
+    if (max && (output > max))
+    {
+        output = max;
+    }
+    if (min && (output < min))
+    {
+        output = min;
+    }
+
+    return output;
+}
