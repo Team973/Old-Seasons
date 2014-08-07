@@ -131,11 +131,11 @@ bool AutoDriveCommand::Run()
         turnInput = rotatePID->update(angleError); // only this one gets a pid output
     }
 
-    drive->update(-turnInput, -driveInput, false, false, false, true);
+    //drive->update(-turnInput, -driveInput, false, false, false, true);
 
     if (timer->Get() >= timeout)
     {
-        drive->update(0, 0, false, false, false, true);
+        //drive->update(0, 0, false, false, false, true);
         return true;
     }
 
@@ -143,8 +143,8 @@ bool AutoDriveCommand::Run()
     {
         if (fabs(robotLinearError) < drivePercision)
         {
-            drive->update(0, 0, false, false, false, true);
-            drive->brake();
+            //drive->update(0, 0, false, false, false, true);
+            //drive->brake();
             return fabs(robotLinearError) < drivePercision;
         }
     }

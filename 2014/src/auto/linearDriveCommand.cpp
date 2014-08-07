@@ -18,11 +18,11 @@ LinearDriveCommand::LinearDriveCommand(Drive *drive_, float targetDrive_, float 
 
     if (driveMode_ == BLOCK)
     {
-        drive->setPIDupdate(BLOCK, targetAngle, targetDrive);
+ //       drive->setPIDupdate(BLOCK, targetAngle, targetDrive);
     }
     else
     {
-        drive->setPIDupdate(LINEAR, targetAngle, targetDrive);
+  //      drive->setPIDupdate(LINEAR, targetAngle, targetDrive);
     }
 
 }
@@ -55,7 +55,7 @@ bool LinearDriveCommand::Run()
     SmartDashboard::PutNumber("Drive Error: ", driveError);
     SmartDashboard::PutNumber("Angle Error: ", angleError);
 
-    drive->update(turnInput, driveInput, false, false, false, true);
+    //drive->update(turnInput, driveInput, false, false, false, true);
 
     return false;
 }
