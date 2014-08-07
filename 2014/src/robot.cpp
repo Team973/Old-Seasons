@@ -9,6 +9,7 @@
 #include "kinectHandler.hpp"
 #include "hellaBlocker.hpp"
 #include <vector>
+#include <pthread.h>
 
 #include "NetworkTables/NetworkTable.h"
 
@@ -488,7 +489,7 @@ void Robot::AutonomousPeriodic()
     shooter->update();
     intake->update();
     kinect->update();
-    drive->PIDupdate();
+    drive->update();
     dashboardUpdate();
     GetWatchdog().Feed();
 }
@@ -496,7 +497,7 @@ void Robot::AutonomousPeriodic()
 void Robot::TeleopInit()
 {
     shooter->cock(NO_COCK);
-    drive->update(0, 0, true, false, false, false);
+    drive->CheesyDrive(0, 0, false, false);
     intake->stop();
     blockerSolenoid->Set(false);
     autoCorralSolenoid->Set(false);
@@ -508,7 +509,8 @@ void Robot::TeleopPeriodic()
     joystick1();
     joystick2();
 
-    drive->update(DriveX, DriveY, lowGear, kickUp, quickTurn, false);
+    drive->CheesyDrive(DriveY, DriveX, lowGear, quickTurn);
+    drive->update();
     arm->update();
     shooter->update();
     intake->update();

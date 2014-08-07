@@ -215,7 +215,7 @@ bool KinectBlock::Run()
                 turn = 0;
             }
 
-            drive->update(turn, -movement, false, false, false, true);
+            //drive->update(turn, -movement, false, false, false, true);
         }
     }
 

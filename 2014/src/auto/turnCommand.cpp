@@ -44,7 +44,7 @@ bool TurnCommand::Run()
 
     SmartDashboard::PutNumber("Turn Error: ", angleError);
 
-    drive->update(turnInput, 0, false, false, true);
+    //drive->update(turnInput, 0, false, false, true);
 
     if ((fabs(angleError) < turnPrecision) || (timer->Get() >= timeout))
     {

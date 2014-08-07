@@ -23,8 +23,6 @@ std::vector<float> TrapProfile::getProfile(float loopTime)
     float t2 = t1 + t12;
     float t3 = t2 + t23;
 
-    std::vector<float> profile(4);
-
 #define T 0
 #define X 1
 #define V 2

@@ -2,6 +2,7 @@
 #include "drive.hpp"
 #include <math.h>
 #include "pid.hpp"
+#include "trapProfile.hpp"
 
 Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoid *kickUp_, Encoder *leftEncoder_, Encoder *rightEncoder_, Encoder *gyro_, Gyro *testGyro_)
 {
@@ -25,10 +26,11 @@ Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoi
     leftDist = 0;
     rightDist = 0;
 
-    AUTO_END_Y = 144;
+    leftPower = 0;
+    rightPower = 0;
 
-    brakeTimer = new Timer();
-    isBraking = false;
+    loopTimer = new Timer();
+    loopTimer->Start();
 
     drivePID = new PID(.015, 0, 0.08);
     drivePID->start();
@@ -42,71 +44,6 @@ Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoi
     drivePID->setBounds(-.9, .9);
     anglePID->setBounds(-.7, .7);
     rotatePID->setBounds(-.9, .9);
-
-    point = 0;
-    endPoint = 0;
-}
-
-void Drive::goLeft()
-{
-    destination = -endPoint;
-}
-
-void Drive::goRight()
-{
-    destination = endPoint;
-}
-
-float Drive::getWaypoint()
-{
-    return destination*12;
-}
-
-void Drive::setWaypoint(int dist)
-{
-
-    switch(dist)
-    {
-        case FAR:
-            endPoint = 6;
-            break;
-        case MID:
-            endPoint = 4;
-            break;
-        case CLOSE:
-            endPoint = 2;
-            break;
-    }
-}
-
-float Drive::generateTurnWaypoint()
-{
-    if (destination < 0)
-    {
-        return getX()-12;
-    }
-    else if (destination > 0)
-    {
-        return getX()+12;
-    }
-    return 0;
-}
-
-float Drive::getFinalY()
-{
-    return AUTO_END_Y;
-}
-
-float Drive::generateDriveTime()
-{
-    float t = fabs(((getWaypoint() - getX()) + (AUTO_END_Y - getY())) * 0.034);
-
-    if (t <= 0)
-        return 0;
-    else if (t > 6)
-        return 6;
-    else
-        return t;
 }
 
 float Drive::generateDistanceTime(float x)
@@ -131,16 +68,10 @@ float Drive::limit(float x)
     return x;
 }
 
-void Drive::brake()
-{
-    brakeTimer->Start();
-    isBraking = true;
-}
-
 void Drive::setDriveMotors(float left, float right)
 {
-    leftDrive->Set(-limit(left-0.01));
-    rightDrive->Set(limit(right));
+    leftPower = -limit(left-0.01);
+    rightPower = limit(right);
 }
 
 float Drive::getLeftDrive()
@@ -407,6 +338,7 @@ void Drive::CheesyDrive(double throttle, double wheel, bool highGear, bool quick
   }
 
   setDriveMotors(leftPwm, rightPwm);
+  setLowGear(highGear);
 }
 
 void Drive::killPID(bool death)
@@ -414,128 +346,42 @@ void Drive::killPID(bool death)
     deadPID = death;
 }
 
-void Drive::setPIDupdate(int driveType_, float driveTargetX_, float driveTargetY_)
+void Drive::setLinear(TrapProfile *linearGenerator_)
 {
-    driveType = driveType_;
-    driveTargetX = driveTargetX_;
-    driveTargetY = driveTargetY_;
-    if (driveType == BLOCK)
-    {
-        drivePID = new PID(0.05, 0.001);
-        drivePID->setICap(.3);
-        drivePID->start();
-    }
+    linearGenerator = linearGenerator_;
+    loopTimer->Reset();
 }
 
-void Drive::PIDupdate()
+void Drive::setAngular(TrapProfile *angularGenerator_)
 {
-    calculateDrive();
-    float currGyro = getGyroAngle();
-    float driveError = 0;
-    float angleError = 0;
-
-    switch (driveType)
-    {
-        case LINEAR:
-            driveError = driveTargetY - getWheelDistance();
-            angleError = driveTargetX - currGyro;
-            turnInput = -anglePID->update(angleError);
-            break;
-        case POINT:
-            float targetAngle = atan2(currX - driveTargetX, driveTargetY - currY) / M_PI * 180;
-            driveError = sqrt(pow((driveTargetX - currX), 2) + pow((driveTargetY - currY), 2));
-            angleError = targetAngle - currGyro;
-            turnInput = -anglePID->update(angleError);
-            break;
-        case TURN:
-            angleError = targetAngle - currGyro;
-            turnInput = -rotatePID->update(angleError);
-            break;
-        case BLOCK:
-            driveError = driveTargetY - getWheelDistance();
-            angleError = driveTargetX - currGyro;
-            turnInput = -anglePID->update(angleError);
-            break;
-    }
-
-    driveInput = drivePID->update(driveError);
-
-    if (!deadPID)
-    {
-        arcade(driveInput, turnInput);
-    }
-
-    storeDriveCalculations();
+    angularGenerator = angularGenerator_;
+    loopTimer->Reset();
 }
 
-float Drive::getVelocity(Encoder *e)
+void Drive::update(bool isAuto)
 {
-    float diameter = 4.8;
-    float encoderTicks = 360;
-    float encoderPeriod = e->GetPeriod();
-    float vel = 2 * pow(M_PI,2) * (diameter / encoderTicks * encoderPeriod);
-    return vel;
-}
-
-void Drive::update(double DriveX, double DriveY, bool gear, bool kick, bool quickTurn, bool isAuto)
-{
+    float kVelFF = 0;
+    float kAccelFF = 0;
     if (isAuto)
     {
         if (!deadPID)
         {
-            driveInput = drivePID->update(DriveY);
-            turnInput = -anglePID->update(DriveX);
+            std::vector<float> linearStep = linearGenerator->getProfile(loopTimer->Get());
+            float linearInput;//, angularInput;
+            linearInput = (kVelFF*linearStep[2]) + (kAccelFF*linearStep[3]);    // This is so we only have to deal with linear
+            arcade(drivePID->update(linearStep[1] + linearInput, loopTimer),0);// rotatePID->update(angleError, loopTimer));
         }
         else
         {
-            arcade(DriveY, 0);//turnInput);
+            leftPower = 0;
+            rightPower = 0;
         }
     }
-    else
-    {
-        CheesyDrive(DriveY, DriveX, gear, quickTurn);
-        //arcade(-DriveY, -DriveX);
-    }
-    setLowGear(gear);
-    setKickUp(kick);
-}
 
-void Drive::brakeUpdate()
-{
-    if (isBraking)
-    {
-        if (brakeTimer->Get() < 1 && brakeTimer->Get() > 0)
-        {
-            float diameter = 4.8;
-            float encoderTicks = 360;
-            float leftEncoderPeriod = leftEncoder->GetPeriod();
-            float rightEncoderPeriod = rightEncoder->GetPeriod();
-            float leftVelocity = 2 * pow(M_PI, 2) * (diameter / encoderTicks * leftEncoderPeriod);
-            float rightVelocity = 2 * pow(M_PI, 2) * (diameter / encoderTicks * rightEncoderPeriod);
-
-            float left = 0;
-            float right = 0;
-
-            if (leftVelocity > 0)
-                left = -.2;
-            else if (leftVelocity < 0)
-                left = .4;
-
-            if (rightVelocity > 0)
-                right = 0.0;
-            else if (rightVelocity < 0)
-                right = -0.4;
-
-            //setDriveMotors(left, right);
-        }
-        else
-        {
-            setDriveMotors(0, 0);
-            brakeTimer->Stop();
-            brakeTimer->Reset();
-            isBraking = false;
-        }
-    }
+    leftDrive->Set(leftPower);
+    rightDrive->Set(rightPower);
+    // was taken off for chezy champs and is no longer needed
+    //setKickUp(kick);
 }
 
 void Drive::dashboardUpdate()

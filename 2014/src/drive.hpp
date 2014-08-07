@@ -3,12 +3,6 @@
 #ifndef DRIVE_H
 #define DRIVE_H
 
-// Auto waypoints
-#define FIRE_POINT 9
-#define FAR 1
-#define MID 2
-#define CLOSE 3
-
 #define LINEAR 21
 #define POINT 22
 #define TURN 23
@@ -16,6 +10,7 @@
 
 class PID;
 class DataLog;
+class TrapProfile;
 
 class Drive //keep space between the class of the file and the classes in the file
 {
@@ -23,8 +18,6 @@ private:
     float limit(float x);
     void setDriveMotors(float left, float right);
     float signSquare(float x);
-    void CheesyDrive(double throttle, double wheel, bool highGear, bool quickTurn);
-    void arcade(float move_, float rotate_);
 
     float quickStopAccumulator;
     float negInertiaAccumulator;
@@ -54,12 +47,17 @@ private:
     PID *rotatePID;
     bool deadPID;
 
-    Timer *brakeTimer;
-    bool isBraking;
-
     DataLog *encoderPosLog;
     DataLog *encoderVelLog;
     DataLog *gyroLog;
+
+    TrapProfile *linearGenerator;
+    TrapProfile *angularGenerator;
+
+    Timer *loopTimer;
+
+    float leftPower;
+    float rightPower;
 
     float getVelocity(Encoder *e);
 
@@ -83,25 +81,20 @@ private:
     float prevX;
     float prevY;
 
-    float point;
-    float endPoint;
-
-    float AUTO_END_Y;
-    float destination;
-
     float driveInput;
     float turnInput;
-    int driveType;
     float driveTargetX;
     float driveTargetY;
 
 public:
     Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoid *kickUp_, Encoder *leftEncoder_, Encoder *rightEncoder_, Encoder *gyro_, Gyro *testGyro_);
-    void update(double DriveX, double DriveY, bool gear, bool kick, bool quickTurn, bool isAuto=false);
+    void CheesyDrive(double throttle, double wheel, bool highGear, bool quickTurn);
+    void arcade(float move_, float rotate_);
+    void update(bool isAuto=false);
     void dashboardUpdate();
-    void PIDupdate();
-    void setPIDupdate(int driveType_, float driveTargetX_, float driveTargetY_);
     void killPID(bool death);
+    void setLinear(TrapProfile *linearGenerator);
+    void setAngular(TrapProfile *angularGenerator);
 
     float getLeftDrive();
     float getRightDrive();
@@ -110,24 +103,13 @@ public:
     float getWheelDistance();
     void resetDriveEncoders();
     void resetGyro();
-    //TODO(oliver): Add in the reset gyro function
     float getGyroAngle();
     void resetDrive();
     void setLowGear(bool lowGear);
     void setKickUp(bool kick);
 
-    float generateDriveTime();
     float generateDistanceTime(float x);
 
-    void brake();
-    void brakeUpdate();
-
-    float getWaypoint();
-    float generateTurnWaypoint();
-    void setWaypoint(int dist);
-    void goLeft();
-    void goRight();
-    float getFinalY();
     float getX();
     float getY();
 };
