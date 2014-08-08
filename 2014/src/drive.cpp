@@ -32,7 +32,8 @@ Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoi
     loopTimer = new Timer();
     loopTimer->Start();
 
-    drivePID = new PID(.015, 0, 0.08);
+    //drivePID = new PID(.015, 0, 0.08);
+    drivePID = new PID(0.0, 0.0, 0.0);
     drivePID->start();
     anglePID = new PID(.05, 0, 0.05);
     anglePID->start();
@@ -89,9 +90,17 @@ float Drive::getWheelDistance()
     float diameter = 4.1;
     float encoderTicks = 360;
     float distancePerRevolution = M_PI * diameter;
-    leftDist = (leftEncoder->Get() / encoderTicks) * distancePerRevolution;
-    rightDist = (rightEncoder->Get() / encoderTicks) * distancePerRevolution;
+    leftDist = ((leftEncoder->Get() / encoderTicks) * distancePerRevolution)/12;
+    rightDist = ((rightEncoder->Get() / encoderTicks) * distancePerRevolution)/12;
     return (leftDist + rightDist)/2;
+}
+
+float Drive::getVelocity()
+{
+    float diameter = 4.1;
+    float leftVel = leftEncoder->GetRate() * 1000 / 360 * M_PI / 12 * diameter;
+    float rightVel = rightEncoder->GetRate() * 1000 / 360 * M_PI / 12 * diameter;;
+    return (leftVel + rightVel)/2;
 }
 
 float Drive::normalizeAngle(float theta)
@@ -360,13 +369,17 @@ void Drive::setAngular(TrapProfile *angularGenerator_)
 
 void Drive::update(bool isAuto)
 {
-    float kVelFF = 0;
+    float kVelFF = 0.05;
     float kAccelFF = 0;
     if (isAuto)
     {
         if (!deadPID)
         {
             std::vector<float> linearStep = linearGenerator->getProfile(loopTimer->Get());
+
+            SmartDashboard::PutNumber("Velocity Error: ", linearStep[2] - getVelocity());
+            SmartDashboard::PutNumber("Position Error: ", linearStep[1] - getWheelDistance());
+
             float linearInput;//, angularInput;
             linearInput = (kVelFF*linearStep[2]) + (kAccelFF*linearStep[3]);    // This is so we only have to deal with linear
             arcade(drivePID->update(linearStep[1] + linearInput, loopTimer),0);// rotatePID->update(angleError, loopTimer));

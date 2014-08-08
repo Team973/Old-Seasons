@@ -101,6 +101,7 @@ public:
     float getLeftDistance();
     float getRightDistance();
     float getWheelDistance();
+    float getVelocity();
     void resetDriveEncoders();
     void resetGyro();
     float getGyroAngle();

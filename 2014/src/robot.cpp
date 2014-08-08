@@ -108,6 +108,7 @@ void Robot::dashboardUpdate()
     SmartDashboard::PutNumber("Gyro: ", drive->getGyroAngle());
     SmartDashboard::PutNumber(" Test Gyro: ", testGyro->GetAngle());
     SmartDashboard::PutNumber("Drive Distance: ", drive->getWheelDistance());
+    SmartDashboard::PutNumber("Drive Velocity: ", drive->getVelocity());
 
     SmartDashboard::PutBoolean("Left Hand: ", kinect->getLeftHand());
     SmartDashboard::PutBoolean("Right Hand: ", kinect->getRightHand());
@@ -489,7 +490,7 @@ void Robot::AutonomousPeriodic()
     shooter->update();
     intake->update();
     kinect->update();
-    drive->update();
+    drive->update(true);
     dashboardUpdate();
     GetWatchdog().Feed();
 }
