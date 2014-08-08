@@ -17,6 +17,7 @@
 #include "auto/kinectSense.hpp"
 #include "auto/kinectBlock.hpp"
 #include "auto/kinectJuke.hpp"
+#include "auto/driveProfileCommand.hpp"
 #include <vector>
 #include <math.h>
 
@@ -87,9 +88,10 @@ void AutoManager::autoSelect(int autoMode)
             //commandSequence.push_back(new AutoDriveCommand(drive, -48, 48, false, 10, 5, 8));
             //commandSequence.push_back(new AutoDriveCommand(drive, 0, 48, false, 10, 5, 8));
             //commandSequence.push_back(new TurnCommand(drive, 90, 10));
-            commandSequence.push_back(new LinearDriveCommand(drive, 24, 0, false, 3));
-            commandSequence.push_back(new KinectSense(kinect, drive, HOT_ONE_BALL_SIDE, 1, side));
-            commandSequence.push_back(new CorralCommand(intake, true));
+            //commandSequence.push_back(new LinearDriveCommand(drive, 24, 0, false, 3));
+            //commandSequence.push_back(new KinectSense(kinect, drive, HOT_ONE_BALL_SIDE, 1, side));
+            //commandSequence.push_back(new CorralCommand(intake, true));
+            commandSequence.push_back(new DriveProfileCommand(drive, 2000, 20, 12, 20, 20));
             commandSequence.push_back(new AutoWaitCommand(10));
             break;
         case ONE_BALL_SIMPLE:
