@@ -169,9 +169,19 @@ void Shooter::update()
     {
         if (firing && arm->isCockSafe())
         {
-            if (performFire())
+            if (arm->getPreset() == SHOOTING)
             {
-                cock(FULL_COCK);
+                if (performFire())
+                {
+                    cock(FULL_COCK);
+                }
+            }
+            else if (arm->getPreset() == CLOSE_SHOT)
+            {
+                if (performSoftFire())
+                {
+                    cock(FULL_COCK);
+                }
             }
         }
         else
