@@ -25,7 +25,7 @@ void DriveProfileCommand::Init()
 
 bool DriveProfileCommand::Run()
 {
-    if (fabs(target - drive->getWheelDistance()) <= 2 || timer->Get() >= timeout)
+    if (timer->Get() >= timeout)
     {
         return true;
     }
