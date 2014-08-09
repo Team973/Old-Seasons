@@ -56,6 +56,7 @@ void Arm::setPreset(int preset)
             break;
         case CLOSE_SHOT:
             setTarget(9.00);
+            autoClamped = false;
             break;
         case HELLAVATOR:
             setTarget(7.5);//2.5
@@ -87,7 +88,7 @@ float Arm::getTarget()
 
 bool Arm::isCockSafe()
 {
-    float bound = 9.5;//30;
+    float bound = 0;//30;
     if (getRawAngle() <= bound)
     {
         return false;
@@ -179,7 +180,7 @@ void Arm::update()
             }
 
     }
-    else if (((lastPreset == STOW) || (lastPreset == SHOOTING)))
+    else if (((lastPreset == STOW) || (lastPreset == SHOOTING || lastPreset == CLOSE_SHOT)))
     {
         armPID->setBounds(-1, 1);
 
