@@ -87,7 +87,7 @@ float Drive::getRightDrive()
 
 float Drive::getWheelDistance()
 {
-    float diameter = 4.1;
+    float diameter = 3.84;
     float encoderTicks = 360;
     float distancePerRevolution = M_PI * diameter;
     leftDist = ((leftEncoder->Get() / encoderTicks) * distancePerRevolution)/12;
@@ -97,7 +97,7 @@ float Drive::getWheelDistance()
 
 float Drive::getVelocity()
 {
-    float diameter = 4.1;
+    float diameter = 3.84;
     float leftVel = (leftEncoder->GetRate() * 1000 / 360 * M_PI / 12 * diameter)/1000;
     float rightVel = (rightEncoder->GetRate() * 1000 / 360 * M_PI / 12 * diameter/1000);;
     return (leftVel + rightVel)/2;
