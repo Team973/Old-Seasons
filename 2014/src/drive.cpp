@@ -384,10 +384,10 @@ void Drive::update(bool isAuto)
             SmartDashboard::PutNumber("Velocity Target: ", linearStep[2]);
             SmartDashboard::PutNumber("Position Error: ", linearStep[1] - getWheelDistance());
 
-            float linearInput;, angularInput;
-            linearInput = -(kVelFF*linearStep[2]) + (kAccelFF*linearStep[3]);
-            angularInput = -(kVelFF*angularStep[2]) + (kAccelFF*angularStep[3]);
-            arcade(drivePID->update(linearStep[1], loopTimer) + linearInput, rotatePID->update(angularStep[1], loopTimer)) + angularInput;
+            float linearInput, angularInput;
+            linearInput = -(kLinVelFF*linearStep[2]) + (kLinAccelFF*linearStep[3]);
+            angularInput = -(kAngVelFF*angularStep[2]) + (kAngAccelFF*angularStep[3]);
+            arcade(drivePID->update(linearStep[1], loopTimer) + linearInput, rotatePID->update(angularStep[1], loopTimer) + angularInput);
         }
         else
         {
