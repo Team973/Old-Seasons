@@ -369,21 +369,25 @@ void Drive::setAngular(TrapProfile *angularGenerator_)
 
 void Drive::update(bool isAuto)
 {
-    float kVelFF = 0.08;
-    float kAccelFF = 0;
+    float kLinVelFF = 0.08;
+    float kLinAccelFF = 0;
+    float kAngVelFF = 0;
+    float kAngAccelFF = 0;
     if (isAuto)
     {
         if (!deadPID)
         {
             std::vector<float> linearStep = linearGenerator->getProfile(loopTimer->Get());
+            std::vector<float> angularStep = angularGenerator->getProfile(loopTimer->Get());
 
             SmartDashboard::PutNumber("Velocity Error: ", linearStep[2] - getVelocity());
             SmartDashboard::PutNumber("Velocity Target: ", linearStep[2]);
             SmartDashboard::PutNumber("Position Error: ", linearStep[1] - getWheelDistance());
 
-            float linearInput;//, angularInput;
-            linearInput = -(kVelFF*linearStep[2]) + (kAccelFF*linearStep[3]);    // This is so we only have to deal with linear
-            arcade(drivePID->update(linearStep[1], loopTimer) + linearInput,0);// rotatePID->update(angleError, loopTimer));
+            float linearInput;, angularInput;
+            linearInput = -(kVelFF*linearStep[2]) + (kAccelFF*linearStep[3]);
+            angularInput = -(kVelFF*angularStep[2]) + (kAccelFF*angularStep[3]);
+            arcade(drivePID->update(linearStep[1], loopTimer) + linearInput, rotatePID->update(angularStep[1], loopTimer)) + angularInput;
         }
         else
         {
