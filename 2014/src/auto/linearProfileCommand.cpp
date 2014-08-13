@@ -4,9 +4,9 @@
 #include "../trapProfile.hpp"
 #include <math.h>
 #include <vector>
-#include "driveProfileCommand.hpp"
+#include "linearProfileCommand.hpp"
 
-DriveProfileCommand::DriveProfileCommand(Drive *drive_, float target_, float aMax, float vMax, float dMax, float timeout_)
+LinearProfileCommand::LinearProfileCommand(Drive *drive_, float target_, float aMax, float vMax, float dMax, float timeout_)
 {
     drive = drive_;
     target = target_;
@@ -16,14 +16,14 @@ DriveProfileCommand::DriveProfileCommand(Drive *drive_, float target_, float aMa
     setTimeout(timeout_);
 }
 
-void DriveProfileCommand::Init()
+void LinearProfileCommand::Init()
 {
     timer->Start();
     timer->Reset();
     drive->setLinear(profileGenerator);
 }
 
-bool DriveProfileCommand::Run()
+bool LinearProfileCommand::Run()
 {
     if ((fabs(target - drive->getWheelDistance())*12 <= 5 && drive->getVelocity() <  2) || timer->Get() >= timeout)
     {
