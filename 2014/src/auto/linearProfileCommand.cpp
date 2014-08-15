@@ -1,9 +1,7 @@
 #include "WPILib.h"
-#include <vector>
 #include "../drive.hpp"
 #include "../trapProfile.hpp"
 #include <math.h>
-#include <vector>
 #include "linearProfileCommand.hpp"
 
 LinearProfileCommand::LinearProfileCommand(Drive *drive_, float target_, float aMax, float vMax, float dMax, float timeout_)
