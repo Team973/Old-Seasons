@@ -40,6 +40,9 @@ Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoi
     rotatePID = new PID(.005, 0, 0.01);
     rotatePID->start();
 
+    linearGenerator = new TrapProfile(0,0,0,0);
+    angularGenerator = new TrapProfile(0,0,0,0);
+
     deadPID = false;
 
     drivePID->setBounds(-.9, .9);
@@ -387,7 +390,7 @@ void Drive::update(bool isAuto)
             float linearInput, angularInput;
             linearInput = -(kLinVelFF*linearStep[2]) + (kLinAccelFF*linearStep[3]);
             angularInput = -(kAngVelFF*angularStep[2]) + (kAngAccelFF*angularStep[3]);
-            arcade(drivePID->update(linearStep[1], loopTimer) + linearInput, rotatePID->update(angularStep[1], loopTimer) + angularInput);
+            arcade(drivePID->update(linearStep[1], loopTimer) + linearInput,0);// rotatePID->update(angularStep[1], loopTimer) + angularInput);
         }
         else
         {
