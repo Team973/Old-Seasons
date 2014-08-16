@@ -1,12 +1,12 @@
 #include "autoCommand.hpp"
 
-#ifndef CONSECUTIVECOMMAND_H
-#define CONSECUTIVECOMMAND_H
+#ifndef CONCURRENT_COMMAND_H
+#define CONCURRENT_COMMAND_H
 
-class ConsecutiveCommand : public AutoCommand
+class ConcurrentCommand : public AutoCommand
 {
 public:
-    ConsecutiveCommand(std::vector<AutoCommand*> cmd_);
+    ConcurrentCommand(std::vector<AutoCommand*> cmd_);
     virtual void Init();
     virtual bool Run();
 
