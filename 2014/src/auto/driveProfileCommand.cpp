@@ -1,17 +1,13 @@
 #include "WPILib.h"
-#include <vector>
+#include "../TrapProfile.hpp"
 #include "../drive.hpp"
-#include "../trapProfile.hpp"
-#include <math.h>
-#include <vector>
 #include "driveProfileCommand.hpp"
 
-DriveProfileCommand::DriveProfileCommand(Drive *drive_, float target_, float aMax, float vMax, float dMax, float timeout_)
+DriveProfileCommand::DriveProfileCommand(Drive *drive_, float linearTarget_, float angularTarget_, float timeout_)
 {
     drive = drive_;
-    target = target_;
-
-    profileGenerator = new TrapProfile(target, vMax, aMax, dMax);
+    linearTarget = linearTarget_; // feet
+    angularTarget = angularTarget_; // degrees
 
     setTimeout(timeout_);
 }
@@ -20,15 +16,9 @@ void DriveProfileCommand::Init()
 {
     timer->Start();
     timer->Reset();
-    drive->setLinear(profileGenerator);
 }
 
 bool DriveProfileCommand::Run()
 {
-    if ((fabs(target - drive->getWheelDistance())*12 <= 5 && drive->getVelocity() <  2) || timer->Get() >= timeout)
-    {
-        return true;
-    }
-
     return false;
 }

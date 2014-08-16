@@ -387,6 +387,8 @@ void Drive::update(bool isAuto)
 
             kAngVelFF = angularStep[1];
 
+            kAngVelFF = angularStep;
+
             SmartDashboard::PutNumber("Velocity Error: ", linearStep[2] - getVelocity());
             SmartDashboard::PutNumber("Velocity Target: ", linearStep[2]);
             SmartDashboard::PutNumber("Position Error: ", linearStep[1] - getWheelDistance());
