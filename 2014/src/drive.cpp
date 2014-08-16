@@ -375,7 +375,7 @@ void Drive::update(bool isAuto)
 {
     float kLinVelFF = 0.08;
     float kLinAccelFF = 0;
-    //float kAngVelFF = 0;
+    float kAngVelFF = 0;
     //float kAngAccelFF = 0;
     SmartDashboard::PutNumber("HIT: ", 0);
     if (isAuto)
@@ -386,19 +386,21 @@ void Drive::update(bool isAuto)
             float loopTime = loopTimer->Get();
             std::vector<float> linearStep = linearGenerator->getProfile(loopTime);
             SmartDashboard::PutNumber("HIT: ", 2);
-            //std::vector<float> angularStep = angularGenerator->getProfile(loopTime);
+            std::vector<float> angularStep = angularGenerator->getProfile(loopTime);
             SmartDashboard::PutNumber("HIT: ", 3);
 
-            //kAngVelFF = angularStep[1];
+            kAngVelFF = angularStep[1];
             SmartDashboard::PutNumber("HIT: ", 4);
 
             SmartDashboard::PutNumber("Velocity Error: ", linearStep[2] - getVelocity());
             SmartDashboard::PutNumber("Velocity Target: ", linearStep[2]);
             SmartDashboard::PutNumber("Position Error: ", linearStep[1] - getWheelDistance());
 
+
             float linearInput;//, angularInput;
             linearInput = -(kLinVelFF*linearStep[2]) + (kLinAccelFF*linearStep[3]);
             //angularInput = -(kAngVelFF*angularStep[2]) + (kAngAccelFF*angularStep[3]);
+            SmartDashboard::PutNumber("driveOutput: ", limit(linearInput));
             SmartDashboard::PutNumber("HIT: ", 5);
             arcade(drivePID->update(linearStep[1], loopTimer) + linearInput,0);// rotatePID->update(angularStep[1], loopTimer) + angularInput);
             SmartDashboard::PutNumber("HIT: ", 6);

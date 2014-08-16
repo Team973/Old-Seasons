@@ -10,6 +10,8 @@ TrapProfile::TrapProfile(float xTarget_, float vMax_, float aMax_, float dMax_)
     aMax = aMax_;
     dMax = dMax_;
 
+    profile.resize(4);
+
     fake = false;
 }
 
