@@ -9,6 +9,18 @@ TrapProfile::TrapProfile(float xTarget_, float vMax_, float aMax_, float dMax_)
     vMax = vMax_;
     aMax = aMax_;
     dMax = dMax_;
+
+    fake = false;
+}
+
+TrapProfile::TrapProfile()
+{
+    xTarget = 10;
+    vMax = 10;
+    aMax = 10;
+    dMax = 10;
+
+    fake = true;
 }
 
 std::vector<float> TrapProfile::getProfile(float loopTime)
@@ -92,6 +104,14 @@ std::vector<float> TrapProfile::getProfile(float loopTime)
             profile[V] = 0;
             profile[A] = 0;
         }
+    }
+
+    if (fake)
+    {
+        profile[T] = 0;
+        profile[X] = 0;
+        profile[V] = 0;
+        profile[A] = 0;
     }
 
     return profile;
