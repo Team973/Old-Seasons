@@ -1,7 +1,7 @@
 #include "autoCommand.hpp"
 
-#ifndef DRIVE_PROFILE_COMMAND_H
-#define DRIVE_PROFILE_COMMAND_H
+#ifndef LINEAR_PROFILE_COMMAND_H
+#define LINEAR_PROFILE_COMMAND_H
 
 class LinearProfileCommand : public AutoCommand
 {
