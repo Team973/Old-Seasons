@@ -4,7 +4,7 @@
 #include "auto/autoCommand.hpp"
 #include "auto/autoDriveCommand.hpp"
 #include "auto/sequentialCommand.hpp"
-#include "auto/consecutiveCommand.hpp"
+#include "auto/concurrentCommand.hpp"
 #include "auto/turnCommand.hpp"
 #include "auto/linearDriveCommand.hpp"
 #include "auto/fireCommand.hpp"

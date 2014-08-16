@@ -1,8 +1,8 @@
 #include "WPILib.h"
-#include "consecutiveCommand.hpp"
+#include "concurrentCommand.hpp"
 #include <vector>
 
-ConsecutiveCommand::ConsecutiveCommand(std::vector<AutoCommand*> cmd_)
+ConcurrentCommand::ConcurrentCommand(std::vector<AutoCommand*> cmd_)
 {
     for (unsigned int i=0; i<cmd_.size(); i++)
     {
@@ -12,7 +12,7 @@ ConsecutiveCommand::ConsecutiveCommand(std::vector<AutoCommand*> cmd_)
     commandsCompleted = 0;
 }
 
-void ConsecutiveCommand::Init()
+void ConcurrentCommand::Init()
 {
     for (unsigned int i=0; i<=commands.size(); i++)
     {
@@ -20,7 +20,7 @@ void ConsecutiveCommand::Init()
     }
 }
 
-bool ConsecutiveCommand::Run()
+bool ConcurrentCommand::Run()
 {
     if (commandsCompleted < commands.size())
     {
