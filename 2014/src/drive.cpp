@@ -41,8 +41,8 @@ Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoi
     rotatePID = new PID(0, 0, 0);
     rotatePID->start();
 
-    linearGenerator = new TrapProfile(0,0,0,0);
-    angularGenerator = new TrapProfile(0,0,0,0);
+    //linearGenerator = new TrapProfile(0,0,0,0);
+    //angularGenerator = new TrapProfile(0,0,0,0);
 
     deadPID = false;
 
@@ -375,7 +375,7 @@ void Drive::update(bool isAuto)
 {
     float kLinVelFF = 0.08;
     float kLinAccelFF = 0;
-    float kAngVelFF = 0;
+    //float kAngVelFF = 0;
     //float kAngAccelFF = 0;
     if (isAuto)
     {
@@ -383,11 +383,9 @@ void Drive::update(bool isAuto)
         {
             float loopTime = loopTimer->Get();
             std::vector<float> linearStep = linearGenerator->getProfile(loopTime);
-            std::vector<float> angularStep = angularGenerator->getProfile(loopTime);
+            //std::vector<float> angularStep = angularGenerator->getProfile(loopTime);
 
-            kAngVelFF = angularStep[1];
-
-            kAngVelFF = angularStep;
+            //kAngVelFF = angularStep[1];
 
             SmartDashboard::PutNumber("Velocity Error: ", linearStep[2] - getVelocity());
             SmartDashboard::PutNumber("Velocity Target: ", linearStep[2]);
