@@ -37,7 +37,8 @@ Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoi
     drivePID->start();
     anglePID = new PID(.05, 0, 0.05);
     anglePID->start();
-    rotatePID = new PID(.005, 0, 0.01);
+    //rotatePID = new PID(.005, 0, 0.01);
+    rotatePID = new PID(0, 0, 0);
     rotatePID->start();
 
     linearGenerator = new TrapProfile(0,0,0,0);
