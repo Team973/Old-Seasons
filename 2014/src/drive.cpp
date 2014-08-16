@@ -37,8 +37,12 @@ Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoi
     drivePID->start();
     anglePID = new PID(.05, 0, 0.05);
     anglePID->start();
-    rotatePID = new PID(.005, 0, 0.01);
+    //rotatePID = new PID(.005, 0, 0.01);
+    rotatePID = new PID(0, 0, 0);
     rotatePID->start();
+
+    linearGenerator = new TrapProfile(0,0,0,0);
+    angularGenerator = new TrapProfile(0,0,0,0);
 
     deadPID = false;
 
@@ -372,22 +376,25 @@ void Drive::update(bool isAuto)
     float kLinVelFF = 0.08;
     float kLinAccelFF = 0;
     float kAngVelFF = 0;
-    float kAngAccelFF = 0;
+    //float kAngAccelFF = 0;
     if (isAuto)
     {
         if (!deadPID)
         {
-            std::vector<float> linearStep = linearGenerator->getProfile(loopTimer->Get());
-            std::vector<float> angularStep = angularGenerator->getProfile(loopTimer->Get());
+            float loopTime = loopTimer->Get();
+            std::vector<float> linearStep = linearGenerator->getProfile(loopTime);
+            std::vector<float> angularStep = angularGenerator->getProfile(loopTime);
+
+            kAngVelFF = angularStep[1];
 
             SmartDashboard::PutNumber("Velocity Error: ", linearStep[2] - getVelocity());
             SmartDashboard::PutNumber("Velocity Target: ", linearStep[2]);
             SmartDashboard::PutNumber("Position Error: ", linearStep[1] - getWheelDistance());
 
-            float linearInput;, angularInput;
-            linearInput = -(kVelFF*linearStep[2]) + (kAccelFF*linearStep[3]);
-            angularInput = -(kVelFF*angularStep[2]) + (kAccelFF*angularStep[3]);
-            arcade(drivePID->update(linearStep[1], loopTimer) + linearInput, rotatePID->update(angularStep[1], loopTimer)) + angularInput;
+            float linearInput;//, angularInput;
+            linearInput = -(kLinVelFF*linearStep[2]) + (kLinAccelFF*linearStep[3]);
+            //angularInput = -(kAngVelFF*angularStep[2]) + (kAngAccelFF*angularStep[3]);
+            arcade(drivePID->update(linearStep[1], loopTimer) + linearInput,0);// rotatePID->update(angularStep[1], loopTimer) + angularInput);
         }
         else
         {
