@@ -415,11 +415,6 @@ void Drive::update(bool isAuto)
             arcade(drivePID->update(linearStep[1]-getWheelDistance(), loopTimer) + linearInput,0);// rotatePID->update(angularStep[1], loopTimer) + angularInput);
             SmartDashboard::PutNumber("HIT: ", 6);
         }
-        else
-        {
-            leftPower = 0;
-            rightPower = 0;
-        }
     }
 
     leftDrive->Set(leftPower);
