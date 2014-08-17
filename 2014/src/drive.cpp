@@ -89,23 +89,27 @@ float Drive::getRightDrive()
     return rightEncoder->Get();
 }
 
+//XXX: this function needs to divide by two fixme
 float Drive::getWheelDistance()
 {
-    float diameter = 3.84;
+    float diameter = 3.89;
     float encoderTicks = 360;
     float distancePerRevolution = M_PI * diameter;
     leftDist = ((leftEncoder->Get() / encoderTicks) * distancePerRevolution)/12;
     rightDist = ((rightEncoder->Get() / encoderTicks) * distancePerRevolution)/12;
-    return (leftDist + rightDist)/2;
+    return (leftDist + rightDist);///2;
 }
+//XXX: end fix
 
+//XXX: this function needs to divide by two fixme
 float Drive::getVelocity()
 {
-    float diameter = 3.84;
+    float diameter = 3.89;
     float leftVel = leftEncoder->GetRate() / 360 * M_PI / 12 * diameter;
     float rightVel = rightEncoder->GetRate() / 360 * M_PI / 12 * diameter;;
-    return (leftVel + rightVel)/2;
+    return (leftVel + rightVel);///2;
 }
+//XXX: end fix
 
 float Drive::normalizeAngle(float theta)
 {
@@ -373,8 +377,8 @@ void Drive::setAngular(TrapProfile *angularGenerator_)
 
 void Drive::update(bool isAuto)
 {
-    float kLinVelFF = 0.08;
-    float kLinAccelFF = 0;
+    float kLinVelFF = 0.07;
+    float kLinAccelFF = 0.02;
     float kAngVelFF = 0;
     //float kAngAccelFF = 0;
     SmartDashboard::PutNumber("HIT: ", 0);
@@ -402,7 +406,7 @@ void Drive::update(bool isAuto)
             //angularInput = -(kAngVelFF*angularStep[2]) + (kAngAccelFF*angularStep[3]);
             SmartDashboard::PutNumber("driveOutput: ", limit(linearInput));
             SmartDashboard::PutNumber("HIT: ", 5);
-            arcade(drivePID->update(linearStep[1], loopTimer) + linearInput,0);// rotatePID->update(angularStep[1], loopTimer) + angularInput);
+            arcade(drivePID->update(linearStep[1]-getWheelDistance(), loopTimer) + linearInput,0);// rotatePID->update(angularStep[1], loopTimer) + angularInput);
             SmartDashboard::PutNumber("HIT: ", 6);
         }
         else

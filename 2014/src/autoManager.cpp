@@ -91,7 +91,7 @@ void AutoManager::autoSelect(int autoMode)
             //commandSequence.push_back(new LinearDriveCommand(drive, 24, 0, false, 3));
             //commandSequence.push_back(new KinectSense(kinect, drive, HOT_ONE_BALL_SIDE, 1, side));
             //commandSequence.push_back(new CorralCommand(intake, true));
-            commandSequence.push_back(new LinearProfileCommand(drive, 20, 20, 12, 20, 20));
+            commandSequence.push_back(new LinearProfileCommand(drive, 10, 20, 14, 20, 20));
             //commandSequence.push_back(new ArmPresetCommand(arm, SHOOTING, 0));
             commandSequence.push_back(new AutoWaitCommand(10));
             break;
