@@ -381,6 +381,8 @@ void Drive::update(bool isAuto)
     float kLinAccelFF = 0.02;
     float kAngVelFF = 0;
     //float kAngAccelFF = 0;
+    //
+    float kDccellFF = 0;
     SmartDashboard::PutNumber("HIT: ", 0);
     if (isAuto)
     {
@@ -402,6 +404,10 @@ void Drive::update(bool isAuto)
 
 
             float linearInput;//, angularInput;
+            if (linearStep[3] < 0)
+            {
+                kLinAccelFF = kDccelFF;
+            }
             linearInput = -(kLinVelFF*linearStep[2]) + (kLinAccelFF*linearStep[3]);
             //angularInput = -(kAngVelFF*angularStep[2]) + (kAngAccelFF*angularStep[3]);
             SmartDashboard::PutNumber("driveOutput: ", limit(linearInput));
