@@ -18,6 +18,8 @@ Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoi
     gyro = gyro_;
     testGyro = testGyro_;
 
+    prevAngle = 0;
+
     M_PI = 3.141592;
 
     quickStopAccumulator = 0;
@@ -33,12 +35,12 @@ Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoi
     loopTimer->Start();
 
     //drivePID = new PID(.015, 0, 0.08);
-    drivePID = new PID(0.0, 0.0, 0.0);
+    drivePID = new PID(1, 0.0, 0.0);
     drivePID->start();
     anglePID = new PID(.05, 0, 0.05);
     anglePID->start();
     //rotatePID = new PID(.005, 0, 0.01);
-    rotatePID = new PID(0, 0, 0);
+    rotatePID = new PID(0.03, 0, 0);
     rotatePID->start();
 
     linearGenerator = new TrapProfile();
@@ -75,7 +77,7 @@ float Drive::limit(float x)
 
 void Drive::setDriveMotors(float left, float right)
 {
-    leftPower = -limit(left-0.01);
+    leftPower = -limit(left);
     rightPower = limit(right);
 }
 
@@ -189,9 +191,12 @@ float Drive::getY()
 
 float Drive::signSquare(float x)
 {
+    /*
     if (x < 0)
         return -x*x;
     return x*x;
+    */
+    return x;
 }
 
 void Drive::arcade(float move_, float rotate_)
@@ -377,12 +382,14 @@ void Drive::setAngular(TrapProfile *angularGenerator_)
 
 void Drive::update(bool isAuto)
 {
-    float kLinVelFF = 0.07;
-    float kLinAccelFF = 0.02;
+    float currAngle = getGyroAngle();
+
+    //float kLinVelFF = 0.155;
+    float kLinVelFF = 0;
+    float kLinAccelFF = 0;
     float kAngVelFF = 0;
-    //float kAngAccelFF = 0;
-    //
-    float kDccellFF = 0;
+    float kAngAccelFF = 0;
+    //float kDccellFF = 0;
     SmartDashboard::PutNumber("HIT: ", 0);
     if (isAuto)
     {
@@ -395,7 +402,6 @@ void Drive::update(bool isAuto)
             std::vector<float> angularStep = angularGenerator->getProfile(loopTime);
             SmartDashboard::PutNumber("HIT: ", 3);
 
-            kAngVelFF = angularStep[1];
             SmartDashboard::PutNumber("HIT: ", 4);
 
             SmartDashboard::PutNumber("Velocity Error: ", linearStep[2] - getVelocity());
@@ -403,20 +409,41 @@ void Drive::update(bool isAuto)
             SmartDashboard::PutNumber("Position Error: ", linearStep[1] - getWheelDistance());
 
 
-            float linearInput;//, angularInput;
+            float linearInput, angularInput;
+            /*
             if (linearStep[3] < 0)
             {
                 kLinAccelFF = kDccelFF;
             }
+            */
             linearInput = -(kLinVelFF*linearStep[2]) + (kLinAccelFF*linearStep[3]);
-            //angularInput = -(kAngVelFF*angularStep[2]) + (kAngAccelFF*angularStep[3]);
+            angularInput = -(kAngVelFF*angularStep[2]) + (kAngAccelFF*angularStep[3]);
             SmartDashboard::PutNumber("driveOutput: ", limit(linearInput));
             SmartDashboard::PutNumber("HIT: ", 5);
-            arcade(drivePID->update(linearStep[1]-getWheelDistance(), loopTimer) + linearInput,0);// rotatePID->update(angularStep[1], loopTimer) + angularInput);
+
+            //float linearOutput = drivePID->update(linearStep[1]-getWheelDistance(), loopTimer) + linearInput;
+
+            /*
+            if (fabs(linearOutput) < .1 && linearOutput != 0)
+            {
+                linearOutput = .1 * (fabs(linearOutput)/linearOutput);
+            }
+
+            SmartDashboard::PutNumber("Linear Output: ", linearOutput);
+            */
+
+            SmartDashboard::PutNumber("angular position profile: ", angularStep[1]);
+
+            arcade(0, -(rotatePID->update(angularStep[1] - getGyroAngle(), loopTimer) + angularInput));
             SmartDashboard::PutNumber("HIT: ", 6);
         }
     }
 
+    SmartDashboard::PutNumber("angular velocity: ", fabs((currAngle - prevAngle)/loopTimer->Get())*1000);
+    prevAngle = currAngle;
+
+    SmartDashboard::PutNumber("left speed: ", leftPower);
+    SmartDashboard::PutNumber("right speed: ", rightPower);
     leftDrive->Set(leftPower);
     rightDrive->Set(rightPower);
     // was taken off for chezy champs and is no longer needed

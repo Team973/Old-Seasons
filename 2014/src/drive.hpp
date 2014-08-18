@@ -81,6 +81,8 @@ private:
     float prevX;
     float prevY;
 
+    float prevAngle;
+
     float driveInput;
     float turnInput;
     float driveTargetX;

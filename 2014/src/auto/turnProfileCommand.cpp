@@ -22,7 +22,7 @@ void TurnProfileCommand::Init()
 
 bool TurnProfileCommand::Run()
 {
-    if ((fabs(target - drive->getGyroAngle()) <= 3 && drive->getVelocity() < 2) || timer->Get() >= timeout)
+    if ((fabs(target - drive->getGyroAngle()) <= 3) || timer->Get() >= timeout)
     {
         return true;
     }
