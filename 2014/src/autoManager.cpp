@@ -18,6 +18,7 @@
 #include "auto/kinectBlock.hpp"
 #include "auto/kinectJuke.hpp"
 #include "auto/linearProfileCommand.hpp"
+#include "auto/turnProfileCommand.hpp"
 #include <vector>
 #include <math.h>
 
@@ -91,8 +92,9 @@ void AutoManager::autoSelect(int autoMode)
             //commandSequence.push_back(new LinearDriveCommand(drive, 24, 0, false, 3));
             //commandSequence.push_back(new KinectSense(kinect, drive, HOT_ONE_BALL_SIDE, 1, side));
             //commandSequence.push_back(new CorralCommand(intake, true));
-            commandSequence.push_back(new LinearProfileCommand(drive, 10, 20, 14, 20, 20));
+            //commandSequence.push_back(new LinearProfileCommand(drive, 8, 25, 6, 25, 20));
             //commandSequence.push_back(new ArmPresetCommand(arm, SHOOTING, 0));
+            commandSequence.push_back(new TurnProfileCommand(drive, 75, 100000000, 120, 100000000, 20));
             commandSequence.push_back(new AutoWaitCommand(10));
             break;
         case ONE_BALL_SIMPLE:
