@@ -35,8 +35,11 @@ Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoi
     loopTimer->Start();
 
     //drivePID = new PID(.015, 0, 0.08);
+    //XXX UNCOMMENT ME WHEN YOU ARE DONE TESTING
+    /*
     drivePID = new PID(1, 0.0, 0.0);
     drivePID->start();
+    */
     anglePID = new PID(.05, 0, 0.05);
     anglePID->start();
     //rotatePID = new PID(.005, 0, 0.01);
@@ -51,6 +54,11 @@ Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoi
     drivePID->setBounds(-.9, .9);
     anglePID->setBounds(-.7, .7);
     rotatePID->setBounds(-.9, .9);
+
+    //XXX destroy us when you are done testing
+    tuneStick = new Joystick(3);
+    buttonTimer = new Timer();
+    buttonTimer->Start();
 }
 
 float Drive::generateDistanceTime(float x)
@@ -383,26 +391,68 @@ void Drive::setAngular(TrapProfile *angularGenerator_)
 void Drive::update(bool isAuto)
 {
     float currAngle = getGyroAngle();
-
     //float kLinVelFF = 0.155;
     float kLinVelFF = 0;
     float kLinAccelFF = 0;
     float kAngVelFF = 0;
     float kAngAccelFF = 0;
     //float kDccellFF = 0;
-    SmartDashboard::PutNumber("HIT: ", 0);
+
+    //XXX remove block when testing is over
+    float Kp = 1;
+    float Ki = 0;
+    float Kd = 0;
+    float iCap = 0;
+
+    if (tuneStick->GetRawButton(1) && buttonTimer->Get() >= .15)
+        Kp += 0.01;
+    else if (tuneStick->GetRawButton(3) && buttonTimer->Get() >= .15)
+        Kp -= 0.01;
+
+    if (tuneStick->GetRawButton(4) && buttonTimer->Get() >= .15)
+        Ki += 0.01;
+    else if (tuneStick->GetRawButton(2) && buttonTimer->Get() >= .15)
+        Ki -= 0.01;
+
+    if (tuneStick->GetRawButton(5) && buttonTimer->Get() >= .15)
+        Kd += 0.01;
+    else if (tuneStick->GetRawButton(6) && buttonTimer->Get() >= .15)
+        Kd -= 0.01;
+
+    if (tuneStick->GetRawButton(7) && buttonTimer->Get() >= .15)
+        iCap += 0.01;
+    else if (tuneStick->GetRawButton(8) && buttonTimer->Get() >= .15)
+        iCap -= 0.01;
+
+    if (tuneStick->GetRawButton(10) && buttonTimer->Get() >= .15)
+        kLinVelFF += 0.01;
+    else if (tuneStick->GetRawButton(9) && buttonTimer->Get() >= .15)
+        kLinVelFF -= 0.01;
+
+    if (tuneStick->GetRawButton(11) && buttonTimer->Get() >= .15)
+        kLinAccelFF += 0.01;
+    else if (tuneStick->GetRawButton(12) && buttonTimer->Get() >= .15)
+        kLinAccelFF -= 0.01;
+
+    SmartDashboard::PutNumber("Kp: ", Kp);
+    SmartDashboard::PutNumber("Ki: ", Ki);
+    SmartDashboard::PutNumber("Kd: ", Kd);
+    SmartDashboard::PutNumber("iCap: ", iCap);
+    SmartDashboard::PutNumber("Kvel: ", kLinVelFF);
+    SmartDashboard::PutNumber("Kaccel: ", kLinAccelFF);
+
+    drivePID = new PID(Kp, Ki, Kd);
+    drivePID->setICap(iCap);
+    drivePID->start();
+    //XXX
+
     if (isAuto)
     {
-        SmartDashboard::PutNumber("HIT: ", 1);
         if (!deadPID)
         {
             float loopTime = loopTimer->Get();
             std::vector<float> linearStep = linearGenerator->getProfile(loopTime);
-            SmartDashboard::PutNumber("HIT: ", 2);
             std::vector<float> angularStep = angularGenerator->getProfile(loopTime);
-            SmartDashboard::PutNumber("HIT: ", 3);
-
-            SmartDashboard::PutNumber("HIT: ", 4);
 
             SmartDashboard::PutNumber("Velocity Error: ", linearStep[2] - getVelocity());
             SmartDashboard::PutNumber("Velocity Target: ", linearStep[2]);
@@ -419,7 +469,6 @@ void Drive::update(bool isAuto)
             linearInput = -(kLinVelFF*linearStep[2]) + (kLinAccelFF*linearStep[3]);
             angularInput = -(kAngVelFF*angularStep[2]) + (kAngAccelFF*angularStep[3]);
             SmartDashboard::PutNumber("driveOutput: ", limit(linearInput));
-            SmartDashboard::PutNumber("HIT: ", 5);
 
             //float linearOutput = drivePID->update(linearStep[1]-getWheelDistance(), loopTimer) + linearInput;
 
@@ -435,7 +484,6 @@ void Drive::update(bool isAuto)
             SmartDashboard::PutNumber("angular position profile: ", angularStep[1]);
 
             arcade(0, -(rotatePID->update(angularStep[1] - getGyroAngle(), loopTimer) + angularInput));
-            SmartDashboard::PutNumber("HIT: ", 6);
         }
     }
 
@@ -448,6 +496,7 @@ void Drive::update(bool isAuto)
     rightDrive->Set(rightPower);
     // was taken off for chezy champs and is no longer needed
     //setKickUp(kick);
+    delete drivePID;
 }
 
 void Drive::dashboardUpdate()
