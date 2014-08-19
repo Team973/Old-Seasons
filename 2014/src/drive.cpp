@@ -468,10 +468,8 @@ void Drive::update(bool isAuto)
             */
             linearInput = -(kLinVelFF*linearStep[2]) + (kLinAccelFF*linearStep[3]);
             angularInput = -(kAngVelFF*angularStep[2]) + (kAngAccelFF*angularStep[3]);
-            SmartDashboard::PutNumber("driveOutput: ", limit(linearInput));
 
             //float linearOutput = drivePID->update(linearStep[1]-getWheelDistance(), loopTimer) + linearInput;
-
             /*
             if (fabs(linearOutput) < .1 && linearOutput != 0)
             {
