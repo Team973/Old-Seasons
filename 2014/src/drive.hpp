@@ -56,6 +56,10 @@ private:
 
     Timer *loopTimer;
 
+    //XXX destroy us when you are done testing
+    Joystick *tuneStick;
+    Timer *buttonTimer;
+
     float leftPower;
     float rightPower;
 
