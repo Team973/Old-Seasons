@@ -75,12 +75,13 @@ float PID::update(float actual)
     {
         if (iterm > icap)
         {
-            iterm = icap;
+            integral = icap/i;
         }
         else if (iterm < -icap)
         {
-            iterm = -icap;
+            integral = -icap/i;
         }
+        iterm = i * integral;
     }
 
     // Calculate derivative
@@ -112,12 +113,13 @@ float PID::update(float actual, Timer *t)
     {
         if (iterm > icap)
         {
-            iterm = icap;
+            integral = icap/i;
         }
         else if (iterm < -icap)
         {
-            iterm = -icap;
+            integral = -icap/i;
         }
+        iterm = i * integral;
     }
 
     // Calculate derivative
