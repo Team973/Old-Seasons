@@ -14,6 +14,8 @@ private:
     float aMax;
     float dMax;
 
+    float directionFlag;
+
     bool fake;
 
     std::vector<float> profile;
