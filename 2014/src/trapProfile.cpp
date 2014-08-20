@@ -5,6 +5,7 @@
 
 TrapProfile::TrapProfile(float xTarget_, float vMax_, float aMax_, float dMax_)
 {
+    realTarget = xTarget_;
     if (xTarget < 0)
     {
         xTarget = -xTarget_;
@@ -32,6 +33,11 @@ TrapProfile::TrapProfile()
     dMax = 10;
 
     fake = true;
+}
+
+float TrapProfile::getTarget()
+{
+    return realTarget;
 }
 
 std::vector<float> TrapProfile::getProfile(float loopTime)
