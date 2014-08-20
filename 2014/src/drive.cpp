@@ -470,7 +470,6 @@ void Drive::update(bool isAuto)
             linearInput = -(kLinVelFF*linearStep[2]) + -(kLinAccelFF*linearStep[3]);
             angularInput = -(kAngVelFF*angularStep[2]) + -(kAngAccelFF*angularStep[3]);
 
-            float linearOutput = drivePID->update(linearStep[1]-getWheelDistance(), loopTimer) + linearInput;
             /*
             if (fabs(linearOutput) < .1 && linearOutput != 0)
             {
@@ -482,8 +481,20 @@ void Drive::update(bool isAuto)
             SmartDashboard::PutNumber("Velocity: ", linearStep[2]);
             SmartDashboard::PutNumber("Acceleration: ", linearStep[3]);
 
+            float linearOutput = 0;
+
+            if (fabs(angularGenerator->getTarget() - getGyroAngle()) < 5)
+            {
+                linearOutput = drivePID->update(linearStep[1]-getWheelDistance(), loopTimer) + linearInput;
+            }
+            else
+            {
+                linearOutput = 0;
+            }
+
             SmartDashboard::PutNumber("I Contribution: ", rotatePID->update(angularStep[1]-getGyroAngle(), loopTimer) - 0.01*(angularStep[1]-getGyroAngle()));
-            arcade(linearOutput,0);// -(rotatePID->update(angularStep[1] - getGyroAngle(), loopTimer) + angularInput));
+            SmartDashboard::PutNumber("Linear Output: ", linearOutput);
+            arcade(0, -(rotatePID->update(angularStep[1] - getGyroAngle(), loopTimer)));
         }
     }
 

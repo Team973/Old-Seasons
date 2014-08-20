@@ -27,6 +27,7 @@ TrapProfile::TrapProfile(float xTarget_, float vMax_, float aMax_, float dMax_)
 
 TrapProfile::TrapProfile()
 {
+    realTarget = 0;
     xTarget = 10;
     vMax = 10;
     aMax = 10;
