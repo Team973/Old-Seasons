@@ -120,7 +120,6 @@ float PID::update(float actual, Timer *t)
             integral = -icap/i;
         }
         iterm = i * integral;
-        SmartDashboard::PutNumber("Iterm: ", iterm);
     }
 
     // Calculate derivative
@@ -137,10 +136,6 @@ float PID::update(float actual, Timer *t)
     {
         output = min;
     }
-
-    SmartDashboard::PutNumber("P input: ", p*err);
-    SmartDashboard::PutNumber("D input: ", d*derivative);
-    SmartDashboard::PutNumber("PID output: ", output);
 
     return output;
 }
