@@ -1,4 +1,5 @@
 #include "WPILib.h"
+#include <math.h>
 #include "kinectHandler.hpp"
 
 KinectHandler::KinectHandler(KinectStick *left_, KinectStick *right_)
@@ -7,16 +8,6 @@ KinectHandler::KinectHandler(KinectStick *left_, KinectStick *right_)
     right = right_;
 
     lastHand = "none";
-}
-
-float KinectHandler::kinectDeadband(float x, float limit)
-{
-    if (x > limit)
-    {
-        return false;
-    }
-    else
-        return true;
 }
 
 bool KinectHandler::override()
@@ -34,17 +25,27 @@ std::string KinectHandler::getScheduledHand()
 
 bool KinectHandler::getLeftHand()
 {
-    return (kinectDeadband(left->GetY(), 0.5));
+    return left->GetY() > 0.5;
 }
 
 bool KinectHandler::getRightHand()
 {
-    return (kinectDeadband(right->GetY(), 0.5));
+    return right->GetY() > 0.5;
 }
 
 void KinectHandler::clearLastHand()
 {
     lastHand = "none";
+}
+
+bool KinectHandler::goLeft()
+{
+    return left->GetY() < -.5;
+}
+
+bool KinectHandler::goRight()
+{
+    return right->GetY() < -.5;
 }
 
 void KinectHandler::update()
