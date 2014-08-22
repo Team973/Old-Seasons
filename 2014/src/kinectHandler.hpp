@@ -5,9 +5,10 @@ class KinectHandler
 {
 public:
     KinectHandler(KinectStick *left_, KinectStick *right_);
-    float kinectDeadband(float x, float limit);
     bool getLeftHand();
     bool getRightHand();
+    bool goLeft();
+    bool goRight();
     std::string getScheduledHand();
     bool override(); // this is for over-riding stuff you know
     void update();
