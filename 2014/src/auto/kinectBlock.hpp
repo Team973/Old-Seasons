@@ -4,10 +4,8 @@
 #define KINECT_BLOCK_H
 
 #define SIMPLE 1
-#define HOT_SIMPLE 2
-#define DOUBLE_TROUBLE 3
-#define HOT_DOUBLE_TROUBLE 4
-#define LOW_GOAL 5
+#define B_90 2
+#define LOW_GOAL 3
 
 class Drive;
 class KinectHandler;
@@ -17,7 +15,7 @@ class HellaBlocker;
 class KinectBlock : public AutoCommand
 {
 public:
-    KinectBlock::KinectBlock(KinectHandler *kinect_, Drive *drive_, HellaBlocker *blocker_, int autoMode_, float initialDistance_, float finalDistance_, float driveTime_);
+    KinectBlock(KinectHandler *kinect_, Drive *drive_, int autoMode_, bool Hot_, float distance_);
     virtual void Init();
     virtual bool Run();
 private:
@@ -27,12 +25,13 @@ private:
     int autoMode;
     float movement;
     bool goalSelected;
-    float initialDistance;
-    float finalDistance;
+    float distance;
     bool init;
-    float autoAngle;
-    float driveTime;
     float turn;
+    bool Hot;
+    int directionFlag;
+
+    Timer *hotTimer;
 
     void clear();
 

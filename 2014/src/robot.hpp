@@ -98,11 +98,8 @@ private:
     bool kickUp;
     float prevCoDriverDPad;
     int autoSelectMode;
-    float initialAutoDistance;
-    float finalAutoDistance;
-    float autoDriveTime;
-    std::string autoSide;
-    std::string autoLane;
+    float autoDistance;
+    bool areWeHot;
 
     bool deBugMode;
 

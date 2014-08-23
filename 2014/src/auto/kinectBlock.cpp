@@ -3,26 +3,23 @@
 #include "../drive.hpp"
 #include "../kinectHandler.hpp"
 #include "sequentialCommand.hpp"
-#include "linearDriveCommand.hpp"
+#include "linearProfileCommand.hpp"
+#include "turnProfileCommand.hpp"
 #include "waitCommand.hpp"
 #include "../hellaBlocker.hpp"
 #include <vector>
 
-KinectBlock::KinectBlock(KinectHandler *kinect_, Drive *drive_, HellaBlocker *blocker_, int autoMode_, float initialDistance_, float finalDistance_, float driveTime_)
+KinectBlock::KinectBlock(KinectHandler *kinect_, Drive *drive_, int autoMode_, bool Hot_, float distance_)
 {
     kinect = kinect_;
     drive = drive_;
-    blocker = blocker_;
     autoMode = autoMode_;
-    initialDistance = initialDistance_;
-    finalDistance = finalDistance_;
+    distance = distance_;
+    Hot = Hot_;
 
-    if (initialDistance > 0)
-        autoAngle = 5;
-    else
-        autoAngle = -5;
+    directionFlag = 1;
 
-    driveTime = driveTime_;
+    hotTimer = new Timer();
 
     movement = false;
     goalSelected = false;
@@ -46,123 +43,69 @@ void KinectBlock::Init()
 
 bool KinectBlock::Run()
 {
-    /*
-    if (autoTimer->Get() >= driveTime)
+    if (Hot && !goalSelected)
     {
-        if (finalDistance > 0)
-            autoAngle = 5;
-        else
-            autoAngle = -5;
+        hotTimer->Start();
+        if (kinect->goLeft())
+        {
+            directionFlag = -1;
+            goalSelected = true;
+        }
+        else if (kinect->goRight())
+        {
+            directionFlag = 1;
+            goalSelected = true;
+        }
+
+        if (hotTimer->Get() > 2)
+        {
+            directionFlag = 1;
+            goalSelected = true;
+        }
     }
-    */
+    else
+    {
+        if (distance > 0)
+            directionFlag = 1;
+        else
+            directionFlag = -1;
+    }
 
     switch (autoMode)
     {
         case SIMPLE:
 
-            if (!goalSelected)
+            if (goalSelected)
             {
                 clear();
-                sequence.push_back( new LinearDriveCommand(drive, initialDistance, 0, false, drive->generateDistanceTime(initialDistance)));
+                sequence.push_back( new LinearProfileCommand(drive, distance, 15, 10, 15, drive->generateDistanceTime(distance)));
                 init = false;
-                goalSelected = true;
             }
 
             break;
 
-        case HOT_SIMPLE:
+        case B_90:
 
-            if (!goalSelected)
-            {
-                if (kinect->getScheduledHand() == "left" || kinect->getLeftHand())
-                {
-                    clear();
-                    sequence.push_back( new LinearDriveCommand(drive, initialDistance, 5, false, drive->generateDistanceTime(initialDistance)));
-                    init = false;
-                    goalSelected = true;
-                }
-                else if (kinect->getScheduledHand() == "right" || kinect->getRightHand())
-                {
-                    clear();
-                    sequence.push_back( new LinearDriveCommand(drive, -initialDistance, -5, false, drive->generateDistanceTime(initialDistance)));
-                    init = false;
-                    goalSelected = true;
-                }
-            }
-
-            break;
-
-        case DOUBLE_TROUBLE:
-
-            if (autoTimer->Get() >= driveTime)
-            {
-                goalSelected = false;
-            }
-
-            if (!goalSelected && autoTimer->Get() >= driveTime)
+            if (goalSelected)
             {
                 clear();
-                sequence.push_back( new LinearDriveCommand(drive, finalDistance, autoAngle, false, drive->generateDistanceTime(finalDistance)));
+                sequence.push_back(new TurnProfileCommand(drive, 90*-directionFlag, 10000, 10000, 10000, 3));
+                sequence.push_back(new AutoWaitCommand(.25));
+                sequence.push_back(new LinearProfileCommand(drive, -distance, 15, 10, 15, drive->generateDistanceTime(distance)));
                 init = false;
-                goalSelected = true;
-            }
-            else if (!goalSelected)
-            {
-                clear();
-                sequence.push_back( new LinearDriveCommand(drive, initialDistance, autoAngle, false, drive->generateDistanceTime(initialDistance)));
-                init = false;
-                goalSelected = true;
-            }
-
-            break;
-
-        case HOT_DOUBLE_TROUBLE:
-
-            if (!goalSelected && autoTimer->Get() >= driveTime)
-            {
-                clear();
-                sequence.push_back( new LinearDriveCommand(drive, finalDistance, autoAngle, false, drive->generateDistanceTime(finalDistance)));
-                init = false;
-                goalSelected = true;
-            }
-            else if (!goalSelected)
-            {
-                if (kinect->getScheduledHand() == "left" || kinect->getLeftHand())
-                {
-                    clear();
-                    sequence.push_back( new LinearDriveCommand(drive, initialDistance, 5, false, drive->generateDistanceTime(initialDistance)));
-                    init = false;
-                    goalSelected = true;
-                }
-                else if (kinect->getScheduledHand() == "right" || kinect->getRightHand())
-                {
-                    clear();
-                    sequence.push_back( new LinearDriveCommand(drive, -initialDistance, -5, false, drive->generateDistanceTime(initialDistance)));
-                    init = false;
-                    goalSelected = true;
-                }
             }
 
             break;
 
         case LOW_GOAL:
 
-            if (initialDistance > 0)
-            {
-                //blocker->front();
-                blocker->back();
-            }
-            else
-            {
-                blocker->back();
-            }
-
-            if (!goalSelected)
+            if (goalSelected)
             {
                 clear();
-                sequence.push_back( new LinearDriveCommand(drive, initialDistance, autoAngle, false, drive->generateDistanceTime(initialDistance), BLOCK));
+                sequence.push_back(new TurnProfileCommand(drive, 75*-directionFlag, 10000, 10000, 10000, 2));
+                sequence.push_back(new AutoWaitCommand(.25));
+                sequence.push_back(new LinearProfileCommand(drive, -distance, 15, 10, 15, drive->generateDistanceTime(distance)));
                 init = false;
-                goalSelected = true;
             }
 
             break;
@@ -182,22 +125,8 @@ bool KinectBlock::Run()
 
             if (kinect->getRightHand() && kinect->getLeftHand())
             {
-                if (autoMode == LOW_GOAL)
-                {
-                    if (drive->getWheelDistance() > 0)
-                    {
-                        turn = -.4;
-                    }
-                    else
-                    {
-                        turn = .4;
-                    }
-                }
-                else
-                {
-                    movement = 0;
-                    turn = 0;
-                }
+                movement = 0;
+                turn = 0;
             }
             else if ((!kinect->getRightHand() && !kinect->getLeftHand()))
             {
@@ -215,7 +144,7 @@ bool KinectBlock::Run()
                 turn = 0;
             }
 
-            //drive->update(turn, -movement, false, false, false, true);
+            drive->arcade(movement, turn);
         }
     }
 

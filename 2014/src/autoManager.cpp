@@ -31,11 +31,7 @@ AutoManager::AutoManager(Drive *drive_, Shooter *shooter_, Intake* intake_, Arm*
     kinect = kinect_;
     blocker = blocker_;
 
-    initialDistance = 0;
-    finalDistance = 0;
-    driveTime = 0;
-
-    side = "none";
+    distance = 0;
 
 }
 
@@ -44,29 +40,14 @@ void AutoManager::inject(Timer *timer)
     injectTimer(timer);
 }
 
-void AutoManager::setInitialDistance(float dist)
+void AutoManager::setDistance(float dist)
 {
-    initialDistance = dist*12;
+    distance = dist;
 }
 
-void AutoManager::setFinalDistance(float dist)
+void AutoManager::setHeat(float hot_)
 {
-    finalDistance = dist*12;
-}
-
-void AutoManager::setDriveTime(float time)
-{
-    driveTime = time;
-}
-
-void AutoManager::setAutoSide(std::string side_)
-{
-    side = side_;
-}
-
-void AutoManager::setAutoLane(std::string lane_)
-{
-    lane = lane_;
+    hot = hot_;
 }
 
 //XXX Always put a wait at the end of auto to make sure we don't double fire
@@ -76,23 +57,6 @@ void AutoManager::autoSelect(int autoMode)
     switch (autoMode)
     {
         case TEST:
-            /*
-            commandSequence.push_back(new ArmPresetCommand(arm, SHOOTING, 0));
-            commandSequence.push_back(new CorralCommand(intake, true));
-            commandSequence.push_back(new LinearDriveCommand(drive, 24, false, 1, 2));
-            commandSequence.push_back(new AutoWaitCommand(1));
-            commandSequence.push_back(new ArmPresetCommand(arm, INTAKE, 0.5));
-            commandSequence.push_back(new CorralCommand(intake, false));
-            commandSequence.push_back(new IntakeCommand(intake, arm, 2));
-            commandSequence.push_back(new AutoWaitCommand(10));
-            */
-            //commandSequence.push_back(new AutoDriveCommand(drive, -48, 48, false, 10, 5, 8));
-            //commandSequence.push_back(new AutoDriveCommand(drive, 0, 48, false, 10, 5, 8));
-            //commandSequence.push_back(new TurnCommand(drive, 90, 10));
-            //commandSequence.push_back(new LinearDriveCommand(drive, 24, 0, false, 3));
-            //commandSequence.push_back(new KinectSense(kinect, drive, HOT_ONE_BALL_SIDE, 1, side));
-            //commandSequence.push_back(new CorralCommand(intake, true));
-            //commandSequence.push_back(new ArmPresetCommand(arm, SHOOTING, 0));
             commandSequence.push_back(new TurnProfileCommand(drive, 90, 100000, 10000, 100000, 20));
             commandSequence.push_back(new LinearProfileCommand(drive, -8, 15, 10, 15, 20));
             commandSequence.push_back(new AutoWaitCommand(10));
@@ -100,7 +64,6 @@ void AutoManager::autoSelect(int autoMode)
         case ONE_BALL_SIMPLE:
             commandSequence.push_back(new ArmPresetCommand(arm, SHOOTING, 0));
             commandSequence.push_back(new LinearDriveCommand(drive, 72, 0, false, 5));
-            //commandSequence.push_back(new KinectJuke(kinect, drive, .5));
             commandSequence.push_back(new AutoWaitCommand(1));
             commandSequence.push_back(new FireCommand(shooter, 1.5));
             commandSequence.push_back(new AutoWaitCommand(10));
@@ -113,72 +76,15 @@ void AutoManager::autoSelect(int autoMode)
             commandSequence.push_back(new AutoWaitCommand(10));
             break;
         case BLOCK_SIMPLE:
-            commandSequence.push_back(new KinectBlock(kinect, drive, blocker, SIMPLE, initialDistance, finalDistance, driveTime));
+            commandSequence.push_back(new KinectBlock(kinect, drive, SIMPLE, hot, distance));
             commandSequence.push_back(new AutoWaitCommand(10));
             break;
-        case BLOCK_HOT:
-            commandSequence.push_back(new KinectBlock(kinect, drive, blocker, HOT_SIMPLE, initialDistance, finalDistance, driveTime));
-            commandSequence.push_back(new AutoWaitCommand(10));
-            break;
-        case BLOCK_DOUBLE:
-            commandSequence.push_back(new KinectBlock(kinect, drive, blocker, DOUBLE_TROUBLE, initialDistance, finalDistance, driveTime));
-            commandSequence.push_back(new AutoWaitCommand(10));
-            break;
-        case BLOCK_DOUBLE_HOT:
-            commandSequence.push_back(new KinectBlock(kinect, drive, blocker, HOT_DOUBLE_TROUBLE, initialDistance, finalDistance, driveTime));
+        case BLOCK_90:
+            commandSequence.push_back(new KinectBlock(kinect, drive, B_90, hot, distance));
             commandSequence.push_back(new AutoWaitCommand(10));
             break;
         case BLOCK_LOW_GOAL:
-            commandSequence.push_back(new KinectBlock(kinect, drive, blocker, LOW_GOAL, initialDistance, finalDistance, driveTime));
-            commandSequence.push_back(new AutoWaitCommand(10));
-            break;
-        case TWO_BALL:
-            commandSequence.push_back(new ArmPresetCommand(arm, SHOOTING, 0));
-            commandSequence.push_back(new CorralCommand(intake, true));
-            commandSequence.push_back(new LinearDriveCommand(drive, 109, 0, false, 6));
-            //commandSequence.push_back(new KinectJuke(kinect, drive, 1));
-            commandSequence.push_back(new AutoWaitCommand(1));
-            commandSequence.push_back(new FireCommand(shooter, 1));
-            commandSequence.push_back(new ArmPresetCommand(arm, INTAKE, 0.5));
-            commandSequence.push_back(new CorralCommand(intake, false));
-            commandSequence.push_back(new LinearDriveCommand(drive, 114, 0, false, 6));
-            commandSequence.push_back(new IntakeCommand(intake, arm, 2));
-            commandSequence.push_back(new ArmPresetCommand(arm, SHOOTING, 1));
-            //commandSequence.push_back(new KinectJuke(kinect, drive, .5));
-            commandSequence.push_back(new AutoWaitCommand(1));
-            commandSequence.push_back(new FireCommand(shooter, 1));
-            commandSequence.push_back(new AutoWaitCommand(10));
-            break;
-        case HOT_CENTER_TWO_BALL:
-            commandSequence.push_back(new ArmPresetCommand(arm, SHOOTING, 0));
-            commandSequence.push_back(new CorralCommand(intake, true));
-            commandSequence.push_back(new LinearDriveCommand(drive, 120, 0, false, 6));
-            commandSequence.push_back(new KinectSense(kinect, drive, HOT_TWO_BALL_CENTER, 1));
-            //commandSequence.push_back(new KinectJuke(kinect, drive, 1));
-            commandSequence.push_back(new FireCommand(shooter, 1));
-            commandSequence.push_back(new ArmPresetCommand(arm, INTAKE, 0.5));
-            commandSequence.push_back(new CorralCommand(intake, false));
-            commandSequence.push_back(new IntakeCommand(intake, arm, 2));
-            commandSequence.push_back(new ArmPresetCommand(arm, SHOOTING, 1));
-            commandSequence.push_back(new KinectSense(kinect, drive, HOT_TWO_BALL_CENTER, 1, "none", "none", true));
-            //commandSequence.push_back(new KinectJuke(kinect, drive, .5));
-            commandSequence.push_back(new FireCommand(shooter, 1));
-            commandSequence.push_back(new AutoWaitCommand(10));
-            break;
-        case HOT_CENTER_ONE_BALL:
-            commandSequence.push_back(new ArmPresetCommand(arm, SHOOTING, 0));
-            commandSequence.push_back(new LinearDriveCommand(drive, 108, 0, false, 5));
-            commandSequence.push_back(new KinectSense(kinect, drive, HOT_ONE_BALL_CENTER, 1));
-            commandSequence.push_back(new FireCommand(shooter, 1.5));
-            commandSequence.push_back(new AutoWaitCommand(10));
-            break;
-        case HOT_SIDE_ONE_BALL:
-            commandSequence.push_back(new ArmPresetCommand(arm, SHOOTING, 0));
-            commandSequence.push_back(new LinearDriveCommand(drive, 108, 0, false, 5));
-            commandSequence.push_back(new KinectSense(kinect, drive, HOT_ONE_BALL_SIDE, 1, side));
-            commandSequence.push_back(new AutoWaitCommand(.5));
-            //commandSequence.push_back(new KinectJuke(kinect, drive, .5));
-            commandSequence.push_back(new FireCommand(shooter, 1.5));
+            commandSequence.push_back(new KinectBlock(kinect, drive, LOW_GOAL, hot, distance));
             commandSequence.push_back(new AutoWaitCommand(10));
             break;
         case TEST_FUNCTIONAL:

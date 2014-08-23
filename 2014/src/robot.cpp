@@ -78,11 +78,8 @@ Robot::Robot()
     autoMode = new AutoManager(drive, shooter, intake, arm, kinect, blocker);
     autoSelectMode = TEST;
     controlTimer= new Timer();
-    initialAutoDistance = 4;
-    finalAutoDistance = -4;
-    autoDriveTime = 4.5;
-    autoSide = "left";
-    autoLane = "mid";
+    autoDistance = 4;
+    areWeHot = false;
 
     autoComplete = false;
 
@@ -321,6 +318,9 @@ void Robot::DisabledPeriodic()
     GetWatchdog().Feed();
     controlTimer->Start();
 
+    float incrementAmnt = .5; //feet
+    float upperLimit = 8; //feet
+
     if (stick2->GetRawButton(4) && controlTimer->Get() >= .15)
     {
         autoSelectMode += 1;
@@ -339,62 +339,24 @@ void Robot::DisabledPeriodic()
 
     if (stick2->GetRawButton(1) && controlTimer->Get() >= .15)
     {
-        initialAutoDistance += .5;
+        autoDistance += .5;
         controlTimer->Reset();
     }
     else if (stick2->GetRawButton(3) && controlTimer->Get() >= .15)
     {
-        initialAutoDistance -= .5;
+        autoDistance -= .5;
         controlTimer->Reset();
     }
 
     if (stick2->GetRawButton(5) && controlTimer->Get() >= .15)
     {
-        finalAutoDistance += .5;
+        areWeHot = true;
         controlTimer->Reset();
     }
     else if (stick2->GetRawButton(6) && controlTimer->Get() >= .15)
     {
-        finalAutoDistance -= .5;
+        areWeHot = false;
         controlTimer->Reset();
-    }
-
-    if (initialAutoDistance >= 8)
-    {
-        initialAutoDistance = 7.5;
-        autoSelectMode = BLOCK_LOW_GOAL;
-    }
-    else if (initialAutoDistance <= -8)
-    {
-        initialAutoDistance = -7.5;
-        autoSelectMode = BLOCK_LOW_GOAL;
-    }
-
-    if (stick2->GetRawButton(9))
-    {
-        dsLCD->PrintfLine(DriverStationLCD::kUser_Line5,"Side: %s", "left");
-        autoSide = "left";
-    }
-    else if (stick2->GetRawButton(10))
-    {
-        dsLCD->PrintfLine(DriverStationLCD::kUser_Line5,"Side: %s", "right");
-        autoSide = "right";
-    }
-
-    if (stick1->GetRawButton(1))
-    {
-        dsLCD->PrintfLine(DriverStationLCD::kUser_Line6,"Lane: %f", "close");
-        autoLane = "close";
-    }
-    else if (stick1->GetRawButton(2))
-    {
-        dsLCD->PrintfLine(DriverStationLCD::kUser_Line6,"Lane: %f", "mid");
-        autoLane = "mid";
-    }
-    else if (stick1->GetRawButton(3))
-    {
-        dsLCD->PrintfLine(DriverStationLCD::kUser_Line6,"Lane: %f", "far");
-        autoLane = "far";
     }
 
     switch(autoSelectMode)
@@ -407,41 +369,33 @@ void Robot::DisabledPeriodic()
             break;
         case DRIVE_ONLY:
             dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Mode: %s", "move only");
+            incrementAmnt = 1;
+            upperLimit = 23;
             break;
         case NO_AUTO:
             dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Mode: %s", "no auto");
             break;
         case BLOCK_SIMPLE:
             dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Mode: %s", "b simple");
-            break;
-        case BLOCK_HOT:
-            dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Mode: %s", "b hot");
-            break;
-        case BLOCK_DOUBLE:
-            dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Mode: %s", "b double");
-            break;
-        case BLOCK_DOUBLE_HOT:
-            dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Mode: %s", "b hot double");
+            incrementAmnt = .5;
+            upperLimit = 8;
             break;
         case BLOCK_LOW_GOAL:
             dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Mode: %s", "b low goal");
             break;
-        case HOT_CENTER_TWO_BALL:
-            dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Mode: %s", "h 2 ball c");
+        case BLOCK_90:
+            dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Mode: %s", "b 90");
+            incrementAmnt = 1;
+            upperLimit = 23;
             break;
-        case HOT_CENTER_ONE_BALL:
-            dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Mode: %s", "h 1 ball c");
-            break;
-        case HOT_SIDE_ONE_BALL:
-            dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Mode: %s", "h 1 ball s");
-            break;
-        case TWO_BALL:
-            dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"Mode: %s", "2 ball");
     }
 
-    dsLCD->PrintfLine(DriverStationLCD::kUser_Line2,"Initial Dist: %f", initialAutoDistance);
-    dsLCD->PrintfLine(DriverStationLCD::kUser_Line3,"Final Dist: %f", finalAutoDistance);
-    dsLCD->PrintfLine(DriverStationLCD::kUser_Line4,"Switch Time: %f", autoDriveTime);
+    dsLCD->PrintfLine(DriverStationLCD::kUser_Line2,"Dist: %f", autoDistance);
+    dsLCD->PrintfLine(DriverStationLCD::kUser_Line3,"Hot: %f", areWeHot);
+    if (autoDistance > 0)
+        dsLCD->PrintfLine(DriverStationLCD::kUser_Line4,"This will go: %s", "right");
+    else
+        dsLCD->PrintfLine(DriverStationLCD::kUser_Line4,"This will go: %s", "left");
 
     if (stick1->GetRawButton(9) && stick1->GetRawButton(10))
     {
@@ -469,11 +423,8 @@ void Robot::AutonomousInit()
 
     drive->resetDrive();
     autoMode->reset();
-    autoMode->setDriveTime(autoDriveTime);
-    autoMode->setAutoSide(autoSide);
-    autoMode->setAutoLane(autoLane);
-    autoMode->setInitialDistance(initialAutoDistance);
-    autoMode->setFinalDistance(finalAutoDistance);
+    autoMode->setHeat(areWeHot);
+    autoMode->setDistance(autoDistance);
     autoMode->autoSelect(autoSelectMode);
     autoMode->Init();
 }
