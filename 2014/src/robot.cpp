@@ -339,12 +339,12 @@ void Robot::DisabledPeriodic()
 
     if (stick2->GetRawButton(1) && controlTimer->Get() >= .15)
     {
-        autoDistance += .5;
+        autoDistance += incrementAmnt;
         controlTimer->Reset();
     }
     else if (stick2->GetRawButton(3) && controlTimer->Get() >= .15)
     {
-        autoDistance -= .5;
+        autoDistance -= incrementAmnt;
         controlTimer->Reset();
     }
 
@@ -357,6 +357,18 @@ void Robot::DisabledPeriodic()
     {
         areWeHot = false;
         controlTimer->Reset();
+    }
+
+    if (stick2->GetRawButton(7) && controlTimer->Get() >= .15)
+    {
+        dsLCD->PrintfLine(DriverStationLCD::kUser_Line4,"This will go: %s", "left");
+        autoDistance *= -1;
+    }
+    else if (stick2->GetRawButton(7) && controlTimer->Get() >= .15)
+    {
+        dsLCD->PrintfLine(DriverStationLCD::kUser_Line4,"This will go: %s", "right");
+        if (autoDistance < 0)
+            autoDistance *= -1;
     }
 
     switch(autoSelectMode)
@@ -390,12 +402,13 @@ void Robot::DisabledPeriodic()
             break;
     }
 
+    if (autoDistance > upperLimit)
+        autoDistance = upperLimit;
+    else if (autoDistance < 0)
+        autoDistance = 0;
+
     dsLCD->PrintfLine(DriverStationLCD::kUser_Line2,"Dist: %f", autoDistance);
     dsLCD->PrintfLine(DriverStationLCD::kUser_Line3,"Hot: %f", areWeHot);
-    if (autoDistance > 0)
-        dsLCD->PrintfLine(DriverStationLCD::kUser_Line4,"This will go: %s", "right");
-    else
-        dsLCD->PrintfLine(DriverStationLCD::kUser_Line4,"This will go: %s", "left");
 
     if (stick1->GetRawButton(9) && stick1->GetRawButton(10))
     {
