@@ -8,6 +8,7 @@
 #include "waitCommand.hpp"
 #include "../hellaBlocker.hpp"
 #include <vector>
+#include <math.h>
 
 KinectBlock::KinectBlock(KinectHandler *kinect_, Drive *drive_, int autoMode_, bool Hot_, float distance_)
 {
@@ -49,11 +50,13 @@ bool KinectBlock::Run()
         if (kinect->goLeft())
         {
             directionFlag = -1;
+            distance = fabs(distance);
             goalSelected = true;
         }
         else if (kinect->goRight())
         {
             directionFlag = 1;
+            distance = fabs(distance);
             goalSelected = true;
         }
 
