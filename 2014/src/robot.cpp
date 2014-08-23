@@ -24,7 +24,7 @@ Robot::Robot()
     armMotor = new Talon(3);
     winchMotor = new Victor(4);
     linearIntakeMotor = new Victor(6);
-    crossIntakeMotor = new Victor(7);
+    trussWinchMotor = new Victor(7);
 
     blockerSolenoid = new Solenoid(6);
     shiftingSolenoid = new Solenoid(5);
@@ -48,6 +48,7 @@ Robot::Robot()
     winchEncoder->Start();
     winchZeroSensor = new DigitalInput(11);
     winchFullCockSensor = new DigitalInput(12);
+    trussWinchPot = new AnalogChannel(2);
 
     colinGyro = new Encoder(13, 14);
     colinGyro->Start();
@@ -61,7 +62,7 @@ Robot::Robot()
 
     drive = new Drive(leftDriveMotors, rightDriveMotors, shiftingSolenoid, kickUpSolenoid, leftDriveEncoder, rightDriveEncoder, colinGyro, testGyro);
     arm = new Arm(armMotor, armSensorA);
-    intake = new Intake(linearIntakeMotor, crossIntakeMotor, clawSolenoid, autoCorralSolenoid, intakeBallSensor);
+    intake = new Intake(linearIntakeMotor, clawSolenoid, autoCorralSolenoid, intakeBallSensor);
     shooter = new Shooter(winchMotor, winchReleaseSolenoid, winchZeroSensor, winchFullCockSensor, winchEncoder);
 
     shooter->initialize(arm, intake);

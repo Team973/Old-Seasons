@@ -38,7 +38,7 @@ private:
     Talon *armMotor;
     Victor *winchMotor;
     Victor *linearIntakeMotor;
-    Victor *crossIntakeMotor;
+    Victor *trussWinchMotor;
 
     Encoder *leftDriveEncoder;
     Encoder *rightDriveEncoder;
@@ -51,6 +51,7 @@ private:
     Encoder *winchEncoder;
     DigitalInput *winchZeroSensor;
     DigitalInput *winchFullCockSensor;
+    AnalogChannel *trussWinchPot;
 
     Encoder *colinGyro;
     Gyro *testGyro;

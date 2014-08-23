@@ -3,10 +3,9 @@
 #include "shooter.hpp"
 #include "intake.hpp"
 
-Intake::Intake(Victor *linearMotor_, Victor *crossMotor_, Solenoid *openClaw_, Solenoid *corral_, DigitalInput *ballSensor_)
+Intake::Intake(Victor *linearMotor_, Solenoid *openClaw_, Solenoid *corral_, DigitalInput *ballSensor_)
 {
     linearMotor = linearMotor_;
-    crossMotor = crossMotor_;
     openClaw = openClaw_;
     corral = corral_;
     ballSensor = ballSensor_;
@@ -59,7 +58,6 @@ bool Intake::isClamped()
 void Intake::stop()
 {
     linearMotor->Set(0);
-    crossMotor->Set(0);
 }
 
 bool Intake::gotBall()
@@ -79,12 +77,10 @@ void Intake::update()
     if (intakeManualSpeed != 0)
     {
         linearMotor->Set(intakeManualSpeed);
-        crossMotor->Set(intakeManualSpeed);
     }
     else
     {
         linearMotor->Set(intakeSpeed);
-        crossMotor->Set(intakeSpeed);
     }
 
     if (hasBall && (shooter->isFiring() || !isClamped())) // This is for Auto only do not overide
