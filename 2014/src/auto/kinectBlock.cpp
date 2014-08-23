@@ -72,6 +72,8 @@ bool KinectBlock::Run()
             directionFlag = 1;
         else
             directionFlag = -1;
+
+        goalSelected = true;
     }
 
     switch (autoMode)

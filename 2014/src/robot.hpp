@@ -101,6 +101,7 @@ private:
     int autoSelectMode;
     float autoDistance;
     bool areWeHot;
+    int directionFlag;
 
     bool deBugMode;
 

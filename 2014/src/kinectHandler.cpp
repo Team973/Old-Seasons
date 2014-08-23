@@ -25,12 +25,12 @@ std::string KinectHandler::getScheduledHand()
 
 bool KinectHandler::getLeftHand()
 {
-    return left->GetY() > 0.5;
+    return left->GetY() < -0.5;
 }
 
 bool KinectHandler::getRightHand()
 {
-    return right->GetY() > 0.5;
+    return right->GetY() < -0.5;
 }
 
 void KinectHandler::clearLastHand()
@@ -40,12 +40,12 @@ void KinectHandler::clearLastHand()
 
 bool KinectHandler::goLeft()
 {
-    return left->GetY() < -.5;
+    return left->GetY() > .5;
 }
 
 bool KinectHandler::goRight()
 {
-    return right->GetY() < -.5;
+    return right->GetY() > .5;
 }
 
 void KinectHandler::update()
