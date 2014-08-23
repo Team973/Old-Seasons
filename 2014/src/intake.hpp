@@ -9,7 +9,7 @@ class Arm;
 class Intake
 {
 public:
-    Intake(Victor *linearMotor_, Victor *crossMotor_, Solenoid *openClaw_, Solenoid *corral_, DigitalInput *ballSensor_);
+    Intake(Victor *linearMotor_, Solenoid *openClaw_, Solenoid *corral_, DigitalInput *ballSensor_);
     void initialize(Arm *arm_, Shooter *shooter_);
     void update();
     void dashboardUpdate();
@@ -30,7 +30,6 @@ private:
     Arm *arm;
     Shooter *shooter;
     Victor *linearMotor;
-    Victor *crossMotor;
     Solenoid *openClaw;
     Solenoid *corral;
     DigitalInput *ballSensor;
