@@ -110,6 +110,8 @@ void Robot::dashboardUpdate()
 
     SmartDashboard::PutBoolean("Left Hand: ", kinect->getLeftHand());
     SmartDashboard::PutBoolean("Right Hand: ", kinect->getRightHand());
+    SmartDashboard::PutBoolean("Left Hand Value: ", leftAutoControl->GetY());
+    SmartDashboard::PutBoolean("Right Hand Value: ", rightAutoControl->GetY());
 
     SmartDashboard::PutString("Last Hand: ", kinect->getScheduledHand());
 
