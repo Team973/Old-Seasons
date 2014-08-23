@@ -81,6 +81,7 @@ Robot::Robot()
     controlTimer= new Timer();
     autoDistance = 4;
     areWeHot = false;
+    directionFlag = 1;
 
     autoComplete = false;
 
@@ -108,10 +109,13 @@ void Robot::dashboardUpdate()
     SmartDashboard::PutNumber("Drive Distance: ", drive->getWheelDistance());
     SmartDashboard::PutNumber("Drive Velocity: ", drive->getVelocity());
 
+    SmartDashboard::PutNumber("Truss Pot: ", trussWinchPot->GetVoltage());
+
     SmartDashboard::PutBoolean("Left Hand: ", kinect->getLeftHand());
     SmartDashboard::PutBoolean("Right Hand: ", kinect->getRightHand());
-    SmartDashboard::PutNumber("Left Hand Value: ", leftAutoControl->GetY());
-    SmartDashboard::PutNumber("Right Hand Value: ", rightAutoControl->GetY());
+    SmartDashboard::PutBoolean("Left Hot: ", kinect->goLeft());
+    SmartDashboard::PutBoolean("Right Hot: ", kinect->goRight());
+
 
     SmartDashboard::PutString("Last Hand: ", kinect->getScheduledHand());
 
@@ -271,13 +275,17 @@ void Robot::joystick2() // Co-Driver
     }
 
     // [9]
-    if (stick2->GetRawButton(9) && stick2->GetRawButton(10))
+    if (stick2->GetRawButton(9))
     {
-        arm->reset();
+        trussWinchMotor->Set(.5);
     }
-    else if (stick2->GetRawButton(9) && stick2->GetRawButton(10) && stick2->GetRawButton(7))
+    else if (stick2->GetRawButton(10))
     {
-        arm->zeroEncoder();
+        trussWinchMotor->Set(-.5);
+    }
+    else
+    {
+        trussWinchMotor->Set(0);
     }
 
     // [10]
@@ -314,6 +322,8 @@ void Robot::RobotInit()
 
 void Robot::DisabledInit()
 {
+    dsLCD->PrintfLine(DriverStationLCD::kUser_Line3,"Hot: %s", "false");
+    dsLCD->PrintfLine(DriverStationLCD::kUser_Line4,"This will go: %s", "right");
 }
 
 void Robot::DisabledPeriodic()
@@ -323,56 +333,6 @@ void Robot::DisabledPeriodic()
 
     float incrementAmnt = .5; //feet
     float upperLimit = 8; //feet
-
-    if (stick2->GetRawButton(4) && controlTimer->Get() >= .15)
-    {
-        autoSelectMode += 1;
-        controlTimer->Reset();
-    }
-    else if (stick2->GetRawButton(2) && controlTimer->Get() >= .15)
-    {
-        autoSelectMode -= 1;
-        controlTimer->Reset();
-    }
-
-    if (autoSelectMode > DRIVE_ONLY)
-        autoSelectMode = TEST;
-    else if (autoSelectMode < TEST)
-        autoSelectMode = DRIVE_ONLY;
-
-    if (stick2->GetRawButton(1) && controlTimer->Get() >= .15)
-    {
-        autoDistance += incrementAmnt;
-        controlTimer->Reset();
-    }
-    else if (stick2->GetRawButton(3) && controlTimer->Get() >= .15)
-    {
-        autoDistance -= incrementAmnt;
-        controlTimer->Reset();
-    }
-
-    if (stick2->GetRawButton(5) && controlTimer->Get() >= .15)
-    {
-        areWeHot = true;
-        controlTimer->Reset();
-    }
-    else if (stick2->GetRawButton(6) && controlTimer->Get() >= .15)
-    {
-        areWeHot = false;
-        controlTimer->Reset();
-    }
-
-    if (stick2->GetRawButton(7) && controlTimer->Get() >= .15)
-    {
-        dsLCD->PrintfLine(DriverStationLCD::kUser_Line4,"This will go: %s", "left");
-        autoDistance *= -1;
-    }
-    else if (stick2->GetRawButton(7) && controlTimer->Get() >= .15)
-    {
-        dsLCD->PrintfLine(DriverStationLCD::kUser_Line4,"This will go: %s", "right");
-        if (autoDistance < 0)
-            autoDistance *= -1;
-    }
 
     switch(autoSelectMode)
     {
@@ -405,13 +365,63 @@ void Robot::DisabledPeriodic()
             break;
     }
 
+    if (stick2->GetRawButton(4) && controlTimer->Get() >= .15)
+    {
+        autoSelectMode += 1;
+        controlTimer->Reset();
+    }
+    else if (stick2->GetRawButton(2) && controlTimer->Get() >= .15)
+    {
+        autoSelectMode -= 1;
+        controlTimer->Reset();
+    }
+
+    if (autoSelectMode > DRIVE_ONLY)
+        autoSelectMode = TEST;
+    else if (autoSelectMode < TEST)
+        autoSelectMode = DRIVE_ONLY;
+
+    if (stick2->GetRawButton(1) && controlTimer->Get() >= .15)
+    {
+        autoDistance += incrementAmnt;
+        controlTimer->Reset();
+    }
+    else if (stick2->GetRawButton(3) && controlTimer->Get() >= .15)
+    {
+        autoDistance -= incrementAmnt;
+        controlTimer->Reset();
+    }
+
+    if (stick2->GetRawButton(5) && controlTimer->Get() >= .15)
+    {
+        areWeHot = true;
+        dsLCD->PrintfLine(DriverStationLCD::kUser_Line3,"Hot: %s", "true");
+        controlTimer->Reset();
+    }
+    else if (stick2->GetRawButton(6) && controlTimer->Get() >= .15)
+    {
+        areWeHot = false;
+        dsLCD->PrintfLine(DriverStationLCD::kUser_Line3,"Hot: %s", "false");
+        controlTimer->Reset();
+    }
+
+    if (stick2->GetRawButton(7) && controlTimer->Get() >= .15)
+    {
+        dsLCD->PrintfLine(DriverStationLCD::kUser_Line4,"This will go: %s", "left");
+        directionFlag = -1;
+    }
+    else if (stick2->GetRawButton(8) && controlTimer->Get() >= .15)
+    {
+        dsLCD->PrintfLine(DriverStationLCD::kUser_Line4,"This will go: %s", "right");
+        directionFlag = 1;
+    }
+
     if (autoDistance > upperLimit)
         autoDistance = upperLimit;
     else if (autoDistance < 0)
         autoDistance = 0;
 
     dsLCD->PrintfLine(DriverStationLCD::kUser_Line2,"Dist: %f", autoDistance);
-    dsLCD->PrintfLine(DriverStationLCD::kUser_Line3,"Hot: %f", areWeHot);
 
     if (stick1->GetRawButton(9) && stick1->GetRawButton(10))
     {
@@ -440,7 +450,7 @@ void Robot::AutonomousInit()
     drive->resetDrive();
     autoMode->reset();
     autoMode->setHeat(areWeHot);
-    autoMode->setDistance(autoDistance);
+    autoMode->setDistance(autoDistance*directionFlag);
     autoMode->autoSelect(autoSelectMode);
     autoMode->Init();
 }

@@ -494,7 +494,7 @@ void Drive::update(bool isAuto)
 
             SmartDashboard::PutNumber("I Contribution: ", rotatePID->update(angularStep[1]-getGyroAngle(), loopTimer) - 0.01*(angularStep[1]-getGyroAngle()));
             SmartDashboard::PutNumber("Linear Output: ", linearOutput);
-            arcade(0, -(rotatePID->update(angularStep[1] - getGyroAngle(), loopTimer)));
+            arcade(linearOutput, -(rotatePID->update(angularStep[1] - getGyroAngle(), loopTimer)));
         }
     }
 
