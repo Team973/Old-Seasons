@@ -14,15 +14,9 @@
 #define ONE_BALL_SIMPLE 2
 #define NO_AUTO 3
 #define BLOCK_SIMPLE 4
-#define BLOCK_HOT 5
-#define BLOCK_DOUBLE 6
-#define BLOCK_DOUBLE_HOT 7
-#define BLOCK_LOW_GOAL 8
-#define TWO_BALL 9
-#define HOT_CENTER_TWO_BALL 10
-#define HOT_CENTER_ONE_BALL 11
-#define HOT_SIDE_ONE_BALL 12
-#define DRIVE_ONLY 13
+#define BLOCK_90 5
+#define BLOCK_LOW_GOAL 6
+#define DRIVE_ONLY 7
 #define TEST_FUNCTIONAL 42
 
 class KinectHandler;
@@ -32,16 +26,13 @@ class AutoManager : public AutoCommand
 {
 public:
     AutoManager(Drive *drive_, Shooter* shooter_, Intake* intake_, Arm *arm_, KinectHandler *kinect_, HellaBlocker *blocker_);
-    void setInitialDistance(float dist);
-    void setFinalDistance(float dist);
-    void setDriveTime(float time);
-    void setAutoSide(std::string side_);
-    void setAutoLane(std::string lane_);
+    void setDistance(float dist);
     virtual void Init();
     virtual bool Run();
     void autoSelect(int autoMode);
     void reset();
     void inject(Timer *timer);
+    void setHeat(float hot_);
 private:
     Drive *drive;
     Shooter *shooter;
@@ -50,13 +41,10 @@ private:
     KinectHandler *kinect;
     HellaBlocker *blocker;
     std::vector<AutoCommand*> commandSequence;
-    std::vector<AutoCommand*> consecutiveSequence;
+    std::vector<AutoCommand*> concurrentSequence;
     SequentialCommand *AUTO_SEQUENCE;
-    float initialDistance;
-    float finalDistance;
-    float driveTime;
-    std::string side;
-    std::string lane;
+    float distance;
+    bool hot;
 };
 
 #endif
