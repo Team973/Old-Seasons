@@ -397,56 +397,6 @@ void Drive::update(bool isAuto)
     float kAngAccelFF = 0;
     //float kDccellFF = 0;
 
-    //XXX remove block when testing is over
-    /*
-    float Kp = 0;
-    float Ki = 0;
-    float Kd = 0;
-    float iCap = 0;
-
-    if (tuneStick->GetRawButton(1) && buttonTimer->Get() >= .15)
-        Kp += 0.01;
-    else if (tuneStick->GetRawButton(3) && buttonTimer->Get() >= .15)
-        Kp -= 0.01;
-
-    if (tuneStick->GetRawButton(4) && buttonTimer->Get() >= .15)
-        Ki += 0.01;
-    else if (tuneStick->GetRawButton(2) && buttonTimer->Get() >= .15)
-        Ki -= 0.01;
-
-    if (tuneStick->GetRawButton(5) && buttonTimer->Get() >= .15)
-        Kd += 0.01;
-    else if (tuneStick->GetRawButton(6) && buttonTimer->Get() >= .15)
-        Kd -= 0.01;
-
-    if (tuneStick->GetRawButton(7) && buttonTimer->Get() >= .15)
-        iCap += 0.01;
-    else if (tuneStick->GetRawButton(8) && buttonTimer->Get() >= .15)
-        iCap -= 0.01;
-
-    if (tuneStick->GetRawButton(10) && buttonTimer->Get() >= .15)
-        kLinVelFF += 0.01;
-    else if (tuneStick->GetRawButton(9) && buttonTimer->Get() >= .15)
-        kLinVelFF -= 0.01;
-
-    if (tuneStick->GetRawButton(11) && buttonTimer->Get() >= .15)
-        kLinAccelFF += 0.01;
-    else if (tuneStick->GetRawButton(12) && buttonTimer->Get() >= .15)
-        kLinAccelFF -= 0.01;
-
-    SmartDashboard::PutNumber("Kp: ", Kp);
-    SmartDashboard::PutNumber("Ki: ", Ki);
-    SmartDashboard::PutNumber("Kd: ", Kd);
-    SmartDashboard::PutNumber("iCap: ", iCap);
-    SmartDashboard::PutNumber("Kvel: ", kLinVelFF);
-    SmartDashboard::PutNumber("Kaccel: ", kLinAccelFF);
-
-    drivePID = new PID(Kp, Ki, Kd);
-    drivePID->setICap(iCap);
-    drivePID->start();
-    //XXX
-    */
-
     if (isAuto)
     {
         if (!deadPID)
