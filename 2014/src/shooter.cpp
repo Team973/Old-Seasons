@@ -234,7 +234,19 @@ void Shooter::update()
         }
     }
 
-    trussWinch->Set(trussPID->update(Pot->GetVoltage()));
+    SmartDashboard::PutNumber("Truss Winch Error: ", trussPID->getTarget() - Pot->GetVoltage());
+    SmartDashboard::PutNumber("Truss PID Output: ", trussPID->update(Pot->GetVoltage()));
+
+    float trussWinchInput = trussPID->update(Pot->GetVoltage());
+    if (Pot->GetVoltage() < 3 && Pot->GetVoltage() > 0.3)
+    {
+        if (fabs(trussWinchInput) > 0.05)
+            trussWinch->Set(trussWinchInput);
+        else
+            trussWinch->Set(0);
+    }
+    else
+        trussWinch->Set(0);
 
     prevZeroPoint = currZeroPoint;
 
