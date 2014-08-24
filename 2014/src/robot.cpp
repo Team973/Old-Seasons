@@ -228,7 +228,6 @@ void Robot::joystick2() // Co-Driver
     {
         arm->setPreset(PSEUDO_INTAKE);
         shooter->cock(FULL_COCK);
-        shooter->setDeTruss();
         intake->setFangs(false, false);
     }
 
@@ -237,8 +236,7 @@ void Robot::joystick2() // Co-Driver
     {
         arm->setPreset(INTAKE);
         shooter->cock(FULL_COCK);
-        shooter->setDeTruss();
-        intake->setFangs(false, false);
+        intake->setFangs(true, false);
     }
 
     // [3]
@@ -263,7 +261,6 @@ void Robot::joystick2() // Co-Driver
     {
         arm->setPreset(STOW);
         shooter->cock(FULL_COCK);
-        shooter->setDeTruss();
     }
 
     // [6]

@@ -37,7 +37,7 @@ void Arm::setPreset(int preset)
     switch (preset)
     {
         case INTAKE:
-            setTarget(103.0);
+            setTarget(109.0);
             errorTarget = 1;
             break;
         case PSEUDO_INTAKE:
