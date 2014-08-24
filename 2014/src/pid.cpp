@@ -23,6 +23,42 @@ PID::PID(double p_, double i_, double d_)
     reset();
 }
 
+PID::PID(double gains[])
+{
+    p = gains[0];
+    i = gains[1];
+    d = gains[2];
+
+    target = 0;
+    min = 0;
+    max = 0;
+
+    integral = 0;
+    iterm = 0;
+    icap = 0;
+
+    output = 0;
+    prevErr = 0;
+
+    timer = new Timer();
+
+    reset();
+}
+
+void PID::setGains(double p_, double i_, double d_)
+{
+    p = p_;
+    i = i_;
+    d = d_;
+}
+
+void PID::setGains(double gains[])
+{
+    p = gains[0];
+    i = gains[1];
+    d = gains[2];
+}
+
 void PID::setTarget(float target_)
 {
     target = target_;
