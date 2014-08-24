@@ -18,6 +18,7 @@ void LinearProfileCommand::Init()
 {
     timer->Start();
     timer->Reset();
+    drive->resetDriveEncoders();
     drive->setLinear(profileGenerator);
 }
 
