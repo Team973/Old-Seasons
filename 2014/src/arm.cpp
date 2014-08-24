@@ -37,7 +37,7 @@ void Arm::setPreset(int preset)
     switch (preset)
     {
         case INTAKE:
-            setTarget(109.0);
+            setTarget(110.0);
             errorTarget = 1;
             break;
         case PSEUDO_INTAKE:
@@ -60,7 +60,7 @@ void Arm::setPreset(int preset)
             setTarget(7.5);//2.5
             break;
         case HIGH_GOAL:
-            setTarget(33);//27.5);
+            setTarget(22);//27.5);
             autoClamped = false;
             break;
     }
@@ -71,6 +71,14 @@ void Arm::setPreset(int preset)
 int Arm::getPreset()
 {
     return lastPreset;
+}
+
+bool Arm::isFireAngle()
+{
+    if (lastPreset == SHOOTING || lastPreset == CLOSE_SHOT || lastPreset == HIGH_GOAL)
+        return true;
+
+    return false;
 }
 
 void Arm::ballTrapper(float magnitude)

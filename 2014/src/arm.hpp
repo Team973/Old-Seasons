@@ -22,6 +22,7 @@ public:
     void dashboardUpdate();
     void setTarget(float target);
     float getTarget();
+    bool isFireAngle();
     void setPreset(int preset);
     float getRawAngle();
     int getPreset();

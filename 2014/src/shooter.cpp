@@ -59,7 +59,7 @@ void Shooter::setTrussTarget(float target)
 
 void Shooter::setTruss()
 {
-    setTrussTarget(2.2);
+    setTrussTarget(2.5);
 }
 
 void Shooter::setDeTruss()
@@ -190,9 +190,12 @@ void Shooter::update()
     }
     else
     {
+        if (!arm->isFireAngle())
+            firing = false;
+
         if (firing && arm->isCockSafe())
         {
-            if (arm->getPreset() == SHOOTING)
+            if (arm->getPreset() == SHOOTING || arm->getPreset() == HIGH_GOAL)
             {
                 if (performFire())
                 {
@@ -238,7 +241,7 @@ void Shooter::update()
     SmartDashboard::PutNumber("Truss PID Output: ", trussPID->update(Pot->GetVoltage()));
 
     float trussWinchInput = trussPID->update(Pot->GetVoltage());
-    if (Pot->GetVoltage() < 3 && Pot->GetVoltage() > 0.3)
+    if (Pot->GetVoltage() < 4 && Pot->GetVoltage() > 0.3)
     {
         if (fabs(trussWinchInput) > 0.05)
             trussWinch->Set(trussWinchInput);
