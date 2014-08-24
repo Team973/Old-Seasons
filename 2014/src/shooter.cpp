@@ -5,18 +5,26 @@
 #include "intake.hpp"
 #include <math.h>
 
-Shooter::Shooter(Victor *winchMotor_, Solenoid *winchRelease_, DigitalInput *zeroPoint_, DigitalInput *fullCockPoint_, Encoder *encoder_)
+Shooter::Shooter(Victor *winchMotor_, Victor *trussWinch_, Solenoid *winchRelease_, DigitalInput *zeroPoint_, DigitalInput *fullCockPoint_, AnalogChannel *Pot_, Encoder *encoder_)
 {
     winchMotor = winchMotor_;
     winchMotor->Set(0);
+    trussWinch = trussWinch_;
+    trussWinch->Set(0);
     winchRelease = winchRelease_;
     zeroPoint = zeroPoint_;
     fullCockPoint = fullCockPoint_;
+    Pot = Pot_;
     encoder = encoder_;
 
     winchPID = new PID(100000, 0, 0);
     winchPID->setBounds(0, 1);
     winchPID->start();
+
+    trussPID = new PID(1.6, 0, 0);
+    trussPID->setBounds(-1, 1);
+    trussPID->start();
+    setDeTruss();
 
     fireTimer = new Timer();
     cockTimer = new Timer();
@@ -42,6 +50,21 @@ void Shooter::initialize(Arm *arm_, Intake *intake_)
 void Shooter::setTarget(float target)
 {
     winchPID->setTarget(target);
+}
+
+void Shooter::setTrussTarget(float target)
+{
+    trussPID->setTarget(target);
+}
+
+void Shooter::setTruss()
+{
+    setTrussTarget(2.2);
+}
+
+void Shooter::setDeTruss()
+{
+    setTrussTarget(.84);
 }
 
 void Shooter::cock(int level)
@@ -173,6 +196,7 @@ void Shooter::update()
             {
                 if (performFire())
                 {
+                    setDeTruss();
                     cock(FULL_COCK);
                 }
             }
@@ -209,6 +233,8 @@ void Shooter::update()
             }
         }
     }
+
+    trussWinch->Set(trussPID->update(Pot->GetVoltage()));
 
     prevZeroPoint = currZeroPoint;
 

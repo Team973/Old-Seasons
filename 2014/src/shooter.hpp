@@ -14,9 +14,12 @@ class Intake;
 class Shooter
 {
 public:
-    Shooter(Victor *winchMotor_, Solenoid *winchRelease_, DigitalInput *zeroPoint, DigitalInput *fullCockPoint_, Encoder *encoder_);
+    Shooter(Victor *winchMotor_, Victor *trussWinch_, Solenoid *winchRelease_, DigitalInput *zeroPoint, DigitalInput *fullCockPoint_, AnalogChannel *Pot_, Encoder *encoder_);
     void initialize(Arm *arm_, Intake *intake_);
     void cock(int level); // Yes, laugh all you want. It's very funny.
+    void setTrussTarget(float target);
+    void setTruss();
+    void setDeTruss();
     void fire(bool fire);
     bool isFiring();
     bool performFire();
@@ -33,12 +36,15 @@ private:
     Arm *arm;
     Intake *intake;
     PID *winchPID;
+    PID *trussPID;
 
     Victor *winchMotor;
+    Victor *trussWinch;
     Solenoid *winchRelease;
     DigitalInput *zeroPoint;
     DigitalInput *fullCockPoint;
     Encoder *encoder;
+    AnalogChannel *Pot;
 
     Timer *fireTimer;
     Timer *cockTimer;
