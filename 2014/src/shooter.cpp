@@ -199,11 +199,10 @@ void Shooter::update()
             {
                 if (performFire())
                 {
-                    setDeTruss();
                     cock(FULL_COCK);
                 }
             }
-            else if (arm->getPreset() == CLOSE_SHOT)
+            else if (arm->getPreset() == CLOSE_SHOT || STOW)
             {
                 if (performSoftFire())
                 {
