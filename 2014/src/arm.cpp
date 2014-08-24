@@ -59,6 +59,10 @@ void Arm::setPreset(int preset)
         case HELLAVATOR:
             setTarget(7.5);//2.5
             break;
+        case HIGH_GOAL:
+            setTarget(33);//27.5);
+            autoClamped = false;
+            break;
     }
 
     lastPreset = preset;
@@ -178,7 +182,7 @@ void Arm::update()
             }
 
     }
-    else if (((lastPreset == STOW) || (lastPreset == SHOOTING || lastPreset == CLOSE_SHOT)))
+    else if (((lastPreset == STOW) || (lastPreset == SHOOTING || lastPreset == CLOSE_SHOT || lastPreset == HIGH_GOAL)))
     {
         armPID->setBounds(-1, 1);
 

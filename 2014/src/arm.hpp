@@ -9,6 +9,7 @@
 #define STOW 4
 #define CLOSE_SHOT 5
 #define HELLAVATOR 6
+#define HIGH_GOAL 7
 
 class Intake;
 
