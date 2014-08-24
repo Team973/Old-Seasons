@@ -75,7 +75,7 @@ int Arm::getPreset()
 
 bool Arm::isFireAngle()
 {
-    if (lastPreset == SHOOTING || lastPreset == CLOSE_SHOT || lastPreset == HIGH_GOAL)
+    if (lastPreset == SHOOTING || lastPreset == CLOSE_SHOT || lastPreset == HIGH_GOAL || lastPreset == STOW)
         return true;
 
     return false;
