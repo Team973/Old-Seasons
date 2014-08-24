@@ -26,6 +26,9 @@ private:
     Timer* timer;
 public:
     PID(double p_=0.0, double i_=0.0, double d_=0.0);
+    PID(double gains[]);
+    void setGains(double p_=0.0, double i_=0.0, double d_=0.0);
+    void setGains(double gains[]);
     void setTarget(float target_);
     float getTarget();
     void reset();
