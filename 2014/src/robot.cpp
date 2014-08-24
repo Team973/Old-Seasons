@@ -63,7 +63,7 @@ Robot::Robot()
     drive = new Drive(leftDriveMotors, rightDriveMotors, shiftingSolenoid, kickUpSolenoid, leftDriveEncoder, rightDriveEncoder, colinGyro, testGyro);
     arm = new Arm(armMotor, armSensorA);
     intake = new Intake(linearIntakeMotor, clawSolenoid, autoCorralSolenoid, intakeBallSensor);
-    shooter = new Shooter(winchMotor, winchReleaseSolenoid, winchZeroSensor, winchFullCockSensor, winchEncoder);
+    shooter = new Shooter(winchMotor, trussWinchMotor, winchReleaseSolenoid, winchZeroSensor, winchFullCockSensor, trussWinchPot, winchEncoder);
 
     shooter->initialize(arm, intake);
     intake->initialize(arm, shooter);
@@ -227,6 +227,7 @@ void Robot::joystick2() // Co-Driver
     if (stick2->GetRawButton(1))
     {
         arm->setPreset(PSEUDO_INTAKE);
+        shooter->setDeTruss();
         intake->setFangs(false, false);
     }
 
@@ -234,6 +235,7 @@ void Robot::joystick2() // Co-Driver
     if (stick2->GetRawButton(2))
     {
         arm->setPreset(INTAKE);
+        shooter->setDeTruss();
         intake->setFangs(false, false);
     }
 
@@ -241,6 +243,7 @@ void Robot::joystick2() // Co-Driver
     if (stick2->GetRawButton(3))
     {
         arm->setPreset(CLOSE_SHOT);
+        shooter->setDeTruss();
     }
 
     // [4]
@@ -254,12 +257,14 @@ void Robot::joystick2() // Co-Driver
     if (stick2->GetRawButton(5))
     {
         arm->setPreset(STOW);
+        shooter->setDeTruss();
     }
 
     // [6]
     if (stick2->GetRawButton(6))
     {
         arm->setPreset(SHOOTING);
+        shooter->setTruss();
     }
 
     // [7]
@@ -275,6 +280,7 @@ void Robot::joystick2() // Co-Driver
     }
 
     // [9]
+    /*
     if (stick2->GetRawButton(9))
     {
         trussWinchMotor->Set(.5);
@@ -287,6 +293,7 @@ void Robot::joystick2() // Co-Driver
     {
         trussWinchMotor->Set(0);
     }
+    */
 
     // [10]
     //shooter->killShooter(stick2->GetRawButton(10));
