@@ -227,6 +227,7 @@ void Robot::joystick2() // Co-Driver
     if (stick2->GetRawButton(1))
     {
         arm->setPreset(PSEUDO_INTAKE);
+        shooter->cock(FULL_COCK);
         shooter->setDeTruss();
         intake->setFangs(false, false);
     }
@@ -235,6 +236,7 @@ void Robot::joystick2() // Co-Driver
     if (stick2->GetRawButton(2))
     {
         arm->setPreset(INTAKE);
+        shooter->cock(FULL_COCK);
         shooter->setDeTruss();
         intake->setFangs(false, false);
     }
@@ -242,14 +244,17 @@ void Robot::joystick2() // Co-Driver
     // [3]
     if (stick2->GetRawButton(3))
     {
-        arm->setPreset(CLOSE_SHOT);
+        arm->setPreset(HIGH_GOAL);
+        shooter->cock(FULL_COCK);
         shooter->setDeTruss();
     }
 
     // [4]
     if (stick2->GetRawButton(4))
     {
+        arm->setPreset(CLOSE_SHOT);
         shooter->cock(FULL_COCK);
+        shooter->setDeTruss();
     }
 
     // [5]
@@ -257,6 +262,7 @@ void Robot::joystick2() // Co-Driver
     if (stick2->GetRawButton(5))
     {
         arm->setPreset(STOW);
+        shooter->cock(FULL_COCK);
         shooter->setDeTruss();
     }
 
@@ -264,6 +270,7 @@ void Robot::joystick2() // Co-Driver
     if (stick2->GetRawButton(6))
     {
         arm->setPreset(SHOOTING);
+        shooter->cock(FULL_COCK);
         shooter->setTruss();
     }
 
