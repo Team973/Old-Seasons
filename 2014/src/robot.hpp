@@ -85,6 +85,10 @@ private:
 
     Timer *autoTimer;
     Timer *controlTimer;
+    Timer *hotTimer;
+
+    TrapProfile *angleGenerator;
+    TrapProfile *linearGenerator;
 
     DriverStationLCD *dsLCD;
     DriverStation *ds;
@@ -102,6 +106,10 @@ private:
     float autoDistance;
     bool areWeHot;
     int directionFlag;
+    bool directionPicked;
+    bool kinectOverride;
+    int AUTO_INDEX;
+    bool generated;
 
     bool deBugMode;
 
