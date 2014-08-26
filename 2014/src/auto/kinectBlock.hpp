@@ -29,6 +29,7 @@ private:
     bool init;
     float turn;
     bool Hot;
+    bool generated;
     int directionFlag;
 
     Timer *hotTimer;

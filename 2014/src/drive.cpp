@@ -38,12 +38,12 @@ Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoi
     drivePID = new PID(.5, 0.0, 0.0);
     drivePID->setICap(0);
     drivePID->start();
-    anglePID = new PID(.05, 0, 0.05);
-    anglePID->start();
     //rotatePID = new PID(.005, 0, 0.01);
     rotatePID = new PID(0.01, 0.001, 0);
     rotatePID->setICap(0.1);
     rotatePID->start();
+
+    doWeProfile = false;
 
     linearGenerator = new TrapProfile();
     angularGenerator = new TrapProfile();
@@ -51,7 +51,6 @@ Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoi
     deadPID = false;
 
     drivePID->setBounds(-.9, .9);
-    anglePID->setBounds(-.7, .7);
     rotatePID->setBounds(-.9, .9);
 
     //XXX destroy us when you are done testing
@@ -375,15 +374,19 @@ void Drive::killPID(bool death)
     deadPID = death;
 }
 
-void Drive::setLinear(TrapProfile *linearGenerator_)
+void Drive::setAngular(TrapProfile *angularGenerator_)
 {
-    linearGenerator = linearGenerator_;
+    drivePID->setGains(0,0,0);
+    rotatePID->setGains(0.01,0.001,0);
+    angularGenerator = angularGenerator_;
     loopTimer->Reset();
 }
 
-void Drive::setAngular(TrapProfile *angularGenerator_)
+void Drive::setLinear(TrapProfile *linearGenerator_)
 {
-    angularGenerator = angularGenerator_;
+    drivePID->setGains(0.5,0,0);
+    linearGenerator = linearGenerator_;
+    doWeProfile = true;
     loopTimer->Reset();
 }
 
@@ -391,8 +394,13 @@ void Drive::update(bool isAuto)
 {
     float currAngle = getGyroAngle();
     //float kLinVelFF = 0.155;
-    float kLinVelFF = 0.08;
-    float kLinAccelFF = 0.03;
+    float kLinVelFF = 0.0;
+    float kLinAccelFF = 0.0;
+    if (doWeProfile)
+    {
+        kLinVelFF = 0.08;
+        kLinAccelFF = 0.03;
+    }
     float kAngVelFF = 0;
     float kAngAccelFF = 0;
     //float kDccellFF = 0;
@@ -431,20 +439,14 @@ void Drive::update(bool isAuto)
             SmartDashboard::PutNumber("Velocity: ", linearStep[2]);
             SmartDashboard::PutNumber("Acceleration: ", linearStep[3]);
 
-            float linearOutput = 0;
+            float linearOutput, angularOutput;
 
-            if (fabs(angularGenerator->getTarget() - getGyroAngle()) < 5)
-            {
-                linearOutput = drivePID->update(linearStep[1]-getWheelDistance(), loopTimer) + linearInput;
-            }
-            else
-            {
-                linearOutput = 0;
-            }
+            linearOutput = drivePID->update(linearStep[1]-getWheelDistance(), loopTimer) + linearInput;
+            angularOutput = -rotatePID->update(angularStep[1] - getGyroAngle(), loopTimer);
 
             SmartDashboard::PutNumber("I Contribution: ", rotatePID->update(angularStep[1]-getGyroAngle(), loopTimer) - 0.01*(angularStep[1]-getGyroAngle()));
             SmartDashboard::PutNumber("Linear Output: ", linearOutput);
-            arcade(linearOutput, -(rotatePID->update(angularStep[1] - getGyroAngle(), loopTimer)));
+            arcade(linearOutput, angularOutput);
         }
     }
 

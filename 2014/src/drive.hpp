@@ -43,7 +43,6 @@ private:
     Solenoid *kickUp;
 
     PID *drivePID;
-    PID *anglePID;
     PID *rotatePID;
     bool deadPID;
 
@@ -59,6 +58,8 @@ private:
     //XXX destroy us when you are done testing
     Joystick *tuneStick;
     Timer *buttonTimer;
+
+    bool doWeProfile;
 
     float leftPower;
     float rightPower;

@@ -3,6 +3,8 @@
 #ifndef LINEAR_PROFILE_COMMAND_H
 #define LINEAR_PROFILE_COMMAND_H
 
+class TrapProfile;
+
 class LinearProfileCommand : public AutoCommand
 {
 public:

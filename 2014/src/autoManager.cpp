@@ -58,7 +58,7 @@ void AutoManager::autoSelect(int autoMode)
     {
         case TEST:
             //commandSequence.push_back(new TurnProfileCommand(drive, 90, 100000, 10000, 100000, 20));
-            commandSequence.push_back(new LinearProfileCommand(drive, 4, 15, 10, 15, 20));
+            commandSequence.push_back(new LinearProfileCommand(drive, -4, 15, 10, 15, 20));
             //commandSequence.push_back(new ArmPresetCommand(arm, SHOOTING, 1));
             commandSequence.push_back(new AutoWaitCommand(10));
             break;
