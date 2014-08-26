@@ -20,7 +20,7 @@ public:
     void setTrussTarget(float target);
     void setTruss();
     void setDeTruss();
-    void fire(bool fire);
+    void fire(bool fire = true);
     bool isFiring();
     bool performFire();
     bool performSoftFire();

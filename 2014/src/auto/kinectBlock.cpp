@@ -26,6 +26,8 @@ KinectBlock::KinectBlock(KinectHandler *kinect_, Drive *drive_, int autoMode_, b
     goalSelected = false;
     init = false;
 
+    generated = false;
+
     turn = 0;
 
     sequence.push_back(new AutoWaitCommand(0)); // pass a dummy command
@@ -44,6 +46,7 @@ void KinectBlock::Init()
 
 bool KinectBlock::Run()
 {
+    /*
     if (Hot && !goalSelected)
     {
         hotTimer->Start();
@@ -75,42 +78,48 @@ bool KinectBlock::Run()
 
         goalSelected = true;
     }
+    */
+    goalSelected = true;
 
     switch (autoMode)
     {
         case SIMPLE:
 
-            if (goalSelected)
+            if (goalSelected && !generated)
             {
                 clear();
                 sequence.push_back( new LinearProfileCommand(drive, distance, 15, 10, 15, drive->generateDistanceTime(distance)));
                 init = false;
+                generated = true;
             }
 
             break;
 
         case B_90:
 
-            if (goalSelected)
+            if (goalSelected && !generated)
             {
                 clear();
-                sequence.push_back(new TurnProfileCommand(drive, 90*-directionFlag, 10000, 10000, 10000, 3));
-                sequence.push_back(new AutoWaitCommand(.25));
-                sequence.push_back(new LinearProfileCommand(drive, -distance, 15, 10, 15, drive->generateDistanceTime(distance)));
+                //sequence.push_back(new TurnProfileCommand(drive, 90*-directionFlag, 10000, 10000, 10000, 3));
+                sequence.push_back(new LinearProfileCommand(drive, distance, 15, 10, 15, drive->generateDistanceTime(distance)));
+                //sequence.push_back(new TurnProfileCommand(drive, 0, 0, 0, 0, 0));
+                //sequence.push_back(new AutoWaitCommand(.25));
                 init = false;
+                generated = true;
             }
 
             break;
 
         case LOW_GOAL:
 
-            if (goalSelected)
+            if (goalSelected && !generated)
             {
                 clear();
                 sequence.push_back(new TurnProfileCommand(drive, 75*-directionFlag, 10000, 10000, 10000, 2));
                 sequence.push_back(new AutoWaitCommand(.25));
                 sequence.push_back(new LinearProfileCommand(drive, -distance, 15, 10, 15, drive->generateDistanceTime(distance)));
                 init = false;
+                generated = true;
             }
 
             break;
