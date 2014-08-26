@@ -19,6 +19,7 @@
 #include "auto/kinectJuke.hpp"
 #include "auto/linearProfileCommand.hpp"
 #include "auto/turnProfileCommand.hpp"
+#include "auto/blockStuff.hpp"
 #include <vector>
 #include <math.h>
 
@@ -77,15 +78,15 @@ void AutoManager::autoSelect(int autoMode)
             commandSequence.push_back(new AutoWaitCommand(10));
             break;
         case BLOCK_SIMPLE:
-            commandSequence.push_back(new KinectBlock(kinect, drive, SIMPLE, hot, distance));
+            commandSequence.push_back(new BlockStuff(drive, kinect, distance, SIMPLE, hot));
             commandSequence.push_back(new AutoWaitCommand(10));
             break;
         case BLOCK_90:
-            commandSequence.push_back(new KinectBlock(kinect, drive, B_90, hot, distance));
+            commandSequence.push_back(new BlockStuff(drive, kinect, distance, B_90, hot));
             commandSequence.push_back(new AutoWaitCommand(10));
             break;
         case BLOCK_LOW_GOAL:
-            commandSequence.push_back(new KinectBlock(kinect, drive, LOW_GOAL, hot, distance));
+            commandSequence.push_back(new BlockStuff(drive, kinect, distance, LOW_GOAL, hot));
             commandSequence.push_back(new AutoWaitCommand(10));
             break;
         case TEST_FUNCTIONAL:
