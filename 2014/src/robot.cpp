@@ -8,8 +8,10 @@
 #include "robot.hpp"
 #include "kinectHandler.hpp"
 #include "hellaBlocker.hpp"
+#include "trapProfile.hpp"
 #include <vector>
 #include <pthread.h>
+#include <math.h>
 
 #include "NetworkTables/NetworkTable.h"
 
@@ -82,6 +84,12 @@ Robot::Robot()
     autoDistance = 4;
     areWeHot = false;
     directionFlag = 1;
+    hotTimer = new Timer();
+    AUTO_INDEX = 0;
+    generated = false;
+
+    directionPicked = false;
+    kinectOverride = false;
 
     autoComplete = false;
 
@@ -416,16 +424,21 @@ void Robot::DisabledPeriodic()
         controlTimer->Reset();
     }
 
-    if (stick2->GetRawButton(7) && controlTimer->Get() >= .15)
+    if (!areWeHot)
     {
-        dsLCD->PrintfLine(DriverStationLCD::kUser_Line4,"This will go: %s", "left");
-        directionFlag = -1;
+        if (stick2->GetRawButton(7) && controlTimer->Get() >= .15)
+        {
+            dsLCD->PrintfLine(DriverStationLCD::kUser_Line4,"This will go: %s", "left");
+            directionFlag = -1;
+        }
+        else if (stick2->GetRawButton(8) && controlTimer->Get() >= .15)
+        {
+            dsLCD->PrintfLine(DriverStationLCD::kUser_Line4,"This will go: %s", "right");
+            directionFlag = 1;
+        }
     }
-    else if (stick2->GetRawButton(8) && controlTimer->Get() >= .15)
-    {
-        dsLCD->PrintfLine(DriverStationLCD::kUser_Line4,"This will go: %s", "right");
-        directionFlag = 1;
-    }
+    else
+        dsLCD->PrintfLine(DriverStationLCD::kUser_Line4,"This will go: %s", "N/A");
 
     if (autoDistance > upperLimit)
         autoDistance = upperLimit;
@@ -456,21 +469,138 @@ void Robot::AutonomousInit()
     autoSafetyTimer->Start();
     autoSafetyTimer->Reset();
 
+    hotTimer->Start();
+    hotTimer->Reset();
+
     blocker->reset();
 
     drive->resetDrive();
+    //XXX
+    autoDistance *= directionFlag;
+    /*
     autoMode->reset();
     autoMode->setHeat(areWeHot);
     autoMode->setDistance(autoDistance*directionFlag);
     autoMode->autoSelect(autoSelectMode);
     autoMode->Init();
+    */
 }
 
 void Robot::AutonomousPeriodic()
 {
     GetWatchdog().Feed();
+    /*
    if (autoMode->Run())
        autoComplete = true;
+       */
+
+    // I'm so sorry for this
+
+    float turnAmnt = 0;
+
+    if (autoSelectMode == BLOCK_90)
+        turnAmnt = 90;
+    else if (autoSelectMode == BLOCK_LOW_GOAL)
+        turnAmnt = 75;
+
+    if (areWeHot && !directionPicked)
+    {
+        if (kinect->goLeft())
+        {
+            directionFlag = -1;
+            directionPicked = true;
+        }
+        else if (kinect->goRight() || hotTimer->Get() > 2)
+        {
+            directionFlag = 1;
+            directionPicked = true;
+        }
+    }
+    else if (!directionPicked)
+    {
+        if (autoDistance > 0)
+        {
+            directionFlag = 1;
+            directionPicked = true;
+        }
+        else
+        {
+            directionFlag = -1;
+            directionPicked = true;
+        }
+    }
+
+    if (kinect->getLeftHand() || kinect->getRightHand())
+    {
+        kinectOverride = true;
+        drive->killPID(true);
+    }
+
+    if (directionPicked && !kinectOverride)
+    {
+        if (AUTO_INDEX < 1)
+        {
+            if (!generated)
+            {
+                angleGenerator = new TrapProfile(turnAmnt*directionFlag, 100000, 100000, 100000);
+                drive->setAngular(angleGenerator);
+                generated = true;
+            }
+            if (autoSelectMode == ONE_BALL_SIMPLE)
+                arm->setPreset(CLOSE_SHOT);
+
+            if (fabs((turnAmnt*directionFlag) - drive->getGyroAngle()) < 3)
+            {
+                generated = false;
+                AUTO_INDEX = 1;
+            }
+        }
+        else if (AUTO_INDEX < 2)
+        {
+            if (autoSelectMode == BLOCK_90 || autoSelectMode == BLOCK_LOW_GOAL)
+                directionFlag = -1;
+            else if (autoSelectMode == ONE_BALL_SIMPLE)
+                directionFlag = 1;
+
+            if (!generated)
+            {
+                linearGenerator = new TrapProfile(autoDistance*directionFlag, 10, 15, 15);
+                drive->setLinear(linearGenerator);
+                generated = true;
+            }
+
+            float turnDirection = turnAmnt*directionFlag;
+            if (autoSelectMode == BLOCK_LOW_GOAL && drive->getWheelDistance() > 1)
+            {
+                if (turnDirection < 0)
+                    kickUpSolenoid->Set(true);
+                else
+                    autoCorralSolenoid->Set(true);
+            }
+
+            if (fabs((autoDistance*directionFlag) - drive->getWheelDistance()) < 3 && drive->getVelocity() < 2)
+            {
+                AUTO_INDEX = 3;
+            }
+        }
+        else if (AUTO_INDEX < 3 && autoSelectMode == ONE_BALL_SIMPLE)
+        {
+            shooter->fire();
+        }
+    }
+    else
+    {
+        float movement = 0;
+        if (kinect->getLeftHand())
+            movement = -.6;
+        else if (kinect->getRightHand())
+            movement = .6;
+
+        if (autoSelectMode != BLOCK_SIMPLE || autoSelectMode != ONE_BALL_SIMPLE)
+            movement *= directionFlag;
+
+        drive->arcade(movement, 0);
+    }
 
     GetWatchdog().Feed();
 
@@ -486,6 +616,8 @@ void Robot::AutonomousPeriodic()
 void Robot::TeleopInit()
 {
     shooter->cock(NO_COCK);
+    autoCorralSolenoid->Set(false);
+    kickUpSolenoid->Set(false);
     drive->CheesyDrive(0, 0, false, false);
     intake->stop();
     blockerSolenoid->Set(false);
