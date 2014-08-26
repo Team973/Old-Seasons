@@ -602,6 +602,16 @@ void Robot::AutonomousPeriodic()
         drive->arcade(movement, 0);
     }
 
+    /*
+    if (autoSelectMode == BLOCK_LOW_GOAL && drive->getWheelDistance() > 1)
+    {
+        if (turnDirection < 0)
+            kickUpSolenoid->Set(true);
+        else
+            autoCorralSolenoid->Set(true);
+    }
+    */
+
     GetWatchdog().Feed();
 
     arm->update();
