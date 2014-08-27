@@ -78,7 +78,7 @@ void AutoManager::autoSelect(int autoMode)
             commandSequence.push_back(new AutoWaitCommand(10));
             break;
         case BLOCK_SIMPLE:
-            commandSequence.push_back(new BlockStuff(drive, kinect, distance, SIMPLE, hot));
+            commandSequence.push_back(new BlockStuff(drive, kinect, distance, B_SIMPLE, hot));
             commandSequence.push_back(new AutoWaitCommand(10));
             break;
         case BLOCK_90:
@@ -86,7 +86,7 @@ void AutoManager::autoSelect(int autoMode)
             commandSequence.push_back(new AutoWaitCommand(10));
             break;
         case BLOCK_LOW_GOAL:
-            commandSequence.push_back(new BlockStuff(drive, kinect, distance, LOW_GOAL, hot));
+            commandSequence.push_back(new BlockStuff(drive, kinect, distance, B_LOW, hot));
             commandSequence.push_back(new AutoWaitCommand(10));
             break;
         case TEST_FUNCTIONAL:

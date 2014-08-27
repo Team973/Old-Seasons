@@ -39,7 +39,7 @@ Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoi
     drivePID->setICap(0);
     drivePID->start();
     //rotatePID = new PID(.005, 0, 0.01);
-    rotatePID = new PID(0.01, 0.001, 0);
+    rotatePID = new PID(0.005, 0.001, 0);
     rotatePID->setICap(0.1);
     rotatePID->start();
 
