@@ -476,25 +476,22 @@ void Robot::AutonomousInit()
 
     drive->resetDrive();
     //XXX
-    autoDistance *= directionFlag;
-    /*
+    //autoDistance *= directionFlag;
     autoMode->reset();
     autoMode->setHeat(areWeHot);
     autoMode->setDistance(autoDistance*directionFlag);
     autoMode->autoSelect(autoSelectMode);
     autoMode->Init();
-    */
 }
 
 void Robot::AutonomousPeriodic()
 {
     GetWatchdog().Feed();
-    /*
    if (autoMode->Run())
        autoComplete = true;
-       */
 
     // I'm so sorry for this
+    /*
 
     float turnAmnt = 0;
 
@@ -601,16 +598,15 @@ void Robot::AutonomousPeriodic()
 
         drive->arcade(movement, 0);
     }
+    */
 
-    /*
-    if (autoSelectMode == BLOCK_LOW_GOAL && drive->getWheelDistance() > 1)
+    if (autoSelectMode == BLOCK_LOW_GOAL && fabs(autoDistance - drive->getWheelDistance()) < autoDistance - 1)
     {
-        if (turnDirection < 0)
+        if (drive->getGyroAngle() < 0)
             kickUpSolenoid->Set(true);
         else
             autoCorralSolenoid->Set(true);
     }
-    */
 
     GetWatchdog().Feed();
 
