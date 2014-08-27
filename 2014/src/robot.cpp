@@ -124,6 +124,9 @@ void Robot::dashboardUpdate()
     SmartDashboard::PutBoolean("Left Hot: ", kinect->goLeft());
     SmartDashboard::PutBoolean("Right Hot: ", kinect->goRight());
 
+    SmartDashboard::PutNumber("Left Raw: ", leftAutoControl->GetY());
+    SmartDashboard::PutNumber("Right Raw: ", rightAutoControl->GetY());
+
 
     SmartDashboard::PutString("Last Hand: ", kinect->getScheduledHand());
 
@@ -600,12 +603,12 @@ void Robot::AutonomousPeriodic()
     }
     */
 
-    if (autoSelectMode == BLOCK_LOW_GOAL && fabs(autoDistance - drive->getWheelDistance()) < autoDistance - 1)
+    if (autoSelectMode == BLOCK_LOW_GOAL && drive->getWheelDistance() < -5)
     {
-        if (drive->getGyroAngle() < 0)
-            kickUpSolenoid->Set(true);
-        else
+        if (directionFlag == 1)
             autoCorralSolenoid->Set(true);
+        else
+            kickUpSolenoid->Set(true);
     }
 
     GetWatchdog().Feed();

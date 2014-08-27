@@ -30,12 +30,14 @@ BlockStuff::BlockStuff(Drive *drive_, KinectHandler *kinect_, float distance_, i
 
 void BlockStuff::Init()
 {
-    hotTimer->Start();
+    sequence.clear();
     hotTimer->Reset();
 }
 
 bool BlockStuff::Run()
 {
+    hotTimer->Start();
+
     if (kinect->getLeftHand() || kinect->getRightHand())
     {
         drive->killPID(true);
@@ -44,12 +46,17 @@ bool BlockStuff::Run()
 
     if (hot && !directionSelected)
     {
+        if (hotTimer->Get() > .2)
+        {
+            directionSelected = true;
+        }
+
         if (kinect->goLeft())
         {
             directionFlag = -1;
             directionSelected = true;
         }
-        else if (kinect->goRight() || hotTimer->Get())
+        else if (kinect->goRight())
         {
             directionFlag = 1;
             directionSelected = true;
@@ -89,7 +96,7 @@ bool BlockStuff::Run()
                 break;
             case B_LOW:
                 sequence.clear();
-                sequence.push_back(new TurnProfileCommand(drive, 75*-directionFlag, 100000, 100000, 100000, 3));
+                sequence.push_back(new TurnProfileCommand(drive, 72*-directionFlag, 100000, 100000, 100000, 3));
                 sequence.push_back(new AutoWaitCommand(2));
                 sequence.push_back(new LinearProfileCommand(drive, -10, 15, 10, 15, 5));
                 init = false;
@@ -113,14 +120,14 @@ bool BlockStuff::Run()
     {
         float movement = 0;
         if (kinect->getLeftHand())
-            movement = -.6;
-        else if (kinect->getLeftHand())
             movement = .6;
+        else if (kinect->getRightHand())
+            movement = -.6;
         else
             movement = 0;
 
         if (mode != B_SIMPLE)
-            movement *= directionFlag;
+            movement *= -directionFlag;
 
         drive->arcade(movement, 0);
     }
