@@ -7,6 +7,7 @@
 #include "../drive.hpp"
 #include "../trapProfile.hpp"
 #include "../kinectHandler.hpp"
+#include <math.h>
 #include <vector>
 
 BlockStuff::BlockStuff(Drive *drive_, KinectHandler *kinect_, float distance_, int mode_, bool hot_)
@@ -46,7 +47,7 @@ bool BlockStuff::Run()
 
     if (hot && !directionSelected)
     {
-        if (hotTimer->Get() > .2)
+        if (hotTimer->Get() > 2)
         {
             directionSelected = true;
         }
@@ -82,7 +83,7 @@ bool BlockStuff::Run()
         {
             case B_SIMPLE:
                 sequence.clear();
-                sequence.push_back(new LinearProfileCommand(drive, distance, 15, 10, 15, 5));
+                sequence.push_back(new LinearProfileCommand(drive, fabs(distance)*directionFlag, 15, 10, 15, 5));
                 init = false;
                 generated = true;
                 break;
@@ -111,12 +112,12 @@ bool BlockStuff::Run()
         cmd->Init();
         init = true;
     }
-    else if (!kinectOver)
+    else if (!kinectOver && generated)
     {
         if (cmd->Run())
             kinectOver = true;
     }
-    else
+    else if (kinectOver)
     {
         float movement = 0;
         if (kinect->getLeftHand())
