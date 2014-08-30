@@ -102,7 +102,7 @@ Robot::Robot()
 
     ds = DriverStation::GetInstance();
     dsLCD = DriverStationLCD::GetInstance();
-    SmartDashboard::init();
+    //SmartDashboard::init();
 }
 
 void Robot::dashboardUpdate()
@@ -111,6 +111,7 @@ void Robot::dashboardUpdate()
     arm->dashboardUpdate();
     shooter->dashboardUpdate();
     intake->dashboardUpdate();
+    /*
     SmartDashboard::PutNumber("Arm Target: ", arm->getTarget());
     SmartDashboard::PutNumber("Gyro: ", drive->getGyroAngle());
     SmartDashboard::PutNumber(" Test Gyro: ", testGyro->GetAngle());
@@ -139,6 +140,7 @@ void Robot::dashboardUpdate()
         SmartDashboard::PutNumber("X: ", drive->getX());
         SmartDashboard::PutNumber("Y: ", drive->getY());
     }
+    */
 }
 
 float Robot::deadband(float axis, float threshold)

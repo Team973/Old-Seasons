@@ -97,7 +97,6 @@ float Drive::getRightDrive()
     return rightEncoder->Get();
 }
 
-//XXX: this function needs to divide by two fixme
 float Drive::getWheelDistance()
 {
     float diameter = 3.89;
@@ -105,19 +104,16 @@ float Drive::getWheelDistance()
     float distancePerRevolution = M_PI * diameter;
     leftDist = ((leftEncoder->Get() / encoderTicks) * distancePerRevolution)/12;
     rightDist = ((rightEncoder->Get() / encoderTicks) * distancePerRevolution)/12;
-    return (leftDist + rightDist);///2;
+    return (leftDist + rightDist)/2;
 }
-//XXX: end fix
 
-//XXX: this function needs to divide by two fixme
 float Drive::getVelocity()
 {
     float diameter = 3.89;
     float leftVel = leftEncoder->GetRate() / 360 * M_PI / 12 * diameter;
     float rightVel = rightEncoder->GetRate() / 360 * M_PI / 12 * diameter;;
-    return (leftVel + rightVel);///2;
+    return (leftVel + rightVel)/2;
 }
-//XXX: end fix
 
 float Drive::normalizeAngle(float theta)
 {
@@ -413,9 +409,11 @@ void Drive::update(bool isAuto)
             std::vector<float> linearStep = linearGenerator->getProfile(loopTime);
             std::vector<float> angularStep = angularGenerator->getProfile(loopTime);
 
+            /*
             SmartDashboard::PutNumber("Velocity Error: ", linearStep[2] - getVelocity());
             SmartDashboard::PutNumber("Position Error: ", linearStep[1] - getWheelDistance());
             SmartDashboard::PutNumber("Angular Error: ", angularStep[1] - getGyroAngle());
+            */
 
 
             float linearInput, angularInput;
@@ -435,17 +433,17 @@ void Drive::update(bool isAuto)
             }
 
             SmartDashboard::PutNumber("Linear Output: ", linearOutput);
-            */
             SmartDashboard::PutNumber("Velocity: ", linearStep[2]);
             SmartDashboard::PutNumber("Acceleration: ", linearStep[3]);
+            */
 
             float linearOutput, angularOutput;
 
             linearOutput = drivePID->update(linearStep[1]-getWheelDistance(), loopTimer) + linearInput;
             angularOutput = -rotatePID->update(angularStep[1] - getGyroAngle(), loopTimer);
 
-            SmartDashboard::PutNumber("I Contribution: ", rotatePID->update(angularStep[1]-getGyroAngle(), loopTimer) - 0.01*(angularStep[1]-getGyroAngle()));
-            SmartDashboard::PutNumber("Linear Output: ", linearOutput);
+            //SmartDashboard::PutNumber("I Contribution: ", rotatePID->update(angularStep[1]-getGyroAngle(), loopTimer) - 0.01*(angularStep[1]-getGyroAngle()));
+            //SmartDashboard::PutNumber("Linear Output: ", linearOutput);
             arcade(linearOutput, angularOutput);
         }
     }
@@ -453,8 +451,8 @@ void Drive::update(bool isAuto)
     prevAngle = currAngle;
 
 
-    SmartDashboard::PutNumber("Left Power: ", leftPower);
-    SmartDashboard::PutNumber("Right Power: ", rightPower);
+    //SmartDashboard::PutNumber("Left Power: ", leftPower);
+    //SmartDashboard::PutNumber("Right Power: ", rightPower);
 
     leftDrive->Set(leftPower);
     rightDrive->Set(rightPower);
