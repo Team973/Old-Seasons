@@ -117,5 +117,5 @@ void Intake::update()
 
 void Intake::dashboardUpdate()
 {
-    SmartDashboard::PutBoolean("Ball Sensor: ", ballSensor->Get());
+    //SmartDashboard::PutBoolean("Ball Sensor: ", ballSensor->Get());
 }

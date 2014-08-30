@@ -236,8 +236,10 @@ void Shooter::update()
         }
     }
 
+    /*
     SmartDashboard::PutNumber("Truss Winch Error: ", trussPID->getTarget() - Pot->GetVoltage());
     SmartDashboard::PutNumber("Truss PID Output: ", trussPID->update(Pot->GetVoltage()));
+    */
 
     float trussWinchInput = trussPID->update(Pot->GetVoltage());
     if (Pot->GetVoltage() < 4 && Pot->GetVoltage() > 0.3)
@@ -256,6 +258,6 @@ void Shooter::update()
 
 void Shooter::dashboardUpdate()
 {
-    SmartDashboard::PutBoolean("Full Cock Point: ", fullCockPoint->Get());
-    SmartDashboard::PutBoolean("Zero Point: ", zeroPoint->Get());
+    //SmartDashboard::PutBoolean("Full Cock Point: ", fullCockPoint->Get());
+    //SmartDashboard::PutBoolean("Zero Point: ", zeroPoint->Get());
 }
