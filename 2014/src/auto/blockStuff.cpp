@@ -90,7 +90,7 @@ bool BlockStuff::Run()
             case B_90:
                 sequence.clear();
                 sequence.push_back(new TurnProfileCommand(drive, 90*-directionFlag, 100000, 100000, 100000, 3));
-                sequence.push_back(new AutoWaitCommand(2));
+                sequence.push_back(new AutoWaitCommand(1));
                 sequence.push_back(new LinearProfileCommand(drive, -distance*directionFlag, 15, 10, 15, 5));
                 init = false;
                 generated = true;
@@ -98,7 +98,7 @@ bool BlockStuff::Run()
             case B_LOW:
                 sequence.clear();
                 sequence.push_back(new TurnProfileCommand(drive, 72*-directionFlag, 100000, 100000, 100000, 3));
-                sequence.push_back(new AutoWaitCommand(2));
+                sequence.push_back(new AutoWaitCommand(1));
                 sequence.push_back(new LinearProfileCommand(drive, -10, 15, 10, 15, 5));
                 init = false;
                 generated = true;
