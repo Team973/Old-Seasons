@@ -121,9 +121,9 @@ bool BlockStuff::Run()
     {
         float movement = 0;
         if (kinect->getLeftHand())
-            movement = .6;
+            movement = .36;
         else if (kinect->getRightHand())
-            movement = -.6;
+            movement = -.36;
         else
             movement = 0;
 
