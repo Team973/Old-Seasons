@@ -53,7 +53,7 @@ void Arm::setPreset(int preset)
             autoClamped = false;
             break;
         case CLOSE_SHOT:
-            setTarget(7.00);
+            setTarget(8.00);
             autoClamped = false;
             break;
         case HELLAVATOR:
