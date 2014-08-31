@@ -7,6 +7,7 @@
 #include "../drive.hpp"
 #include "../trapProfile.hpp"
 #include "../kinectHandler.hpp"
+#include "../pid.hpp"
 #include <math.h>
 #include <vector>
 
@@ -26,6 +27,12 @@ BlockStuff::BlockStuff(Drive *drive_, KinectHandler *kinect_, float distance_, i
 
     directionFlag = 1;
 
+    holdAnglePID = new PID(0.005, 0.001, 0);
+    holdAnglePID->setICap(0.1);
+    holdAnglePID->start();
+
+    angle = 0;
+
     init = false;
 }
 
@@ -33,6 +40,7 @@ void BlockStuff::Init()
 {
     sequence.clear();
     hotTimer->Reset();
+    holdAnglePID->reset();
 }
 
 bool BlockStuff::Run()
@@ -97,7 +105,7 @@ bool BlockStuff::Run()
                 break;
             case B_LOW:
                 sequence.clear();
-                sequence.push_back(new TurnProfileCommand(drive, 78*-directionFlag, 100000, 100000, 100000, 3));
+                sequence.push_back(new TurnProfileCommand(drive, 82*-directionFlag, 100000, 100000, 100000, 3));
                 sequence.push_back(new AutoWaitCommand(1));
                 sequence.push_back(new LinearProfileCommand(drive, -9, 15, 10, 15, 5));
                 init = false;
@@ -106,7 +114,7 @@ bool BlockStuff::Run()
         }
     }
 
-    if (!init && generated)
+    if (!init && generated && !kinectOver)
     {
         cmd = new SequentialCommand(sequence);
         cmd->Init();
@@ -119,22 +127,30 @@ bool BlockStuff::Run()
     }
     else if (kinectOver)
     {
+        if (init) {
+            angle = drive->getGyroAngle();
+            init = false;
+        }
         float movement = 0;
         if (kinect->getLeftHand())
-            movement = .36;
+            movement = .5;
         else if (kinect->getRightHand())
-            movement = -.36;
+            movement = -.5;
+        /*
         else if (kinect->goLeft())
             movement = .6;
         else if (kinect->goRight())
             movement = -.6;
+            */
         else
             movement = 0;
 
         if (mode != B_SIMPLE)
             movement *= -directionFlag;
 
-        drive->arcade(movement, 0);
+        float turn = -holdAnglePID->update(angle - drive->getGyroAngle());
+
+        drive->arcade(movement, turn);
     }
 
     return false;
