@@ -124,6 +124,10 @@ bool BlockStuff::Run()
             movement = .36;
         else if (kinect->getRightHand())
             movement = -.36;
+        else if (kinect->goLeft())
+            movement = .6;
+        else if (kinect->goRight())
+            movement = -.6;
         else
             movement = 0;
 
