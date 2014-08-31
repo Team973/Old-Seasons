@@ -605,12 +605,17 @@ void Robot::AutonomousPeriodic()
     }
     */
 
-    if (autoSelectMode == BLOCK_LOW_GOAL && drive->getWheelDistance() < -5)
+    if (autoSelectMode == BLOCK_LOW_GOAL && drive->getWheelDistance() < -3)
     {
         if (directionFlag == 1)
             autoCorralSolenoid->Set(true);
         else
             kickUpSolenoid->Set(true);
+    }
+    else
+    {
+        autoCorralSolenoid->Set(false);
+        kickUpSolenoid->Set(false);
     }
 
     GetWatchdog().Feed();

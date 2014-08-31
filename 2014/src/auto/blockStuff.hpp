@@ -10,6 +10,7 @@
 class Drive;
 class KinectHandler;
 class SequentialCommand;
+class PID;
 
 class BlockStuff : public AutoCommand
 {
@@ -24,12 +25,16 @@ private:
     int mode;
     bool hot;
 
+    PID *holdAnglePID;
+
     Timer *hotTimer;
 
     bool generated;
     bool directionSelected;
     bool kinectOver;
     int directionFlag;
+
+    float angle;
 
     bool init;
 
