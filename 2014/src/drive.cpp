@@ -97,6 +97,7 @@ float Drive::getRightDrive()
     return rightEncoder->Get();
 }
 
+//XXX WE broke a drive encoder divide me by 2
 float Drive::getWheelDistance()
 {
     float diameter = 3.89;
@@ -104,7 +105,7 @@ float Drive::getWheelDistance()
     float distancePerRevolution = M_PI * diameter;
     leftDist = ((leftEncoder->Get() / encoderTicks) * distancePerRevolution)/12;
     rightDist = ((rightEncoder->Get() / encoderTicks) * distancePerRevolution)/12;
-    return (leftDist + rightDist)/2;
+    return (leftDist + rightDist);//2;
 }
 
 float Drive::getVelocity()
@@ -112,8 +113,9 @@ float Drive::getVelocity()
     float diameter = 3.89;
     float leftVel = leftEncoder->GetRate() / 360 * M_PI / 12 * diameter;
     float rightVel = rightEncoder->GetRate() / 360 * M_PI / 12 * diameter;;
-    return (leftVel + rightVel)/2;
+    return (leftVel + rightVel);//2;
 }
+//XXX don't divide after me
 
 float Drive::normalizeAngle(float theta)
 {
