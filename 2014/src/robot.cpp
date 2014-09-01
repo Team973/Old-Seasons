@@ -240,7 +240,6 @@ void Robot::joystick2() // Co-Driver
     if (stick2->GetRawButton(1))
     {
         arm->setPreset(PSEUDO_INTAKE);
-        shooter->cock(FULL_COCK);
         intake->setFangs(true, false);
     }
 
@@ -248,7 +247,6 @@ void Robot::joystick2() // Co-Driver
     if (stick2->GetRawButton(2))
     {
         arm->setPreset(INTAKE);
-        shooter->cock(FULL_COCK);
         intake->setFangs(true, false);
     }
 
@@ -273,7 +271,6 @@ void Robot::joystick2() // Co-Driver
     if (stick2->GetRawButton(5))
     {
         arm->setPreset(STOW);
-        shooter->cock(FULL_COCK);
     }
 
     // [6]

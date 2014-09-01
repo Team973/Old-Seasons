@@ -199,14 +199,14 @@ void Shooter::update()
             {
                 if (performFire())
                 {
-                    cock(FULL_COCK);
+                    //cock(FULL_COCK);
                 }
             }
             else if (arm->getPreset() == CLOSE_SHOT || STOW)
             {
                 if (performSoftFire())
                 {
-                    cock(FULL_COCK);
+                    //cock(FULL_COCK);
                 }
             }
         }
