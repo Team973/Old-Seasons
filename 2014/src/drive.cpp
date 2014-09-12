@@ -3,6 +3,7 @@
 #include <math.h>
 #include "pid.hpp"
 #include "trapProfile.hpp"
+#include "dataLog.hpp"
 
 Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoid *kickUp_, Encoder *leftEncoder_, Encoder *rightEncoder_, Encoder *gyro_, Gyro *testGyro_)
 {
@@ -57,6 +58,12 @@ Drive::Drive(Talon *leftDrive_, Talon *rightDrive_, Solenoid *shifters_, Solenoi
     tuneStick = new Joystick(3);
     buttonTimer = new Timer();
     buttonTimer->Start();
+
+    log = new DataLog();
+    printTimer = new Timer();
+    printTimer->Start();
+
+    ds = DriverStation::GetInstance();
 }
 
 float Drive::generateDistanceTime(float x)
@@ -117,6 +124,18 @@ float Drive::getVelocity()
 }
 //XXX don't divide after me
 
+float Drive::getLeftVelocity()
+{
+    float diameter = 3.89;
+    return leftEncoder->GetRate() / 360 * M_PI / 12 * diameter;
+}
+
+float Drive::getRightVelocity()
+{
+    float diameter = 3.89;
+    return rightEncoder->GetRate() / 360 * M_PI / 12 * diameter;
+}
+
 float Drive::normalizeAngle(float theta)
 {
     while (theta > 180)
@@ -157,7 +176,6 @@ float Drive::getRightDistance()
 {
     return rightDist;
 }
-
 
 void Drive::calculateDrive()
 {
@@ -403,6 +421,7 @@ void Drive::update(bool isAuto)
     float kAngAccelFF = 0;
     //float kDccellFF = 0;
 
+
     if (isAuto)
     {
         if (!deadPID)
@@ -444,6 +463,14 @@ void Drive::update(bool isAuto)
             linearOutput = drivePID->update(linearStep[1]-getWheelDistance(), loopTimer) + linearInput;
             angularOutput = -rotatePID->update(angularStep[1] - getGyroAngle(), loopTimer);
 
+
+            if (printTimer->Get() > .15)
+            {
+                std::string s = log->asString(getLeftDistance()) + ", " + log->asString(getLeftVelocity()) + ", " + log->asString(getRightDistance()) + ", " + log->asString(getRightVelocity()) + ", " + log->asString(getWheelDistance()) + ", " + log->asString(getVelocity()) + ", " + log->asString(getGyroAngle()) + ", " + log->asString(loopTime) + ", " + log->asString(ds->GetBatteryVoltage()) + ", " + log->asString(leftPower) + ", " + log->asString(rightPower) + ", " + log->asString(linearOutput) + ", " + log->asString(drivePID->getP()) + ", " + log->asString(drivePID->getI()) + ", " + log->asString(drivePID->getD()) + ", " + log->asString(-(kLinVelFF*linearStep[2])) + ", " + log->asString(-(kLinAccelFF*linearStep[3])) + ", " + log->asString(linearStep[1] - getWheelDistance()) + ", " + log->asString(linearStep[2] - getVelocity()) + ", " + log->asString(linearStep[1]) + ", " + log->asString(linearStep[2]) + ", " + log->asString(linearStep[3]);
+                printf("%s", s.c_str());
+                printTimer->Reset();
+            }
+
             //SmartDashboard::PutNumber("I Contribution: ", rotatePID->update(angularStep[1]-getGyroAngle(), loopTimer) - 0.01*(angularStep[1]-getGyroAngle()));
             //SmartDashboard::PutNumber("Linear Output: ", linearOutput);
             arcade(linearOutput, angularOutput);
@@ -451,10 +478,6 @@ void Drive::update(bool isAuto)
     }
 
     prevAngle = currAngle;
-
-
-    //SmartDashboard::PutNumber("Left Power: ", leftPower);
-    //SmartDashboard::PutNumber("Right Power: ", rightPower);
 
     leftDrive->Set(leftPower);
     rightDrive->Set(rightPower);

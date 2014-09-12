@@ -11,6 +11,7 @@
 class PID;
 class DataLog;
 class TrapProfile;
+class DataLog;
 
 class Drive //keep space between the class of the file and the classes in the file
 {
@@ -55,6 +56,9 @@ private:
 
     Timer *loopTimer;
 
+    DataLog * log;
+    Timer *printTimer;
+
     //XXX destroy us when you are done testing
     Joystick *tuneStick;
     Timer *buttonTimer;
@@ -65,6 +69,8 @@ private:
     float rightPower;
 
     float getVelocity(Encoder *e);
+
+    DriverStation *ds;
 
     // Drive calculation variables
     void calculateDrive();
@@ -109,6 +115,8 @@ public:
     float getRightDistance();
     float getWheelDistance();
     float getVelocity();
+    float getLeftVelocity();
+    float getRightVelocity();
     void resetDriveEncoders();
     void resetGyro();
     float getGyroAngle();
