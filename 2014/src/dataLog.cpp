@@ -36,6 +36,11 @@ DataLog::DataLog(std::string filename_)
     fclose(file);
 }
 
+// this will break if anything other then asString is called
+DataLog::DataLog()
+{
+}
+
 template<typename T>
 std::string DataLog::asString(T in)
 {

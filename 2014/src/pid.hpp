@@ -23,6 +23,9 @@ private:
     float err;
     float derivative;
 
+    float pterm;
+    float dterm;
+
     Timer* timer;
 public:
     PID(double p_=0.0, double i_=0.0, double d_=0.0);
@@ -38,6 +41,9 @@ public:
     void setBounds(float min_, float max_);
     float update(float actual);
     float update(float actual, Timer *t);
+    float getP();
+    float getI();
+    float getD();
 };
 
 #endif

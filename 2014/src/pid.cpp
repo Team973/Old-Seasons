@@ -14,6 +14,10 @@ PID::PID(double p_, double i_, double d_)
     integral = 0;
     iterm = 0;
     icap = 0;
+    derivative = 0;
+
+    pterm = 0;
+    dterm = 0;
 
     output = 0;
     prevErr = 0;
@@ -36,6 +40,10 @@ PID::PID(double gains[])
     integral = 0;
     iterm = 0;
     icap = 0;
+    derivative = 0;
+
+    pterm = 0;
+    dterm = 0;
 
     output = 0;
     prevErr = 0;
@@ -122,8 +130,10 @@ float PID::update(float actual)
 
     // Calculate derivative
     derivative = (err - prevErr) / timer->Get();
+    pterm = p * err;
+    dterm = d * derivative;
 
-    output = (p * err) + iterm + (d * derivative);
+    output = pterm + iterm + dterm;
     prevErr = err;
 
     if (max && (output > max))
@@ -161,7 +171,11 @@ float PID::update(float actual, Timer *t)
     // Calculate derivative
     derivative = (err - prevErr) / t->Get();
 
-    output = (p * err) + iterm + (d * derivative);
+    pterm = p * err;
+
+    dterm = d * derivative;
+
+    output = pterm + iterm + dterm;
     prevErr = err;
 
     if (max && (output > max))
@@ -174,4 +188,19 @@ float PID::update(float actual, Timer *t)
     }
 
     return output;
+}
+
+float PID::getP()
+{
+    return pterm;
+}
+
+float PID::getI()
+{
+    return iterm;
+}
+
+float PID::getD()
+{
+    return dterm;
 }
