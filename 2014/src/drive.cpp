@@ -464,12 +464,9 @@ void Drive::update(bool isAuto)
             angularOutput = -rotatePID->update(angularStep[1] - getGyroAngle(), loopTimer);
 
 
-            if (printTimer->Get() > .15)
-            {
-                std::string s = log->asString(getLeftDistance()) + ", " + log->asString(getLeftVelocity()) + ", " + log->asString(getRightDistance()) + ", " + log->asString(getRightVelocity()) + ", " + log->asString(getWheelDistance()) + ", " + log->asString(getVelocity()) + ", " + log->asString(getGyroAngle()) + ", " + log->asString(loopTime) + ", " + log->asString(ds->GetBatteryVoltage()) + ", " + log->asString(leftPower) + ", " + log->asString(rightPower) + ", " + log->asString(linearOutput) + ", " + log->asString(drivePID->getP()) + ", " + log->asString(drivePID->getI()) + ", " + log->asString(drivePID->getD()) + ", " + log->asString(-(kLinVelFF*linearStep[2])) + ", " + log->asString(-(kLinAccelFF*linearStep[3])) + ", " + log->asString(linearStep[1] - getWheelDistance()) + ", " + log->asString(linearStep[2] - getVelocity()) + ", " + log->asString(linearStep[1]) + ", " + log->asString(linearStep[2]) + ", " + log->asString(linearStep[3]);
-                printf("%s", s.c_str());
+            std::string s = "---" + log->asString(getLeftDistance()) + ", " + log->asString(getLeftVelocity()) + ", " + log->asString(getRightDistance()) + ", " + log->asString(getRightVelocity()) + ", " + log->asString(getWheelDistance()) + ", " + log->asString(getVelocity()) + ", " + log->asString(getGyroAngle()) + ", " + log->asString(loopTime) + ", " + log->asString(ds->GetBatteryVoltage()) + ", " + log->asString(leftPower) + ", " + log->asString(rightPower) + ", " + log->asString(linearOutput) + ", " + log->asString(drivePID->getP()) + ", " + log->asString(drivePID->getI()) + ", " + log->asString(drivePID->getD()) + ", " + log->asString(-(kLinVelFF*linearStep[2])) + ", " + log->asString(-(kLinAccelFF*linearStep[3])) + ", " + log->asString(linearStep[1] - getWheelDistance()) + ", " + log->asString(linearStep[2] - getVelocity()) + ", " + log->asString(linearStep[1]) + ", " + log->asString(linearStep[2]) + ", " + log->asString(linearStep[3]) + "____";
+                printf("%s\n", s.c_str());
                 printTimer->Reset();
-            }
 
             //SmartDashboard::PutNumber("I Contribution: ", rotatePID->update(angularStep[1]-getGyroAngle(), loopTimer) - 0.01*(angularStep[1]-getGyroAngle()));
             //SmartDashboard::PutNumber("Linear Output: ", linearOutput);
