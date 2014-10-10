@@ -2,12 +2,11 @@
 #define ROBOT_H
 
 class Drive;
-class GreyJoy;
 
 class Robot : public IterativeRobot
 {
 public:
-        TestRobot();
+        Robot();
         void RobotInit();
         void DisabledInit();
         void DisabledPeriodic();
@@ -23,9 +22,6 @@ private:
         Solenoid *shiftingSolenoid;
 
         Drive *drive;
-
-        GreyJoy *driver;
-        GreyJoy *coDriver;
 };
 
 #endif
