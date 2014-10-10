@@ -1,6 +1,7 @@
 #include "WPILib.h"
 #include "drive.hpp"
 #include "math.h"
+#include "utility.hpp"
 
 Drive::Drive(Talon *left_, Talon *right_, Solenoid *shifters_)
 {
@@ -11,16 +12,6 @@ Drive::Drive(Talon *left_, Talon *right_, Solenoid *shifters_)
     quickStopAccumulator = 0;
     negInertiaAccumulator = 0;
     oldWheel = 0;
-}
-
-float Drive::limit(float x)
-{
-    if (x > 1)
-        return 1;
-    else if (x < -1)
-        return -1;
-    else
-        return x;
 }
 
 void Drive::setDriveMotors(float left, float right)
@@ -148,6 +139,11 @@ void Drive::CheesyDrive(double throttle, double wheel, bool highGear, bool quick
   }
 
   setDriveMotors(leftPwm, rightPwm);
+}
+
+void Drive::setBehavior(float throttle, float turn, bool highGear, bool quickTurn)
+{
+    CheesyDrive(throttle,turn,highGear,quickTurn);
 }
 
 void Drive::update()
