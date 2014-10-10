@@ -1,10 +1,10 @@
-#ifndef TEST_ROBOT_H
-#define TEST_ROBOT_H
+#ifndef ROBOT_H
+#define ROBOT_H
 
 class Drive;
 class GreyJoy;
 
-class TestRobot : public IterativeRobot
+class Robot : public IterativeRobot
 {
 public:
         TestRobot();
