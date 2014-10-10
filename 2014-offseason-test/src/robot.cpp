@@ -4,7 +4,7 @@
 #include "greyJoy.hpp"
 #include "NetworkTables/NetworkTable.h"
 
-TestRobot::TestRobot()
+Robot::Robot()
 {
     this->SetPeriod(0);
 
@@ -23,25 +23,25 @@ TestRobot::TestRobot()
     SmartDashboard::init();
 }
 
-void TestRobot::RobotInit() {
+void Robot::RobotInit() {
 }
 
-void TestRobot::DisabledInit() {
+void Robot::DisabledInit() {
 }
 
-void TestRobot::DisabledPeriodic() {
+void Robot::DisabledPeriodic() {
 }
 
-void TestRobot::AutonomousInit() {
+void Robot::AutonomousInit() {
 }
 
-void TestRobot::AutonomousPeriodic() {
+void Robot::AutonomousPeriodic() {
 }
 
-void TestRobot::TeleopInit() {
+void Robot::TeleopInit() {
 }
 
-void TestRobot::TeleopPeriodic() {
+void Robot::TeleopPeriodic() {
     /*
     drive->CheesyDrive(driver->getAxis("y"), driver->getAxis("rx"), driver->getButton("rbumper"), driver->getButton("lbumper"));
     drive->update();
@@ -52,10 +52,10 @@ void TestRobot::TeleopPeriodic() {
     driver->update();
 }
 
-void TestRobot::TestInit() {
+void Robot::TestInit() {
 }
 
-void TestRobot::TestPeriodic() {
+void Robot::TestPeriodic() {
 }
 
-START_ROBOT_CLASS(TestRobot);
+START_ROBOT_CLASS(Robot);
