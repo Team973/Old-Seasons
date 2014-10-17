@@ -19,8 +19,14 @@ public:
         void TestInit();
         void TestPeriodic();
 private:
-        Talon *leftDriveMotors;
-        Talon *rightDriveMotors;
+
+        float deadband(float x, float threshold);
+
+        Talon *leftFrontDriveMotors;
+        Talon *leftBackDriveMotors;
+        Talon *rightFrontDriveMotors;
+        Talon *rightBackDriveMotors;
+        Talon *strafeDriveMotors;
         Talon *armMotor;
         Victor *intakeMotor;
 

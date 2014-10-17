@@ -3,15 +3,19 @@
 #include "drive.hpp"
 #include "arm.hpp"
 #include "intake.hpp"
+#include <math.h>
 
 Robot::Robot()
 {
     this->SetPeriod(0);
 
-    leftDriveMotors = new Talon(1);
-    rightDriveMotors = new Talon(2);
+    leftFrontDriveMotors = new Talon(1);
+    rightFrontDriveMotors = new Talon(2);
+    leftBackDriveMotors = new Talon(5);
+    rightBackDriveMotors = new Talon(6);
+    strafeDriveMotors = new Talon(4);
     armMotor = new Talon(3);
-    intakeMotor = new Victor(6);
+    intakeMotor = new Victor(9);
 
     shiftingSolenoid = new Solenoid(5);
     clawSolenoid = new Solenoid(3);
@@ -19,12 +23,20 @@ Robot::Robot()
     armEncoder = new Encoder(6,7);
     armEncoder->Start();
 
-    drive = new Drive(leftDriveMotors, rightDriveMotors, shiftingSolenoid);
+    drive = new Drive(leftFrontDriveMotors, rightFrontDriveMotors, leftBackDriveMotors, rightBackDriveMotors, strafeDriveMotors, shiftingSolenoid);
     arm = new Arm(armMotor, armEncoder);
     intake = new Intake(intakeMotor, clawSolenoid);
 
     driver = new Joystick(1);
     coDriver = new Joystick(2);
+}
+
+float Robot::deadband(float x, float threshold)
+{
+    if (fabs(x) < threshold)
+        return 0;
+    else
+        return x;
 }
 
 void Robot::RobotInit() {
@@ -48,7 +60,8 @@ void Robot::TeleopInit() {
 void Robot::TeleopPeriodic() {
 
     // Driver
-    drive->setBehavior(-driver->GetY(), -driver->GetRawAxis(3), false, false);
+    drive->setBehavior(-deadband(driver->GetY(), 0.1), deadband(driver->GetRawAxis(3), 0.1), false, false);
+    drive->strafe(deadband(driver->GetX(), 0.1));
 
     // coDriver
     if (coDriver->GetRawButton(2))
