@@ -33,7 +33,8 @@ private:
         Arm *arm;
         Intake *intake;
 
-        Joystick *stick;
+        Joystick *driver;
+        Joystick *coDriver;
 };
 
 #endif
