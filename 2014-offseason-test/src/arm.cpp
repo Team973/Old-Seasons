@@ -18,8 +18,9 @@ Arm::Arm(Talon *motor_, Encoder *sensor_)
     presets["stow"] = 29;
     presets["closeShot"] = 22;
     presets["fenderShot"] = 8.8;
+    presets["none"] = 0;
 
-    lastPreset = "none";
+    currPreset = "none";
 }
 
 float Arm::getAngle()
@@ -30,25 +31,36 @@ float Arm::getAngle()
     return sensor->Get() / (ticksPerRevolution * gearRatio) * degreesPerRevolution;
 }
 
+void Arm::setBehavior(std::string state)
+{
+    setPreset(state);
+}
 
-void Arm::setBehavior(std::string preset)
+std::string Arm::getBehavior()
+{
+    return currPreset;
+}
+
+void Arm::setPreset(std::string preset)
 {
     if (presets.find(preset) != presets.end())
     {
         float p = presets[preset];
         armPID->setTarget(p);
-        lastPreset = preset;
+        currPreset = preset;
     }
     else
     {
-        armPID->setTarget(presets[lastPreset]);
+        armPID->setTarget(presets[currPreset]);
     }
 }
 
 void Arm::update()
 {
-    if (lastPreset == "intake")
+    if (currPreset == "intake")
         armPID->setGains(0.09);
+    else
+        armPID->setGains(0.1);
 
     motor->Set(armPID->update(getAngle()));
 }
