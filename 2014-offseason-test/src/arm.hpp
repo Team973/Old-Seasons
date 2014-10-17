@@ -1,12 +1,9 @@
-#include "lib/subsystem.hpp"
-
 #ifndef ARM_HPP
 #define ARM_HPP
 
 class PID;
-class Subsystem;
 
-class Arm : public Subsystem
+class Arm
 {
 public:
     Arm(Talon *motor_, Encoder *sensor_);
