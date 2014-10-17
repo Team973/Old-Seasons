@@ -23,7 +23,8 @@ Robot::Robot()
     arm = new Arm(armMotor, armEncoder);
     intake = new Intake(intakeMotor, clawSolenoid);
 
-    stick = new Joystick(1);
+    driver = new Joystick(1);
+    coDriver = new Joystick(2);
 }
 
 void Robot::RobotInit() {
@@ -46,18 +47,22 @@ void Robot::TeleopInit() {
 
 void Robot::TeleopPeriodic() {
 
-    if (stick->GetRawButton(2))
+    // Driver
+    drive->setBehavior(-driver->GetY(), -driver->GetRawAxis(3), false, false);
+
+    // coDriver
+    if (coDriver->GetRawButton(2))
         arm->setBehavior("intake");
 
-    if (stick->GetRawButton(5))
+    if (coDriver->GetRawButton(5))
         arm->setBehavior("stow");
 
-    intake->setSpeed(stick->GetY());
+    intake->setSpeed(coDriver->GetY());
 
-    if (stick->GetRawButton(7))
+    if (coDriver->GetRawButton(7))
         intake->setFangs(true);
 
-    if (stick->GetRawButton(8))
+    if (coDriver->GetRawButton(8))
         intake->setFangs(false);
 
     drive->update();
