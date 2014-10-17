@@ -1,17 +1,29 @@
 #include "WPILib.h"
 #include "drive.hpp"
 #include "math.h"
-#include "utility.hpp"
 
-Drive::Drive(Talon *left_, Talon *right_, Solenoid *shifters_)
+Drive::Drive(Talon *frontLeft_, Talon *frontRight_, Talon *backLeft_, Talon *backRight_, Talon *strafe_, Solenoid *shifters_)
 {
-    leftMotor = left_;
-    rightMotor = right_;
+    frontLeftMotor = frontLeft_;
+    backLeftMotor = backLeft_;
+    frontRightMotor = frontRight_;
+    backRightMotor = backRight_;
+    strafeMotor = strafe_;
     shifters = shifters_;
 
     quickStopAccumulator = 0;
     negInertiaAccumulator = 0;
     oldWheel = 0;
+}
+
+float Drive::limit(float x)
+{
+    if (x > 1)
+        return 1;
+    else if (x < -1)
+        return -1;
+    else
+        return x;
 }
 
 void Drive::setDriveMotors(float left, float right)
@@ -146,8 +158,15 @@ void Drive::setBehavior(float throttle, float turn, bool highGear, bool quickTur
     CheesyDrive(throttle,turn,highGear,quickTurn);
 }
 
+void Drive::strafe(float z)
+{
+    strafeMotor->Set(limit(z));
+}
+
 void Drive::update()
 {
-    leftMotor->Set(leftPower);
-    rightMotor->Set(rightPower);
+    frontLeftMotor->Set(-limit(leftPower));
+    frontRightMotor->Set(limit(rightPower));
+    backLeftMotor->Set(-limit(leftPower));
+    backRightMotor->Set(limit(rightPower));
 }

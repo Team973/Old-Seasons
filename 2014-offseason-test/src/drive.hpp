@@ -4,16 +4,21 @@
 class Drive
 {
 public:
-    Drive(Talon *left_, Talon *right_, Solenoid *shifters_);
+    Drive(Talon *frontLeft_, Talon *frontRight_, Talon *backLeft_, Talon *backRight_, Talon *strafe_, Solenoid *shifters_);
     void setBehavior(float throttle, float turn, bool highGear, bool quickTurn);
+    void strafe(float z);
     void update();
 private:
 
+    float limit(float x);
     void setDriveMotors(float left, float right);
     void CheesyDrive(double throttle, double wheel, bool highGear, bool quickTurn);
 
-    Talon *leftMotor;
-    Talon *rightMotor;
+    Talon *frontLeftMotor;
+    Talon *frontRightMotor;
+    Talon *backLeftMotor;
+    Talon *backRightMotor;
+    Talon *strafeMotor;
     Solenoid *shifters;
 
     float leftPower;
