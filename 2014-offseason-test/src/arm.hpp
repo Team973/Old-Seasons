@@ -1,18 +1,23 @@
+#include "lib/subsystem.hpp"
+
 #ifndef ARM_HPP
 #define ARM_HPP
 
 class PID;
+class Subsystem;
 
-class Arm
+class Arm : public Subsystem
 {
 public:
     Arm(Talon *motor_, Encoder *sensor_);
     float getAngle();
     void setBehavior(std::string preset);
+    std::string getBehavior();
+    void setPreset(std::string state);
     void update();
 private:
     std::map<std::string, float> presets;
-    std::string lastPreset;
+    std::string currPreset;
 
     Talon *motor;
     Encoder *sensor;
