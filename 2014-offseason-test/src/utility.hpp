@@ -1,9 +1,11 @@
-#include <math.h>
-
 #ifndef UTILITY_HPP
 #define UTILITY_HPP
 
-float limit(float x)
+#include <math.h>
+#include <string>
+#include <cctype>
+
+inline float limit(float x)
 {
     if (x > 1)
         return 1;
@@ -13,12 +15,22 @@ float limit(float x)
         return x;
 }
 
-float deadband(float x, float threshold)
+inline float deadband(float x, float threshold)
 {
     if (fabs(x) < threshold)
         return 0;
     else
         return x;
+}
+
+inline std::string asLower(std::string line)
+{
+    for (unsigned int n=0;n<line.size();n++)
+    {
+        line[n] = tolower(line[n]);
+    }
+
+    return line;
 }
 
 #endif
