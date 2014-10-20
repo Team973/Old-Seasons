@@ -1,6 +1,7 @@
 #include "WPILib.h"
 #include "drive.hpp"
 #include "math.h"
+#include "utility.hpp"
 
 Drive::Drive(Talon *frontLeft_, Talon *frontRight_, Talon *backLeft_, Talon *backRight_, Talon *strafe_, Solenoid *shifters_)
 {
@@ -14,16 +15,6 @@ Drive::Drive(Talon *frontLeft_, Talon *frontRight_, Talon *backLeft_, Talon *bac
     quickStopAccumulator = 0;
     negInertiaAccumulator = 0;
     oldWheel = 0;
-}
-
-float Drive::limit(float x)
-{
-    if (x > 1)
-        return 1;
-    else if (x < -1)
-        return -1;
-    else
-        return x;
 }
 
 void Drive::setDriveMotors(float left, float right)

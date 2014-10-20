@@ -1,6 +1,9 @@
 #ifndef INTAKE_HPP
 #define INTAKE_HPP
-class Intake
+
+#include "lib/subsystemBase.hpp"
+
+class Intake : public SubsystemBase
 {
 public:
     Intake(Victor *motor_, Solenoid *claw_);

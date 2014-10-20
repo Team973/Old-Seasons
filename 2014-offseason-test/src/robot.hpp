@@ -20,8 +20,6 @@ public:
         void TestPeriodic();
 private:
 
-        float deadband(float x, float threshold);
-
         Talon *leftFrontDriveMotors;
         Talon *leftBackDriveMotors;
         Talon *rightFrontDriveMotors;
