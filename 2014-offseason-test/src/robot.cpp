@@ -4,6 +4,7 @@
 #include "arm.hpp"
 #include "intake.hpp"
 #include <math.h>
+#include "utility.hpp"
 
 Robot::Robot()
 {
@@ -29,14 +30,6 @@ Robot::Robot()
 
     driver = new Joystick(1);
     coDriver = new Joystick(2);
-}
-
-float Robot::deadband(float x, float threshold)
-{
-    if (fabs(x) < threshold)
-        return 0;
-    else
-        return x;
 }
 
 void Robot::RobotInit() {

@@ -1,7 +1,9 @@
 #ifndef DRIVE_H
 #define DRIVE_H
 
-class Drive
+#include "lib/subsystemBase.hpp"
+
+class Drive : public SubsystemBase
 {
 public:
     Drive(Talon *frontLeft_, Talon *frontRight_, Talon *backLeft_, Talon *backRight_, Talon *strafe_, Solenoid *shifters_);
@@ -10,7 +12,6 @@ public:
     void update();
 private:
 
-    float limit(float x);
     void setDriveMotors(float left, float right);
     void CheesyDrive(double throttle, double wheel, bool highGear, bool quickTurn);
 

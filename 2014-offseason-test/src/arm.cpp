@@ -2,6 +2,7 @@
 #include "arm.hpp"
 #include "pid.hpp"
 #include <map>
+#include "utility.hpp"
 
 Arm::Arm(Talon *motor_, Encoder *sensor_)
 {
@@ -62,5 +63,5 @@ void Arm::update()
     else
         armPID->setGains(0.1);
 
-    motor->Set(armPID->update(getAngle()));
+    motor->Set(limit(armPID->update(getAngle())));
 }
