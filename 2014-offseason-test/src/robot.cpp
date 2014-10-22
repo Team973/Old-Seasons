@@ -3,6 +3,7 @@
 #include "drive.hpp"
 #include "arm.hpp"
 #include "intake.hpp"
+#include "shooter.hpp"
 #include <math.h>
 #include "utility.hpp"
 
@@ -15,21 +16,32 @@ Robot::Robot()
     leftBackDriveMotors = new Talon(5);
     rightBackDriveMotors = new Talon(6);
     strafeDriveMotors = new Talon(4);
-    armMotor = new Talon(3);
-    intakeMotor = new Victor(9);
+    armMotor = new Talon(8);
+    intakeMotor = new Victor(7);
+    winchMotor = new Victor(3);
 
-    shiftingSolenoid = new Solenoid(5);
+    shiftingSolenoid = new Solenoid(1);
+    backShiftingSolenoid = new Solenoid(2);
     clawSolenoid = new Solenoid(3);
+    winchReleaseSolenoid = new Solenoid(4);
 
-    armEncoder = new Encoder(6,7);
+    armEncoder = new Encoder(4,5);
     armEncoder->Start();
 
-    drive = new Drive(leftFrontDriveMotors, rightFrontDriveMotors, leftBackDriveMotors, rightBackDriveMotors, strafeDriveMotors, shiftingSolenoid);
+    winchFullCockSensor = new DigitalInput(2);
+
+    compressor = new Compressor(1,1);
+    compressor->Start();
+
+    drive = new Drive(leftFrontDriveMotors, rightFrontDriveMotors, leftBackDriveMotors, rightBackDriveMotors, strafeDriveMotors, shiftingSolenoid, backShiftingSolenoid);
     arm = new Arm(armMotor, armEncoder);
     intake = new Intake(intakeMotor, clawSolenoid);
+    shooter = new Shooter(winchMotor, winchReleaseSolenoid, winchFullCockSensor);
 
     driver = new Joystick(1);
     coDriver = new Joystick(2);
+
+    dsLCD = DriverStationLCD::GetInstance();
 }
 
 void Robot::RobotInit() {
@@ -38,7 +50,20 @@ void Robot::RobotInit() {
 void Robot::DisabledInit() {
 }
 
+std::string Robot::boolToString(bool b)
+{
+    if (b)
+        return "true";
+    else
+        return "false";
+}
+
 void Robot::DisabledPeriodic() {
+    dsLCD->PrintfLine(DriverStationLCD::kUser_Line6, "Arm Angle: %f", arm->getAngle());
+    dsLCD->PrintfLine(DriverStationLCD::kUser_Line5, "Full Cock: %s", boolToString(winchFullCockSensor->Get()).c_str());
+
+    printf("Arm Angle: %f\n", arm->getAngle());
+    printf("Full Cock: %s\n", boolToString(winchFullCockSensor->Get()).c_str());
 }
 
 void Robot::AutonomousInit() {
@@ -53,27 +78,77 @@ void Robot::TeleopInit() {
 void Robot::TeleopPeriodic() {
 
     // Driver
-    drive->setBehavior(-deadband(driver->GetY(), 0.1), deadband(driver->GetRawAxis(3), 0.1), false, false);
+    drive->setBehavior(-deadband(driver->GetY(), 0.1), deadband(driver->GetRawAxis(3), 0.1), driver->GetRawButton(6), driver->GetRawButton(5));
     drive->strafe(deadband(driver->GetX(), 0.1));
 
+
+    if (driver->GetRawButton(8) && !shooter->isFiring())
+    {
+        if (arm->getBehavior() == "trussShot")
+            intake->setFangs(false);
+
+        shooter->wantFire();
+    }
+
     // coDriver
-    if (coDriver->GetRawButton(2))
-        arm->setBehavior("intake");
-
-    if (coDriver->GetRawButton(5))
-        arm->setBehavior("stow");
-
     intake->setSpeed(coDriver->GetY());
 
-    if (coDriver->GetRawButton(7))
+    if (coDriver->GetRawButton(1))
+    {
         intake->setFangs(true);
+        arm->setBehavior("pseudoIntake");
+    }
+
+    if (coDriver->GetRawButton(2))
+    {
+        intake->setFangs(true);
+        arm->setBehavior("intake");
+    }
+
+    if (coDriver->GetRawButton(3))
+    {
+        intake->setFangs(true);
+        shooter->cock("fullCock");
+        arm->setBehavior("closeShot");
+    }
+
+    if (coDriver->GetRawButton(4))
+    {
+        intake->setFangs(true);
+        shooter->cock("fullCock");
+        arm->setBehavior("fenderShot");
+    }
+
+    if (coDriver->GetRawButton(5))
+    {
+        intake->setFangs(true);
+        arm->setBehavior("stow");
+    }
+
+    if (coDriver->GetRawButton(6))
+    {
+        intake->setFangs(true);
+        shooter->cock("fullCock");
+        arm->setBehavior("trussShot");
+    }
+
+    if (coDriver->GetRawButton(7))
+    {
+        intake->setFangs(true);
+    }
 
     if (coDriver->GetRawButton(8))
+    {
         intake->setFangs(false);
+    }
 
     drive->update();
     arm->update();
     intake->update();
+    shooter->update();
+
+    dsLCD->PrintfLine(DriverStationLCD::kUser_Line5, "Full Cock: %s", boolToString(winchFullCockSensor->Get()).c_str());
+    dsLCD->PrintfLine(DriverStationLCD::kUser_Line6, "Arm Angle: %f", arm->getAngle());
 }
 
 void Robot::TestInit() {

@@ -1,6 +1,8 @@
 #ifndef ARM_HPP
 #define ARM_HPP
 
+#include "WPILib.h"
+#include <string>
 #include "lib/subsystemBase.hpp"
 
 class PID;
