@@ -1,4 +1,3 @@
-#include "WPILib.h"
 #include "arm.hpp"
 #include "pid.hpp"
 #include <map>
@@ -27,8 +26,8 @@ Arm::Arm(Talon *motor_, Encoder *sensor_)
 float Arm::getAngle()
 {
     float degreesPerRevolution = 360;
-    float gearRatio = 1;
-    float ticksPerRevolution = 2500;
+    float gearRatio = 10;
+    float ticksPerRevolution = 90;
     return sensor->Get() / (ticksPerRevolution * gearRatio) * degreesPerRevolution;
 }
 
