@@ -3,7 +3,7 @@
 #include "math.h"
 #include "utility.hpp"
 
-Drive::Drive(Talon *frontLeft_, Talon *frontRight_, Talon *backLeft_, Talon *backRight_, Talon *strafe_, Solenoid *shifters_)
+Drive::Drive(Talon *frontLeft_, Talon *frontRight_, Talon *backLeft_, Talon *backRight_, Talon *strafe_, Solenoid *shifters_, Solenoid *backShifters_)
 {
     frontLeftMotor = frontLeft_;
     backLeftMotor = backLeft_;
@@ -11,16 +11,25 @@ Drive::Drive(Talon *frontLeft_, Talon *frontRight_, Talon *backLeft_, Talon *bac
     backRightMotor = backRight_;
     strafeMotor = strafe_;
     shifters = shifters_;
+    backShifters = backShifters_;
 
     quickStopAccumulator = 0;
     negInertiaAccumulator = 0;
     oldWheel = 0;
+
+    front = false;
+    back = false;
 }
 
 void Drive::setDriveMotors(float left, float right)
 {
     leftPower = left;
     rightPower = right;
+}
+
+void Drive::setHighGear(bool high)
+{
+    front = back = high;
 }
 
 void Drive::CheesyDrive(double throttle, double wheel, bool highGear, bool quickTurn) {
@@ -142,6 +151,7 @@ void Drive::CheesyDrive(double throttle, double wheel, bool highGear, bool quick
   }
 
   setDriveMotors(leftPwm, rightPwm);
+  setHighGear(highGear);
 }
 
 void Drive::setBehavior(float throttle, float turn, bool highGear, bool quickTurn)
@@ -160,4 +170,7 @@ void Drive::update()
     frontRightMotor->Set(limit(rightPower));
     backLeftMotor->Set(-limit(leftPower));
     backRightMotor->Set(limit(rightPower));
+
+    shifters->Set(front);
+    backShifters->Set(back);
 }
