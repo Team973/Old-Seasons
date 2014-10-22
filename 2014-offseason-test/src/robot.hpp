@@ -4,6 +4,7 @@
 class Drive;
 class Arm;
 class Intake;
+class Shooter;
 
 class Robot : public IterativeRobot
 {
@@ -20,6 +21,8 @@ public:
         void TestPeriodic();
 private:
 
+        std::string boolToString(bool b);
+
         Talon *leftFrontDriveMotors;
         Talon *leftBackDriveMotors;
         Talon *rightFrontDriveMotors;
@@ -27,18 +30,28 @@ private:
         Talon *strafeDriveMotors;
         Talon *armMotor;
         Victor *intakeMotor;
+        Victor *winchMotor;
 
         Solenoid *shiftingSolenoid;
+        Solenoid *backShiftingSolenoid;
         Solenoid *clawSolenoid;
+        Solenoid *winchReleaseSolenoid;
 
         Encoder *armEncoder;
+
+        DigitalInput *winchFullCockSensor;
+
+        Compressor *compressor;
 
         Drive *drive;
         Arm *arm;
         Intake *intake;
+        Shooter *shooter;
 
         Joystick *driver;
         Joystick *coDriver;
+
+        DriverStationLCD *dsLCD;
 };
 
 #endif
