@@ -454,6 +454,8 @@ void Robot::DisabledPeriodic()
         deBugMode = true;
     }
 
+    dsLCD->PrintfLine(DriverStationLCD::kUser_Line5,"Pot Voltage: %f", trussWinchPot->GetVoltage());
+
     dashboardUpdate();
     dsLCD->UpdateLCD();
 }
@@ -650,6 +652,7 @@ void Robot::TeleopPeriodic()
     intake->update();
 
     dashboardUpdate();
+    dsLCD->PrintfLine(DriverStationLCD::kUser_Line5,"Pot Voltage: %f", trussWinchPot->GetVoltage());
     dsLCD->PrintfLine(DriverStationLCD::kUser_Line6,"Arm Angle: %f", arm->getRawAngle());
     dsLCD->UpdateLCD();
 }

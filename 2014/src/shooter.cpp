@@ -21,7 +21,7 @@ Shooter::Shooter(Victor *winchMotor_, Victor *trussWinch_, Solenoid *winchReleas
     winchPID->setBounds(0, 1);
     winchPID->start();
 
-    trussPID = new PID(1.6, 0, 0);
+    trussPID = new PID(1.8, 0, 0);
     trussPID->setBounds(-1, 1);
     trussPID->start();
     setDeTruss();
@@ -59,12 +59,12 @@ void Shooter::setTrussTarget(float target)
 
 void Shooter::setTruss()
 {
-    setTrussTarget(2.5);
+    setTrussTarget(1.4);
 }
 
 void Shooter::setDeTruss()
 {
-    setTrussTarget(.84);
+    setTrussTarget(.3);
 }
 
 void Shooter::cock(int level)
