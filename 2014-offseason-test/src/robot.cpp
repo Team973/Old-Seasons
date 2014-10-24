@@ -23,7 +23,7 @@ Robot::Robot()
     shiftingSolenoid = new Solenoid(1);
     backShiftingSolenoid = new Solenoid(2);
     clawSolenoid = new Solenoid(3);
-    winchReleaseSolenoid = new Solenoid(4);
+    winchReleaseSolenoid = new Solenoid(5);
 
     armEncoder = new Encoder(4,5);
     armEncoder->Start();
