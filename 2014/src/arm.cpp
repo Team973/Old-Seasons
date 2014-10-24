@@ -37,7 +37,7 @@ void Arm::setPreset(int preset)
     switch (preset)
     {
         case INTAKE:
-            setTarget(108.0);
+            setTarget(107.0);
             errorTarget = 1;
             break;
         case PSEUDO_INTAKE:
@@ -53,7 +53,7 @@ void Arm::setPreset(int preset)
             autoClamped = false;
             break;
         case CLOSE_SHOT:
-            setTarget(8.80);
+            setTarget(7.05);
             autoClamped = false;
             break;
         case HELLAVATOR:
