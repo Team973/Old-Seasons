@@ -39,6 +39,8 @@ private:
 
         Encoder *armEncoder;
 
+        AnalogChannel *armPot;
+
         DigitalInput *winchFullCockSensor;
 
         Compressor *compressor;
