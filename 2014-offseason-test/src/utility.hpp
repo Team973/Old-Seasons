@@ -4,6 +4,7 @@
 #include <math.h>
 #include <string>
 #include <cctype>
+#include <sstream>
 
 inline float limit(float x)
 {
@@ -32,5 +33,35 @@ inline std::string asLower(std::string line)
 
     return line;
 }
+
+template<typename T>
+inline std::string asString(T in)
+{
+    std::stringstream ss;
+    ss << in;
+    return ss.str();
+}
+
+template<class T, class R>
+class Tuple
+{
+public:
+    Tuple(T first_, R second_)
+    {
+        first = first_;
+        second = second_;
+    }
+    T getFirst()
+    {
+        return first;
+    }
+    R getSecond()
+    {
+        return second;
+    }
+private:
+    T first;
+    R second;
+};
 
 #endif
