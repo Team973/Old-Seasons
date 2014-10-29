@@ -67,9 +67,6 @@ void Robot::DisabledPeriodic() {
     dsLCD->PrintfLine(DriverStationLCD::kUser_Line5, "Full Cock: %s", boolToString(winchFullCockSensor->Get()).c_str());
     dsLCD->PrintfLine(DriverStationLCD::kUser_Line4, "Arm Pot: %f", armPot->GetVoltage());
     dsLCD->UpdateLCD();
-
-    printf("Arm Angle: %f\n", arm->getAngle());
-    printf("Full Cock: %s\n", boolToString(winchFullCockSensor->Get()).c_str());
 }
 
 void Robot::AutonomousInit() {
