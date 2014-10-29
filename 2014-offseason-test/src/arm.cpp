@@ -3,10 +3,11 @@
 #include <map>
 #include "utility.hpp"
 
-Arm::Arm(Talon *motor_, Encoder *sensor_)
+Arm::Arm(Talon *motor_, Encoder *sensor_, AnalogChannel *pot_)
 {
     motor = motor_;
     sensor = sensor_;
+    pot = pot_;
 
     armPID = new PID(0.1);
     armPID->setBounds(-1,1);

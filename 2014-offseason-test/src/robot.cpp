@@ -7,15 +7,17 @@
 #include <math.h>
 #include "utility.hpp"
 
+#include "NetworkTables/NetworkTable.h"
+
 Robot::Robot()
 {
     this->SetPeriod(0);
 
-    leftFrontDriveMotors = new Talon(1);
-    rightFrontDriveMotors = new Talon(2);
-    leftBackDriveMotors = new Talon(5);
-    rightBackDriveMotors = new Talon(6);
-    strafeDriveMotors = new Talon(4);
+    leftFrontDriveMotors = new Talon(2,1);
+    rightFrontDriveMotors = new Talon(2,2);
+    leftBackDriveMotors = new Talon(2,5);
+    rightBackDriveMotors = new Talon(2,6);
+    strafeDriveMotors = new Talon(2,4);
     armMotor = new Talon(8);
     intakeMotor = new Victor(7);
     winchMotor = new Victor(3);
@@ -30,11 +32,13 @@ Robot::Robot()
 
     winchFullCockSensor = new DigitalInput(2);
 
+    armPot = new AnalogChannel(1);
+
     compressor = new Compressor(1,1);
     compressor->Start();
 
     drive = new Drive(leftFrontDriveMotors, rightFrontDriveMotors, leftBackDriveMotors, rightBackDriveMotors, strafeDriveMotors, shiftingSolenoid, backShiftingSolenoid);
-    arm = new Arm(armMotor, armEncoder);
+    arm = new Arm(armMotor, armEncoder, armPot);
     intake = new Intake(intakeMotor, clawSolenoid);
     shooter = new Shooter(winchMotor, winchReleaseSolenoid, winchFullCockSensor);
 
@@ -61,6 +65,8 @@ std::string Robot::boolToString(bool b)
 void Robot::DisabledPeriodic() {
     dsLCD->PrintfLine(DriverStationLCD::kUser_Line6, "Arm Angle: %f", arm->getAngle());
     dsLCD->PrintfLine(DriverStationLCD::kUser_Line5, "Full Cock: %s", boolToString(winchFullCockSensor->Get()).c_str());
+    dsLCD->PrintfLine(DriverStationLCD::kUser_Line4, "Arm Pot: %f", armPot->GetVoltage());
+    dsLCD->UpdateLCD();
 
     printf("Arm Angle: %f\n", arm->getAngle());
     printf("Full Cock: %s\n", boolToString(winchFullCockSensor->Get()).c_str());
@@ -149,6 +155,8 @@ void Robot::TeleopPeriodic() {
 
     dsLCD->PrintfLine(DriverStationLCD::kUser_Line5, "Full Cock: %s", boolToString(winchFullCockSensor->Get()).c_str());
     dsLCD->PrintfLine(DriverStationLCD::kUser_Line6, "Arm Angle: %f", arm->getAngle());
+    dsLCD->PrintfLine(DriverStationLCD::kUser_Line4, "Arm Pot: %f", armPot->GetVoltage());
+    dsLCD->UpdateLCD();
 }
 
 void Robot::TestInit() {

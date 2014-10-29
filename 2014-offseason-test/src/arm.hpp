@@ -10,7 +10,7 @@ class PID;
 class Arm : public SubsystemBase
 {
 public:
-    Arm(Talon *motor_, Encoder *sensor_);
+    Arm(Talon *motor_, Encoder *sensor_, AnalogChannel *pot_);
     float getAngle();
     void setBehavior(std::string preset);
     std::string getBehavior();
@@ -22,6 +22,7 @@ private:
 
     Talon *motor;
     Encoder *sensor;
+    AnalogChannel *pot;
 
     PID *armPID;
 };
