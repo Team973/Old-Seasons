@@ -10,6 +10,8 @@ public:
     static void Extend();
 
     static Constant *testConstant;
+
+    ~Constants(){}
 private:
     static Constants* instance;
 };

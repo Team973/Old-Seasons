@@ -10,6 +10,7 @@ class ConstantsBase
 public:
     ConstantsBase();
     void readConstantsFile();
+    virtual ~ConstantsBase(){}
 
     class Constant
     {
@@ -46,7 +47,7 @@ public:
                 return name + " = " + asString(value);
             }
 
-
+            virtual ~Constant(){}
         private:
             std::string name;
             double value;
