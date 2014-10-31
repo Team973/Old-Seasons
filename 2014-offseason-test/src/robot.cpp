@@ -7,8 +7,6 @@
 #include <math.h>
 #include "utility.hpp"
 
-#include "NetworkTables/NetworkTable.h"
-
 Robot::Robot()
 {
     this->SetPeriod(0);
