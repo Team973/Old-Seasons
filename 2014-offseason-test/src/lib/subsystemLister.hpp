@@ -12,7 +12,7 @@ public:
     SubsystemLister();
     void addSubsystem(std::string name, SubsystemBase *s);
     SubsystemBase* addReturnSubsystem(std::string name, SubsystemBase *s);
-    SubsystemLister* getInstance();
+    static SubsystemLister* getInstance();
     bool isSubsystem(std::string name);
     SubsystemBase* getSubsystem(std::string name);
 private:
