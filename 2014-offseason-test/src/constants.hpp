@@ -7,10 +7,12 @@ class Constants : public ConstantsBase
 {
 public:
     Constants();
-    void Extend();
+    static void Extend();
 
-    Constant *testConstant;
+    static Constant *testConstant;
 private:
     static Constants* instance;
 };
+
+
 #endif
