@@ -6,10 +6,15 @@
 #include "shooter.hpp"
 #include <math.h>
 #include "utility.hpp"
+#include "constants.hpp"
 
 Robot::Robot()
 {
     this->SetPeriod(0);
+
+    Constants::Extend();
+
+    Constants::testConstant->setValue(3.14);
 
     leftFrontDriveMotors = new Talon(2,1);
     rightFrontDriveMotors = new Talon(2,2);
