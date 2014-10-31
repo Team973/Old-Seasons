@@ -1,5 +1,6 @@
 #include "constants.hpp"
 
+/*
 Constants* Constants::instance = NULL;
 
 void Constants::Extend()
@@ -16,3 +17,4 @@ Constants::Constants()
 
     readConstantsFile();
 }
+*/

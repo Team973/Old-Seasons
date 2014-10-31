@@ -5,6 +5,7 @@
 #include "../utility.hpp"
 #include <vector>
 
+/*
 class ConstantsBase
 {
 public:
@@ -56,4 +57,5 @@ public:
     static std::vector<Constant*> constants;
 private:
 };
+*/
 #endif

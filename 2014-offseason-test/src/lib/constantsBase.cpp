@@ -3,8 +3,10 @@
 #include "../txtParser.hpp"
 #include <stdlib.h>
 
+/*
 ConstantsBase::ConstantsBase()
 {
+    constants.push_back(new Constant("dummy", 0.0));
 }
 
 void ConstantsBase::readConstantsFile()
@@ -44,3 +46,4 @@ void ConstantsBase::readConstantsFile()
 
     }
 }
+*/
