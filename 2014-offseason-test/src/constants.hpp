@@ -3,7 +3,6 @@
 
 #include "lib/constantsBase.hpp"
 
-/*
 class Constants : public ConstantsBase
 {
 public:
@@ -16,6 +15,5 @@ public:
 private:
     static Constants* instance;
 };
-*/
 
 #endif
