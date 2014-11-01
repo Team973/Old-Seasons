@@ -1,10 +1,12 @@
 #include "constants.hpp"
 
-/*
 Constants* Constants::instance = NULL;
+
+ConstantsBase::Constant* Constants::testConstant = new ConstantsBase::Constant("testConstant", 15);
 
 void Constants::Extend()
 {
+    printf("extending constants file\n");
     if (instance == NULL)
     {
         instance = new Constants();
@@ -13,8 +15,6 @@ void Constants::Extend()
 
 Constants::Constants()
 {
-    testConstant = new Constant("testConstant", 15);
-
+    printf("preparing to read constants from file\n");
     readConstantsFile();
 }
-*/
