@@ -14,7 +14,7 @@ Robot::Robot()
 
     Constants::Extend();
 
-    Constants::testConstant->setValue(3.14);
+    printf("left front drive motor port # is %i\n", (int)Constants::getConstant("leftFrontDriveMotor"));
 
     leftFrontDriveMotors = new Talon(1);
     rightFrontDriveMotors = new Talon(2);

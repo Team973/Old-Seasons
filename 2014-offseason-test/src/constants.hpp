@@ -9,7 +9,8 @@ public:
     Constants();
     static void Extend();
 
-    static Constant *testConstant;
+    static double getConstant(std::string name);
+    void addConstant(std::string name, double value);
 
     ~Constants(){}
 private:
