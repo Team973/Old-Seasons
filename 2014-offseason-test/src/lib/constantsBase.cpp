@@ -11,7 +11,6 @@ ConstantsBase::ConstantsBase()
 
 void ConstantsBase::readConstantsFile()
 {
-    constants.push_back(new Constant("testConstant", 50));
     printf("reading constants file\n");
     TxtParser* file = new TxtParser("constants.txt");
     std::vector<std::string> lines = file->getContent();
@@ -37,7 +36,7 @@ void ConstantsBase::readConstantsFile()
             for (unsigned int k=0;k<line.size()-1;k++)
             {
                 printf("the first for loop is entered NOW\n");
-                for (unsigned int v=0;v<constants.size();v++)
+                for (unsigned int v=0;v<constants.size()-1;v++)
                 {
                     printf("the second for loop is entered NOW\n");
                     if (asLower(line[k].c_str()) == constants[v]->getName().c_str())
@@ -45,6 +44,10 @@ void ConstantsBase::readConstantsFile()
                         printf("constant found\n");
                         constants[v]->setValue(atof(line.back().c_str()));
                         printf("adding constant %s with value of %s\n", line[k].c_str(), line.back().c_str());
+                    }
+                    else
+                    {
+                        printf("the constant %s with value of %s does not exist in this system\n", line[k].c_str(), line.back().c_str());
                     }
                 }
             }
