@@ -122,8 +122,8 @@ float Arm::getRawAngle()
 
 float Arm::pot2degrees()
 {
-    float multiplier = 0.0;
-    return (pot->GetVoltage()*multiplier) - potZero;
+    float multiplier = (112.01 - 0.00)/(1.87 - 5.01);
+    return (pot->GetVoltage() - potZero)*multiplier;
 }
 
 float Arm::getError()

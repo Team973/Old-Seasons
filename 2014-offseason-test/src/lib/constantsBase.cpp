@@ -11,7 +11,7 @@ ConstantsBase::ConstantsBase()
 
 void ConstantsBase::readConstantsFile()
 {
-    printf("reading constants file\n");
+    //printf("reading constants file\n");
     TxtParser* file = new TxtParser("constants.txt");
     std::vector<std::string> lines = file->getContent();
 
@@ -24,7 +24,7 @@ void ConstantsBase::readConstantsFile()
     for (unsigned int n=0;n<lines.size();n++)
     {
         std::vector<std::string> line = file->split(file->scrape(lines[n], ' '), '=', n);
-        printf("line has been split and scraped\n");
+        //printf("line has been split and scraped\n");
 
         if (line[0] == line.back())
         {
@@ -32,22 +32,19 @@ void ConstantsBase::readConstantsFile()
         }
         else
         {
-            printf("all items in line have a value\n");
+            //printf("all items in line have a value\n");
             for (unsigned int k=0;k<line.size()-1;k++)
             {
-                printf("the first for loop is entered NOW\n");
-                for (unsigned int v=0;v<constants.size()-1;v++)
+                //printf("the first for loop is entered NOW\n");
+                for (unsigned int v=0;v<constants.size();v++)
                 {
-                    printf("the second for loop is entered NOW\n");
+                    //printf("the second for loop is entered NOW\n");
                     if (asLower(line[k].c_str()) == constants[v]->getName().c_str())
                     {
-                        printf("constant found\n");
+                        //printf("constant found\n");
                         constants[v]->setValue(atof(line.back().c_str()));
                         printf("adding constant %s with value of %s\n", line[k].c_str(), line.back().c_str());
-                    }
-                    else
-                    {
-                        printf("the constant %s with value of %s does not exist in this system\n", line[k].c_str(), line.back().c_str());
+                        continue;
                     }
                 }
             }

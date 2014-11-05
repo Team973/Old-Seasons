@@ -6,11 +6,11 @@
 
 TxtParser::TxtParser(std::string name)
 {
-    printf("opening file\n");
+    //printf("opening file\n");
     pFile = fopen(name.c_str(), "r");
     if (pFile != NULL)
     {
-        printf("file exists, getting contents\n");
+        //printf("file exists, getting contents\n");
         lines = getFile();
         printf("file read\n");
     }
@@ -49,12 +49,12 @@ std::string TxtParser::scrape(std::string line, char token)
     {
         return line;
     }
-    printf("preparing to scrape file\n");
+    //printf("preparing to scrape file\n");
     while ((point = line.find(token)) != std::string::npos)
     {
         line.erase(line.begin()+point);
     }
-    printf("file scraped\n");
+    //printf("file scraped\n");
     return line;
 }
 
@@ -74,7 +74,7 @@ std::vector<std::string> TxtParser::split(std::string line, char token, int line
     }
     
     // this loop removes the first part of the string
-    printf("preparing to split the file\n");
+    //printf("preparing to split the file\n");
     while ((point = line.find(token)) != std::string::npos)
     {
         str.append(line, 0, point);
@@ -83,7 +83,7 @@ std::vector<std::string> TxtParser::split(std::string line, char token, int line
         str.erase();
         n += 1;
     }
-    printf("file split\n");
+    //printf("file split\n");
     
     str.append(line);
     chunks.push_back(str);
