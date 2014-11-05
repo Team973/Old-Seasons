@@ -13,7 +13,13 @@ void Constants::Extend()
 
 Constants::Constants()
 {
-    addConstant("leftFrontDriveMotor", 0);
+    addConstant("armKP", 1.0);
+    addConstant("armKI", 0);
+    addConstant("armKD", 0);
+    addConstant("trussShot", 33);
+    addConstant("intake", 108);
+    addConstant("pseudoIntake", 67);
+    addConstant("stow", 29);
 
     printf("preparing to read constants from file\n");
     readConstantsFile();
