@@ -46,13 +46,20 @@ Robot::Robot()
     driver = new Joystick(1);
     coDriver = new Joystick(2);
 
+    autoThrottle = new KinectStick(1);
+    autoTimer = new Timer();
+
     dsLCD = DriverStationLCD::GetInstance();
+
+    autoMode = BLOCK;
 }
 
 void Robot::RobotInit() {
 }
 
 void Robot::DisabledInit() {
+    autoTimer->Stop();
+    autoTimer->Reset();
 }
 
 std::string Robot::boolToString(bool b)
@@ -68,12 +75,40 @@ void Robot::DisabledPeriodic() {
     dsLCD->PrintfLine(DriverStationLCD::kUser_Line5, "Full Cock: %s", boolToString(winchFullCockSensor->Get()).c_str());
     dsLCD->PrintfLine(DriverStationLCD::kUser_Line4, "Arm Pot: %f", armPot->GetVoltage());
     dsLCD->UpdateLCD();
+
+    if (coDriver->GetRawButton(1))
+    {
+        autoMode = BLOCK;
+        dsLCD->PrintfLine(DriverStationLCD::kUser_Line1, "Auto Mode: %s", "block dat stuff");
+    }
+    else if (coDriver->GetRawButton(3))
+    {
+        autoMode = JUST_DRIVE;
+        dsLCD->PrintfLine(DriverStationLCD::kUser_Line1, "Auto Mode: %s", "driving places");
+    }
+
 }
 
 void Robot::AutonomousInit() {
+    autoTimer->Start();
 }
 
 void Robot::AutonomousPeriodic() {
+    switch (autoMode)
+    {
+        case JUST_DRIVE:
+
+            if (autoTimer->Get() <= 3)
+                drive->setBehavior(1, 0, false, false);
+            else
+                drive->setBehavior(0, 0, false, false);
+
+            break;
+
+        case BLOCK:
+            drive->setBehavior(deadband(autoThrottle->GetY(), 0.2), 0, false, false);
+            break;
+    }
 }
 
 void Robot::TeleopInit() {
