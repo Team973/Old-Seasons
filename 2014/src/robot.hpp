@@ -46,6 +46,8 @@ private:
     Encoder *armSensorA;
     Encoder *armSensorB;
 
+    AnalogChannel *armPot;
+
     DigitalInput *intakeBallSensor;
 
     Encoder *winchEncoder;
