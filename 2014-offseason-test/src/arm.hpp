@@ -14,6 +14,7 @@ public:
     float getAngle();
     void setBehavior(std::string preset);
     std::string getBehavior();
+    bool isShotSafe();
     void setPreset(std::string state);
     void update();
 private:

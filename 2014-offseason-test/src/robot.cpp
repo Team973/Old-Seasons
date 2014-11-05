@@ -111,18 +111,12 @@ void Robot::TeleopPeriodic() {
         arm->setBehavior("intake");
     }
 
-    if (coDriver->GetRawButton(3))
-    {
-        intake->setFangs(true);
-        shooter->cock("fullCock");
-        arm->setBehavior("closeShot");
-    }
-
     if (coDriver->GetRawButton(4))
     {
-        intake->setFangs(true);
-        shooter->cock("fullCock");
-        arm->setBehavior("fenderShot");
+        if (arm->isShotSafe())
+        {
+            shooter->cock("fullCock");
+        }
     }
 
     if (coDriver->GetRawButton(5))
@@ -134,7 +128,6 @@ void Robot::TeleopPeriodic() {
     if (coDriver->GetRawButton(6))
     {
         intake->setFangs(true);
-        shooter->cock("fullCock");
         arm->setBehavior("trussShot");
     }
 

@@ -42,6 +42,14 @@ std::string Arm::getBehavior()
     return currPreset;
 }
 
+bool Arm::isShotSafe()
+{
+    if (getAngle() > 11)
+        return true;
+
+    return false;
+}
+
 void Arm::setPreset(std::string preset)
 {
     if (presets.find(preset) != presets.end())
