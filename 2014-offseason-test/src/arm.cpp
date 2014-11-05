@@ -10,6 +10,8 @@ Arm::Arm(Talon *motor_, Encoder *sensor_, AnalogChannel *pot_)
     sensor = sensor_;
     pot = pot_;
 
+    potZero = pot->GetVoltage();
+
     armPID = new PID(Constants::getConstant("armKP")->getDouble(), Constants::getConstant("armKI")->getDouble(), Constants::getConstant("armKD")->getDouble());
     armPID->setBounds(-1,1);
     armPID->start();
@@ -25,11 +27,10 @@ Arm::Arm(Talon *motor_, Encoder *sensor_, AnalogChannel *pot_)
 
 float Arm::getAngle()
 {
-    float degreesPerRevolution = 360;
-    float gearRatio = 10;
-    float ticksPerRevolution = 90;
-    return sensor->Get() / (ticksPerRevolution * gearRatio) * degreesPerRevolution;
+    float multiplier = (112.01 - 0.00)/(1.87 - 5.01);
+    return (pot->GetVoltage() - potZero) * multiplier;
 }
+
 
 void Arm::setBehavior(std::string state)
 {
