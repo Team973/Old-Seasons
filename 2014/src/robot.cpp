@@ -113,6 +113,8 @@ void Robot::dashboardUpdate()
     arm->dashboardUpdate();
     shooter->dashboardUpdate();
     intake->dashboardUpdate();
+    SmartDashboard::PutNumber("Left Distance: ", drive->getLeftDrive());
+    SmartDashboard::PutNumber("Right Distance: ", drive->getRightDrive());
     /*
     SmartDashboard::PutNumber("Arm Target: ", arm->getTarget());
     SmartDashboard::PutNumber("Gyro: ", drive->getGyroAngle());
