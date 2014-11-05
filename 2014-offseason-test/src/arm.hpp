@@ -26,5 +26,7 @@ private:
     AnalogChannel *pot;
 
     PID *armPID;
+
+    float potZero;
 };
 #endif
