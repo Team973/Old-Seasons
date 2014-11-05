@@ -6,6 +6,9 @@ class Arm;
 class Intake;
 class Shooter;
 
+#define JUST_DRIVE 1
+#define BLOCK 2
+
 class Robot : public IterativeRobot
 {
 public:
@@ -54,6 +57,10 @@ private:
         Joystick *coDriver;
 
         DriverStationLCD *dsLCD;
+
+        int autoMode;
+        KinectStick *autoThrottle;
+        Timer *autoTimer;
 };
 
 #endif
