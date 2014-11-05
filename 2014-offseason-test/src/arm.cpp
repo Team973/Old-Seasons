@@ -2,6 +2,7 @@
 #include "pid.hpp"
 #include <map>
 #include "utility.hpp"
+#include "constants.hpp"
 
 Arm::Arm(Talon *motor_, Encoder *sensor_, AnalogChannel *pot_)
 {
@@ -9,14 +10,14 @@ Arm::Arm(Talon *motor_, Encoder *sensor_, AnalogChannel *pot_)
     sensor = sensor_;
     pot = pot_;
 
-    armPID = new PID(0.1);
+    armPID = new PID(Constants::getConstant("armKP")->getDouble(), Constants::getConstant("armKI")->getDouble(), Constants::getConstant("armKD")->getDouble());
     armPID->setBounds(-1,1);
     armPID->start();
 
-    presets["trussShot"] = 33;
-    presets["intake"] = 108;
-    presets["pseudoIntake"] = 67;
-    presets["stow"] = 29;
+    presets["trussShot"] = Constants::getConstant("trussShot")->getDouble();
+    presets["intake"] = Constants::getConstant("intake")->getDouble();
+    presets["pseudoIntake"] = Constants::getConstant("pseudoIntake")->getDouble();
+    presets["stow"] = Constants::getConstant("stow")->getDouble();
     presets["none"] = 0;
 
     currPreset = "none";
