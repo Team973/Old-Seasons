@@ -44,6 +44,8 @@ Robot::Robot()
     armSensorA = new Encoder(6, 7);
     armSensorA->Start();
 
+    armPot = new AnalogChannel(3);
+
     intakeBallSensor = new DigitalInput(8);
 
     winchEncoder = new Encoder(9, 10, false, CounterBase::k1X);
@@ -63,7 +65,7 @@ Robot::Robot()
     blocker = new HellaBlocker(blockerSolenoid, autoCorralSolenoid);
 
     drive = new Drive(leftDriveMotors, rightDriveMotors, shiftingSolenoid, kickUpSolenoid, leftDriveEncoder, rightDriveEncoder, colinGyro, testGyro);
-    arm = new Arm(armMotor, armSensorA);
+    arm = new Arm(armMotor, armSensorA, armPot);
     intake = new Intake(linearIntakeMotor, clawSolenoid, autoCorralSolenoid, intakeBallSensor);
     shooter = new Shooter(winchMotor, trussWinchMotor, winchReleaseSolenoid, winchZeroSensor, winchFullCockSensor, trussWinchPot, winchEncoder);
 
@@ -454,7 +456,8 @@ void Robot::DisabledPeriodic()
         deBugMode = true;
     }
 
-    dsLCD->PrintfLine(DriverStationLCD::kUser_Line5,"Pot Voltage: %f", trussWinchPot->GetVoltage());
+    dsLCD->PrintfLine(DriverStationLCD::kUser_Line5,"Arm Pot Voltage: %f", armPot->GetVoltage());
+    dsLCD->PrintfLine(DriverStationLCD::kUser_Line6,"Arm Angle: %f", arm->getRawAngle());
 
     dashboardUpdate();
     dsLCD->UpdateLCD();
@@ -652,7 +655,7 @@ void Robot::TeleopPeriodic()
     intake->update();
 
     dashboardUpdate();
-    dsLCD->PrintfLine(DriverStationLCD::kUser_Line5,"Pot Voltage: %f", trussWinchPot->GetVoltage());
+    dsLCD->PrintfLine(DriverStationLCD::kUser_Line5,"Arm Pot Voltage: %f", armPot->GetVoltage());
     dsLCD->PrintfLine(DriverStationLCD::kUser_Line6,"Arm Angle: %f", arm->getRawAngle());
     dsLCD->UpdateLCD();
 }

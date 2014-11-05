@@ -4,17 +4,20 @@
 #include "intake.hpp"
 #include <math.h>
 
-Arm::Arm(Talon *motor_, Encoder *sensorA_)
+Arm::Arm(Talon *motor_, Encoder *sensorA_, AnalogChannel *pot_)
 {
 
     motor = motor_;
     sensorA = sensorA_;
+    pot = pot_;
 
     armPID = new PID(0.1, 0, 0);
     armPID->setBounds(-1, 1);
     armPID->start();
 
     errorTarget = 1;
+
+    potZero = pot->GetVoltage();
 
     armTimer = new Timer();
     armTimer->Reset();
@@ -115,6 +118,12 @@ float Arm::getRawAngle()
     float gearRatio = 1;
     float ticksPerRevolution = 2500;
     return sensorA->Get() / (ticksPerRevolution * gearRatio) * degreesPerRevolution;
+}
+
+float Arm::pot2degrees()
+{
+    float multiplier = 0.0;
+    return (pot->GetVoltage()*multiplier) - potZero;
 }
 
 float Arm::getError()

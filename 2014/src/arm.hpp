@@ -16,7 +16,7 @@ class Intake;
 class Arm
 {
 public:
-    Arm(Talon *motor_, Encoder *sensorA_);
+    Arm(Talon *motor_, Encoder *sensorA_, AnalogChannel *pot_);
     void initialize(Intake *intake_);
     void update();
     void dashboardUpdate();
@@ -31,9 +31,11 @@ public:
     float getError();
     void reset();
     void zeroEncoder();
+    float pot2degrees();
 private:
     Talon *motor;
     Encoder *sensorA;
+    AnalogChannel *pot;
 
     Intake *intake;
 
@@ -53,6 +55,7 @@ private:
     bool autoClamped;
     bool zero;
     bool completeZero;
+    double potZero;
 };
 
 #endif
