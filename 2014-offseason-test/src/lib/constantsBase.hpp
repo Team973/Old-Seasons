@@ -19,7 +19,6 @@ public:
             {
                 name = asLower(name_);
                 value = value_;
-                constants.push_back(this);
             }
 
             std::string getName()
