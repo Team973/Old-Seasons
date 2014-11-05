@@ -17,8 +17,6 @@ Arm::Arm(Talon *motor_, Encoder *sensor_, AnalogChannel *pot_)
     presets["intake"] = 108;
     presets["pseudoIntake"] = 67;
     presets["stow"] = 29;
-    presets["closeShot"] = 22;
-    presets["fenderShot"] = 8.8;
     presets["none"] = 0;
 
     currPreset = "none";
