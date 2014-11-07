@@ -57,17 +57,20 @@ Robot::Robot()
 void Robot::RobotInit() {
 }
 
-void Robot::DisabledInit() {
-    autoTimer->Stop();
-    autoTimer->Reset();
-}
-
 std::string Robot::boolToString(bool b)
 {
     if (b)
         return "true";
     else
         return "false";
+}
+
+void Robot::DisabledInit()
+{
+    autoTimer->Stop();
+    autoTimer->Reset();
+    dsLCD->PrintfLine(DriverStationLCD::kUser_Line1, "Mode: %s", "block dat stuff");
+    dsLCD->UpdateLCD();
 }
 
 void Robot::DisabledPeriodic() {
@@ -79,12 +82,12 @@ void Robot::DisabledPeriodic() {
     if (coDriver->GetRawButton(1))
     {
         autoMode = BLOCK;
-        dsLCD->PrintfLine(DriverStationLCD::kUser_Line1, "Auto Mode: %s", "block dat stuff");
+        dsLCD->PrintfLine(DriverStationLCD::kUser_Line1, "Mode: %s", "block dat stuff");
     }
     else if (coDriver->GetRawButton(3))
     {
         autoMode = JUST_DRIVE;
-        dsLCD->PrintfLine(DriverStationLCD::kUser_Line1, "Auto Mode: %s", "driving places");
+        dsLCD->PrintfLine(DriverStationLCD::kUser_Line1, "Mode: %s", "driving places");
     }
 
 }
@@ -106,9 +109,10 @@ void Robot::AutonomousPeriodic() {
             break;
 
         case BLOCK:
-            drive->setBehavior(deadband(autoThrottle->GetY(), 0.2), 0, false, false);
+            drive->setBehavior(-deadband(autoThrottle->GetY(), 0.2), 0, false, false);
             break;
     }
+    drive->update();
 }
 
 void Robot::TeleopInit() {
