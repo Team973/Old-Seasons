@@ -101,7 +101,7 @@ void Robot::AutonomousPeriodic() {
     {
         case JUST_DRIVE:
 
-            if (autoTimer->Get() <= 3)
+            if (autoTimer->Get() <= .5)
                 drive->setBehavior(1, 0, false, false);
             else
                 drive->setBehavior(0, 0, false, false);
