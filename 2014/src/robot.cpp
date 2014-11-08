@@ -667,7 +667,7 @@ void Robot::TeleopPeriodic()
     intake->update();
 
     dashboardUpdate();
-    dsLCD->PrintfLine(DriverStationLCD::kUser_Line5,"Arm Pot Voltage: %f", armPot->GetVoltage());
+    //dsLCD->PrintfLine(DriverStationLCD::kUser_Line5,"Arm Pot Voltage: %f", armPot->GetVoltage());
     dsLCD->PrintfLine(DriverStationLCD::kUser_Line6,"Arm Angle: %f", arm->getRawAngle());
     dsLCD->UpdateLCD();
 }
