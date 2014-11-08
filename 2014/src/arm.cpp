@@ -150,7 +150,7 @@ void Arm::update()
 
     if (zero)
     {
-        motor->Set(.5);
+        motor->Set(-.5);
         if (sensorA->GetRate() > 5)
             zeroFlag = true;
 
