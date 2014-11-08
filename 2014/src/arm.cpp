@@ -11,7 +11,7 @@ Arm::Arm(Talon *motor_, Encoder *sensorA_, AnalogChannel *pot_)
     sensorA = sensorA_;
     pot = pot_;
 
-    armPID = new PID(0.1, 0, 0);
+    armPID = new PID(0.12, 0, 0);
     armPID->setBounds(-1, 1);
     armPID->start();
 
@@ -57,7 +57,7 @@ void Arm::setPreset(int preset)
             autoClamped = false;
             break;
         case CLOSE_SHOT:
-            setTarget(7.05);
+            setTarget(8);
             autoClamped = false;
             break;
         case HELLAVATOR:
