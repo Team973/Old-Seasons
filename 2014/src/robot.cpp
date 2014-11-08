@@ -113,9 +113,13 @@ void Robot::dashboardUpdate()
     arm->dashboardUpdate();
     shooter->dashboardUpdate();
     intake->dashboardUpdate();
+    if (fabs(arm->pot2degrees() - arm->getRawAngle()) > 2)
+        dsLCD->PrintfLine(DriverStationLCD::kUser_Line5,"Reset the Arm");
+    else
+        dsLCD->PrintfLine(DriverStationLCD::kUser_Line5,"             ");
+    /*
     SmartDashboard::PutNumber("Left Distance: ", drive->getLeftDrive());
     SmartDashboard::PutNumber("Right Distance: ", drive->getRightDrive());
-    /*
     SmartDashboard::PutNumber("Arm Target: ", arm->getTarget());
     SmartDashboard::PutNumber("Gyro: ", drive->getGyroAngle());
     SmartDashboard::PutNumber(" Test Gyro: ", testGyro->GetAngle());
@@ -313,6 +317,11 @@ void Robot::joystick2() // Co-Driver
     }
     */
 
+    if (stick2->GetRawButton(9) && stick2->GetRawButton(10))
+    {
+        arm->reset();
+    }
+
     // [10]
     //shooter->killShooter(stick2->GetRawButton(10));
 
@@ -458,7 +467,7 @@ void Robot::DisabledPeriodic()
         deBugMode = true;
     }
 
-    dsLCD->PrintfLine(DriverStationLCD::kUser_Line5,"Arm Pot Angle: %f", arm->pot2degrees());
+    //dsLCD->PrintfLine(DriverStationLCD::kUser_Line5,"Arm Pot Angle: %f", arm->pot2degrees());
     //dsLCD->PrintfLine(DriverStationLCD::kUser_Line5,"Arm Pot Angle: %f", armPot->GetVoltage());
     dsLCD->PrintfLine(DriverStationLCD::kUser_Line6,"Arm Angle: %f", arm->getRawAngle());
 

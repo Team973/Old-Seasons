@@ -56,6 +56,7 @@ private:
     bool zero;
     bool completeZero;
     double potZero;
+    bool zeroFlag;
 };
 
 #endif

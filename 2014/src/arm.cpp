@@ -28,6 +28,7 @@ Arm::Arm(Talon *motor_, Encoder *sensorA_, AnalogChannel *pot_)
     autoClamped = false;
     zero = false;
     completeZero = false;
+    zeroFlag = false;
 }
 
 void Arm::initialize(Intake *intake_)
@@ -149,11 +150,14 @@ void Arm::update()
 
     if (zero)
     {
-        motor->Set(0);
-        if (completeZero)
+        motor->Set(.5);
+        if (sensorA->GetRate() > 5)
+            zeroFlag = true;
+
+        if (zeroFlag && sensorA->GetRate() < 2)
         {
             sensorA->Reset();
-            completeZero = false;
+            zeroFlag = false;
             zero = false;
         }
     }
