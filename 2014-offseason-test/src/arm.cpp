@@ -12,6 +12,8 @@ Arm::Arm(Talon *motor_, Encoder *sensor_, AnalogChannel *pot_)
 
     potZero = pot->GetVoltage();
 
+    printf("constant 'armKP' has the value %f in subsystem 'arm'\n", Constants::getConstant("armKP")->getDouble());
+
     armPID = new PID(Constants::getConstant("armKP")->getDouble(), Constants::getConstant("armKI")->getDouble(), Constants::getConstant("armKD")->getDouble());
     armPID->setBounds(-1,1);
     armPID->start();
@@ -66,10 +68,5 @@ void Arm::setPreset(std::string preset)
 
 void Arm::update()
 {
-    if (currPreset == "intake")
-        armPID->setGains(0.09);
-    else
-        armPID->setGains(0.1);
-
     motor->Set(limit(armPID->update(getAngle())));
 }

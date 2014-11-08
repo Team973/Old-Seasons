@@ -21,6 +21,7 @@ void ConstantsBase::readConstantsFile()
         return;
     }
 
+
     for (unsigned int n=0;n<lines.size();n++)
     {
         std::vector<std::string> line = file->split(file->scrape(lines[n], ' '), '=', n);
@@ -43,13 +44,12 @@ void ConstantsBase::readConstantsFile()
                     {
                         //printf("constant found\n");
                         constants[v]->setValue(atof(line.back().c_str()));
-                        printf("adding constant %s with value of %s\n", line[k].c_str(), line.back().c_str());
-                        continue;
+                        printf("adding constant %s with value of %f\n", line[k].c_str(), atof(line.back().c_str()));
+                        printf("constant %s has the value %f\n", constants[v]->getName().c_str(), constants[v]->getDouble());
+                        break;
                     }
                 }
             }
         }
-
-
     }
 }
