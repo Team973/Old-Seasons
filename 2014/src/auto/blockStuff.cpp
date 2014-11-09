@@ -105,7 +105,7 @@ bool BlockStuff::Run()
                 break;
             case B_LOW:
                 sequence.clear();
-                sequence.push_back(new TurnProfileCommand(drive, 82*-directionFlag, 100000, 100000, 100000, 3));
+                sequence.push_back(new TurnProfileCommand(drive, 78*-directionFlag, 100000, 100000, 100000, 3));
                 sequence.push_back(new AutoWaitCommand(1));
                 sequence.push_back(new LinearProfileCommand(drive, -9, 15, 10, 15, 5));
                 init = false;
