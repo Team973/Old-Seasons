@@ -634,11 +634,14 @@ void Robot::AutonomousPeriodic()
 
     GetWatchdog().Feed();
 
+
     arm->update();
     shooter->update();
     intake->update();
     kinect->update();
     drive->update(true);
+    dsLCD->PrintfLine(DriverStationLCD::kUser_Line4,"dist:%f", drive->getWheelDistance());
+    dsLCD->UpdateLCD();
     dashboardUpdate();
     GetWatchdog().Feed();
 }
