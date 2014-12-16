@@ -4,6 +4,8 @@
 #include "utility.hpp"
 #include "constants.hpp"
 
+namespace frc973 {
+
 Arm::Arm(Talon *motor_, Encoder *sensor_, AnalogChannel *pot_)
 {
     motor = motor_;
@@ -69,4 +71,6 @@ void Arm::setPreset(std::string preset)
 void Arm::update()
 {
     motor->Set(limit(armPID->update(getAngle())));
+}
+
 }

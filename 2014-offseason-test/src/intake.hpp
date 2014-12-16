@@ -3,6 +3,8 @@
 
 #include "lib/subsystemBase.hpp"
 
+namespace frc973 {
+
 class Intake : public SubsystemBase
 {
 public:
@@ -17,4 +19,7 @@ private:
 
     float intakeSpeed;
 };
+
+}
+
 #endif

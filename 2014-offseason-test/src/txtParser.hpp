@@ -1,6 +1,8 @@
 #ifndef TXT_PARSER_HPP
 #define TXT_PARSER_HPP
 
+namespace frc973 {
+
 class TxtParser
 {
 public:
@@ -13,5 +15,7 @@ private:
     FILE *pFile;
     std::vector<std::string> lines;
 };
+
+}
 
 #endif

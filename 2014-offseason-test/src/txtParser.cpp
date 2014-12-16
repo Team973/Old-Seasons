@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <vector>
 
+namespace frc973 {
+
 TxtParser::TxtParser(std::string name)
 {
     //printf("opening file\n");
@@ -88,4 +90,6 @@ std::vector<std::string> TxtParser::split(std::string line, char token, int line
     str.append(line);
     chunks.push_back(str);
     return chunks;
+}
+
 }

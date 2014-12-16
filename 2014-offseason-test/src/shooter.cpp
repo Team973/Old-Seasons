@@ -4,6 +4,8 @@
 #include "utility.hpp"
 #include <map>
 
+namespace frc973 {
+
 Shooter::Shooter(Victor *winchMotor_, Solenoid *winchRelease_, DigitalInput *fullCockPoint_)
 {
     winchMotor = winchMotor_;
@@ -86,4 +88,6 @@ void Shooter::update()
         winchMotor->Set(limit(winchPID->update(0))); // this means that when we reach our set point the pid automatically turns off
         // not the cleanest thing but I already wrote it and don't feel like cleaning it up
     }
+}
+
 }

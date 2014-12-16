@@ -5,6 +5,7 @@
 #include <string>
 #include "lib/subsystemBase.hpp"
 
+namespace frc973 {
 class PID;
 
 class Arm : public SubsystemBase
@@ -29,4 +30,7 @@ private:
 
     float potZero;
 };
+
+}
+
 #endif

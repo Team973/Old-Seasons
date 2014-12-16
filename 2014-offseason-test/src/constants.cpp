@@ -1,5 +1,7 @@
 #include "constants.hpp"
 
+namespace frc973 {
+
 Constants* Constants::instance = NULL;
 
 void Constants::Extend()
@@ -41,4 +43,6 @@ ConstantsBase::Constant* Constants::getConstant(std::string name)
 void Constants::addConstant(std::string name, double value)
 {
     constants.push_back(new Constant(name, value));
+}
+
 }

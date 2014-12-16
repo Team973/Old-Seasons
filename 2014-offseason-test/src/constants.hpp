@@ -3,6 +3,8 @@
 
 #include "lib/constantsBase.hpp"
 
+namespace frc973 {
+
 class Constants : public ConstantsBase
 {
 public:
@@ -16,5 +18,7 @@ public:
 private:
     static Constants* instance;
 };
+
+}
 
 #endif

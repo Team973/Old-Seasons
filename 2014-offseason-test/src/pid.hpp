@@ -1,6 +1,8 @@
 #ifndef PID_HPP
 #define PID_HPP
 
+namespace frc973 {
+
 class PID
 {
 private:
@@ -43,5 +45,7 @@ public:
     float getI();
     float getD();
 };
+
+}
 
 #endif

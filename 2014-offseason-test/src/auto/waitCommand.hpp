@@ -3,11 +3,15 @@
 
 #include "autoCommand.hpp"
 
-class Wait : public AutoCommand {
+namespace frc973 {
+
+class WaitCommand : public AutoCommand {
 public:
-    Wait(float timeout_);
+    WaitCommand(float timeout_);
     void init();
     bool run();
 };
+
+}
 
 #endif

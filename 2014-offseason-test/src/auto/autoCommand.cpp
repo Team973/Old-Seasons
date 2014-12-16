@@ -1,5 +1,7 @@
 #include "autoCommand.hpp"
 
+namespace frc973 {
+
 // sets the timeout and initializes the timer
 AutoCommand::AutoCommand() {
     timer = new Timer();
@@ -22,4 +24,6 @@ void AutoCommand::init() {
 bool AutoCommand::run() {
 
     return true;
+}
+
 }

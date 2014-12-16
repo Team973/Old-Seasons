@@ -1,6 +1,8 @@
 #ifndef ROBOT_H
 #define ROBOT_H
 
+namespace frc973 {
+
 class Drive;
 class Arm;
 class Intake;
@@ -62,5 +64,7 @@ private:
         KinectStick *autoThrottle;
         Timer *autoTimer;
 };
+
+}
 
 #endif

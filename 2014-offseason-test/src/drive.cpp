@@ -3,6 +3,8 @@
 #include "math.h"
 #include "utility.hpp"
 
+namespace frc973 {
+
 Drive::Drive(Talon *frontLeft_, Talon *frontRight_, Talon *backLeft_, Talon *backRight_, Talon *strafe_, Solenoid *shifters_, Solenoid *backShifters_)
 {
     frontLeftMotor = frontLeft_;
@@ -173,4 +175,6 @@ void Drive::update()
 
     shifters->Set(front);
     backShifters->Set(back);
+}
+
 }

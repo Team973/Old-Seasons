@@ -5,6 +5,8 @@
 #include "../utility.hpp"
 #include <vector>
 
+namespace frc973 {
+
 class ConstantsBase
 {
 public:
@@ -56,4 +58,6 @@ public:
 
 private:
 };
+
+}
 #endif

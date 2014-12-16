@@ -4,6 +4,8 @@
 #include <string>
 #include <map>
 
+namespace frc973 {
+
 class SubsystemBase;
 
 class SubsystemLister
@@ -19,5 +21,7 @@ private:
     static SubsystemLister *singleInstance;
     std::map<std::string, SubsystemBase*> subsystems;
 };
+
+}
 
 #endif
