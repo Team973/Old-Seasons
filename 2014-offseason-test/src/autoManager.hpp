@@ -3,7 +3,6 @@
 
 #include <map>
 #include "auto/autoSequencer.hpp"
-#include "auto/waitCommand.hpp"
 
 namespace frc973 {
 
