@@ -3,6 +3,8 @@
 
 #include "WPILib.h"
 
+namespace frc973 {
+
 class AutoCommand {
 public:
     AutoCommand();
@@ -15,5 +17,7 @@ public:
     Timer *timer;
     float timeout;
 };
+
+}
 
 #endif

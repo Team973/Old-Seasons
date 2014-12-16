@@ -5,6 +5,8 @@
 #include "WPILib.h"
 #include "lib/subsystemBase.hpp"
 
+namespace frc973 {
+
 class PID;
 
 class Shooter : public SubsystemBase
@@ -33,5 +35,7 @@ private:
 
     map<std::string, float> presets;
 };
+
+}
 
 #endif

@@ -8,6 +8,9 @@
 #include "utility.hpp"
 #include "constants.hpp"
 
+namespace frc973
+{
+
 Robot::Robot()
 {
     this->SetPeriod(0);
@@ -195,4 +198,6 @@ void Robot::TestInit() {
 void Robot::TestPeriodic() {
 }
 
-START_ROBOT_CLASS(Robot);
+}
+
+START_ROBOT_CLASS(frc973::Robot);

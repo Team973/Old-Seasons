@@ -3,6 +3,8 @@
 
 #include "lib/subsystemBase.hpp"
 
+namespace frc973 {
+
 class Drive : public SubsystemBase
 {
 public:
@@ -34,5 +36,7 @@ private:
     bool front;
     bool back;
 };
+
+}
 
 #endif

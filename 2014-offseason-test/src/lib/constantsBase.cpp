@@ -3,6 +3,8 @@
 #include "../txtParser.hpp"
 #include <stdlib.h>
 
+namespace frc973 {
+
 std::vector<ConstantsBase::Constant*> ConstantsBase::constants;
 
 ConstantsBase::ConstantsBase()
@@ -52,4 +54,6 @@ void ConstantsBase::readConstantsFile()
             }
         }
     }
+}
+
 }

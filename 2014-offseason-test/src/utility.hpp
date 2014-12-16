@@ -6,6 +6,8 @@
 #include <cctype>
 #include <sstream>
 
+namespace frc973 {
+
 inline float limit(float x)
 {
     if (x > 1)
@@ -63,5 +65,7 @@ private:
     T first;
     R second;
 };
+
+}
 
 #endif

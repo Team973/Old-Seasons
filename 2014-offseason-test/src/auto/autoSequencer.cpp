@@ -1,5 +1,6 @@
 #include "autoSequencer.hpp"
 
+namespace frc973 {
 
 AutoSequencer::AutoSequencer()
 {
@@ -86,4 +87,6 @@ bool AutoSequencer::run()
     }
 
     return false;
+}
+
 }

@@ -2,6 +2,8 @@
 #include "subsystemBase.hpp"
 #include "../utility.hpp"
 
+namespace frc973 {
+
 SubsystemLister* SubsystemLister::singleInstance = NULL;
 
 SubsystemLister* SubsystemLister::getInstance()
@@ -44,4 +46,6 @@ SubsystemBase* SubsystemLister::getSubsystem(std::string name)
     }
 
     return NULL;
+}
+
 }

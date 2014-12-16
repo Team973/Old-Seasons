@@ -1,19 +1,23 @@
 #include "waitCommand.hpp"
 #include "WPILib.h"
 
-Wait::Wait(float timeout_) {
+namespace frc973 {
+
+WaitCommand::WaitCommand(float timeout_) {
     setTimeout(timeout_);
 }
 
-void Wait::init() {
+void WaitCommand::init() {
     timer->Start();
     timer->Reset();
 }
 
-bool Wait::run() {
+bool WaitCommand::run() {
     if (timer->Get() >= timeout) {
         return true;
     }
 
     return false;
+}
+
 }

@@ -1,6 +1,8 @@
 #ifndef SUBSYSTEM_BASE_HPP
 #define SUBSYSTEM_BASE_HPP
 
+namespace frc973 {
+
 class SubsystemBase
 {
 public:
@@ -10,5 +12,7 @@ public:
 
     virtual ~SubsystemBase() {};
 };
+
+}
 
 #endif 

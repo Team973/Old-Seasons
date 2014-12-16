@@ -5,6 +5,8 @@
 #include "auto/autoSequencer.hpp"
 #include "auto/waitCommand.hpp"
 
+namespace frc973 {
+
 class Wait;
 
 class AutoManager
@@ -13,8 +15,8 @@ public:
     AutoManager();
 private:
     std::map<std::string, AutoSequencer*> modes;
-
-    Wait* waitCommand;
 };
+
+}
 
 #endif

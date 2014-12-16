@@ -1,6 +1,8 @@
 #include "WPILib.h"
 #include "pid.hpp"
 
+namespace frc973 {
+
 PID::PID(double p_, double i_, double d_)
 {
     p = p_;
@@ -203,4 +205,6 @@ float PID::getI()
 float PID::getD()
 {
     return dterm;
+}
+
 }

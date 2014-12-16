@@ -5,6 +5,8 @@
 #include "autoCommand.hpp"
 #include <string>
 
+namespace frc973 {
+
 class AutoSequencer : public AutoCommand {
 public:
     AutoSequencer();
@@ -23,5 +25,7 @@ private:
     AutoSequencer::COMMAND* newCommand(AutoCommand* command, std::string type);
     std::vector< std::vector<AutoSequencer::COMMAND*> > sequence;
 };
+
+}
 
 #endif

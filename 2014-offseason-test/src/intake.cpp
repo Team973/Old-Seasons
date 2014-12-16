@@ -1,6 +1,8 @@
 #include "WPILib.h"
 #include "intake.hpp"
 
+namespace frc973 {
+
 Intake::Intake(Victor *motor_, Solenoid *claw_)
 {
     motor = motor_;
@@ -26,4 +28,6 @@ void Intake::setSpeed(float speed)
 void Intake::update()
 {
     motor->Set(intakeSpeed);
+}
+
 }
