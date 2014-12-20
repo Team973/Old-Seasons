@@ -9,12 +9,6 @@ Intake::Intake(Victor *motor_, Solenoid *claw_)
     claw = claw_;
 }
 
-void Intake::setBehavior(float speed, bool open)
-{
-    setSpeed(speed);
-    setFangs(open);
-}
-
 void Intake::setFangs(bool open)
 {
     claw->Set(open);

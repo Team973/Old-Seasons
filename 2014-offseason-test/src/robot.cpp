@@ -105,14 +105,14 @@ void Robot::AutonomousPeriodic() {
         case JUST_DRIVE:
 
             if (autoTimer->Get() <= .5)
-                drive->setBehavior(1, 0, false, false);
+                drive->fromControls(1, 0, false, false);
             else
-                drive->setBehavior(0, 0, false, false);
+                drive->fromControls(0, 0, false, false);
 
             break;
 
         case BLOCK:
-            drive->setBehavior(-deadband(autoThrottle->GetY(), 0.2), 0, false, false);
+            drive->fromControls(-deadband(autoThrottle->GetY(), 0.2), 0, false, false);
             break;
     }
     drive->update();
@@ -124,13 +124,13 @@ void Robot::TeleopInit() {
 void Robot::TeleopPeriodic() {
 
     // Driver
-    drive->setBehavior(-deadband(driver->GetY(), 0.1), deadband(driver->GetRawAxis(3), 0.1), driver->GetRawButton(6), driver->GetRawButton(5));
+    drive->fromControls(-deadband(driver->GetY(), 0.1), deadband(driver->GetRawAxis(3), 0.1), driver->GetRawButton(6), driver->GetRawButton(5));
     drive->strafe(deadband(driver->GetX(), 0.1));
 
 
     if (driver->GetRawButton(8) && !shooter->isFiring())
     {
-        if (arm->getBehavior() == "trussShot")
+        if (arm->getCurrPreset() == "trussShot")
             intake->setFangs(false);
 
         shooter->wantFire();
@@ -142,33 +142,33 @@ void Robot::TeleopPeriodic() {
     if (coDriver->GetRawButton(1))
     {
         intake->setFangs(true);
-        arm->setBehavior("pseudoIntake");
+        arm->setPreset("pseudoIntake");
     }
 
     if (coDriver->GetRawButton(2))
     {
         intake->setFangs(true);
-        arm->setBehavior("intake");
+        arm->setPreset("intake");
     }
 
     if (coDriver->GetRawButton(4))
     {
         if (arm->isShotSafe())
         {
-            shooter->cock("fullCock");
+            shooter->setCock("fullCock");
         }
     }
 
     if (coDriver->GetRawButton(5))
     {
         intake->setFangs(true);
-        arm->setBehavior("stow");
+        arm->setPreset("stow");
     }
 
     if (coDriver->GetRawButton(6))
     {
         intake->setFangs(true);
-        arm->setBehavior("trussShot");
+        arm->setPreset("trussShot");
     }
 
     if (coDriver->GetRawButton(7))

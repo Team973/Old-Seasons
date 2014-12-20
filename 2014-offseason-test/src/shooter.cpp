@@ -31,7 +31,7 @@ void Shooter::setTarget(float target)
     winchPID->setTarget(target);
 }
 
-void Shooter::cock(std::string preset)
+void Shooter::setCock(std::string preset)
 {
     if (presets.find(preset) != presets.end())
     {
@@ -53,11 +53,6 @@ void Shooter::wantFire()
     fireTimer->Start();
 }
 
-void Shooter::setBehavior(std::string preset)
-{
-    cock(preset);
-}
-
 bool Shooter::isFiring()
 {
     return firing;
@@ -77,7 +72,7 @@ void Shooter::update()
     }
     else if (!fullCockPoint->Get() || cockTimer->Get() >= 6)
     {
-        cock("noCock");
+        setCock("noCock");
         winchMotor->Set(0);
         cockTimer->Stop();
         cockTimer->Reset();

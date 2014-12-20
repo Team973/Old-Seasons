@@ -7,7 +7,6 @@ class SubsystemBase
 {
 public:
     SubsystemBase() {};
-    virtual void setBehavior() {};
     virtual void update() {};
 
     virtual ~SubsystemBase() {};

@@ -36,16 +36,6 @@ float Arm::getAngle()
 }
 
 
-void Arm::setBehavior(std::string state)
-{
-    setPreset(state);
-}
-
-std::string Arm::getBehavior()
-{
-    return currPreset;
-}
-
 bool Arm::isShotSafe()
 {
     if (getAngle() > 11)
@@ -66,6 +56,11 @@ void Arm::setPreset(std::string preset)
     {
         armPID->setTarget(presets[currPreset]);
     }
+}
+
+std::string Arm::getCurrPreset()
+{
+    return currPreset;
 }
 
 void Arm::update()

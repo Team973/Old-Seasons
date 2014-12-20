@@ -9,7 +9,7 @@ class Drive : public SubsystemBase
 {
 public:
     Drive(Talon *frontLeft_, Talon *frontRight_, Talon *backLeft_, Talon *backRight_, Talon *strafe_, Solenoid *shifters_, Solenoid *backShifters_);
-    void setBehavior(float throttle, float turn, bool highGear, bool quickTurn);
+    void fromControls(float throttle, float turn, bool highGear, bool quickTurn);
     void strafe(float z);
     void update();
 private:

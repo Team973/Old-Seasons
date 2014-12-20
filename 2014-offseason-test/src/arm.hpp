@@ -13,10 +13,9 @@ class Arm : public SubsystemBase
 public:
     Arm(Talon *motor_, Encoder *sensor_, AnalogChannel *pot_);
     float getAngle();
-    void setBehavior(std::string preset);
-    std::string getBehavior();
     bool isShotSafe();
     void setPreset(std::string state);
+    std::string getCurrPreset();
     void update();
 private:
     std::map<std::string, float> presets;
