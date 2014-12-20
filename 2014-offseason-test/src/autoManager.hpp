@@ -12,8 +12,14 @@ class AutoManager
 {
 public:
     AutoManager();
+    void nextMode();
+    AutoSequencer* getCurrentMode();
+    std::string getCurrentName();
 private:
     std::map<std::string, AutoSequencer*> modes;
+
+    std::map<std::string, AutoSequencer*>::iterator it;
+
 };
 
 }
