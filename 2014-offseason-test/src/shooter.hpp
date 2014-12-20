@@ -13,8 +13,7 @@ class Shooter : public SubsystemBase
 {
 public:
     Shooter(Victor *winchMotor_, Solenoid *winchRelease_, DigitalInput *fullCockPoint_);
-    void setBehavior(std::string preset);
-    void cock(std::string preset);
+    void setCock(std::string preset);
     void wantFire();
     bool isFiring();
     void update();

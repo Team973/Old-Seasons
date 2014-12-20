@@ -156,7 +156,7 @@ void Drive::CheesyDrive(double throttle, double wheel, bool highGear, bool quick
   setHighGear(highGear);
 }
 
-void Drive::setBehavior(float throttle, float turn, bool highGear, bool quickTurn)
+void Drive::fromControls(float throttle, float turn, bool highGear, bool quickTurn)
 {
     CheesyDrive(throttle,turn,highGear,quickTurn);
 }
