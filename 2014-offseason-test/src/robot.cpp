@@ -7,6 +7,8 @@
 #include <math.h>
 #include "utility.hpp"
 #include "constants.hpp"
+#include "lib/subsystemLister.hpp"
+#include "lib/subsystemBase.hpp"
 
 namespace frc973
 {
@@ -16,6 +18,8 @@ Robot::Robot()
     this->SetPeriod(0);
 
     Constants::Extend();
+
+    subsystemLister = SubsystemLister::getInstance();
 
     leftFrontDriveMotors = new Talon(1);
     rightFrontDriveMotors = new Talon(2);
@@ -42,9 +46,12 @@ Robot::Robot()
     compressor->Start();
 
     drive = new Drive(leftFrontDriveMotors, rightFrontDriveMotors, leftBackDriveMotors, rightBackDriveMotors, strafeDriveMotors, shiftingSolenoid, backShiftingSolenoid);
-    arm = new Arm(armMotor, armEncoder, armPot);
-    intake = new Intake(intakeMotor, clawSolenoid);
-    shooter = new Shooter(winchMotor, winchReleaseSolenoid, winchFullCockSensor);
+    arm = dynamic_cast<Arm*>(subsystemLister->addReturnSubsystem("arm",
+            new Arm(armMotor, armEncoder, armPot)));
+    intake = dynamic_cast<Intake*>(subsystemLister->addReturnSubsystem("intake",
+            new Intake(intakeMotor, clawSolenoid)));
+    shooter = dynamic_cast<Shooter*>(subsystemLister->addReturnSubsystem("shooter",
+            new Shooter(winchMotor, winchReleaseSolenoid, winchFullCockSensor)));
 
     driver = new Joystick(1);
     coDriver = new Joystick(2);

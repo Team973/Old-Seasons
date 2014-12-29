@@ -5,8 +5,7 @@
 
 namespace frc973 {
 
-class Drive : public SubsystemBase
-{
+class Drive : public SubsystemBase {
 public:
     Drive(Talon *frontLeft_, Talon *frontRight_, Talon *backLeft_, Talon *backRight_, Talon *strafe_, Solenoid *shifters_, Solenoid *backShifters_);
     void fromControls(float throttle, float turn, bool highGear, bool quickTurn);
