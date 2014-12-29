@@ -2,6 +2,7 @@
 #include "drive.hpp"
 #include "math.h"
 #include "utility.hpp"
+#include "lib/subsystemLister.hpp"
 
 namespace frc973 {
 

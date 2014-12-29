@@ -7,6 +7,7 @@ class Drive;
 class Arm;
 class Intake;
 class Shooter;
+class SubsystemLister;
 
 #define JUST_DRIVE 1
 #define BLOCK 2
@@ -27,6 +28,8 @@ public:
 private:
 
         std::string boolToString(bool b);
+
+        SubsystemLister *subsystemLister;
 
         Talon *leftFrontDriveMotors;
         Talon *leftBackDriveMotors;
