@@ -3,14 +3,17 @@
 ***********************
 
 This is the Team 973 robot code repository.  All code from ``2011`` to ``2013`` uses the `Greyhound
-Lua`_. ``2010-boss`` and ``2013-cpp`` use c++.
+Lua`_. ``2010-boss``, and all code after ``2013-cpp`` use c++.
+=======
 
 .. _Greyhound Lua: https://bitbucket.org/zombiezen/greyhound-lua/
 
 Subdirectories
 ================
+``2014``
+   The 2014 season code
 ``2013-cpp``
-   The 2013 off-season code where we switched to using cpp
+   The 2013 of-season code where we switched to using cpp
 ``2013``
    The 2013 season code
 ``2013-vision``
