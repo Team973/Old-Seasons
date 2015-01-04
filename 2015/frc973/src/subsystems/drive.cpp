@@ -1,10 +1,15 @@
+#include "WPILib.h"
 #include "drive.hpp"
+#include <cmath>
 #include "../lib/utility.hpp"
 
 namespace frc973 {
 
-Drive::Drive()
+Drive::Drive(Talon *leftFrontMotor_, Talon *rightFrontMotor_, Talon *leftBackMotor_, Talon *rightBackMotor_)
 {
+    oldWheel = 0;
+    negInertiaAccumulator = 0;
+    quickStopAccumulator = 0;
 }
 
 void Drive::setDriveMotors(float left, float right)
@@ -21,11 +26,11 @@ void Drive::arcade(float move_, float rotate_)
         if (rotate > 0)
         {
             left = (-move - rotate);
-            right = max(-move, rotate);
+            right = fmax(-move, rotate);
         }
         else
         {
-            left = max(-move, -rotate);
+            left = fmax(-move, -rotate);
             right = (-move + rotate);
         }
     }
@@ -33,13 +38,13 @@ void Drive::arcade(float move_, float rotate_)
     {
         if (rotate > 0)
         {
-            left = -max(move, rotate);
+            left = -fmax(move, rotate);
             right = (-move + rotate);
         }
         else
         {
             left = (-move - rotate);
-            right = -max(move, -rotate);
+            right = -fmax(move, -rotate);
         }
     }
     setDriveMotors(left, right);
@@ -162,7 +167,6 @@ void Drive::CheesyDrive(double throttle, double wheel, bool highGear, bool quick
   }
 
   setDriveMotors(leftPwm, rightPwm);
-  setLowGear(highGear);
 }
 
 void Drive::update()
