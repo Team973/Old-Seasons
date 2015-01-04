@@ -3,6 +3,8 @@
 
 namespace frc973 {
 
+class Drive;
+
 class Robot : public IterativeRobot
 {
 public:
@@ -14,6 +16,12 @@ public:
     void TeleopPeriodic();
     void TestPeriodic();
 private:
+    Talon *leftFrontDrive;
+    Talon *rightFrontDrive;
+    Talon *leftBackDrive;
+    Talon *rightBackDrive;
+
+    Drive *drive;
 };
 
 }
