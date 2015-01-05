@@ -47,7 +47,7 @@ template <class T> class Channel {
     pthread_mutex_t m;
     pthread_cond_t cond;
     std::queue<T> q;
-    int sz;
+    unsigned int sz;
 };
     
 }

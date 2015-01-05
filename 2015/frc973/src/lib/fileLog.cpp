@@ -1,11 +1,6 @@
 #include "fileLog.hpp"
-#include "msgChannel.hpp"
 
 namespace frc973 {
-
-FileLog::FileLog() {
-    msgChan(10);
-}
 
 // Log is called to log a message.
 void FileLog::Log(std::string msg) {
