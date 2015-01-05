@@ -9,11 +9,22 @@ Locator::Locator(Encoder *encoderX_, Encoder *encoderY_, Encoder *gyro_)
     gyro = gyro_;
 }
 
-void Locator::reset()
+void Locator::resetAll()
 {
     encoderX->Reset();
     encoderY->Reset();
     gyro->Reset();
+}
+
+void Locator::resetGyro()
+{
+    gyro->Reset();
+}
+
+void Locator::resetXY()
+{
+    encoderX->Reset();
+    encoderY->Reset();
 }
 
 // in feet
@@ -33,6 +44,25 @@ float Locator::getCurrX()
 float Locator::getCurrY()
 {
     return getDistance(encoderY);
+}
+
+float Locator::normalizeAngle(float theta)
+{
+    while (theta > 180)
+    {
+        theta -= 360;
+    }
+    while (theta < -180)
+    {
+        theta += 360;
+    }
+    return theta;
+}
+
+float Locator::getAngle()
+{
+    float gyroTicks = 1024;
+    return normalizeAngle(gyro->Get() * (360/gyroTicks));
 }
 
 void Locator::update()
