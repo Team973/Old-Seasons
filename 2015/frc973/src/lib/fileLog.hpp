@@ -2,14 +2,12 @@
 #define FILE_LOG_HPP
 
 #include <string>
+#include "msgChannel.hpp"
 
 namespace frc973 {
 
-class Channel;
-
 class FileLog {
   public:
-      FileLog();
       void Log(std::string msg);
       void Run();
  
