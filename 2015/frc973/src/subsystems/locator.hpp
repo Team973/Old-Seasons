@@ -8,9 +8,13 @@ namespace frc973 {
 class Locator {
 public:
     Locator(Encoder *encoderX_, Encoder *encoderY_, Encoder *gyro_);
-    void reset();
+    void resetAll();
+    void resetGyro();
+    void resetXY();
     float getCurrX();
     float getCurrY();
+    float normalizeAngle(float theta);
+    float getAngle();
     void update();
 private:
     float getDistance(Encoder *encoder);
