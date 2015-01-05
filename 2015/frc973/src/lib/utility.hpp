@@ -5,7 +5,6 @@
 #include <string>
 #include <cctype>
 #include <sstream>
-#include <string>
 #include <vector>
 
 namespace frc973 {
