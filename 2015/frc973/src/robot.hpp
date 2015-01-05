@@ -21,6 +21,10 @@ private:
     Talon *leftBackDrive;
     Talon *rightBackDrive;
 
+    Talon *strafeDrive;
+
+    Joystick *testStick;
+
     Drive *drive;
 };
 

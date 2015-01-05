@@ -12,7 +12,11 @@ Robot::Robot()
     leftBackDrive = new Talon(2);
     rightBackDrive = new Talon(3);
 
-    drive = new Drive(leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive);
+    strafeDrive = new Talon(4);
+
+    testStick = new Joystick(0);
+
+    drive = new Drive(leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive, strafeDrive);
 }
 
 void Robot::RobotInit()
@@ -30,11 +34,12 @@ void Robot::AutonomousPeriodic()
 
 void Robot::TeleopInit()
 {
-
 }
 
 void Robot::TeleopPeriodic()
 {
+    drive->CheesyDrive(deadband(testStick->GetY(), 0.1), deadband(testStick->GetRawAxis(2), 0.1), false, testStick->GetRawButton(6));
+    drive->strafe(-deadband(testStick->GetX(), 0.3));
 }
 
 void Robot::TestPeriodic()
