@@ -2,6 +2,15 @@
 
 namespace frc973 {
 
+Logger* Logger::instance = NULL;
+
+Logger* Logger::getInstance() {
+    if (instance == NULL)
+    {
+        instance = new Logger();
+    }
+    return instance;
+}
 
 // Log is called to log a message.
 void Logger::Log(std::string msg) {
