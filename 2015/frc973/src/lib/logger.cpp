@@ -18,7 +18,7 @@ void Logger::Log(std::string msg) {
 }
 
 // Run is run in a separate thread, started when the robot is initialized.
-void Logger::Run() {
+void* Logger::Run(void*) {
     while (true) {
         std::string msg = msgChan.recv();
     }

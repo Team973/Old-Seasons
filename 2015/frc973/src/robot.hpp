@@ -16,6 +16,7 @@ public:
     void TeleopPeriodic();
     void TestPeriodic();
 private:
+    static void* runLogger(void*);
     Talon *leftFrontDrive;
     Talon *rightFrontDrive;
     Talon *leftBackDrive;

@@ -8,11 +8,11 @@ namespace frc973 {
 
 class Logger {
   public:
-      Logger() : msgChan(20) {
+      Logger() : msgChan(80) {
       }
       Logger* getInstance();
       void Log(std::string msg);
-      void Run();
+      void* Run(void*);
  
   private:
     Channel<std::string> msgChan;
