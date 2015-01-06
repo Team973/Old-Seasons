@@ -6,7 +6,7 @@
 
 namespace frc973 {
 
-class FileLog {
+class Logger {
   public:
       void Log(std::string msg);
       void Run();
