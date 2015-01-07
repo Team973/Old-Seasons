@@ -9,8 +9,7 @@ namespace frc973 {
 
 void* Robot::runLogger(void*)
 {
-    Logger *logger = new Logger();
-    logger->Run(NULL);
+    Logger::Run(NULL);
     return NULL;
 }
 

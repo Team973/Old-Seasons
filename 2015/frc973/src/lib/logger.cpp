@@ -2,15 +2,7 @@
 
 namespace frc973 {
 
-Logger* Logger::instance = NULL;
-
-Logger* Logger::getInstance() {
-    if (instance == NULL)
-    {
-        instance = new Logger();
-    }
-    return instance;
-}
+Channel<std::string> Logger::msgChan(3);
 
 // Log is called to log a message.
 void Logger::Log(std::string msg) {
