@@ -4,6 +4,7 @@
 #include "lib/logger.hpp"
 #include "subsystems/drive.hpp"
 #include <pthread.h>
+#include <unistd.h>
 
 namespace frc973 {
 
@@ -13,10 +14,22 @@ void* Robot::runLogger(void*)
     return NULL;
 }
 
+void* Robot::runThread(void*)
+{
+    while (true)
+    {
+        printf("hello from a second thread\n");
+        usleep(10000);
+    }
+}
+
 Robot::Robot()
 {
     pthread_t loggingThread;
     pthread_create(&loggingThread, NULL, runLogger, NULL);
+
+    pthread_t secondThread;
+    pthread_create(&secondThread, NULL, runThread, NULL);
 
     leftFrontDrive = new Talon(0);
     rightFrontDrive = new Talon(1);

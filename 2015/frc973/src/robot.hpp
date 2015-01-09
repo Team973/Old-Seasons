@@ -17,6 +17,7 @@ public:
     void TestPeriodic();
 private:
     static void* runLogger(void*);
+    static void* runThread(void*);
     Talon *leftFrontDrive;
     Talon *rightFrontDrive;
     Talon *leftBackDrive;
