@@ -17,7 +17,7 @@ public:
     void TestPeriodic();
 private:
     static void* runLogger(void*);
-    static void* runThread(void*);
+    static void* runTxtParser(void*);
     Talon *leftFrontDrive;
     Talon *rightFrontDrive;
     Talon *leftBackDrive;

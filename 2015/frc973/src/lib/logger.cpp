@@ -1,4 +1,5 @@
 #include "logger.hpp"
+#include "txtParser.hpp"
 #include <unistd.h>
 
 namespace frc973 {
@@ -14,7 +15,7 @@ void Logger::Log(std::string msg) {
 void* Logger::Run(void*) {
     while (true) {
         std::string msg = msgChan.recv();
-        printf("Hello, World %s\n", msg.c_str());
+        TxtWriter::Write("/home/lvuser/log.txt", msg);
         usleep(10000);
     }
 }
