@@ -6,6 +6,9 @@
 
 namespace frc973 {
 
+Channel<std::string> TxtWriter::msgChan(3);
+Channel<std::string> TxtWriter::pathChan(3);
+
 TxtParser::TxtParser(std::string name)
 {
     //printf("opening file\n");
@@ -42,6 +45,35 @@ std::vector<std::string> TxtParser::getFile()
         }
     }
     return str;
+}
+
+void TxtWriter::Write(std::string filePath, std::string msg)
+{
+    pathChan.send(filePath);
+    msgChan.send(msg);
+}
+
+void TxtWriter::Run()
+{
+    while (true)
+    {
+        std::string lines;
+
+        std::string filePath = pathChan.recv();
+        FILE *pFile = fopen(filePath.c_str(), "w+");
+
+        if (pFile != NULL)
+        {
+            lines = msgChan.recv();
+            fputs(lines.c_str(), pFile);
+        }
+        else
+        {
+            printf("The file %s does not exist\n", filePath.c_str());
+        }
+
+        fclose(pFile);
+    }
 }
 
 }

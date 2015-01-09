@@ -2,6 +2,7 @@
 #include "robot.hpp"
 #include "lib/utility.hpp"
 #include "lib/logger.hpp"
+#include "lib/txtParser.hpp"
 #include "subsystems/drive.hpp"
 #include <pthread.h>
 #include <unistd.h>
@@ -14,13 +15,10 @@ void* Robot::runLogger(void*)
     return NULL;
 }
 
-void* Robot::runThread(void*)
+void* Robot::runTxtParser(void*)
 {
-    while (true)
-    {
-        printf("hello from a second thread\n");
-        usleep(10000);
-    }
+    TxtWriter::Run();
+    return NULL;
 }
 
 Robot::Robot()
@@ -28,8 +26,10 @@ Robot::Robot()
     pthread_t loggingThread;
     pthread_create(&loggingThread, NULL, runLogger, NULL);
 
-    pthread_t secondThread;
-    pthread_create(&secondThread, NULL, runThread, NULL);
+    pthread_t parsingThread;
+    pthread_create(&parsingThread, NULL, runTxtParser, NULL);
+
+    Logger::Log("testing, testing, 123\n");
 
     leftFrontDrive = new Talon(0);
     rightFrontDrive = new Talon(1);
@@ -63,7 +63,6 @@ void Robot::TeleopInit()
 
 void Robot::TeleopPeriodic()
 {
-    Logger::Log("From outside a thread!!");
     drive->CheesyDrive(deadband(testStick->GetY(), 0.1), deadband(testStick->GetRawAxis(2), 0.1), false, testStick->GetRawButton(6));
     drive->strafe(-deadband(testStick->GetX(), 0.3));
 }
