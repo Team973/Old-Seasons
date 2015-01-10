@@ -15,7 +15,7 @@ public:
 
 protected:
     virtual void init();
-    virtual void taskPeriodic();
+    virtual bool taskPeriodic();
 
     Timer *timer;
     float timeout;
