@@ -6,10 +6,13 @@
 
 namespace frc973 {
 
+#define WARNING "[ERROR] "
+#define MESSAGE "[MESSAGE] "
+
 class Logger {
   public:
       static void Initialize();
-      static void Log(std::string msg);
+      static void Log(std::string flag, std::string msg);
       static void* Run(void*);
  
   private:
