@@ -1,5 +1,5 @@
 #include "constants.hpp"
-#include "lib/txtParser.hpp"
+#include "lib/txtFileIO.hpp"
 #include "lib/utility.hpp"
 #include <stdio.h>
 

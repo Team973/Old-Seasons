@@ -1,5 +1,5 @@
-#ifndef TXT_PARSER_HPP
-#define TXT_PARSER_HPP
+#ifndef TXT_FILE_IO_HPP
+#define TXT_FILE_IO_HPP
 
 #include "msgChannel.hpp"
 
