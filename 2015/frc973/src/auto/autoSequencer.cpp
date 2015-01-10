@@ -50,10 +50,6 @@ AutoSequencer::COMMAND* AutoSequencer::newCommand(AutoCommand* command, std::str
 
 void AutoSequencer::init()
 {
-    for (unsigned int n=0;n<sequence.front().size();n++)
-    {
-        sequence.front()[n]->cmd->init();
-    }
 }
 
 bool AutoSequencer::run()
@@ -66,22 +62,12 @@ bool AutoSequencer::run()
 
     for (unsigned int k=0;k<sequence.size();k++)
     {
-        for (unsigned int v=0;v<sequence[k].size();v++)
-        {
-            if (sequence[k][v]->cmd->run())
+        bool allDone = false;
+        while (!allDone) {
+            allDone = true;
+            for (unsigned int v=0;v<sequence[k].size();v++)
             {
-                if (v+1 < sequence[k].size())
-                {
-                    sequence[k][v+1]->cmd->init();
-                }
-                else if (k+1 < sequence.size())
-                {
-                    sequence[k+1][0]->cmd->init();
-                }
-                else
-                {
-                    return true;
-                }
+                allDone &= sequence[k][v]->cmd->run();
             }
         }
     }

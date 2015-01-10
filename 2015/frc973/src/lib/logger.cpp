@@ -17,7 +17,7 @@ void Logger::Initialize()
     timeInfo = localtime(&rawTime);
     strftime(buffer, 80, "%x::%X", timeInfo);
 
-    rename("/home/lvuser/log.txt", "/home/lvuser/Logs/log::" + buffer + ".log"); 
+    rename("/home/lvuser/log.txt", "/home/lvuser/Logs/log::" + buffer + ".log");
 }
 
 // Log is called to log a message.
