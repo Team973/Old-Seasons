@@ -6,6 +6,7 @@
 #include "subsystems/drive.hpp"
 #include <pthread.h>
 #include <unistd.h>
+#include <time.h>
 
 namespace frc973 {
 
@@ -23,11 +24,14 @@ void* Robot::runTxtIO(void*)
 
 Robot::Robot()
 {
+    Logger::Initialize();
+
     pthread_t loggingThread;
     pthread_create(&loggingThread, NULL, runLogger, NULL);
 
     pthread_t parsingThread;
     pthread_create(&parsingThread, NULL, runTxtIO, NULL);
+
 
     Logger::Log("testing, testing, 123\n");
 

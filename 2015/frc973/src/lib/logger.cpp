@@ -2,7 +2,8 @@
 #include "txtFileIO.hpp"
 #include <time.h>
 #include <unistd.h>
-#include <string>
+#include <string.h>
+#include <stdio.h>
 
 namespace frc973 {
 
@@ -16,7 +17,14 @@ void Logger::Initialize()
 
     time(&rawTime);
     timeInfo = localtime(&rawTime);
-    strftime(buffer, 80, "/home/lvuser/log::%x::%X.log", timeInfo);
+    strftime(buffer, 80, "/home/lvuser/Logs/log::%F::%X.txt", timeInfo);
+    for (unsigned int n=0;n<80;n++)
+    {
+        if (buffer[n] == '\n')
+        {
+            strncpy(buffer, buffer, n-1);
+        }
+    }
 
     rename("/home/lvuser/log.txt", buffer);
 }
