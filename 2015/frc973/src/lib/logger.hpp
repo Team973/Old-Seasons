@@ -8,7 +8,7 @@ namespace frc973 {
 
 class Logger {
   public:
-      Logger* getInstance();
+      static void Initialize();
       static void Log(std::string msg);
       static void* Run(void*);
  
