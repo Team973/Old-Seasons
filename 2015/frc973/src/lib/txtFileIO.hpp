@@ -5,10 +5,10 @@
 
 namespace frc973 {
 
-class TxtParser
+class TxtReader
 {
 public:
-    TxtParser(std::string name);
+    TxtReader(std::string name);
     std::vector<std::string> getContent();
     static void Run();
 

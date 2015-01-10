@@ -9,7 +9,7 @@ namespace frc973 {
 Channel<std::string> TxtWriter::msgChan(3);
 Channel<std::string> TxtWriter::pathChan(3);
 
-TxtParser::TxtParser(std::string name)
+TxtReader::TxtReader(std::string name)
 {
     //printf("opening file\n");
     pFile = fopen(name.c_str(), "r");
@@ -23,12 +23,12 @@ TxtParser::TxtParser(std::string name)
         printf("The file %s does not exist\n",name.c_str());
 }
 
-std::vector<std::string> TxtParser::getContent()
+std::vector<std::string> TxtReader::getContent()
 {
     return lines;
 }
 
-std::vector<std::string> TxtParser::getFile()
+std::vector<std::string> TxtReader::getFile()
 {
     std::vector<std::string> str;
     char lineBuffer[80];
