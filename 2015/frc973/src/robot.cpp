@@ -33,7 +33,7 @@ Robot::Robot()
     pthread_create(&parsingThread, NULL, runTxtIO, NULL);
 
 
-    Logger::Log("testing, testing, 123\n");
+    Logger::Log(MESSAGE, "testing, testing, 123\n");
 
     leftFrontDrive = new Talon(0);
     rightFrontDrive = new Talon(1);

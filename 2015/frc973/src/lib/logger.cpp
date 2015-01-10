@@ -30,8 +30,8 @@ void Logger::Initialize()
 }
 
 // Log is called to log a message.
-void Logger::Log(std::string msg) {
-    msgChan.send(msg);
+void Logger::Log(std::string flag, std::string msg) {
+    msgChan.send(flag + msg);
 }
 
 // Run is run in a separate thread, started when the robot is initialized.
