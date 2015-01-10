@@ -8,14 +8,21 @@ namespace frc973 {
 class AutoCommand {
 public:
     AutoCommand();
-    virtual void init();
-    virtual bool run();
+    bool run();
     void setTimeout(float timeout_);
 
     virtual ~AutoCommand() {}
 
+protected:
+    virtual void init();
+    virtual void taskPeriodic();
+
     Timer *timer;
     float timeout;
+
+private:
+    bool initYet;
+    bool doneYet;
 };
 
 }

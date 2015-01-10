@@ -19,11 +19,28 @@ void AutoCommand::init() {
     timer->Start();
 }
 
-// called each cycle
-// returns true if the command is complete
-bool AutoCommand::run() {
-
+/**
+ * Called repeatedly to do the work of the task.
+ * Should be redefined by any childrens classes.
+ * Returns true to signal that the task is done.
+ */
+bool AutoCommand::taskPeriodic() {
     return true;
+}
+
+/**
+ * Initialize task if it has not been initialized,
+ * then call taskPeriodic and return the result
+ */
+bool AutoCommand::run() {
+    if (!initYet) {
+        initYet = true;
+        init();
+    }
+    if (!doneYet) {
+        doneYet = taskPeriodic();
+    }
+    return doneYet;
 }
 
 }
