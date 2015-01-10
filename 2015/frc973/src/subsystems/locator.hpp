@@ -7,21 +7,48 @@ namespace frc973 {
 
 class Locator {
 public:
-    Locator(Encoder *encoderX_, Encoder *encoderY_, Encoder *gyro_);
+    struct Point {
+        float x;
+        float y;
+    };
+
+    Locator(Encoder *leftEncoder_, Encoder *rightEncoder_, Encoder *gyro_);
     void resetAll();
     void resetGyro();
-    void resetXY();
-    float getCurrX();
-    float getCurrY();
+    void resetEncoders();
+    float getMovedDistance();
     float normalizeAngle(float theta);
     float getAngle();
+    Point* getPoint();
+    void storeCalculations();
     void update();
+
 private:
     float getDistance(Encoder *encoder);
 
-    Encoder *encoderX;
-    Encoder *encoderY;
+    Point *currPoint;
+
+    Encoder *leftEncoder;
+    Encoder *rightEncoder;
     Encoder *gyro;
+
+    float currGyro;
+    float currTheta;
+    float theta;
+    float currLeft;
+    float currRight;
+    float magnitude;
+    float deltaX;
+    float deltaY;
+    float currX;
+    float currY;
+
+    float prevGyro;
+    float prevTheta;
+    float prevLeft;
+    float prevRight;
+    float prevX;
+    float prevY;
 };
 
 }
