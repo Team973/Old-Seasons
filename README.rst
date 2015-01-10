@@ -4,7 +4,7 @@
 
 This is the Team 973 robot code repository.  All code from ``2011`` to ``2013`` uses the `Greyhound
 Lua`_. ``2010-boss``, and all code after ``2013-cpp`` use c++.
-=======
+
 
 .. _Greyhound Lua: https://bitbucket.org/zombiezen/greyhound-lua/
 
