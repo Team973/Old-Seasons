@@ -2,6 +2,7 @@
 #include "txtFileIO.hpp"
 #include <time.h>
 #include <unistd.h>
+#include <string>
 
 namespace frc973 {
 
@@ -15,9 +16,9 @@ void Logger::Initialize()
 
     time(&rawTime);
     timeInfo = localtime(&rawTime);
-    strftime(buffer, 80, "%x::%X", timeInfo);
+    strftime(buffer, 80, "/home/lvuser/log::%x::%X.log", timeInfo);
 
-    rename("/home/lvuser/log.txt", "/home/lvuser/Logs/log::" + buffer + ".log");
+    rename("/home/lvuser/log.txt", buffer);
 }
 
 // Log is called to log a message.
