@@ -42,7 +42,7 @@ void Constants::addConstant(std::string name, double value)
 void Constants::readConstantsFile()
 {
     //printf("reading constants file\n");
-    TxtParser* file = new TxtParser("constants.txt");
+    TxtReader* file = new TxtReader("constants.txt");
     std::vector<std::string> lines = file->getContent();
 
     if (lines.size() < 1)
