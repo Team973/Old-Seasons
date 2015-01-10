@@ -15,7 +15,7 @@ void* Robot::runLogger(void*)
     return NULL;
 }
 
-void* Robot::runTxtParser(void*)
+void* Robot::runTxtIO(void*)
 {
     TxtWriter::Run();
     return NULL;
@@ -27,7 +27,7 @@ Robot::Robot()
     pthread_create(&loggingThread, NULL, runLogger, NULL);
 
     pthread_t parsingThread;
-    pthread_create(&parsingThread, NULL, runTxtParser, NULL);
+    pthread_create(&parsingThread, NULL, runTxtIO, NULL);
 
     Logger::Log("testing, testing, 123\n");
 
