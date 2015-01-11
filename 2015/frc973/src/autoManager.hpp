@@ -7,11 +7,12 @@
 namespace frc973 {
 
 class Wait;
+class Drive;
 
 class AutoManager
 {
 public:
-    AutoManager();
+    AutoManager(Drive* drive_);
     void nextMode();
     AutoSequencer* getCurrentMode();
     std::string getCurrentName();

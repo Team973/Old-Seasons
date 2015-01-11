@@ -1,10 +1,12 @@
 #include "autoManager.hpp"
 #include "auto/autoCommand.hpp"
 #include "auto/waitCommand.hpp"
+#include "auto/driveCommand.hpp"
+#include "subsystems/drive.hpp"
 
 namespace frc973 {
 
-AutoManager::AutoManager()
+AutoManager::AutoManager(Drive* drive_)
 {
     modes["Test"] = new AutoSequencer();
 
