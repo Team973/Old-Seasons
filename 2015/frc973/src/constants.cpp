@@ -38,7 +38,7 @@ void Constants::addConstant(std::string name, double value)
 void Constants::readConstantsFile()
 {
     //printf("reading constants file\n");
-    TxtReader* file = new TxtReader("constants.txt");
+    TxtReader* file = new TxtReader("/home/lvuser/constants.txt");
     std::vector<std::string> lines = file->getContent();
 
     if (lines.size() < 1)
@@ -71,7 +71,6 @@ void Constants::readConstantsFile()
                         //printf("constant found\n");
                         constants[v]->setValue(atof(line.back().c_str()));
                         printf("adding constant %s with value of %f\n", line[k].c_str(), atof(line.back().c_str()));
-                        printf("constant %s has the value %f\n", constants[v]->getName().c_str(), constants[v]->getDouble());
                         break;
                     }
                 }
