@@ -6,13 +6,15 @@
 namespace frc973 {
 
 class Locator;
+class PID;
+class TrapProfile;
 
 class XYManager {
 public:
 
     struct MotorValue {
-        float throttle;
-        float turn;
+        float throttle = 0;
+        float turn = 0;
     };
 
     XYManager();
@@ -20,6 +22,8 @@ public:
     void injectLocator(Locator* locator_);
     void reset();
     void setTarget(float targetX_, float targetY, bool backward_, float drivePrecision_, float turnPrecision_, float driveCap_, float turnCap_, float arcCap_);
+    void startProfile();
+    XYManager::MotorValue* getValues();
     void calculate();
     void update();
 
@@ -28,6 +32,22 @@ private:
 
     Locator* locator;
     Locator::Point* currPoint;
+    Locator::Point* origPoint;
+
+    XYManager::MotorValue* updateValue;
+
+    Timer* loopTimer;
+
+    TrapProfile* linearProfile;
+    TrapProfile* angularProfile;
+
+    PID* drivePID;
+    PID* turnPID;
+
+    float kLinVelFF;
+    float  kLinAccelFF;
+    float kAngVelFF;
+    float kAngAccelFF;
 
     float targetX;
     float targetY;
