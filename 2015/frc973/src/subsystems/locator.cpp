@@ -10,6 +10,8 @@ Locator::Locator(Encoder *leftEncoder_, Encoder *rightEncoder_, Encoder *gyro_)
     rightEncoder = rightEncoder_;
     gyro = gyro_;
 
+    currPoint = new Point;
+
     currPoint->x = 0;
     currPoint->y = 0;
 
