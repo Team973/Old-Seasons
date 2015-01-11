@@ -9,10 +9,9 @@ namespace frc973 {
     
 class Constants {
 public:
-    Constants();
-    void Extend();
-    void readConstantsFile();
-    void addConstant(std::string name, double value);
+    static void Extend();
+    static void readConstantsFile();
+    static void addConstant(std::string name, double value);
 
     class Constant
     {
@@ -54,12 +53,10 @@ public:
             double value;
     };
 
-    Constant* getConstant(std::string name);
-
-    static Constants *instance;
+    static Constant* getConstant(std::string name);
 
 private:
-    std::vector<Constant*> constants;
+    static std::vector<Constant*> constants;
 };
 
 }
