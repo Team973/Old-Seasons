@@ -5,6 +5,8 @@
 #include "lib/logger.hpp"
 #include "lib/txtFileIO.hpp"
 #include "subsystems/drive.hpp"
+#include "subsystems/locator.hpp"
+#include "subsystems/xyManager.hpp"
 #include <pthread.h>
 #include <unistd.h>
 #include <time.h>
@@ -35,8 +37,9 @@ Robot::Robot()
     pthread_t parsingThread;
     pthread_create(&parsingThread, NULL, runTxtIO, NULL);
 
+    Logger::Log(MESSAGE, "Boot complete, initializing objects...\n");
 
-    Logger::Log(MESSAGE, "testing, testing, 123\n");
+    testStick = new Joystick(0);
 
     leftFrontDrive = new Talon(0);
     rightFrontDrive = new Talon(1);
@@ -45,9 +48,18 @@ Robot::Robot()
 
     strafeDrive = new Talon(4);
 
-    testStick = new Joystick(0);
+    leftDriveEncoder = new Encoder(0,1);
+    rightDriveEncoder = new Encoder(2,3);
+    gyro = new Encoder(4,5);
+
+    locator = new Locator(leftDriveEncoder, rightDriveEncoder, gyro);
+
+    xyManager = XYManager::getInstance();
+    xyManager->injectLocator(locator);
 
     drive = new Drive(leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive, strafeDrive);
+
+    Logger::Log(MESSAGE, "objects initialized\n");
 
 }
 

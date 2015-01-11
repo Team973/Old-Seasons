@@ -4,6 +4,8 @@
 namespace frc973 {
 
 class Drive;
+class Locator;
+class XYManager;
 
 class Robot : public IterativeRobot
 {
@@ -18,6 +20,7 @@ public:
 private:
     static void* runLogger(void*);
     static void* runTxtIO(void*);
+
     Talon *leftFrontDrive;
     Talon *rightFrontDrive;
     Talon *leftBackDrive;
@@ -25,7 +28,15 @@ private:
 
     Talon *strafeDrive;
 
+    Encoder *leftDriveEncoder;
+    Encoder *rightDriveEncoder;
+    Encoder *gyro;
+
     Joystick *testStick;
+
+    Locator *locator;
+
+    XYManager *xyManager;
 
     Drive *drive;
 };

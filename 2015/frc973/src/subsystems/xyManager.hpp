@@ -18,7 +18,7 @@ public:
     };
 
     XYManager();
-    XYManager* getInstance();
+    static XYManager* getInstance();
     void injectLocator(Locator* locator_);
     void reset();
     void setTarget(float targetX_, float targetY, bool backward_, float drivePrecision_, float turnPrecision_, float driveCap_, float turnCap_, float arcCap_);
