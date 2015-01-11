@@ -34,6 +34,7 @@ TrapProfile::TrapProfile()
     vMax = 10;
     aMax = 10;
     dMax = 10;
+    directionFlag = 1;
 
     fake = true;
 }
