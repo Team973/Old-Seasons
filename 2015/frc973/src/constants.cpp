@@ -5,19 +5,15 @@
 
 namespace frc973 {
 
-Constants* Constants::instance = NULL;
+std::vector<Constants::Constant*> Constants::constants;
 
 void Constants::Extend()
 {
-    printf("extending constants file\n");
-    if (instance == NULL)
-    {
-        instance = new Constants();
-    }
-}
+    addConstant("kLinVelFF", 0.08);
+    addConstant("kLinAccelFF", 0.03);
+    addConstant("kAngVelFF", 0.0);
+    addConstant("kAngAccelFF", 0.0);
 
-Constants::Constants()
-{
     readConstantsFile();
 }
 
