@@ -1,6 +1,7 @@
 #include "WPILib.h"
 #include "robot.hpp"
 #include "constants.hpp"
+#include "autoManager.hpp"
 #include "lib/utility.hpp"
 #include "lib/logger.hpp"
 #include "lib/txtFileIO.hpp"
@@ -58,6 +59,8 @@ Robot::Robot()
     xyManager->injectLocator(locator);
 
     drive = new Drive(leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive, strafeDrive);
+
+    autoManager = new AutoManager(drive);
 
     Logger::Log(MESSAGE, "objects initialized\n");
 

@@ -6,6 +6,7 @@ namespace frc973 {
 class Drive;
 class Locator;
 class XYManager;
+class AutoManager;
 
 class Robot : public IterativeRobot
 {
@@ -39,6 +40,8 @@ private:
     XYManager *xyManager;
 
     Drive *drive;
+
+    AutoManager *autoManager;
 };
 
 }
