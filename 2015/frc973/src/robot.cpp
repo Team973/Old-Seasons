@@ -1,5 +1,6 @@
 #include "WPILib.h"
 #include "robot.hpp"
+#include "constants.hpp"
 #include "lib/utility.hpp"
 #include "lib/logger.hpp"
 #include "lib/txtFileIO.hpp"
@@ -24,6 +25,8 @@ void* Robot::runTxtIO(void*)
 
 Robot::Robot()
 {
+    Constants::Extend();
+
     Logger::Initialize();
 
     pthread_t loggingThread;

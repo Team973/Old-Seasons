@@ -2,6 +2,7 @@
 #include "WPILib.h"
 #include "../lib/trapProfile.hpp"
 #include "../lib/pid.hpp"
+#include "../constants.hpp"
 #include <math.h>
 #include <vector>
 
@@ -29,10 +30,10 @@ XYManager::XYManager()
     turnCap = 0;
     arcCap = 0;
 
-    kLinVelFF = 0.08;
-    kLinAccelFF = 0.03;
-    kAngVelFF = 0.0;
-    kAngAccelFF = 0.0;
+    kLinVelFF = Constants::getConstant("kLinVelFF")->getDouble();
+    kLinAccelFF = Constants::getConstant("kLinAccelFF")->getDouble();
+    kAngVelFF = Constants::getConstant("kAngVelFF")->getDouble();
+    kAngAccelFF = Constants::getConstant("kAngAccelFF")->getDouble();
 
     currPoint = new Locator::Point;
     origPoint = new Locator::Point;
