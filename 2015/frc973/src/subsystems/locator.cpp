@@ -114,6 +114,7 @@ void Locator::update()
 
     currPoint->x = currX;
     currPoint->y = currY;
+    currPoint->angle = currGyro();
 
     storeCalculations();
 }

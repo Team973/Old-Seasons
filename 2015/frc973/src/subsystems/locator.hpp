@@ -10,6 +10,7 @@ public:
     struct Point {
         float x;
         float y;
+        float angle;
     };
 
     Locator(Encoder *leftEncoder_, Encoder *rightEncoder_, Encoder *gyro_);
