@@ -8,9 +8,9 @@ namespace frc973 {
 class Locator {
 public:
     struct Point {
-        float x;
-        float y;
-        float angle;
+        float x = 0;
+        float y = 0;
+        float angle= 0;
     };
 
     Locator(Encoder *leftEncoder_, Encoder *rightEncoder_, Encoder *gyro_);

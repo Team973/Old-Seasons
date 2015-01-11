@@ -28,9 +28,6 @@ XYManager::XYManager()
     turnCap = 0;
     arcCap = 0;
     currPoint = new Locator::Point;
-    currPoint->x = 0;
-    currPoint->y = 0;
-
 }
 
 void XYManager::injectLocator(Locator* locator_)

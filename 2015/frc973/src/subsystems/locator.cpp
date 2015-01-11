@@ -12,9 +12,6 @@ Locator::Locator(Encoder *leftEncoder_, Encoder *rightEncoder_, Encoder *gyro_)
 
     currPoint = new Point;
 
-    currPoint->x = 0;
-    currPoint->y = 0;
-
     currGyro = 0;
     currTheta = 0;
     theta = 0;
