@@ -1,5 +1,6 @@
 #include "WPILib.h"
 #include "drive.hpp"
+#include "xyManager.hpp"
 #include <cmath>
 #include "../lib/utility.hpp"
 
@@ -13,6 +14,8 @@ Drive::Drive(Talon *leftFrontMotor_, Talon *rightFrontMotor_, Talon *leftBackMot
     rightBackMotor = rightBackMotor_;
 
     strafeMotor = strafeMotor_;
+
+    xyManager = XYManager::getInstance();
 
     oldWheel = 0;
     negInertiaAccumulator = 0;

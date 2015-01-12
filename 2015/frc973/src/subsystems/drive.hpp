@@ -19,6 +19,8 @@ private:
 
     Talon *strafeMotor;
 
+    XYManager *xyManager;
+
     //Cheesy Drive Variables
     float oldWheel;
     float negInertiaAccumulator;
