@@ -188,6 +188,8 @@ void Drive::CheesyDrive(double throttle, double wheel, bool highGear, bool quick
   setDriveMotors(leftPwm, rightPwm);
 }
 
+// This function should only be called in autonomous periodic
+// if it is called during teleop the robot will revert to auto control
 void Drive::update()
 {
     XYManager::MotorValue* values = xyManager->getValues();
