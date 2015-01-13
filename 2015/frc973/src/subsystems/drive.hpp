@@ -1,6 +1,9 @@
 #ifndef DRIVE_HPP
 #define DRIVE_HPP
+
 namespace frc973 {
+
+class XYManager;
 
 class Drive {
 public:
