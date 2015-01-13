@@ -92,8 +92,8 @@ void XYManager::update()
     std::vector<float> linearStep = linearProfile->getProfile(currTime);
     std::vector<float> angularStep = angularProfile->getProfile(currTime);
 
-    float linearFF = -(kLinVelFF*linearStep[2]) + -(kLinAccelFF*linearStep[3]);
-    float angularFF = -(kAngVelFF*angularStep[2]) + -(kAngAccelFF*angularStep[3]);
+    float linearFF = (kLinVelFF*linearStep[2]) + (kLinAccelFF*linearStep[3]);
+    float angularFF = (kAngVelFF*angularStep[2]) + (kAngAccelFF*angularStep[3]);
 
     float distanceError = fabs(currPoint->distance - origPoint->distance);
     float angleError = fabs(currPoint->angle - origPoint->distance);
