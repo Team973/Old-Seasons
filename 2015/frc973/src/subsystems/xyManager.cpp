@@ -26,6 +26,8 @@ XYManager::XYManager()
     kAngVelFF = Constants::getConstant("kAngVelFF")->getDouble();
     kAngAccelFF = Constants::getConstant("kAngAccelFF")->getDouble();
 
+    done = true;
+
     currPoint = new Locator::Point;
     origPoint = new Locator::Point;
 
@@ -49,18 +51,25 @@ void XYManager::injectLocator(Locator* locator_)
     locator = locator_;
 }
 
+bool XYManager::isMovementDone()
+{
+    return done;
+}
+
 void XYManager::setTargetDistance(float distance_)
 {
     currPoint = locator->getPoint();
     origPoint = locator->getPoint();
     linearProfile = new TrapProfile(distance_, 8, 10, 15);
     angularProfile = new TrapProfile(currPoint->angle, 100000, 100000,10000); // this is purposfully blown up do not change the numbers
+    done = false;
 }
 
 void XYManager::setTargetAngle(float angle_)
 {
     angularProfile = new TrapProfile(angle_, 100000, 100000,10000); // this is purposfully blown up do not change the numbers
     linearProfile = new TrapProfile(0, 8, 10, 15); // this means that we don't have to seperate turn and drive in update
+    done = false;
 }
 
 void XYManager::startProfile()
@@ -86,7 +95,17 @@ void XYManager::update()
     float linearFF = -(kLinVelFF*linearStep[2]) + -(kLinAccelFF*linearStep[3]);
     float angularFF = -(kAngVelFF*angularStep[2]) + -(kAngAccelFF*angularStep[3]);
 
-    float distanceError = currPoint->distance - origPoint->distance;
+    float distanceError = fabs(currPoint->distance - origPoint->distance);
+    float angleError = fabs(currPoint->angle - origPoint->distance);
+
+    if (distanceError <= .5 && angleError <= 2)
+    {
+        done = true;
+    }
+    else
+    {
+        done = false;
+    }
 
     float driveInput, angularInput;
 

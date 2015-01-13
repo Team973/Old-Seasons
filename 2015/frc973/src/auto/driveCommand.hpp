@@ -5,11 +5,15 @@
 
 namespace frc973 {
 
+class XYManager;
+
 class DriveCommand : public AutoCommand {
 public:
-    DriveCommand();
-protected:
+    DriveCommand(float target_, float timeout_);
+    void init();
+    bool taskPeriodic();
 private:
+    XYManager *xyManager;
 };
 
 }
