@@ -69,13 +69,9 @@ bool AutoSequencer::run()
 
     for (unsigned int k=0;k<sequence.size();k++)
     {
-        bool allDone = false;
-        while (!allDone) {
-            allDone = true;
-            for (unsigned int v=0;v<sequence[k].size();v++)
-            {
-                allDone &= sequence[k][v]->cmd->run();
-            }
+        for (unsigned int v=0;v<sequence[k].size();v++)
+        {
+            sequence[k][v]->cmd->run();
         }
     }
 
