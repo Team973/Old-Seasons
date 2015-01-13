@@ -66,14 +66,12 @@ Robot::Robot()
 
     Logger::Log(MESSAGE, "starting smart dashboard\n");
 
-    SmartDashboard::init();
-
 }
 
 void Robot::dashboardUpdate()
 {
-    SmartDashboard::PutNumber("Left Encoder: ", leftDriveEncoder->Get());
-    SmartDashboard::PutNumber("Right Encoder: ", rightDriveEncoder->Get());
+    SmartDashboard::PutString("DB/String 0", asString(leftDriveEncoder->Get()));
+    SmartDashboard::PutString("DB/String 1", asString(rightDriveEncoder->Get()));
 }
 
 void Robot::RobotInit()
