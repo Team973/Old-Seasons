@@ -1,7 +1,7 @@
 #ifndef AUTO_MANAGER_HPP
 #define AUTO_MANAGER_HPP
 
-#include <map>
+#include <vector>
 #include "auto/autoSequencer.hpp"
 
 namespace frc973 {
@@ -17,10 +17,9 @@ public:
     AutoSequencer* getCurrentMode();
     std::string getCurrentName();
 private:
-    std::map<std::string, AutoSequencer*> modes;
+    std::vector<AutoSequencer*> modes;
 
-    std::map<std::string, AutoSequencer*>::iterator it;
-
+    unsigned int currMode;
 };
 
 }

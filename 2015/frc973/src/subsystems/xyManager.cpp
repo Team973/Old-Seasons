@@ -38,10 +38,10 @@ XYManager::XYManager()
 
     loopTimer = new Timer();
 
-    drivePID = new PID(0, 0, 0);
+    drivePID = new PID(0.05, 0, 0);
     drivePID->start();
     drivePID->setBounds(-1,1);
-    turnPID = new PID(0, 0, 0);
+    turnPID = new PID(.05, 0, 0);
     turnPID->start();
     turnPID->setBounds(-1,1);
 }
@@ -109,7 +109,7 @@ void XYManager::update()
 
     float driveInput, angularInput;
 
-    driveInput = drivePID->update(linearStep[1] - distanceError, loopTimer) + linearFF;
+    driveInput = -drivePID->update(linearStep[1] - distanceError, loopTimer) + linearFF;
     angularInput = turnPID->update(angularStep[1] - currPoint->angle, loopTimer) + angularFF;
 
     updateValue->throttle = driveInput;

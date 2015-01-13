@@ -72,6 +72,7 @@ void Robot::dashboardUpdate()
 {
     SmartDashboard::PutString("DB/String 0", asString(leftDriveEncoder->Get()));
     SmartDashboard::PutString("DB/String 1", asString(rightDriveEncoder->Get()));
+    SmartDashboard::PutString("DB/String 3", autoManager->getCurrentName());
 }
 
 void Robot::RobotInit()
@@ -84,16 +85,28 @@ void Robot::DisabledInit()
 
 void Robot::DisabledPeriodic()
 {
+    if (testStick->GetRawButton(1))
+    {
+        autoManager->nextMode();
+    }
+
     dashboardUpdate();
 }
 
 void Robot::AutonomousInit()
 {
+    locator->resetEncoders();
+    autoManager->getCurrentMode()->init();
 }
 
 void Robot::AutonomousPeriodic()
 {
+    autoManager->getCurrentMode()->run();
 
+    xyManager->update();
+    drive->update();
+
+    dashboardUpdate();
 }
 
 void Robot::TeleopInit()
