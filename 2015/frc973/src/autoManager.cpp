@@ -8,26 +8,36 @@ namespace frc973 {
 
 AutoManager::AutoManager(Drive* drive_)
 {
-    modes["Test"] = new AutoSequencer();
+    currMode = 0;
 
-    modes["Test"]->addSequential(new WaitCommand(1));
+    modes.push_back(new AutoSequencer("Test"));
+    modes.back()->addSequential(new WaitCommand(1));
 
-    it = modes.begin();
+    modes.push_back(new AutoSequencer("Drive"));
+    modes.back()->addSequential(new DriveCommand(10, 10));
 }
 
 AutoSequencer* AutoManager::getCurrentMode()
 {
-    return it->second;
+    return modes[currMode];
 }
 
 std::string AutoManager::getCurrentName()
 {
-    return it->first;
+    return modes[currMode]->getName();
 }
 
 void AutoManager::nextMode()
 {
-    ++it;
+    currMode += 1;
+    if (currMode > modes.size()-1)
+    {
+        currMode -= modes.size();
+    }
+    else if (currMode < modes.size()-1)
+    {
+        currMode += modes.size();
+    }
 }
 
 }
