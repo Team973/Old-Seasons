@@ -64,10 +64,29 @@ Robot::Robot()
 
     Logger::Log(MESSAGE, "objects initialized\n");
 
+    Logger::Log(MESSAGE, "starting smart dashboard\n");
+
+    SmartDashboard::init();
+
+}
+
+void Robot::dashboardUpdate()
+{
+    SmartDashboard::PutNumber("Left Encoder: ", leftDriveEncoder->Get());
+    SmartDashboard::PutNumber("Right Encoder: ", rightDriveEncoder->Get());
 }
 
 void Robot::RobotInit()
 {
+}
+
+void Robot::DisabledInit()
+{
+}
+
+void Robot::DisabledPeriodic()
+{
+    dashboardUpdate();
 }
 
 void Robot::AutonomousInit()
