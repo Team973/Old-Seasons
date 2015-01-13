@@ -190,6 +190,8 @@ void Drive::CheesyDrive(double throttle, double wheel, bool highGear, bool quick
 
 void Drive::update()
 {
+    XYManager::MotorValue* values = xyManager->getValues();
+    arcade(values->throttle, values->turn);
 }
 
 }
