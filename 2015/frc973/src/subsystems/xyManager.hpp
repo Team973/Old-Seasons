@@ -20,11 +20,10 @@ public:
     XYManager();
     static XYManager* getInstance();
     void injectLocator(Locator* locator_);
-    void reset();
-    void setTarget(float targetX_, float targetY, bool backward_, float drivePrecision_, float turnPrecision_, float driveCap_, float turnCap_, float arcCap_);
+    void setTargetDistance(float distance_);
+    void setTargetAngle(float angle_);
     void startProfile();
     XYManager::MotorValue* getValues();
-    void calculate();
     void update();
 
 private:
@@ -48,20 +47,6 @@ private:
     float  kLinAccelFF;
     float kAngVelFF;
     float kAngAccelFF;
-
-    float targetX;
-    float targetY;
-    float drivePrecision;
-    float turnPrecision;
-    float driveCap;
-    float turnCap;
-    float arcCap;
-    bool backward;
-
-    float targetAngle;
-    float driveError;
-    float angleError;
-    float robotLinearError;
 };
 
 }
