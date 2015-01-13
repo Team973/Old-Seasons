@@ -20,6 +20,7 @@ public:
     XYManager();
     static XYManager* getInstance();
     void injectLocator(Locator* locator_);
+    bool isMovementDone();
     void setTargetDistance(float distance_);
     void setTargetAngle(float angle_);
     void startProfile();
@@ -47,6 +48,8 @@ private:
     float  kLinAccelFF;
     float kAngVelFF;
     float kAngAccelFF;
+
+    bool done;
 };
 
 }
