@@ -8,8 +8,6 @@ namespace frc973 {
 class Locator {
 public:
     struct Point {
-        float x = 0;
-        float y = 0;
         float angle = 0;
         float distance = 0;
     };
@@ -22,7 +20,6 @@ public:
     float normalizeAngle(float theta);
     float getAngle();
     Locator::Point* getPoint();
-    void storeCalculations();
     void update();
 
 private:
@@ -33,24 +30,6 @@ private:
     Encoder *leftEncoder;
     Encoder *rightEncoder;
     Encoder *gyro;
-
-    float currGyro;
-    float currTheta;
-    float theta;
-    float currLeft;
-    float currRight;
-    float magnitude;
-    float deltaX;
-    float deltaY;
-    float currX;
-    float currY;
-
-    float prevGyro;
-    float prevTheta;
-    float prevLeft;
-    float prevRight;
-    float prevX;
-    float prevY;
 };
 
 }

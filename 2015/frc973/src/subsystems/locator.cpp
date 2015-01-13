@@ -11,23 +11,6 @@ Locator::Locator(Encoder *leftEncoder_, Encoder *rightEncoder_, Encoder *gyro_)
     gyro = gyro_;
 
     currPoint = new Point;
-
-    currGyro = 0;
-    currTheta = 0;
-    theta = 0;
-    currLeft = 0;
-    currRight = 0;
-    magnitude = 0;
-    deltaX = 0;
-    deltaY = 0;
-    currX = 0;
-    currY = 0;
-    prevGyro = 0;
-    prevTheta = 0;
-    prevLeft = 0;
-    prevRight = 0;
-    prevX = 0;
-    prevY = 0;
 }
 
 void Locator::resetAll()
@@ -88,35 +71,10 @@ Locator::Point* Locator::getPoint()
     return currPoint;
 }
 
-void Locator::storeCalculations()
-{
-    prevGyro = currGyro;
-    prevTheta = currTheta;
-    prevLeft = currLeft;
-    prevRight = currRight;
-    prevX = currX;
-    prevY = currY;
-}
-
 void Locator::update()
 {
-    currGyro = getAngle();
-    currTheta = prevTheta + (currGyro - prevGyro);
-    theta = (currTheta + prevTheta)/2;
-    currLeft = getDistance(leftEncoder);
-    currRight = getDistance(rightEncoder);
-    magnitude = (currLeft + currRight - prevLeft - prevRight) / 2;
-    deltaX = -magnitude * sin(theta/180*M_PI);
-    deltaY = magnitude * sin(theta/180*M_PI);
-    currX = prevX + deltaX;
-    currY = prevY + deltaY;
-
-    currPoint->x = currX;
-    currPoint->y = currY;
-    currPoint->angle = currGyro;
-    currPoint->distance = ((currLeft + currRight)/2)/12;
-
-    storeCalculations();
+    currPoint->angle = getAngle();
+    currPoint->distance = getMovedDistance();
 }
 
 }
