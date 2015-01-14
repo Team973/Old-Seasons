@@ -72,7 +72,7 @@ void Robot::dashboardUpdate()
 {
     SmartDashboard::PutString("DB/String 0", asString(leftDriveEncoder->Get()));
     SmartDashboard::PutString("DB/String 1", asString(rightDriveEncoder->Get()));
-    SmartDashboard::PutString("DB/String 3", autoManager->getCurrentName());
+    SmartDashboard::PutString("DB/String 2", autoManager->getCurrentName());
 }
 
 void Robot::RobotInit()
