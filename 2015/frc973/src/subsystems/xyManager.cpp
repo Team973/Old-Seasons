@@ -38,10 +38,10 @@ XYManager::XYManager()
 
     loopTimer = new Timer();
 
-    drivePID = new PID(0.05, 0, 0);
+    drivePID = new PID(0.0, 0, 0);
     drivePID->start();
     drivePID->setBounds(-1,1);
-    turnPID = new PID(.05, 0, 0);
+    turnPID = new PID(0.0, 0, 0);
     turnPID->start();
     turnPID->setBounds(-1,1);
 }
