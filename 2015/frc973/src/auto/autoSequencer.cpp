@@ -2,17 +2,10 @@
 
 namespace frc973 {
 
-AutoSequencer::AutoSequencer(std::string name_)
+AutoSequencer::AutoSequencer()
 {
-    name = name_;
-
     // add a dummy command
     addSequential(new AutoCommand());
-}
-
-std::string AutoSequencer::getName()
-{
-    return name;
 }
 
 void AutoSequencer::addSequential(AutoCommand* command)
