@@ -42,6 +42,17 @@ template <class T> class Channel {
       pthread_mutex_unlock(&m);
       return val;
     }
+
+    T recvNonBlock() {
+      pthread_mutex_lock(&m);
+      if (q.empty()) {
+          return NULL;
+      }
+      T val = q.front();
+      q.pop();
+      pthread_mutex_unlock(&m);
+      return val;
+    }
  
   private:
     pthread_mutex_t m;
