@@ -12,7 +12,7 @@
 namespace frc973 {
 
     int SocketClient::sockfd = 0;
-    Channel<std::string> SocketClient::sendChan(1);
+    Channel<std::string> SocketClient::sendChan(5);
     Channel<std::string> SocketClient::recvChan(1);
 
     void SocketClient::Start() {
