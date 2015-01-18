@@ -14,7 +14,7 @@ AutoManager::AutoManager(Drive* drive_)
 
     modes["Test"]->addSequential(new WaitCommand(1));
 
-    modes["Drive"]->addSequential(new DriveCommand(10, 10));
+    modes["Drive"]->addSequential(new DriveCommand(8, 10));
 
     it = modes.begin();
 }
