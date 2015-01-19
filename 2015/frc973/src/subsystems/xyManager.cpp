@@ -41,9 +41,12 @@ XYManager::XYManager()
             Constants::getConstant("kDriveD")->getDouble());
     drivePID->start();
     drivePID->setBounds(-1,1);
-    turnPID = new PID(0.0, 0, 0);
+    turnPID = new PID(
+            Constants::getConstant("kTurnP")->getDouble(),
+            Constants::getConstant("kTurnI")->getDouble(),
+            Constants::getConstant("kTurnD")->getDouble());
     turnPID->start();
-    turnPID->setBounds(-1,1);
+    turnPID->setBounds(-.7,7);
 }
 
 void XYManager::injectLocator(Locator* locator_)

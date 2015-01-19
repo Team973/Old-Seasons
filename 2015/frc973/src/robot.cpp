@@ -70,7 +70,6 @@ Robot::Robot()
 
 void Robot::dashboardUpdate()
 {
-    SmartDashboard::PutString("DB/String 1", " ");
     SmartDashboard::PutString("DB/String 2", autoManager->getCurrentName());
 }
 

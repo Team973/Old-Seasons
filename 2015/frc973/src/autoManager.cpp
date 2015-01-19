@@ -11,10 +11,13 @@ AutoManager::AutoManager(Drive* drive_)
 {
     modes["Test"] = new AutoSequencer();
     modes["Drive"] = new AutoSequencer();
+    modes["Turn"] = new AutoSequencer();
 
     modes["Test"]->addSequential(new WaitCommand(1));
 
     modes["Drive"]->addSequential(new DriveCommand(8, 10));
+
+    //modes["Turn"]->addSequential(new TurnCommand(90, 10));
 
     it = modes.begin();
 }
