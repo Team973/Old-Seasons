@@ -28,9 +28,6 @@ XYManager::XYManager()
 
     done = true;
 
-    currPoint = new Locator::Point;
-    origPoint = new Locator::Point;
-
     updateValue = new XYManager::MotorValue;
 
     linearProfile = new TrapProfile();
@@ -38,7 +35,10 @@ XYManager::XYManager()
 
     loopTimer = new Timer();
 
-    drivePID = new PID(0.0, 0, 0);
+    drivePID = new PID(
+            Constants::getConstant("kDriveP")->getDouble(),
+            Constants::getConstant("kDriveI")->getDouble(),
+            Constants::getConstant("kDriveD")->getDouble());
     drivePID->start();
     drivePID->setBounds(-1,1);
     turnPID = new PID(0.0, 0, 0);
@@ -61,7 +61,7 @@ void XYManager::setTargetDistance(float distance_)
     currPoint = locator->getPoint();
     origPoint = locator->getPoint();
     linearProfile = new TrapProfile(distance_, 8, 10, 15);
-    angularProfile = new TrapProfile(currPoint->angle, 100000, 100000,10000); // this is purposfully blown up do not change the numbers
+    angularProfile = new TrapProfile(currPoint.angle, 100000, 100000,10000); // this is purposfully blown up do not change the numbers
     done = false;
 }
 
@@ -85,6 +85,8 @@ XYManager::MotorValue* XYManager::getValues()
 
 void XYManager::update()
 {
+    locator->update();
+    
     currPoint = locator->getPoint();
 
     float currTime = loopTimer->Get();
@@ -95,9 +97,10 @@ void XYManager::update()
     float linearFF = (kLinVelFF*linearStep[2]) + (kLinAccelFF*linearStep[3]);
     float angularFF = (kAngVelFF*angularStep[2]) + (kAngAccelFF*angularStep[3]);
 
-    float distanceError = fabs(currPoint->distance - origPoint->distance);
-    float angleError = fabs(currPoint->angle - origPoint->distance);
+    float distanceTravelled = currPoint.distance - origPoint.distance;
+    //float angleError = currPoint.angle - origPoint.distance;
 
+    /*
     if (distanceError <= .5 && angleError <= 2)
     {
         done = true;
@@ -106,11 +109,17 @@ void XYManager::update()
     {
         done = false;
     }
+    */
 
     float driveInput, angularInput;
 
-    driveInput = -drivePID->update(linearStep[1] - distanceError, loopTimer) + linearFF;
-    angularInput = turnPID->update(angularStep[1] - currPoint->angle, loopTimer) + angularFF;
+    SmartDashboard::PutString("DB/String 5", asString(distanceTravelled));
+    SmartDashboard::PutString("DB/String 6", asString(linearStep[1]));
+    SmartDashboard::PutString("DB/String 7", asString(currPoint.distance));
+    SmartDashboard::PutString("DB/String 8", asString(origPoint.distance));
+
+    driveInput = drivePID->update(distanceTravelled - linearStep[1], loopTimer) + linearFF;
+    angularInput = turnPID->update(currPoint.angle - angularStep[1], loopTimer) + angularFF;
 
     updateValue->throttle = driveInput;
     updateValue->turn = angularInput;

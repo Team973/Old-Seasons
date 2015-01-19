@@ -35,7 +35,7 @@ void Locator::resetEncoders()
 float Locator::getDistance(Encoder *encoder)
 {
     float diameter = 2.5;
-    float encoderTicks = 360;
+    float encoderTicks = 250;
     float distancePerRevolution = M_PI * diameter;
     return ((encoder->Get() / encoderTicks) * distancePerRevolution);
 }
@@ -43,7 +43,9 @@ float Locator::getDistance(Encoder *encoder)
 // in feet
 float Locator::getMovedDistance()
 {
-    return ((getDistance(leftEncoder) + getDistance(rightEncoder))/2)/12;
+    //XXX (oliver): un comment this line when we have left and right encoders
+    //return ((getDistance(leftEncoder) + getDistance(rightEncoder))/2)/12;
+    return (getDistance(leftEncoder)/12);
 }
 
 float Locator::normalizeAngle(float theta)
@@ -66,13 +68,14 @@ float Locator::getAngle()
     return normalizeAngle(gyro->Get() * (360/gyroTicks));
 }
 
-Locator::Point* Locator::getPoint()
+Locator::Point Locator::getPoint()
 {
-    return currPoint;
+    return *currPoint;
 }
 
 void Locator::update()
 {
+    SmartDashboard::PutString("DB/String 0", asString(getMovedDistance()));
     currPoint->angle = getAngle();
     currPoint->distance = getMovedDistance();
 }

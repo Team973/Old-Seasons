@@ -13,6 +13,9 @@ void Constants::Extend()
     addConstant("kLinAccelFF", 0.03);
     addConstant("kAngVelFF", 0.0);
     addConstant("kAngAccelFF", 0.0);
+    addConstant("kDriveP", 0.0);
+    addConstant("kDriveI", 0.0);
+    addConstant("kDriveD", 0.0);
 
     readConstantsFile();
 }

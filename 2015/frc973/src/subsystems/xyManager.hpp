@@ -31,8 +31,8 @@ private:
     static XYManager* instance;
 
     Locator* locator;
-    Locator::Point* currPoint;
-    Locator::Point* origPoint;
+    Locator::Point currPoint;
+    Locator::Point origPoint;
 
     XYManager::MotorValue* updateValue;
 

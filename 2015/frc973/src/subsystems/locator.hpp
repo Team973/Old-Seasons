@@ -19,7 +19,7 @@ public:
     float getMovedDistance();
     float normalizeAngle(float theta);
     float getAngle();
-    Locator::Point* getPoint();
+    Locator::Point getPoint();
     void update();
 
 private:
