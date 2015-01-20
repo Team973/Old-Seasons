@@ -17,6 +17,7 @@ public:
     void resetGyro();
     void resetEncoders();
     float getMovedDistance();
+    float getLinearVelocity();
     float normalizeAngle(float theta);
     float getAngle();
     Locator::Point getPoint();
@@ -24,6 +25,7 @@ public:
 
 private:
     float getDistance(Encoder *encoder);
+    float getVelocity(Encoder *encoder);
 
     Point *currPoint;
 

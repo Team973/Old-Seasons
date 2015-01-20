@@ -2,6 +2,7 @@
 #include "WPILib.h"
 #include "../lib/trapProfile.hpp"
 #include "../lib/pid.hpp"
+#include "lib/utility.hpp"
 #include "../constants.hpp"
 #include <math.h>
 #include <vector>
@@ -49,6 +50,8 @@ XYManager::XYManager()
             Constants::getConstant("kTurnD")->getDouble());
     turnPID->start();
     turnPID->setBounds(-.7,7);
+
+    printf("Profile Pos, Profile Vel, Profile Accel, Actual Pos, Actual Vel\n");
 }
 
 void XYManager::injectLocator(Locator* locator_)
@@ -73,7 +76,7 @@ void XYManager::setTargetDistance(float distance_)
 void XYManager::setTargetAngle(float angle_)
 {
     angularProfile = new TrapProfile(angle_, 100000, 100000,10000); // this is purposfully blown up do not change the numbers
-    linearProfile = new TrapProfile(0, 8, 10, 15); // this means that we don't have to seperate turn and drive in update
+    linearProfile = new TrapProfile(0, 0, 0, 0); // this means that we don't have to seperate turn and drive in update
     done = false;
 }
 
@@ -122,6 +125,8 @@ void XYManager::update()
     SmartDashboard::PutString("DB/String 6", asString(linearStep[1]));
     SmartDashboard::PutString("DB/String 7", asString(currPoint.distance));
     SmartDashboard::PutString("DB/String 8", asString(origPoint.distance));
+
+    printf("%f, %f, %f, %f, %f\n", linearStep[1], linearStep[2], linearStep[3], distanceTravelled, locator->getLinearVelocity());
 
     driveInput = drivePID->update(distanceTravelled - linearStep[1], loopTimer) + linearFF;
     angularInput = turnPID->update(currPoint.angle - angularStep[1], loopTimer) + angularFF;
