@@ -73,7 +73,7 @@ void XYManager::setTargetDistance(float distance_)
 void XYManager::setTargetAngle(float angle_)
 {
     angularProfile = new TrapProfile(angle_, 100000, 100000,10000); // this is purposfully blown up do not change the numbers
-    linearProfile = new TrapProfile(0, 8, 10, 15); // this means that we don't have to seperate turn and drive in update
+    linearProfile = new TrapProfile(0, 0, 0, 0); // this means that we don't have to seperate turn and drive in update
     done = false;
 }
 
