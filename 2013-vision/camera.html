@@ -1,0 +1,44 @@
+<style type="text/css">
+    html, body {
+        margin: 0;
+        padding: 0;
+    }
+
+    #feed {
+        position: absolute;
+        top: 0;
+        left: 0;
+        margin: 0;
+        padding: 0;
+        -moz-transform: translate(-20px, 0px);
+        -webkit-transform: translate(-20px, 0px);
+    }
+
+    #overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        margin: 0;
+        padding: 0;
+        -moz-transform: translate(-20px, 0px);
+        -webkit-transform: translate(-20px, 0px);
+    } 
+</style>
+<img id="feed" src="http://10.9.73.20/mjpg/video.mjpg" width="320" height="240">
+<canvas id="overlay" width="320" height="240"></canvas>
+<script type="text/javascript">
+    var w = 320;
+    var h = 240;
+    var horizLineY = h * 0.5;
+    var context = document.getElementById("overlay").getContext("2d");
+    context.lineWidth = 2;
+    context.strokeStyle = "red";
+    // horizontal line
+    context.moveTo(0, horizLineY);
+    context.lineTo(w, horizLineY);
+    context.stroke();
+    // vertical line
+    context.moveTo(w / 2, 0);
+    context.lineTo(w / 2, h);
+    context.stroke();
+</script>
