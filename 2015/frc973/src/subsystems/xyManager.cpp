@@ -30,6 +30,8 @@ XYManager::XYManager()
 
     updateValue = new XYManager::MotorValue;
 
+    locator = NULL;
+
     linearProfile = new TrapProfile();
     angularProfile = new TrapProfile();
 
