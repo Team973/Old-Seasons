@@ -15,7 +15,12 @@ AutoManager::AutoManager(Drive* drive_)
 
     modes["Test"]->addSequential(new WaitCommand(1));
 
-    modes["Drive"]->addSequential(new DriveCommand(8, 10));
+    modes["Drive"]->addSequential(new DriveCommand(5, 5));
+    modes["Drive"]->addSequential(new TurnCommand(90, 3));
+    modes["Drive"]->addSequential(new DriveCommand(2, 4));
+    modes["Drive"]->addConcurrent(new TurnCommand(90, 3));
+    modes["Drive"]->addConcurrent(new WaitCommand(7));
+    modes["Drive"]->addSequential(new DriveCommand(5, 5));
 
     //modes["Turn"]->addSequential(new TurnCommand(90, 10));
 

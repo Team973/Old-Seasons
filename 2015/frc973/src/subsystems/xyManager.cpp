@@ -105,11 +105,10 @@ void XYManager::update()
     float linearFF = (kLinVelFF*linearStep[2]) + (kLinAccelFF*linearStep[3]);
     float angularFF = (kAngVelFF*angularStep[2]) + (kAngAccelFF*angularStep[3]);
 
-    float distanceTravelled = currPoint.distance - origPoint.distance;
-    //float angleError = currPoint.angle - origPoint.distance;
+    float relativeDistance = currPoint.distance - origPoint.distance;
+    float angleError = currPoint.angle - origPoint.distance;
 
-    /*
-    if (distanceError <= .5 && angleError <= 2)
+    if (relativeDistance<= .5 && angleError <= 2)
     {
         done = true;
     }
@@ -117,18 +116,17 @@ void XYManager::update()
     {
         done = false;
     }
-    */
 
     float driveInput, angularInput;
 
-    SmartDashboard::PutString("DB/String 5", asString(distanceTravelled));
+    SmartDashboard::PutString("DB/String 5", asString(relativeDistance));
     SmartDashboard::PutString("DB/String 6", asString(linearStep[1]));
     SmartDashboard::PutString("DB/String 7", asString(currPoint.distance));
     SmartDashboard::PutString("DB/String 8", asString(origPoint.distance));
 
-    printf("%f, %f, %f, %f, %f\n", linearStep[1], linearStep[2], linearStep[3], distanceTravelled, locator->getLinearVelocity());
+    printf("%f, %f, %f, %f, %f\n", linearStep[1], linearStep[2], linearStep[3], relativeDistance, locator->getLinearVelocity());
 
-    driveInput = drivePID->update(distanceTravelled - linearStep[1], loopTimer) + linearFF;
+    driveInput = drivePID->update(relativeDistance - linearStep[1], loopTimer) + linearFF;
     angularInput = turnPID->update(currPoint.angle - angularStep[1], loopTimer) + angularFF;
 
     updateValue->throttle = driveInput;
