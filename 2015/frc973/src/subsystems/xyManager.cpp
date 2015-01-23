@@ -106,9 +106,17 @@ void XYManager::update()
     float angularFF = (kAngVelFF*angularStep[2]) + (kAngAccelFF*angularStep[3]);
 
     float relativeDistance = currPoint.distance - origPoint.distance;
-    float angleError = currPoint.angle - origPoint.distance;
+    float relativeAngle = currPoint.angle - origPoint.distance;
 
-    if (relativeDistance<= .5 && angleError <= 2)
+    float angleError = 0;
+    if (fabs(currPoint.angle - angularStep[1]) > (currPoint.angle + angularStep[1])) {
+        angleError = (currPoint.angle + angularStep[1]);
+    }
+    else {
+        angleError = currPoint.angle - angularStep[1];
+    }
+
+    if (relativeDistance<= .5 && relativeAngle <= 2)
     {
         done = true;
     }
@@ -127,7 +135,7 @@ void XYManager::update()
     printf("%f, %f, %f, %f, %f\n", linearStep[1], linearStep[2], linearStep[3], relativeDistance, locator->getLinearVelocity());
 
     driveInput = drivePID->update(relativeDistance - linearStep[1], loopTimer) + linearFF;
-    angularInput = turnPID->update(currPoint.angle - angularStep[1], loopTimer) + angularFF;
+    angularInput = turnPID->update(angleError, loopTimer) + angularFF;
 
     updateValue->throttle = driveInput;
     updateValue->turn = angularInput;
