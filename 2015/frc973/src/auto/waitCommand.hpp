@@ -8,7 +8,6 @@ namespace frc973 {
 class WaitCommand : public AutoCommand {
 public:
     WaitCommand(float timeout_);
-protected:
     void init();
     bool taskPeriodic();
 };

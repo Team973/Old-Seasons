@@ -6,6 +6,9 @@ AutoSequencer::AutoSequencer()
 {
     // add a dummy command
     addSequential(new AutoCommand());
+
+    currInnerCommand = 0;
+    currOuterCommand = 0;
 }
 
 void AutoSequencer::addSequential(AutoCommand* command)
@@ -60,12 +63,28 @@ bool AutoSequencer::run()
         return true;
     }
 
-    for (unsigned int k=0;k<sequence.size();k++)
-    {
-        for (unsigned int v=0;v<sequence[k].size();v++)
-        {
-            sequence[k][v]->cmd->run();
+    printf("hit 1\n");
+    if (currOuterCommand < sequence.size()) {
+        printf("hit 2\n");
+        if (currInnerCommand < sequence[currOuterCommand].size()) {
+
+            if (sequence[currOuterCommand][currInnerCommand]->cmd->run()) {
+                printf("hit 3\n");
+                currInnerCommand += 1;
+
+                if (currInnerCommand >= sequence[currOuterCommand].size()) {
+                    currInnerCommand = 0;
+                    currOuterCommand += 1;
+
+                    if (currOuterCommand >= sequence.size()) {
+                        return true;
+                    }
+                }
+            }
         }
+    }
+    else {
+        return true;
     }
 
     return false;

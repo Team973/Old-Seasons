@@ -13,6 +13,7 @@ public:
     void init();
     bool taskPeriodic();
 private:
+    float target;
     XYManager *xyManager;
 };
 
