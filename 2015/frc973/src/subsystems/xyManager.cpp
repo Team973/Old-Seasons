@@ -116,7 +116,8 @@ void XYManager::update()
         angleError = currPoint.angle - angularStep[1];
     }
 
-    if (relativeDistance<= .5 && relativeAngle <= 2)
+    /*
+    if ( <= .5 && relativeAngle <= 2)
     {
         done = true;
     }
@@ -124,6 +125,7 @@ void XYManager::update()
     {
         done = false;
     }
+    */
 
     float driveInput, angularInput;
 

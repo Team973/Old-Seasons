@@ -5,6 +5,9 @@ namespace frc973 {
 // sets the timeout and initializes the timer
 AutoCommand::AutoCommand() {
     timer = new Timer();
+
+    initYet = false;
+    doneYet = false;
 }
 
 // sets timeout in seconds

@@ -14,6 +14,8 @@ public:
     bool taskPeriodic();
 private:
     XYManager *xyManager;
+
+    float target;
 };
 
 }

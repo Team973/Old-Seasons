@@ -6,7 +6,8 @@ namespace frc973 {
 TurnCommand::TurnCommand(float target_, float timeout_)
 {
     xyManager = XYManager::getInstance();
-    xyManager->setTargetAngle(target_);
+
+    target = target_;
 
     setTimeout(timeout_);
 }
@@ -15,6 +16,7 @@ void TurnCommand::init()
 {
     timer->Start();
     timer->Reset();
+    xyManager->setTargetAngle(target);
     xyManager->startProfile();
 }
 

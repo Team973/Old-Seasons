@@ -6,7 +6,8 @@ namespace frc973 {
 DriveCommand::DriveCommand(float target_, float timeout_)
 {
     xyManager = XYManager::getInstance();
-    xyManager->setTargetDistance(target_);
+
+    target = target_;
 
     setTimeout(timeout_);
 }
@@ -15,6 +16,7 @@ void DriveCommand::init()
 {
     timer->Start();
     timer->Reset();
+    xyManager->setTargetDistance(target);
     xyManager->startProfile();
 }
 
@@ -27,5 +29,19 @@ bool DriveCommand::taskPeriodic()
 
     return false;
 }
+/*
+bool DriveCommand::run() {
+    if (!initYet) {
+        initYet = true;
+        init();
+    }
+
+    if (!doneYet) {
+        doneYet = taskPeriodic();
+    }
+
+    return doneYet;
+}
+*/
 
 }
