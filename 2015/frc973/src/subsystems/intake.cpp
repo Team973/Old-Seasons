@@ -1,12 +1,5 @@
-/*
- * intake.cpp
- *
- *  Created on: Jan 15, 2015
- *      Author: Logan Wilt
- */
-
-#include "subsystems/intake.hpp"
 #include "WPILib.h"
+#include "intake.hpp"
 
 namespace frc973 {
 
