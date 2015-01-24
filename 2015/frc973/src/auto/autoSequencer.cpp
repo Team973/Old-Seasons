@@ -18,27 +18,15 @@ void AutoSequencer::addSequential(AutoCommand* command)
 
 void AutoSequencer::addConcurrent(AutoCommand* command)
 {
-    COMMAND* c = newCommand(command, "con");
-
-    if (sequence.back().back()->type == "con")
-    {
-        addCommand(c, sequence.size());
-    }
-    else
-    {
-        addCommand(c);
-    }
+    addCommand(newCommand(command, "con"));
 }
 
-// order = -1 by default
-void AutoSequencer::addCommand(AutoSequencer::COMMAND* command, int order)
+void AutoSequencer::addCommand(AutoSequencer::COMMAND* command)
 {
-    if (order != -1)
-    {
-        sequence[order].push_back(command);
+    if (command->type == "con" && sequence.back().back()->type == "con") {
+        sequence.back().push_back(command);
     }
-    else
-    {
+    else {
         sequence.push_back(std::vector<AutoSequencer::COMMAND*> (1, command));
     }
 }
