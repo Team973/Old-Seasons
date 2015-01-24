@@ -2,7 +2,7 @@
 #include "WPILib.h"
 #include "../lib/trapProfile.hpp"
 #include "../lib/pid.hpp"
-#include "lib/utility.hpp"
+#include "../lib/utility.hpp"
 #include "../constants.hpp"
 #include <math.h>
 #include <vector>
@@ -33,8 +33,8 @@ XYManager::XYManager()
 
     locator = NULL;
 
-    linearProfile = new TrapProfile();
-    angularProfile = new TrapProfile();
+    linearProfile = new TrapProfile(0, 0, 0, 0);
+    angularProfile = new TrapProfile(0, 0, 0, 0);
 
     loopTimer = new Timer();
 
