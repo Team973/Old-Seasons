@@ -21,7 +21,7 @@ private:
         AutoCommand* cmd;
     };
 
-    void addCommand(AutoSequencer::COMMAND* command, int order=-1);
+    void addCommand(AutoSequencer::COMMAND* command);
     AutoSequencer::COMMAND* newCommand(AutoCommand* command, std::string type);
     std::vector< std::vector<AutoSequencer::COMMAND*> > sequence;
 
