@@ -27,6 +27,10 @@ inline float deadband(float x, float threshold)
         return x;
 }
 
+inline float signMin(float x, float y) {
+    return (fabs(x) > fabs(y)) ? x : y;
+}
+
 inline std::string asLower(std::string line)
 {
     for (unsigned int n=0;n<line.size();n++)
