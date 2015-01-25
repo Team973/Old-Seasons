@@ -87,7 +87,7 @@ Locator::Point Locator::getPoint()
 
 void Locator::update()
 {
-    SmartDashboard::PutString("DB/String 0", asString(getMovedDistance()));
+    SmartDashboard::PutString("DB/String 0", asString(gyro->Get() * (360.0/1024.0)));
     currPoint->angle = getAngle();
     currPoint->distance = getMovedDistance();
 }

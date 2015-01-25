@@ -75,8 +75,9 @@ void XYManager::setTargetDistance(float distance_)
 
 void XYManager::setTargetAngle(float angle_)
 {
+    currPoint = locator->getPoint();
     angularProfile = new TrapProfile(angle_, 100000, 100000,10000); // this is purposfully blown up do not change the numbers
-    linearProfile = new TrapProfile(0, 0, 0, 0); // this means that we don't have to seperate turn and drive in update
+    linearProfile = new TrapProfile(currPoint.distance - origPoint.distance, 0, 0, 0); // this means that we don't have to seperate turn and drive in update
     done = false;
 }
 
@@ -108,19 +109,10 @@ void XYManager::update()
     float relativeDistance = currPoint.distance - origPoint.distance;
     float relativeAngle = currPoint.angle - origPoint.distance;
 
-    float angleError = 0;
 
-    float baseError = currPoint.angle - angularProfile->getTarget();
+    float baseError = angularProfile->getTarget() - currPoint.angle;
 
-    float a = baseError;
-    float b = baseError + 360;
-    float c = baseError - 360;
-
-    if (fabs(a) < fmin(fabs(b), fabs(c))) {
-        angleError = a;
-    } else {
-        angleError = signMin(b, c);
-    }
+    float angleError = baseError;
 
     float driveInput = 0;
     float angularInput = 0;
@@ -135,7 +127,7 @@ void XYManager::update()
     printf("%f, %f, %f, %f, %f\n", linearStep[1], linearStep[2], linearStep[3], relativeDistance, locator->getLinearVelocity());
 
     driveInput = drivePID->update(relativeDistance - linearStep[1], loopTimer) + linearFF;
-    angularInput = turnPID->update(locator->normalizeAngle(angleError), loopTimer) + angularFF;
+    angularInput = -(turnPID->update(locator->normalizeAngle(angleError), loopTimer)) + angularFF;
 
     updateValue->throttle = driveInput;
     updateValue->turn = angularInput;
