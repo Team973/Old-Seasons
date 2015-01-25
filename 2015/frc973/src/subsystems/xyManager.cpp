@@ -27,7 +27,7 @@ XYManager::XYManager()
     kAngVelFF = Constants::getConstant("kAngVelFF")->getDouble();
     kAngAccelFF = Constants::getConstant("kAngAccelFF")->getDouble();
 
-    done = true;
+    done = false;
 
     updateValue = new XYManager::MotorValue;
 
@@ -107,19 +107,21 @@ void XYManager::update()
     float angularFF = (kAngVelFF*angularStep[2]) + (kAngAccelFF*angularStep[3]);
 
     float relativeDistance = currPoint.distance - origPoint.distance;
-    float relativeAngle = currPoint.angle - origPoint.distance;
-
 
     float baseError = angularProfile->getTarget() - currPoint.angle;
 
     float angleError = baseError;
+
+    if ( (linearProfile->getTarget() - relativeDistance) <= .5 && angleError <= 2 && locator->getLinearVelocity() < 2) {
+        done = true;
+    }
 
     float driveInput = 0;
     float angularInput = 0;
 
     SmartDashboard::PutString("DB/String 4", asString(currPoint.angle));
     SmartDashboard::PutString("DB/String 5", asString(relativeDistance));
-    SmartDashboard::PutString("DB/String 6", asString(linearStep[1]));
+    SmartDashboard::PutString("DB/String 6", asString(linearProfile->getTarget()));
     SmartDashboard::PutString("DB/String 7", asString(currPoint.distance));
     SmartDashboard::PutString("DB/String 8", asString(origPoint.distance));
     SmartDashboard::PutString("DB/String 9", asString(locator->normalizeAngle(angleError)));
