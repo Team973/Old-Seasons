@@ -56,11 +56,11 @@ bool AutoSequencer::run()
             if (sequence[currOuterCommand][v]->cmd->run()) {
                 commandsCompleted += 1;
             }
+        }
 
-            if (commandsCompleted >= sequence[currOuterCommand].size()) {
-                commandsCompleted = 0;
-                currOuterCommand += 1;
-            }
+        if (commandsCompleted >= sequence[currOuterCommand].size()) {
+            commandsCompleted = 0;
+            currOuterCommand += 1;
         }
     }
     else {

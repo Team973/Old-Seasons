@@ -122,19 +122,6 @@ void XYManager::update()
         angleError = signMin(b, c);
     }
 
-
-
-    /*
-    if ( <= .5 && relativeAngle <= 2)
-    {
-        done = true;
-    }
-    else
-    {
-        done = false;
-    }
-    */
-
     float driveInput = 0;
     float angularInput = 0;
 
@@ -148,7 +135,7 @@ void XYManager::update()
     printf("%f, %f, %f, %f, %f\n", linearStep[1], linearStep[2], linearStep[3], relativeDistance, locator->getLinearVelocity());
 
     driveInput = drivePID->update(relativeDistance - linearStep[1], loopTimer) + linearFF;
-    //angularInput = turnPID->update(angleError, loopTimer) + angularFF;
+    angularInput = turnPID->update(locator->normalizeAngle(angleError), loopTimer) + angularFF;
 
     updateValue->throttle = driveInput;
     updateValue->turn = angularInput;
