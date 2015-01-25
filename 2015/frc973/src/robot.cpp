@@ -79,6 +79,7 @@ void Robot::RobotInit()
 
 void Robot::DisabledInit()
 {
+    autoManager->resetModes();
 }
 
 void Robot::DisabledPeriodic()

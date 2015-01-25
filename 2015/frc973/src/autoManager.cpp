@@ -9,6 +9,10 @@ namespace frc973 {
 
 AutoManager::AutoManager(Drive* drive_)
 {
+    resetModes();
+}
+
+void AutoManager::setModes() {
     modes["Test"] = new AutoSequencer();
     modes["Drive"] = new AutoSequencer();
     modes["Turn"] = new AutoSequencer();
@@ -26,6 +30,11 @@ AutoManager::AutoManager(Drive* drive_)
     //modes["Turn"]->addSequential(new TurnCommand(90, 10));
 
     it = modes.begin();
+}
+
+void AutoManager::resetModes() {
+    modes.clear();
+    setModes();
 }
 
 AutoSequencer* AutoManager::getCurrentMode()

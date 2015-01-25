@@ -13,6 +13,8 @@ class AutoManager
 {
 public:
     AutoManager(Drive* drive_);
+    void resetModes();
+    void setModes();
     void nextMode();
     AutoSequencer* getCurrentMode();
     std::string getCurrentName();
