@@ -7,7 +7,6 @@ AutoSequencer::AutoSequencer()
     // add a dummy command
     addSequential(new AutoCommand());
 
-    commandsCompleted = 0;
     currOuterCommand = 0;
 }
 
@@ -51,15 +50,15 @@ bool AutoSequencer::run()
         return true;
     }
 
+    bool readyToContinue  = true;
     if (currOuterCommand < sequence.size()) {
         for (unsigned int v=0; v < sequence[currOuterCommand].size(); v++) {
-            if (sequence[currOuterCommand][v]->cmd->run()) {
-                commandsCompleted += 1;
+            if (!sequence[currOuterCommand][v]->cmd->run()) {
+                readyToContinue = false;
             }
         }
 
-        if (commandsCompleted >= sequence[currOuterCommand].size()) {
-            commandsCompleted = 0;
+        if (readyToContinue) {
             currOuterCommand += 1;
         }
     }

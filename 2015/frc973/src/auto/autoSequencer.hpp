@@ -25,7 +25,6 @@ private:
     AutoSequencer::COMMAND* newCommand(AutoCommand* command, std::string type);
     std::vector< std::vector<AutoSequencer::COMMAND*> > sequence;
 
-    unsigned int commandsCompleted;
     unsigned int currOuterCommand;
 };
 
