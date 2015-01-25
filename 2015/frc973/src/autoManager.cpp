@@ -13,13 +13,13 @@ AutoManager::AutoManager(Drive* drive_)
     modes["Drive"] = new AutoSequencer();
     modes["Turn"] = new AutoSequencer();
 
-    modes["Test"]->addSequential(new TurnCommand(180, 10));
+    modes["Test"]->addSequential(new TurnCommand(90, 10));
 
     /*
-    modes["Drive"]->addSequential(new DriveCommand(3, 5));
-    modes["Drive"]->addSequential(new TurnCommand(180, 3));
-    modes["Drive"]->addSequential(new DriveCommand(3, 4));
-    modes["Drive"]->addConcurrent(new TurnCommand(180, 3));
+    modes["Drive"]->addSequential(new DriveCommand(3, 10));
+    modes["Drive"]->addSequential(new TurnCommand(90, 10));
+    modes["Drive"]->addSequential(new DriveCommand(3, 10));
+    modes["Drive"]->addConcurrent(new TurnCommand(180, 10));
     modes["Drive"]->addConcurrent(new WaitCommand(7));
     modes["Drive"]->addSequential(new DriveCommand(3, 5));
     modes["Drive"]->addSequential(new TurnCommand(180, 3));
