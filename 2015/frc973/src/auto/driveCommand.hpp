@@ -6,6 +6,7 @@
 namespace frc973 {
 
 class XYManager;
+class FlagAccumulator;
 
 class DriveCommand : public AutoCommand {
 public:
@@ -15,6 +16,7 @@ public:
 private:
     float target;
     XYManager *xyManager;
+    FlagAccumulator *accumulator;
 };
 
 }
