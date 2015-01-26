@@ -19,7 +19,7 @@ void AutoManager::setModes() {
 
     //modes["Test"]->addSequential(new TurnCommand(90, 10));
 
-    modes["Drive"]->addSequential(new DriveCommand(3, 5));
+    modes["Drive"]->addSequential(new DriveCommand(3, 10));
     modes["Drive"]->addSequential(new TurnCommand(90, 5));
     modes["Drive"]->addSequential(new DriveCommand(3, 5));
     modes["Drive"]->addConcurrent(new TurnCommand(0, 5));
