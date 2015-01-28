@@ -20,7 +20,9 @@ public:
     void setPreset(std::string preset);
     void setTarget(Preset target);
     void update();
+
 private:
+    void addPreset(std::string name, float horiz, float height);
 
     PID *armPID;
     PID *elevatorPID;

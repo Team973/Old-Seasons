@@ -12,8 +12,15 @@ Sauropod::Sauropod() {
 
     currPreset = "test1";
 
-    presets["test1"];
-    presets["test2"];
+    addPreset("test1", 2, 3);
+    addPreset("test2", 1, 1.5);
+}
+
+void Sauropod::addPreset(std::string name, float horiz, float height) {
+    Preset p;
+    p.horizProjection = horiz;
+    p.height = height;
+    presets[name] = p;
 }
 
 void Sauropod::setPreset(std::string preset) {
