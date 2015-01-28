@@ -1,6 +1,8 @@
 #ifndef PID_HPP
 #define PID_HPP
 
+#include "WPILib.h"
+
 namespace frc973 {
 
 class PID
