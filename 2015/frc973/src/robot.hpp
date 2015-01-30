@@ -30,12 +30,14 @@ private:
     Talon *rightFrontDrive;
     Talon *leftBackDrive;
     Talon *rightBackDrive;
+    VictorSP *elevatorMotor;
 
     Talon *strafeDrive;
 
     Encoder *leftDriveEncoder;
     Encoder *rightDriveEncoder;
     Encoder *gyro;
+    Encoder *elevatorEncoder;
 
     Joystick *testStick;
 
