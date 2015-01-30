@@ -2,7 +2,7 @@
 #define AUTO_SEQUENCER_HPP
 
 #include <vector>
-#include "autoCommand.hpp"
+#include "commands/autoCommand.hpp"
 #include <string>
 
 namespace frc973 {
