@@ -47,11 +47,15 @@ Robot::Robot()
     leftBackDrive = new Talon(2);
     rightBackDrive = new Talon(3);
 
+    elevatorMotor = new VictorSP(6);
+
     strafeDrive = new Talon(4);
 
     leftDriveEncoder = new Encoder(0,1);
     rightDriveEncoder = new Encoder(2,3);
-    gyro = new Encoder(4,5);
+    gyro = new Encoder(14,15);
+
+    elevatorEncoder = new Encoder(5,6);
 
     locator = new Locator(leftDriveEncoder, rightDriveEncoder, gyro);
 
@@ -73,6 +77,7 @@ void Robot::dashboardUpdate()
     SmartDashboard::PutString("DB/String 0", asString(leftDriveEncoder->Get()));
     SmartDashboard::PutString("DB/String 1", asString(rightDriveEncoder->Get()));
     SmartDashboard::PutString("DB/String 2", autoManager->getCurrentName());
+    SmartDashboard::PutString("DB/String 3", asString(elevatorEncoder->Get()));
 }
 
 void Robot::RobotInit()
@@ -118,6 +123,7 @@ void Robot::TeleopPeriodic()
 {
     drive->CheesyDrive(deadband(testStick->GetY(), 0.1), deadband(testStick->GetRawAxis(2), 0.1), false, testStick->GetRawButton(6));
     drive->strafe(-deadband(testStick->GetX(), 0.3));
+    elevatorMotor->Set(deadband(testStick->GetRawAxis(3), 0.1));
 }
 
 void Robot::TestPeriodic()
