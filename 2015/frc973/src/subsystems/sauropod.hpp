@@ -11,8 +11,8 @@ class PID;
 class Sauropod {
 
     struct Preset {
-        float horizProjection=0;
-        float height=0;
+        float horizProjection;
+        float height;
     };
 
 public:

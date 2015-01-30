@@ -17,9 +17,7 @@ Sauropod::Sauropod() {
 }
 
 void Sauropod::addPreset(std::string name, float horiz, float height) {
-    Preset p;
-    p.horizProjection = horiz;
-    p.height = height;
+    Preset p = {horiz, height};
     presets[name] = p;
 }
 
