@@ -1,6 +1,6 @@
 #include "driveCommand.hpp"
-#include "../subsystems/xyManager.hpp"
-#include "../lib/flagAccumulator.hpp"
+#include "../../subsystems/xyManager.hpp"
+#include "../../lib/flagAccumulator.hpp"
 
 namespace frc973 {
 
