@@ -1,8 +1,8 @@
 #include "autoManager.hpp"
-#include "auto/autoCommand.hpp"
-#include "auto/waitCommand.hpp"
-#include "auto/driveCommand.hpp"
-#include "auto/turnCommand.hpp"
+#include "auto/commands/autoCommand.hpp"
+#include "auto/commands/waitCommand.hpp"
+#include "auto/commands/driveCommand.hpp"
+#include "auto/commands/turnCommand.hpp"
 #include "subsystems/drive.hpp"
 
 namespace frc973 {
