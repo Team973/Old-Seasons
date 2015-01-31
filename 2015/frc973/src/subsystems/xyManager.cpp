@@ -68,7 +68,7 @@ void XYManager::setTargetDistance(float distance_)
 {
     currPoint = locator->getPoint();
     origPoint = locator->getPoint();
-    linearProfile = new TrapProfile(distance_, 8, 10, 15);
+    linearProfile = new TrapProfile(distance_, 8.0, 10.0, 15.0);
     angularProfile = new TrapProfile(currPoint.angle, 100000, 100000,10000); // this is purposfully blown up do not change the numbers
     done = false;
 }
@@ -112,7 +112,7 @@ void XYManager::update()
 
     float angleError = baseError;
 
-    if ( (linearProfile->getTarget() - relativeDistance) <= .5 && angleError <= 2 && locator->getLinearVelocity() < 2) {
+    if ( fabs(linearProfile->getTarget() - relativeDistance) <= .5 && angleError <= 2 && locator->getLinearVelocity() < 2) {
         done = true;
     }
 
@@ -124,15 +124,15 @@ void XYManager::update()
     SmartDashboard::PutString("DB/String 6", asString(linearProfile->getTarget()));
     SmartDashboard::PutString("DB/String 7", asString(currPoint.distance));
     SmartDashboard::PutString("DB/String 8", asString(origPoint.distance));
-    SmartDashboard::PutString("DB/String 9", asString(locator->normalizeAngle(angleError)));
 
-    printf("%f, %f, %f, %f, %f\n", linearStep[1], linearStep[2], linearStep[3], relativeDistance, locator->getLinearVelocity());
+    printf("%f, %f, %f, %f, %f, %f\n",linearStep[0], linearStep[1], linearStep[2], linearStep[3], relativeDistance, locator->getLinearVelocity());
 
     driveInput = drivePID->update(relativeDistance - linearStep[1], loopTimer) + linearFF;
-    angularInput = -(turnPID->update(locator->normalizeAngle(angleError), loopTimer)) + angularFF;
+    angularInput = (turnPID->update(locator->normalizeAngle(angleError), loopTimer)) + angularFF;
+
+    SmartDashboard::PutString("DB/String 9", asString(angularInput));
 
     updateValue->throttle = driveInput;
     updateValue->turn = angularInput;
 }
-
 }
