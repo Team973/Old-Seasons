@@ -8,7 +8,7 @@ namespace frc973 {
 TrapProfile::TrapProfile(float xTarget_, float vMax_, float aMax_, float dMax_)
 {
     realTarget = xTarget_;
-    if (xTarget < 0)
+    if (xTarget_ < 0)
     {
         xTarget = -xTarget_;
         directionFlag = -1;

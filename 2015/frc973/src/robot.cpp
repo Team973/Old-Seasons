@@ -53,7 +53,7 @@ Robot::Robot()
 
     leftDriveEncoder = new Encoder(0,1);
     rightDriveEncoder = new Encoder(2,3);
-    gyro = new Encoder(14,15);
+    gyro = new Encoder(8,9);
 
     elevatorEncoder = new Encoder(5,6);
 
@@ -78,6 +78,7 @@ void Robot::dashboardUpdate()
     SmartDashboard::PutString("DB/String 1", asString(rightDriveEncoder->Get()));
     SmartDashboard::PutString("DB/String 2", autoManager->getCurrentName());
     SmartDashboard::PutString("DB/String 3", asString(elevatorEncoder->Get()));
+    SmartDashboard::PutString("DB/String 4", asString(gyro->Get()));
 }
 
 void Robot::RobotInit()
