@@ -35,29 +35,25 @@ void Locator::resetEncoders()
 float Locator::getDistance(Encoder *encoder)
 {
     float diameter = 2.5;
-    float encoderTicks = 250;
+    float encoderTicks = 360;
     float distancePerRevolution = M_PI * diameter;
     return ((encoder->Get() / encoderTicks) * distancePerRevolution);
 }
 
 float Locator::getVelocity(Encoder *encoder) {
     float diameter = 2.5;
-    float encoderTicks = 250;
+    float encoderTicks = 360;
     return encoder->GetRate() / encoderTicks * M_PI / 12 * diameter;
 }
 
 // in feet
 float Locator::getMovedDistance()
 {
-    //XXX (oliver): un comment this line when we have left and right encoders
-    //return ((getDistance(leftEncoder) + getDistance(rightEncoder))/2)/12;
-    return (getDistance(leftEncoder)/12);
+    return ((getDistance(leftEncoder) + getDistance(rightEncoder))/2)/12;
 }
 
 float Locator::getLinearVelocity() {
-    //XXX (oliver): un comment this line when we have left and right encoders
-    //return (getVelocity(leftEncoder) + getVelocity(rightEncoder))/2;
-    return getVelocity(leftEncoder);
+    return (getVelocity(leftEncoder) + getVelocity(rightEncoder))/2;
 }
 
 float Locator::normalizeAngle(float theta)
