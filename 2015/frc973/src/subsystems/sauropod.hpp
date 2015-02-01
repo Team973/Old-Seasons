@@ -25,6 +25,8 @@ public:
 
 private:
     void addPreset(std::string name, float horiz, float height);
+    bool isPackSafe();
+    bool isDropSafe();
 
     VictorSP *elevatorMotor;
     VictorSP *armMotor;
@@ -35,6 +37,8 @@ private:
     PID *elevatorPID;
 
     std::string currPreset;
+
+    bool inCradle;
 
     std::map<std::string, Preset> presets;
 };
