@@ -14,7 +14,11 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* eleva
     armEncoder = armEncoder_;
 
     armPID = new PID(0,0,0);
+    armPID->setBounds(-1,1);
     elevatorPID = new PID(0,0,0);
+    elevatorPID->setBounds(-1,1);
+
+    inCradle = false;
 
     currPreset = "hardStop";
 
@@ -62,12 +66,13 @@ void Sauropod::setTarget(Preset target) {
     elevatorPID->setTarget(elevatorTarget);
 }
 
+// in feet
 float Sauropod::getElevatorHeight() {
     float encoderTicks = 360;
     float diameter = 1.5;
     float gearRatio = 1;
     float distancePerRevolution = diameter * M_PI;
-    return (elevatorEncoder->Get()/(encoderTicks*gearRatio))*distancePerRevolution;
+    return ((elevatorEncoder->Get()/(encoderTicks*gearRatio))*distancePerRevolution)/12;
 }
 
 float Sauropod::getArmAngle() {
@@ -76,7 +81,29 @@ float Sauropod::getArmAngle() {
     return armEncoder->Get()/(encoderTicks*gearRatio)*360;
 }
 
+bool Sauropod::isPackSafe() {
+    return getElevatorHeight() > .3;//feet
+}
+
+bool Sauropod::isDropSafe() {
+    return getArmAngle() > 5;
+}
+
 void Sauropod::update() {
+    Preset p = presets[currPreset];
+
+    if (inCradle && !isPackSafe()) {
+        Preset target = {0, .3};
+        setTarget(target);
+    } else if (inCradle && !isDropSafe()) {
+        Preset target = {.3, p.height};
+        setTarget(target);
+    } else {
+        setTarget(p);
+    }
+
+    armMotor->Set(armPID->update(getArmAngle()));
+    elevatorMotor->Set(armPID->update(getArmAngle()));
 }
 
 }
