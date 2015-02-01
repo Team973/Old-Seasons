@@ -1,3 +1,4 @@
+#include "WPILib.h"
 #include "sauropod.hpp"
 #include "../lib/pid.hpp"
 #include "../lib/utility.hpp"
@@ -6,7 +7,12 @@
 
 namespace frc973 {
 
-Sauropod::Sauropod() {
+Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* elevatorEncoder_, Encoder* armEncoder_) {
+    elevatorMotor = elevatorMotor_;
+    armMotor = armMotor_;
+    elevatorEncoder = elevatorEncoder_;
+    armEncoder = armEncoder_;
+
     armPID = new PID(0,0,0);
     elevatorPID = new PID(0,0,0);
 
@@ -54,6 +60,20 @@ void Sauropod::setTarget(Preset target) {
 
     armPID->setTarget(armTarget);
     elevatorPID->setTarget(elevatorTarget);
+}
+
+float Sauropod::getElevatorHeight() {
+    float encoderTicks = 360;
+    float diameter = 1.5;
+    float gearRatio = 1;
+    float distancePerRevolution = diameter * M_PI;
+    return (elevatorEncoder->Get()/(encoderTicks*gearRatio))*distancePerRevolution;
+}
+
+float Sauropod::getArmAngle() {
+    float encoderTicks = 360;
+    float gearRatio = 1;
+    return armEncoder->Get()/(encoderTicks*gearRatio)*360;
 }
 
 void Sauropod::update() {
