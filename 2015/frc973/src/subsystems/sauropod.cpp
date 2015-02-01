@@ -25,6 +25,7 @@ void Sauropod::addPreset(std::string name, float horiz, float height) {
 void Sauropod::setPreset(std::string preset) {
     if (presets.find(preset) != presets.end()) {
         setTarget(presets[preset]);
+        currPreset = preset;
     } else {
         setTarget(presets[currPreset]);
     }
