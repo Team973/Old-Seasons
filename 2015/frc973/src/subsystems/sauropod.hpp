@@ -16,13 +16,20 @@ class Sauropod {
     };
 
 public:
-    Sauropod();
+    Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* elevatorEncoder_, Encoder* armEncoder_);
     void setPreset(std::string preset);
     void setTarget(Preset target);
+    float getElevatorHeight();
+    float getArmAngle();
     void update();
 
 private:
     void addPreset(std::string name, float horiz, float height);
+
+    VictorSP *elevatorMotor;
+    VictorSP *armMotor;
+    Encoder *elevatorEncoder;
+    Encoder *armEncoder;
 
     PID *armPID;
     PID *elevatorPID;
