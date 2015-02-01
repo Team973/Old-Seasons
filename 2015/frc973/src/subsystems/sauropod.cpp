@@ -39,13 +39,17 @@ void Sauropod::setTarget(Preset target) {
     float elevatorTarget, armTarget;
 
     if (target.height > switchThreshold) {
-        armTarget = 180 - (asin(target.horizProjection/h)*(180/M_PI));
-        deltaY += (e*2)
+        if ((armTarget = 180 - (asin(target.horizProjection/h)*(180/M_PI))) > 160) {
+            e = h*sin(20);
+            deltaY += (e*2);
+        }
     } else {
         armTarget = asin(target.horizProjection/h)*(180/M_PI);
     }
 
-    elevatorTarget = target.height - deltaY;
+    if ((elevatorTarget = target.height - deltaY)<0) {
+        elevatorTarget = 0;
+    }
 
     armPID->setTarget(armTarget);
     elevatorPID->setTarget(elevatorTarget);
