@@ -82,24 +82,29 @@ float Sauropod::getArmAngle() {
 }
 
 bool Sauropod::isPackSafe() {
-    return getElevatorHeight() > .3;//feet
+    return getElevatorHeight() >= .3;//feet
 }
 
 bool Sauropod::isDropSafe() {
-    return getArmAngle() > 5;
+    return getArmAngle() < 2 && getElevatorHeight() > .5;
 }
 
 void Sauropod::update() {
     Preset p = presets[currPreset];
 
-    if (inCradle && !isPackSafe()) {
-        Preset target = {0, .3};
-        setTarget(target);
-    } else if (inCradle && !isDropSafe()) {
-        Preset target = {.3, p.height};
-        setTarget(target);
-    } else {
-        setTarget(p);
+    if (p.horizProjection == 0 && p.height < .3) {
+        if (inCradle && !isPackSafe()) {
+            Preset target = {0, .3};
+            setTarget(target);
+        } else if (inCradle && !isDropSafe()) {
+            Preset target = {.3, p.height};
+            setTarget(target);
+        } else if (!isPackSafe || !isDropSafe()) {
+            Preset target = {0,.3};
+            setTarget(target);
+        } else {
+            setTarget(p);
+        }
     }
 
     armMotor->Set(armPID->update(getArmAngle()));
