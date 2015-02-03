@@ -8,6 +8,7 @@ class Locator;
 class XYManager;
 class JoystickManager;
 class AutoManager;
+class StateManager;
 
 class Robot : public IterativeRobot
 {
@@ -50,6 +51,8 @@ private:
     Drive *drive;
 
     JoystickManager *controls;
+
+    StateManager *stateManager;
 
     AutoManager *autoManager;
 };
