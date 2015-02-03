@@ -8,7 +8,6 @@ public:
     JoystickManager(Joystick *coDriver_, Joystick *driver_);
     float getThrottle();
     float getTurn();
-    virtual ~JoystickManager();
 private:
     Joystick *coDriver;
     Joystick *driver;
