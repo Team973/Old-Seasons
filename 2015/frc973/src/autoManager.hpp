@@ -7,18 +7,21 @@
 namespace frc973 {
 
 class Wait;
-class Drive;
+class StateManager;
 
 class AutoManager
 {
 public:
-    AutoManager(Drive* drive_);
+    AutoManager(StateManager* stateManager_);
     void resetModes();
     void setModes();
     void nextMode();
     AutoSequencer* getCurrentMode();
     std::string getCurrentName();
 private:
+
+    StateManager *stateManager;
+
     std::map<std::string, AutoSequencer*> modes;
 
     std::map<std::string, AutoSequencer*>::iterator it;

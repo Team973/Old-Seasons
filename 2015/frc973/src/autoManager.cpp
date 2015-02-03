@@ -1,4 +1,5 @@
 #include "autoManager.hpp"
+#include "stateManager.hpp"
 #include "auto/commands/autoCommand.hpp"
 #include "auto/commands/waitCommand.hpp"
 #include "auto/commands/driveCommand.hpp"
@@ -7,8 +8,9 @@
 
 namespace frc973 {
 
-AutoManager::AutoManager(Drive* drive_)
+AutoManager::AutoManager(StateManager *stateManager_)
 {
+    stateManager = stateManager_;
     resetModes();
 }
 
