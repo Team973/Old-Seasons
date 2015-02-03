@@ -2,6 +2,7 @@
 #include "robot.hpp"
 #include "constants.hpp"
 #include "autoManager.hpp"
+#include "joystickManager.hpp"
 #include "lib/utility.hpp"
 #include "lib/logger.hpp"
 #include "lib/txtFileIO.hpp"
@@ -40,7 +41,8 @@ Robot::Robot()
 
     Logger::Log(MESSAGE, "Boot complete, initializing objects...\n");
 
-    testStick = new Joystick(0);
+    driver = new Joystick(0);
+    coDriver = new Joystick(1);
 
     leftFrontDrive = new Talon(0);
     rightFrontDrive = new Talon(1);
@@ -63,6 +65,8 @@ Robot::Robot()
     xyManager->injectLocator(locator);
 
     drive = new Drive(leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive, strafeDrive);
+
+    controls = new JoystickManager(driver, coDriver);
 
     autoManager = new AutoManager(drive);
 
@@ -92,11 +96,6 @@ void Robot::DisabledInit()
 
 void Robot::DisabledPeriodic()
 {
-    if (testStick->GetRawButton(1))
-    {
-        autoManager->nextMode();
-    }
-
     dashboardUpdate();
 }
 
@@ -122,9 +121,11 @@ void Robot::TeleopInit()
 
 void Robot::TeleopPeriodic()
 {
+    /*
     drive->CheesyDrive(deadband(testStick->GetY(), 0.1), -deadband(testStick->GetRawAxis(2), 0.1), false, testStick->GetRawButton(5));
     drive->strafe(-deadband(testStick->GetX(), 0.3));
     elevatorMotor->Set(deadband(testStick->GetRawAxis(3), 0.1));
+    */
 }
 
 void Robot::TestPeriodic()

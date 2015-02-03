@@ -6,6 +6,7 @@ namespace frc973 {
 class Drive;
 class Locator;
 class XYManager;
+class JoystickManager;
 class AutoManager;
 
 class Robot : public IterativeRobot
@@ -39,13 +40,16 @@ private:
     Encoder *gyro;
     Encoder *elevatorEncoder;
 
-    Joystick *testStick;
+    Joystick *driver;
+    Joystick *coDriver;
 
     Locator *locator;
 
     XYManager *xyManager;
 
     Drive *drive;
+
+    JoystickManager *controls;
 
     AutoManager *autoManager;
 };
