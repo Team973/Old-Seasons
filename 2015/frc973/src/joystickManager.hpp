@@ -8,6 +8,7 @@ public:
     JoystickManager(Joystick *coDriver_, Joystick *driver_);
     float getThrottle();
     float getTurn();
+    bool getQuickturn();
 private:
     Joystick *coDriver;
     Joystick *driver;
