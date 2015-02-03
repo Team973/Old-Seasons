@@ -5,8 +5,8 @@
  *      Author: Logan Wilt
  */
 
-#include "subsystems/intake.hpp"
 #include "WPILib.h"
+#include "subsystems/intake.hpp"
 
 namespace frc973 {
 
