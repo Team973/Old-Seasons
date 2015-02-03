@@ -3,6 +3,7 @@
 #include "constants.hpp"
 #include "autoManager.hpp"
 #include "joystickManager.hpp"
+#include "stateManager.hpp"
 #include "lib/utility.hpp"
 #include "lib/logger.hpp"
 #include "lib/txtFileIO.hpp"
@@ -67,6 +68,8 @@ Robot::Robot()
     drive = new Drive(leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive, strafeDrive);
 
     controls = new JoystickManager(driver, coDriver);
+
+    stateManager = new StateManager(controls, drive);
 
     autoManager = new AutoManager(drive);
 
