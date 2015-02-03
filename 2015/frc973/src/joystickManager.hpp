@@ -1,5 +1,5 @@
-#ifndef JOYSTICK_HANDLER_HPP_
-#define JOYSTICK_HANDLER_HPP_
+#ifndef JOYSTICK_MANAGER_HPP_
+#define JOYSTICK_MANAGER_HPP_
 
 namespace frc973 {
 
@@ -8,6 +8,7 @@ public:
     JoystickManager(Joystick *coDriver_, Joystick *driver_);
     float getThrottle();
     float getTurn();
+    virtual ~JoystickManager();
 private:
     Joystick *coDriver;
     Joystick *driver;
