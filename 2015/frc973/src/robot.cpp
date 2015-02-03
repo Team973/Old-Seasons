@@ -121,11 +121,6 @@ void Robot::TeleopInit()
 
 void Robot::TeleopPeriodic()
 {
-    /*
-    drive->CheesyDrive(deadband(testStick->GetY(), 0.1), -deadband(testStick->GetRawAxis(2), 0.1), false, testStick->GetRawButton(5));
-    drive->strafe(-deadband(testStick->GetX(), 0.3));
-    elevatorMotor->Set(deadband(testStick->GetRawAxis(3), 0.1));
-    */
 }
 
 void Robot::TestPeriodic()

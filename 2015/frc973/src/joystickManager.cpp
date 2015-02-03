@@ -13,7 +13,11 @@ float JoystickManager::getThrottle() {
 }
 
 float JoystickManager::getTurn() {
-    return driver->GetRawAxis(4);
+    return driver->GetRawAxis(2);
+}
+
+bool JoystickManager::getQuickturn() {
+    return driver->GetRawButton(5);
 }
 
 }
