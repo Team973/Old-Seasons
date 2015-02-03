@@ -99,7 +99,7 @@ void Sauropod::update() {
         } else if (inCradle && !isDropSafe()) {
             Preset target = {.3, p.height};
             setTarget(target);
-        } else if (!isPackSafe || !isDropSafe()) {
+        } else if (!isPackSafe() || !isDropSafe()) {
             Preset target = {0,.3};
             setTarget(target);
         } else {
