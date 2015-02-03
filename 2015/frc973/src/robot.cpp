@@ -71,7 +71,7 @@ Robot::Robot()
 
     stateManager = new StateManager(controls, drive);
 
-    autoManager = new AutoManager(drive);
+    autoManager = new AutoManager(stateManager);
 
     Logger::Log(MESSAGE, "objects initialized\n");
 
@@ -113,7 +113,7 @@ void Robot::AutonomousPeriodic()
     autoManager->getCurrentMode()->run();
 
     xyManager->update();
-    drive->update();
+    stateManager->update();
 
     dashboardUpdate();
 }
@@ -124,6 +124,7 @@ void Robot::TeleopInit()
 
 void Robot::TeleopPeriodic()
 {
+    stateManager->update();
 }
 
 void Robot::TestPeriodic()
