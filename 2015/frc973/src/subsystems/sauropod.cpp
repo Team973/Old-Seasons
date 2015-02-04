@@ -15,8 +15,10 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* eleva
 
     armPID = new PID(0,0,0);
     armPID->setBounds(-1,1);
+    armPID->start();
     elevatorPID = new PID(.1,0,0);
     elevatorPID->setBounds(-1,1);
+    elevatorPID->start();
 
     inCradle = false;
 
