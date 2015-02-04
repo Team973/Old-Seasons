@@ -8,6 +8,7 @@ class Drive;
 class StateManager {
 public:
     StateManager(Drive *drive_);
+    void setDriveFromControls(double throttle, double turn, bool quickTurn);
     void update();
 private:
     Drive *drive;
