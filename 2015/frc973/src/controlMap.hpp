@@ -9,6 +9,7 @@ public:
     float getThrottle();
     float getTurn();
     bool getQuickturn();
+    bool getCodriverButton(int button);
 private:
     Joystick *coDriver;
     Joystick *driver;

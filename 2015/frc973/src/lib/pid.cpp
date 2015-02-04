@@ -1,5 +1,6 @@
 #include "WPILib.h"
 #include "pid.hpp"
+#include "utility.hpp"
 
 namespace frc973 {
 
@@ -147,7 +148,7 @@ float PID::update(float actual)
         output = min;
     }
 
-    return output;
+    return limit(output);
 }
 
 float PID::update(float actual, Timer *t)
@@ -189,7 +190,7 @@ float PID::update(float actual, Timer *t)
         output = min;
     }
 
-    return output;
+    return limit(output);
 }
 
 float PID::getP()
