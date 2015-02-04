@@ -9,6 +9,7 @@
 #include "lib/logger.hpp"
 #include "lib/txtFileIO.hpp"
 #include "subsystems/drive.hpp"
+#include "subsystems/sauropod.hpp"
 #include "subsystems/locator.hpp"
 #include "subsystems/xyManager.hpp"
 #include <pthread.h>
@@ -52,6 +53,7 @@ Robot::Robot()
     rightBackDrive = new Talon(3);
 
     elevatorMotor = new VictorSP(6);
+    armMotor = new VictorSP(7);
 
     strafeDrive = new Talon(4);
 
@@ -60,6 +62,7 @@ Robot::Robot()
     gyro = new Encoder(8,9);
 
     elevatorEncoder = new Encoder(5,6);
+    armEncoder = new Encoder(7,8);
 
     locator = new Locator(leftDriveEncoder, rightDriveEncoder, gyro);
 
@@ -67,6 +70,7 @@ Robot::Robot()
     xyManager->injectLocator(locator);
 
     drive = new Drive(leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive, strafeDrive);
+    sauropod = new Sauropod(elevatorMotor, armMotor, elevatorEncoder,  armEncoder);
 
     controls = new ControlMap(driver, coDriver);
 
@@ -129,6 +133,7 @@ void Robot::TeleopPeriodic()
 {
     controlManager->update();
     stateManager->update();
+    dashboardUpdate();
 }
 
 void Robot::TestPeriodic()
