@@ -1,17 +1,13 @@
-/*
- * controlManager.cpp
- *
- *  Created on: Feb 3, 2015
- *      Author: Logan Wilt
- */
-
-#include <controlManager.hpp>
+#include "WPILib.h"
+#include "controlManager.hpp"
+#include "controlMap.hpp"
+#include "stateManager.hpp"
 
 namespace frc973 {
 
-ControlManager::ControlManager() {
-	// TODO Auto-generated constructor stub
-
+ControlManager::ControlManager(ControlMap *controls_, StateManager *stateManager_) {
+    controls = controls_;
+    stateManager = stateManager_;
 }
 
 } /* namespace frc973 */

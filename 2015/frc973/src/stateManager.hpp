@@ -3,15 +3,13 @@
 
 namespace frc973 {
 
-class ControlMap;
 class Drive;
 
 class StateManager {
 public:
-    StateManager(ControlMap *controls_, Drive *drive_);
+    StateManager(Drive *drive_);
     void update();
 private:
-    ControlMap *controls;
     Drive *drive;
 };
 
