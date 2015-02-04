@@ -1,22 +1,22 @@
 #include "WPILib.h"
-#include "joystickManager.hpp"
+#include "controlMap.hpp"
 
 namespace frc973 {
 
-JoystickManager::JoystickManager(Joystick *coDriver_, Joystick *driver_) {
+ControlMap::ControlMap(Joystick *coDriver_, Joystick *driver_) {
     coDriver = coDriver_;
     driver = driver_;
 }
 
-float JoystickManager::getThrottle() {
+float ControlMap::getThrottle() {
     return driver->GetRawAxis(1);
 }
 
-float JoystickManager::getTurn() {
+float ControlMap::getTurn() {
     return driver->GetRawAxis(2);
 }
 
-bool JoystickManager::getQuickturn() {
+bool ControlMap::getQuickturn() {
     return driver->GetRawButton(5);
 }
 

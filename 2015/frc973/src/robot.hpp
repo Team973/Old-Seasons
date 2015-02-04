@@ -6,7 +6,7 @@ namespace frc973 {
 class Drive;
 class Locator;
 class XYManager;
-class JoystickManager;
+class ControlMap;
 class AutoManager;
 class StateManager;
 
@@ -50,7 +50,7 @@ private:
 
     Drive *drive;
 
-    JoystickManager *controls;
+    ControlMap *controls;
 
     StateManager *stateManager;
 
