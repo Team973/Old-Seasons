@@ -127,6 +127,7 @@ void Robot::TeleopInit()
 
 void Robot::TeleopPeriodic()
 {
+    controlManager->update();
     stateManager->update();
 }
 
