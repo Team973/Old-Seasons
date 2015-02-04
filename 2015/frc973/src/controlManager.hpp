@@ -1,18 +1,18 @@
-/*
- * controlManager.hpp
- *
- *  Created on: Feb 3, 2015
- *      Author: Logan Wilt
- */
-
 #ifndef CONTROLMANAGER_HPP_
 #define CONTROLMANAGER_HPP_
 
 namespace frc973 {
 
+class ControlMap;
+class StateManager;
+
 class ControlManager {
 public:
-	ControlManager();
+    ControlManager(ControlMap *controls_, StateManager *stateManager_);
+private:
+
+    ControlMap *controls;
+    StateManager *stateManager;
 };
 
 } /* namespace frc973 */

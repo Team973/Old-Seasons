@@ -1,9 +1,10 @@
 #include "WPILib.h"
 #include "robot.hpp"
 #include "constants.hpp"
-#include "autoManager.hpp"
 #include "controlMap.hpp"
+#include "autoManager.hpp"
 #include "stateManager.hpp"
+#include "controlManager.hpp"
 #include "lib/utility.hpp"
 #include "lib/logger.hpp"
 #include "lib/txtFileIO.hpp"
@@ -69,7 +70,9 @@ Robot::Robot()
 
     controls = new ControlMap(driver, coDriver);
 
-    stateManager = new StateManager(controls, drive);
+    stateManager = new StateManager(drive);
+
+    controlManager = new ControlManager(controls, stateManager);
 
     autoManager = new AutoManager(stateManager);
 

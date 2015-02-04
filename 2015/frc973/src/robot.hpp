@@ -9,6 +9,7 @@ class XYManager;
 class ControlMap;
 class AutoManager;
 class StateManager;
+class ControlManager;
 
 class Robot : public IterativeRobot
 {
@@ -53,6 +54,8 @@ private:
     ControlMap *controls;
 
     StateManager *stateManager;
+
+    ControlManager *controlManager;
 
     AutoManager *autoManager;
 };
