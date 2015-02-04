@@ -15,7 +15,7 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* eleva
 
     armPID = new PID(0,0,0);
     armPID->setBounds(-1,1);
-    elevatorPID = new PID(0,0,0);
+    elevatorPID = new PID(.1,0,0);
     elevatorPID->setBounds(-1,1);
 
     inCradle = false;
@@ -23,8 +23,9 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* eleva
     currPreset = "hardStop";
 
     addPreset("hardStop", 0, 0);
-    addPreset("test1", 2, 3);
-    addPreset("test2", 1, 1.5);
+    addPreset("test1", 0, 6);
+    addPreset("test2", 0, 3);
+    addPreset("test3", 0, 12);
 }
 
 void Sauropod::addPreset(std::string name, float horiz, float height) {
@@ -43,8 +44,8 @@ void Sauropod::setPreset(std::string preset) {
 }
 
 void Sauropod::setTarget(Preset target) {
-    float switchThreshold = 5; //feet
-    float h = 3.27;
+    float switchThreshold = 60; //inches
+    float h = 39.25; //inches
     float e = sqrt((h*h)+(target.horizProjection*target.horizProjection));
     float deltaY = h - e;
     float elevatorTarget, armTarget;
@@ -69,10 +70,10 @@ void Sauropod::setTarget(Preset target) {
 // in feet
 float Sauropod::getElevatorHeight() {
     float encoderTicks = 360;
-    float diameter = 1.5;
+    float diameter = 1.27; //inches
     float gearRatio = 1;
     float distancePerRevolution = diameter * M_PI;
-    return ((elevatorEncoder->Get()/(encoderTicks*gearRatio))*distancePerRevolution)/12;
+    return ((elevatorEncoder->Get()/(encoderTicks*gearRatio))*distancePerRevolution);
 }
 
 float Sauropod::getArmAngle() {
@@ -90,8 +91,9 @@ bool Sauropod::isDropSafe() {
 }
 
 void Sauropod::update() {
-    Preset p = presets[currPreset];
+    //Preset p = presets[currPreset];
 
+    /*
     if (p.horizProjection == 0 && p.height < .3) {
         if (inCradle && !isPackSafe()) {
             Preset target = {0, .3};
@@ -106,9 +108,10 @@ void Sauropod::update() {
             setTarget(p);
         }
     }
+    */
 
     armMotor->Set(armPID->update(getArmAngle()));
-    elevatorMotor->Set(armPID->update(getArmAngle()));
+    elevatorMotor->Set(-elevatorPID->update(getArmAngle()));
 }
 
 }
