@@ -59,7 +59,7 @@ Robot::Robot()
 
     leftDriveEncoder = new Encoder(0,1);
     rightDriveEncoder = new Encoder(2,3);
-    gyro = new Encoder(8,9);
+    gyro = new Encoder(14,15);
 
     elevatorEncoder = new Encoder(5,6);
     armEncoder = new Encoder(7,8);
@@ -74,7 +74,7 @@ Robot::Robot()
 
     controls = new ControlMap(driver, coDriver);
 
-    stateManager = new StateManager(drive);
+    stateManager = new StateManager(drive, sauropod);
 
     controlManager = new ControlManager(controls, stateManager);
 
@@ -91,7 +91,7 @@ void Robot::dashboardUpdate()
     SmartDashboard::PutString("DB/String 0", asString(leftDriveEncoder->Get()));
     SmartDashboard::PutString("DB/String 1", asString(rightDriveEncoder->Get()));
     SmartDashboard::PutString("DB/String 2", autoManager->getCurrentName());
-    SmartDashboard::PutString("DB/String 3", asString(elevatorEncoder->Get()));
+    SmartDashboard::PutString("DB/String 3", asString(sauropod->getElevatorHeight()));
     SmartDashboard::PutString("DB/String 4", asString(gyro->Get()));
 }
 

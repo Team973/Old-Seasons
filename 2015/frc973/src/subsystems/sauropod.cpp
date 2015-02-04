@@ -22,10 +22,12 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* eleva
 
     currPreset = "hardStop";
 
-    addPreset("hardStop", 0, 0);
+    addPreset("hardStop", 0.1, 0.1);
     addPreset("test1", 0, 6);
     addPreset("test2", 0, 3);
     addPreset("test3", 0, 12);
+
+    setPreset("hardStop");
 }
 
 void Sauropod::addPreset(std::string name, float horiz, float height) {
@@ -110,8 +112,8 @@ void Sauropod::update() {
     }
     */
 
-    armMotor->Set(armPID->update(getArmAngle()));
-    elevatorMotor->Set(-elevatorPID->update(getArmAngle()));
+    //armMotor->Set(armPID->update(getArmAngle()));
+    elevatorMotor->Set(0.5);//-limit(elevatorPID->update(getArmAngle())));
 }
 
 }

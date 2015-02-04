@@ -3,7 +3,7 @@
 
 namespace frc973 {
 
-ControlMap::ControlMap(Joystick *coDriver_, Joystick *driver_) {
+ControlMap::ControlMap(Joystick *driver_, Joystick *coDriver_) {
     coDriver = coDriver_;
     driver = driver_;
 }
@@ -18,6 +18,10 @@ float ControlMap::getTurn() {
 
 bool ControlMap::getQuickturn() {
     return driver->GetRawButton(5);
+}
+
+bool ControlMap::getCodriverButton(int button) {
+    return coDriver->GetRawButton(button);
 }
 
 }
