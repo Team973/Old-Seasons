@@ -3,15 +3,15 @@
 
 namespace frc973 {
 
-class JoystickManager;
+class ControlMap;
 class Drive;
 
 class StateManager {
 public:
-    StateManager(JoystickManager *controls_, Drive *drive_);
+    StateManager(ControlMap *controls_, Drive *drive_);
     void update();
 private:
-    JoystickManager *controls;
+    ControlMap *controls;
     Drive *drive;
 };
 

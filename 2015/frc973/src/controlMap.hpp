@@ -1,11 +1,11 @@
-#ifndef JOYSTICK_MANAGER_HPP_
-#define JOYSTICK_MANAGER_HPP_
+#ifndef CONTROL_MAP_HPP_
+#define CONTROL_MAP_HPP_
 
 namespace frc973 {
 
-class JoystickManager {
+class ControlMap {
 public:
-    JoystickManager(Joystick *coDriver_, Joystick *driver_);
+    ControlMap(Joystick *coDriver_, Joystick *driver_);
     float getThrottle();
     float getTurn();
     bool getQuickturn();
