@@ -9,12 +9,11 @@ StateManager::StateManager(Drive *drive_) {
     drive = drive_;
 }
 
-void StateManager::update() {
-    /*
-    drive->CheesyDrive(deadband(controls->getThrottle(), 0.1), -deadband(controls->getTurn(), 0.1), false, controls->getQuickturn());
+void StateManager::setDriveFromControls(double throttle, double turn, bool quickTurn) {
+    drive->CheesyDrive(deadband(throttle, 0.1), -deadband(turn, 0.1), false, quickTurn);
+}
 
-    drive->update();
-    */
+void StateManager::update() {
 }
 
 }

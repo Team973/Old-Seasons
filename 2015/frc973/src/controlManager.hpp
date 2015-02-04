@@ -9,6 +9,7 @@ class StateManager;
 class ControlManager {
 public:
     ControlManager(ControlMap *controls_, StateManager *stateManager_);
+    void update();
 private:
 
     ControlMap *controls;

@@ -10,4 +10,8 @@ ControlManager::ControlManager(ControlMap *controls_, StateManager *stateManager
     stateManager = stateManager_;
 }
 
+void ControlManager::update() {
+    stateManager->setDriveFromControls(controls->getThrottle(), controls->getTurn(), controls->getQuickturn());
+}
+
 } /* namespace frc973 */
