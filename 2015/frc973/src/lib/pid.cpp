@@ -25,6 +25,8 @@ PID::PID(double p_, double i_, double d_)
     output = 0;
     prevErr = 0;
 
+    err = 0;
+
     timer = new Timer();
 
     reset();
