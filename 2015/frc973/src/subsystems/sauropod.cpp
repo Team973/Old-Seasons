@@ -115,7 +115,7 @@ void Sauropod::update() {
     */
 
     //armMotor->Set(armPID->update(getArmAngle()));
-    elevatorMotor->Set(0.5);//-limit(elevatorPID->update(getArmAngle())));
+    elevatorMotor->Set(-limit(elevatorPID->update(getElevatorHeight())));
 }
 
 }
