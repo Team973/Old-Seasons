@@ -56,7 +56,7 @@ void Sauropod::setTarget(Preset target) {
 
     if (target.height > switchThreshold) {
         if ((armTarget = 180 - (asin(target.horizProjection/h)*(180/M_PI))) > 160) {
-            e = h*sin(20);
+            e = h*(sin(20)*(180/M_PI));
             deltaY += (e*2);
         }
     } else {
