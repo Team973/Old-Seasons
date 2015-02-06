@@ -13,10 +13,12 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* eleva
     elevatorEncoder = elevatorEncoder_;
     armEncoder = armEncoder_;
 
+    pdp = new PowerDistributionPanel();
+
     armPID = new PID(0,0,0);
     armPID->setBounds(-1,1);
     armPID->start();
-    elevatorPID = new PID(.1,0,0);
+    elevatorPID = new PID(0,0,0);
     elevatorPID->setBounds(-1,1);
     elevatorPID->start();
 
@@ -28,9 +30,30 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* eleva
     addPreset("test1", 0, 6);
     addPreset("test2", 0, 3);
     addPreset("test3", 0, 12);
+    addPreset("test4", 0, 20);
 
     setPreset("hardStop");
+
+    currGains = "empty";
+
+    Gains empty = {
+        {0.5,0,0},
+        {0.1,0,0}
+    };
+    Gains oneTote = {
+        {0,0,0},
+        {0,0,0}
+    };
+
+    addGain("empty", empty);
+    addGain("oneTote", oneTote);
+
+    setGain("empty");
 }
+
+void Sauropod::addGain(std::string name, Gains gain) {
+    gainSchedule[name] = gain;
+};
 
 void Sauropod::addPreset(std::string name, float horiz, float height) {
     Preset p = {horiz, height};
@@ -47,8 +70,15 @@ void Sauropod::setPreset(std::string preset) {
     
 }
 
+// this has no way of telling the caller wether or not the gain was found
+void Sauropod::setGain(std::string name) {
+    if (gainSchedule.find(name) != gainSchedule.end()) {
+        currGains = name;
+    }
+}
+
 void Sauropod::setTarget(Preset target) {
-    float switchThreshold = 60; //inches
+    float switchThreshold = 20; //inches
     float h = 39.25; //inches
     float e = sqrt((h*h)+(target.horizProjection*target.horizProjection));
     float deltaY = h - e;
@@ -95,7 +125,13 @@ bool Sauropod::isDropSafe() {
 }
 
 void Sauropod::update() {
-    //Preset p = presets[currPreset];
+    Preset p = presets[currPreset];
+
+    if (p.height < getElevatorHeight()) {
+        elevatorPID->setGains(gainSchedule[currGains].down);
+    } else {
+        elevatorPID->setGains(gainSchedule[currGains].up);
+    }
 
     /*
     if (p.horizProjection == 0 && p.height < .3) {
@@ -115,6 +151,12 @@ void Sauropod::update() {
     */
 
     //armMotor->Set(armPID->update(getArmAngle()));
+    pdp->UpdateTable();
+    SmartDashboard::PutNumber("Elevator Height:", getElevatorHeight());
+    SmartDashboard::PutNumber("Elevator Current:", pdp->GetCurrent(3));
+    SmartDashboard::PutNumber("Elevator Output:", -limit(elevatorPID->update(getElevatorHeight())));
+    SmartDashboard::PutNumber("Total Voltage:", pdp->GetVoltage());
+    SmartDashboard::PutNumber("Elevator Error:", elevatorPID->getTarget()-getElevatorHeight());
     elevatorMotor->Set(-limit(elevatorPID->update(getElevatorHeight())));
 }
 

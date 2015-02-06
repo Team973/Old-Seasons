@@ -11,12 +11,10 @@ namespace frc973 {
 
 inline float limit(float x)
 {
-    if (x >= 1.0)
-        return 0.9;
-    else if (x <= -1.0)
-        return -0.9;
-    else if (x == 0)
-        return 0.001;
+    if (x > 1.0)
+        return 1.0;
+    else if (x < -1.0)
+        return -1.0;
     else
         return x;
 }
