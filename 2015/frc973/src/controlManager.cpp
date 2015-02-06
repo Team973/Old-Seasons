@@ -22,6 +22,9 @@ void ControlManager::update() {
     if (controls->getCodriverButton(3)) {
         stateManager->setElevatorPreset("test3");
     }
+    if (controls->getCodriverButton(4)) {
+        stateManager->setElevatorPreset("test4");
+    }
 }
 
 } /* namespace frc973 */

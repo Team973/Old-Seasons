@@ -32,7 +32,7 @@ PID::PID(double p_, double i_, double d_)
     reset();
 }
 
-PID::PID(double gains[])
+PID::PID(float gains[3])
 {
     p = gains[0];
     i = gains[1];
@@ -65,7 +65,7 @@ void PID::setGains(double p_, double i_, double d_)
     d = d_;
 }
 
-void PID::setGains(double gains[])
+void PID::setGains(float gains[3])
 {
     p = gains[0];
     i = gains[1];
