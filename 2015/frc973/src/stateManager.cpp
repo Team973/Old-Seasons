@@ -30,6 +30,7 @@ void StateManager::setElevatorPreset(std::string preset) {
 void StateManager::update() {
     intake->setIntake(manualIntakeSpeed);
     sauropod->update();
+    intake->update();
 }
 
 }
