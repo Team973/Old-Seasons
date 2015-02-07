@@ -6,14 +6,12 @@
 
 namespace frc973 {
 
-Drive::Drive(Talon *leftFrontMotor_, Talon *rightFrontMotor_, Talon *leftBackMotor_, Talon *rightBackMotor_, Talon *strafeMotor_)
+Drive::Drive(VictorSP *leftFrontMotor_, VictorSP *rightFrontMotor_, VictorSP *leftBackMotor_, VictorSP *rightBackMotor_)
 {
     leftFrontMotor = leftFrontMotor_;
     rightFrontMotor = rightFrontMotor_;
     leftBackMotor = leftBackMotor_;
     rightBackMotor = rightBackMotor_;
-
-    strafeMotor = strafeMotor_;
 
     xyManager = XYManager::getInstance();
 
@@ -62,11 +60,6 @@ void Drive::arcade(float move_, float rotate_)
         }
     }
     setDriveMotors(left, right);
-}
-
-void Drive::strafe(float strafe)
-{
-    strafeMotor->Set(limit(strafe));
 }
 
 void Drive::CheesyDrive(double throttle, double wheel, bool highGear, bool quickTurn) {

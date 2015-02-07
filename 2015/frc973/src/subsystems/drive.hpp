@@ -7,20 +7,17 @@ class XYManager;
 
 class Drive {
 public:
-    Drive(Talon *leftFrontMotor_, Talon *rightFrontMotor_, Talon *leftBackMotor_, Talon *rightBackMotor_, Talon *strafeMotor_);
+    Drive(VictorSP *leftFrontMotor_, VictorSP *rightFrontMotor_, VictorSP *leftBackMotor_, VictorSP *rightBackMotor_);
     void arcade(float move_, float rotate_);
-    void strafe(float strafe);
     void CheesyDrive(double throttle, double wheel, bool highGear, bool quickTurn);
     void update();
 private:
     void setDriveMotors(float left, float right);
 
-    Talon *leftFrontMotor;
-    Talon *rightFrontMotor;
-    Talon *leftBackMotor;
-    Talon *rightBackMotor;
-
-    Talon *strafeMotor;
+    VictorSP *leftFrontMotor;
+    VictorSP *rightFrontMotor;
+    VictorSP *leftBackMotor;
+    VictorSP *rightBackMotor;
 
     XYManager *xyManager;
 
