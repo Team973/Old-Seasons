@@ -5,7 +5,7 @@ namespace frc973 {
 
 class Intake {
 public:
-	Intake(VictorSP *rightMotor_, VictorSP *leftMotor_);
+    Intake(VictorSP *leftMotor_, VictorSP *rightMotor_);
     void update();
     void setIntake(float indicatedSpeed);
 private:

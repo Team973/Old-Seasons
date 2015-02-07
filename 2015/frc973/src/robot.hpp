@@ -5,6 +5,7 @@ namespace frc973 {
 
 class Drive;
 class Sauropod;
+class Intake;
 class Locator;
 class XYManager;
 class ControlMap;
@@ -36,6 +37,8 @@ private:
     Talon *rightBackDrive;
     VictorSP *elevatorMotor;
     VictorSP *armMotor;
+    VictorSP *leftIntakeMotor;
+    VictorSP *rightIntakeMotor;
 
     Talon *strafeDrive;
 
@@ -54,6 +57,7 @@ private:
 
     Drive *drive;
     Sauropod *sauropod;
+    Intake *intake;
 
     ControlMap *controls;
 

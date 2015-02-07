@@ -24,4 +24,8 @@ bool ControlMap::getCodriverButton(int button) {
     return coDriver->GetRawButton(button);
 }
 
+float ControlMap::getCodriverAxis(int axis) {
+    return coDriver->GetRawAxis(axis);
+}
+
 }
