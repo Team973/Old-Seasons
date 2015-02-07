@@ -53,6 +53,10 @@ private:
 
     std::map<std::string, Preset> presets;
     std::map<std::string, Gains> gainSchedule;
+
+    TrapProfile *profile;
+
+    Timer *loopTimer;
 };
 
 }

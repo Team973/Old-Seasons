@@ -5,6 +5,7 @@
 #include "../lib/trapProfile.hpp"
 #include "../constants.hpp"
 #include <math.h>
+#include <vector>
 
 namespace frc973 {
 
@@ -58,6 +59,9 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* eleva
     addGain("oneTote", oneTote);
 
     setGain("empty");
+
+    profile = new TrapProfile(0,0,0,0);
+    loopTimer = new Timer();
 }
 
 void Sauropod::addGain(std::string name, Gains gain) {
@@ -79,7 +83,7 @@ void Sauropod::setPreset(std::string preset) {
     
 }
 
-// this has no way of telling the caller wether or not the gain was found
+// this has no way of telling the caller whether or not the gain was found
 void Sauropod::setGain(std::string name) {
     if (gainSchedule.find(name) != gainSchedule.end()) {
         currGains = name;
