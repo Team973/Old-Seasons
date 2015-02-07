@@ -99,9 +99,10 @@ void Sauropod::setTarget(Preset target) {
 
     if (target.height > switchThreshold) {
         if ((armTarget = 180 - (asin(target.horizProjection/h)*(180/M_PI))) > 160) {
-            e = h*(sin(20)*(180/M_PI));
-            deltaY += (e*2);
+            armTarget = 160;
+            e = h*(sin(20)*(180/M_PI)); // the 20 is the angle from the arm to the elevator from the top of the arm --> \| <--
         }
+        deltaY += (e*2);
     } else {
         armTarget = asin(target.horizProjection/h)*(180/M_PI);
     }
@@ -112,6 +113,26 @@ void Sauropod::setTarget(Preset target) {
 
     armPID->setTarget(armTarget);
     elevatorPID->setTarget(elevatorTarget);
+    //profile = new TrapProfile(elevatorTarget-getElevatorHeight(), 0,0,0);
+}
+
+bool Sauropod::atTarget() {
+    Preset p = presets[currPreset];
+
+    float switchThreshold = 20; //inches
+    float h = 39.25; //inches
+    float projection = h*(sin(getArmAngle())*(180/M_PI));
+    float e = sqrt((h*h)+(projection*projection));
+    float height = 0;
+
+    if (p.height > switchThreshold) {
+        height = ((h-e)+(e*2)) + getElevatorHeight();
+    } else {
+        height = (h-e) + getElevatorHeight();
+    }
+
+
+    return fabs(height - p.height) <= .1 && fabs(projection - p.horizProjection) <= .1;
 }
 
 // in feet
@@ -139,6 +160,10 @@ bool Sauropod::isDropSafe() {
 
 void Sauropod::update() {
     Preset p = presets[currPreset];
+
+    //float currTime = loopTimer->Get();
+
+    //std::vector<float> step = profile->getProfile(currTime);
 
     if (p.height < getElevatorHeight()) {
         elevatorPID->setGains(gainSchedule[currGains].down);

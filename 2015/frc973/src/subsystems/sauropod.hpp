@@ -7,6 +7,7 @@
 namespace frc973 {
 
 class PID;
+class TrapProfile;
 
 class Sauropod {
 
@@ -25,6 +26,7 @@ public:
     void setPreset(std::string preset);
     void setGain(std::string name);
     void setTarget(Preset target);
+    bool atTarget();
     float getElevatorHeight();
     float getArmAngle();
     void update();
