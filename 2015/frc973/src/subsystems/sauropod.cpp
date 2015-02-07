@@ -27,8 +27,6 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* eleva
     elevatorPID->setBounds(-1,1);
     elevatorPID->start();
 
-    inCradle = false;
-
     currPreset = "hardStop";
 
     addPreset("hardStop", 0.1, 0.1);
@@ -172,19 +170,7 @@ void Sauropod::update() {
     }
 
     /*
-    if (p.horizProjection == 0 && p.height < .3) {
-        if (inCradle && !isPackSafe()) {
-            Preset target = {0, .3};
-            setTarget(target);
-        } else if (inCradle && !isDropSafe()) {
-            Preset target = {.3, p.height};
-            setTarget(target);
-        } else if (!isPackSafe() || !isDropSafe()) {
-            Preset target = {0,.3};
-            setTarget(target);
-        } else {
-            setTarget(p);
-        }
+    if (p.horizProjection != 0 && getElevatorHeight() < 4) {
     }
     */
 
