@@ -10,6 +10,7 @@ public:
     float getTurn();
     bool getQuickturn();
     bool getCodriverButton(int button);
+    float getCodriverAxis(int axis);
 private:
     Joystick *coDriver;
     Joystick *driver;

@@ -10,6 +10,7 @@
 #include "lib/txtFileIO.hpp"
 #include "subsystems/drive.hpp"
 #include "subsystems/sauropod.hpp"
+#include "subsystems/intake.hpp"
 #include "subsystems/locator.hpp"
 #include "subsystems/xyManager.hpp"
 #include <pthread.h>
@@ -55,6 +56,9 @@ Robot::Robot()
     elevatorMotor = new VictorSP(6);
     armMotor = new VictorSP(7);
 
+    leftIntakeMotor = new VictorSP(8);
+    rightIntakeMotor = new VictorSP(9);
+
     strafeDrive = new Talon(4);
 
     leftDriveEncoder = new Encoder(0,1);
@@ -71,10 +75,11 @@ Robot::Robot()
 
     drive = new Drive(leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive, strafeDrive);
     sauropod = new Sauropod(elevatorMotor, armMotor, elevatorEncoder,  armEncoder);
+    intake = new Intake(leftIntakeMotor, rightIntakeMotor);
 
     controls = new ControlMap(driver, coDriver);
 
-    stateManager = new StateManager(drive, sauropod);
+    stateManager = new StateManager(drive, sauropod, intake);
 
     controlManager = new ControlManager(controls, stateManager);
 

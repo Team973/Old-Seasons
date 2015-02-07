@@ -3,7 +3,7 @@
 
 namespace frc973 {
 
-Intake::Intake(VictorSP *rightMotor_, VictorSP *leftMotor_) {
+Intake::Intake(VictorSP *leftMotor_, VictorSP *rightMotor_) {
     rightMotor = rightMotor_;
     leftMotor = leftMotor_;
     motorSpeed = 0;
