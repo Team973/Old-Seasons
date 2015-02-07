@@ -31,16 +31,14 @@ private:
 
     void dashboardUpdate();
 
-    Talon *leftFrontDrive;
-    Talon *rightFrontDrive;
-    Talon *leftBackDrive;
-    Talon *rightBackDrive;
+    VictorSP *leftFrontDrive;
+    VictorSP *rightFrontDrive;
+    VictorSP *leftBackDrive;
+    VictorSP *rightBackDrive;
     VictorSP *elevatorMotor;
     VictorSP *armMotor;
     VictorSP *leftIntakeMotor;
     VictorSP *rightIntakeMotor;
-
-    Talon *strafeDrive;
 
     Encoder *leftDriveEncoder;
     Encoder *rightDriveEncoder;
