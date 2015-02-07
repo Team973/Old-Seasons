@@ -3,6 +3,7 @@
 #include "../lib/pid.hpp"
 #include "../lib/utility.hpp"
 #include "../lib/trapProfile.hpp"
+#include "../constants.hpp"
 #include <math.h>
 
 namespace frc973 {
@@ -15,7 +16,10 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* eleva
 
     pdp = new PowerDistributionPanel();
 
-    armPID = new PID(0,0,0);
+    armPID = new PID(
+            Constants::getConstant("kArmP")->getDouble(),
+            Constants::getConstant("kArmI")->getDouble(),
+            Constants::getConstant("kArmD")->getDouble());
     armPID->setBounds(-1,1);
     armPID->start();
     elevatorPID = new PID(0,0,0);
@@ -37,8 +41,13 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* eleva
     currGains = "empty";
 
     Gains empty = {
-        {0.5,0,0},
-        {0.1,0,0}
+        {Constants::getConstant("kUpElevatorP")->getFloat(),
+         Constants::getConstant("kUpElevatorI")->getFloat(),
+         Constants::getConstant("kUpElevatorD")->getFloat()},
+
+        {Constants::getConstant("kDownElevatorP")->getFloat(),
+         Constants::getConstant("kDownElevatorI")->getFloat(),
+         Constants::getConstant("kDownElevatorD")->getFloat()}
     };
     Gains oneTote = {
         {0,0,0},

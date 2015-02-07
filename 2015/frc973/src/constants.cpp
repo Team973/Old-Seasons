@@ -19,6 +19,15 @@ void Constants::Extend()
     addConstant("kTurnP", 0.0);
     addConstant("kTurnI", 0.0);
     addConstant("kTurnD", 0.0);
+    addConstant("kUpElevatorP", 0.5);
+    addConstant("kUpElevatorI", 0.0);
+    addConstant("kUpElevatorD", 0.0);
+    addConstant("kDownElevatorP", 0.1);
+    addConstant("kDownElevatorI", 0.0);
+    addConstant("kDownElevatorD", 0.0);
+    addConstant("kArmP", 0.0);
+    addConstant("kArmI", 0.0);
+    addConstant("kArmD", 0.0);
 
     readConstantsFile();
 }
