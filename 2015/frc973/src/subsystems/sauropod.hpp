@@ -51,8 +51,6 @@ private:
     std::string currPreset;
     std::string currGains;
 
-    bool inCradle;
-
     std::map<std::string, Preset> presets;
     std::map<std::string, Gains> gainSchedule;
 
