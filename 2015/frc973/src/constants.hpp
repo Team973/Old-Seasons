@@ -32,6 +32,11 @@ public:
                 return value;
             }
 
+            float getFloat()
+            {
+                return (float)value;
+            }
+
             int getInt()
             {
                 return (int)value;
