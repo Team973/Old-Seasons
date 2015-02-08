@@ -11,6 +11,8 @@ public:
     bool getQuickturn();
     bool getCodriverButton(int button);
     float getCodriverAxis(int axis);
+    bool getDriverButton(int button);
+    float getDriverAxis(int axis);
 private:
     Joystick *coDriver;
     Joystick *driver;
