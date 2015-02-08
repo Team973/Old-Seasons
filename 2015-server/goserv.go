@@ -52,7 +52,7 @@ func constantsHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles("templates/goserv.html")
 	if err != nil {
 		fmt.Println("can't parse template", err)
-			os.Exit(1)
+		os.Exit(1)
 	}
 
 	for n := 0; n<len(constantList.List);n++ {
@@ -72,7 +72,12 @@ func constantsHandler(w http.ResponseWriter, r *http.Request) {
 		 }
 	}
 
-	req := r.FormValue("save")
+	req := r.FormValue("reset")
+	if req != "" {
+		tempConstants.List = constantList.List
+	}
+
+	req = r.FormValue("save")
 	if req != "" {
 		err := os.Remove("constants.txt")
 		if err != nil {
