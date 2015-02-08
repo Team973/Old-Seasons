@@ -23,7 +23,7 @@ void StateManager::setIntakeFromControls(float manual) {
     manualIntakeSpeed = manual;
 }
 
-void StateManager::setElevatorPreset(std::string preset) {
+void StateManager::setSauropodPreset(std::string preset) {
     sauropod->setPreset(preset);
 }
 

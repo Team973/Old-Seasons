@@ -3,6 +3,8 @@
 
 #include <string>
 #include <map>
+#include <vector>
+#include <queue>
 
 namespace frc973 {
 
@@ -12,7 +14,7 @@ class TrapProfile;
 class Sauropod {
 
     struct Preset {
-        float horizProjection;
+        float projection;
         float height;
     };
 
@@ -27,6 +29,8 @@ public:
     void setGain(std::string name);
     void setTarget(Preset target);
     bool atTarget();
+    void addToQueue(std::string preset);
+    void clearQueue();
     float getElevatorHeight();
     float getArmAngle();
     void update();
@@ -35,8 +39,10 @@ private:
     void addPreset(std::string name, float horiz, float height);
     void addGain(std::string name, Gains gain);
 
+    bool executeQueue();
+
     bool isPackSafe();
-    bool isDropSafe();
+    bool inCradle();
 
     PowerDistributionPanel *pdp;
 
@@ -53,6 +59,8 @@ private:
 
     std::map<std::string, Preset> presets;
     std::map<std::string, Gains> gainSchedule;
+
+    std::queue<std::string> waypointQueue;
 
     TrapProfile *profile;
 

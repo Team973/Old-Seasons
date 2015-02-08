@@ -16,16 +16,16 @@ void ControlManager::update() {
     stateManager->setIntakeFromControls(controls->getCodriverAxis(1));
 
     if (controls->getCodriverButton(1)) {
-        stateManager->setElevatorPreset("test1");
+        stateManager->setSauropodPreset("test1");
     }
     if (controls->getCodriverButton(2)) {
-        stateManager->setElevatorPreset("test2");
+        stateManager->setSauropodPreset("test2");
     }
     if (controls->getCodriverButton(3)) {
-        stateManager->setElevatorPreset("test3");
+        stateManager->setSauropodPreset("test3");
     }
     if (controls->getCodriverButton(4)) {
-        stateManager->setElevatorPreset("test4");
+        stateManager->setSauropodPreset("test4");
     }
 }
 

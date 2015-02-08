@@ -12,7 +12,7 @@ public:
     StateManager(Drive *drive_, Sauropod *sauropod_, Intake *intake_);
     void setDriveFromControls(double throttle, double turn, bool quickTurn);
     void setIntakeFromControls(float manual);
-    void setElevatorPreset(std::string preset);
+    void setSauropodPreset(std::string preset);
     void update();
 private:
     Drive *drive;
