@@ -74,6 +74,10 @@ func constantsHandler(w http.ResponseWriter, r *http.Request) {
 
 	req := r.FormValue("save")
 	if req != "" {
+		err := os.Remove("constants.txt")
+		if err != nil {
+			fmt.Println("Error deleting file: ",err)
+		}
 		saveConstants()
 	}
 
@@ -125,7 +129,7 @@ func main() {
 	if err != nil {
 		fmt.Println("can't load file", err)
 	}
-	tempConstants = constantsList
+	tempConstants = constantList
 
 	http.HandleFunc("/", indexHandler)
 	http.HandleFunc("/constants/", constantsHandler)
@@ -169,9 +173,16 @@ func loadConstants() (error) {
 	return nil
 }
 
-//TODO fill this in
-func saveConstants() error {
-	constantsList = tempConstants
+func saveConstants() {
+	constantList = tempConstants
+	var saveFile string
+	for n:=0;n<len(constantList.List);n++ {
+		 saveFile += constantList.List[n].Key + " = " + strconv.FormatFloat(constantList.List[n].Value, 'f', -1, 64) + "\n"
+	}
+	err := writeStringToFile("constants",saveFile)
+	if err != nil {
+	fmt.Printf("error writing to constants file: ", err);
+    }
 }
 
 func loadFileAsString(title string) (string, error) {
@@ -185,5 +196,6 @@ func loadFileAsString(title string) (string, error) {
 
 func writeStringToFile(fileName, data string) error {
 	fileName = fileName + ".txt"
-	return ioutil.WriteFile(fileName, []byte(data), 0600)
+	err := ioutil.WriteFile(fileName, []byte(data), 0600)
+	return err
 }
