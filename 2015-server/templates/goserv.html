@@ -1,0 +1,13 @@
+<html>
+    <h1> {{.Title}} </h1>
+    <p>
+        {{range .List}} 
+        <form>
+            <h3>{{.Key}}:</h3><input type="text" name={{.Key}} value={{.Value}}>
+        </form>
+        {{end}}
+        <form>
+            <input type="submit" name="save" value="Save Constants">
+        </form>
+    </p>
+</html>
