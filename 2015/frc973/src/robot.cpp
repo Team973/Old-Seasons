@@ -97,6 +97,7 @@ void Robot::dashboardUpdate()
     SmartDashboard::PutString("DB/String 3", asString(sauropod->getElevatorHeight()));
     SmartDashboard::PutString("DB/String 4", asString(gyro->Get()));
     SmartDashboard::PutNumber("raw arm encoder: ", armEncoder->Get());
+    SmartDashboard::PutBoolean("is sauropod done: ", sauropod->atTarget());
 }
 
 void Robot::RobotInit()
