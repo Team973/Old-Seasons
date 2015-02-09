@@ -3,6 +3,7 @@
 #include "../lib/pid.hpp"
 #include "../lib/utility.hpp"
 #include "../lib/trapProfile.hpp"
+#include "../lib/flagAccumulator.hpp"
 #include "../constants.hpp"
 #include <math.h>
 
@@ -28,10 +29,11 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* eleva
 
     currPreset = "hardStop";
 
-    addPreset("hardStop", 0.1, 0.1);
-    addPreset("stow", 0, 5);
+    addPreset("hardStop", 0, 0);
+    addPreset("stow", 0, 6);
     addPreset("currHeight", 0,0);
     addPreset("currProjection", 0,0);
+    addPreset("requested",0,0);
     addPreset("test1", 10, 12);
     addPreset("test2", 12, 20);
     addPreset("test3", 4, 6);
@@ -59,6 +61,11 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* eleva
     addGain("oneTote", oneTote);
 
     setGain("empty");
+
+    clearQueue();
+
+    accumulator = new FlagAccumulator();
+    accumulator->setThreshold(3);
 
     profile = new TrapProfile(0,0,0,0);
     loopTimer = new Timer();
@@ -98,14 +105,14 @@ void Sauropod::setTarget(Preset target) {
     float elevatorTarget, armTarget;
 
     if (target.height > switchThreshold) {
-        if ((armTarget = 180 - (asin(target.projection/h)*(180/M_PI))) > 100) {
+        if ((armTarget = 180 - (radiansToDegrees(asin(target.projection/h)))) > 100) {
             armTarget = 100;
-            e = h*(sin(80)*(180/M_PI)); // the 80 is the angle from the arm to the elevator from the top of the arm --> \^| <--
+            e = h*(radiansToDegrees(sin(degreesToRadians(80)))); // the 80 is the angle from the arm to the elevator from the top of the arm --> \^| <--
         }
 
         deltaY += (e*2);
     } else {
-        armTarget = asin(target.projection/h)*(180/M_PI);
+        armTarget = radiansToDegrees(asin(target.projection/h));
     }
 
     if ((elevatorTarget = target.height - deltaY)<0) {
@@ -122,7 +129,7 @@ bool Sauropod::atTarget() {
 
     float switchThreshold = 20; //inches
     float h = 39.25; //inches
-    float projection = h*(sin(getArmAngle())*(180/M_PI));
+    float projection = h*(sin(degreesToRadians(getArmAngle())));
     float e = sqrt((h*h)+(projection*projection));
     float height = 0;
 
@@ -131,9 +138,12 @@ bool Sauropod::atTarget() {
     } else {
         height = (h-e) + getElevatorHeight();
     }
+    
+    SmartDashboard::PutNumber("current height: ", height);
+    SmartDashboard::PutNumber("current projection: ", projection);
 
 
-    return fabs(height - p.height) <= .1 && fabs(projection - p.projection) <= .1;
+    return fabs(p.height - height) <= .5 && fabs(p.projection - projection) <= .5;
 }
 
 void Sauropod::clearQueue() {
@@ -142,20 +152,25 @@ void Sauropod::clearQueue() {
 }
 
 void Sauropod::addToQueue(std::string preset) {
-    waypointQueue.push(preset);
+    if (waypointQueue.empty()) {
+        setPreset(preset);
+    } else {
+        waypointQueue.push(preset);
+    }
 }
 
 bool Sauropod::executeQueue() {
     if (waypointQueue.empty()) {
-        return true;
+        return false;
     }
 
     if (atTarget()) {
         setPreset(waypointQueue.front());
         waypointQueue.pop();
+        accumulator->reset();
     }
 
-    return false;
+    return true;
 }
 
 // in feet
@@ -174,7 +189,7 @@ float Sauropod::getArmAngle() {
 }
 
 bool Sauropod::isPackSafe() {
-    return getElevatorHeight() >= 5;//inches
+    return getElevatorHeight() > 5;//inches
 }
 
 bool Sauropod::inCradle() {
@@ -182,9 +197,10 @@ bool Sauropod::inCradle() {
 }
 
 void Sauropod::update() {
+    std::string instancePreset = currPreset;
     Preset currTarget = presets[currPreset];
     addPreset("currHeight", 0, currTarget.height);
-    addPreset("currProjection", currTarget.projection, 5);
+    addPreset("currProjection", currTarget.projection, 6);
 
     //float currTime = loopTimer->Get();
 
@@ -201,19 +217,21 @@ void Sauropod::update() {
             clearQueue();
             addToQueue("stow");
             addToQueue("currProjection");
-            addToQueue(currPreset);
+            addToQueue(instancePreset);
         } else if (isPackSafe() && currTarget.height < 5) {
             if (currTarget.projection > 0) {
                 clearQueue();
                 addToQueue("currProjection");
-                addToQueue(currPreset);
+                addToQueue(instancePreset);
             } else {
                 clearQueue();
                 addToQueue("stow");
-                addToQueue(currPreset);
+                addToQueue(instancePreset);
             }
         }
     }
+
+    SmartDashboard::PutString("curr preset: ", currPreset);
 
     armMotor->Set(-armPID->update(getArmAngle()));
     pdp->UpdateTable();

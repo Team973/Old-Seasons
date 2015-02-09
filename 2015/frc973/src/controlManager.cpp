@@ -19,7 +19,7 @@ void ControlManager::update() {
         stateManager->setSauropodPreset("test1");
     }
     if (controls->getCodriverButton(2)) {
-        stateManager->setSauropodPreset("test2");
+        stateManager->setSauropodPreset("hardStop");
     }
     if (controls->getCodriverButton(3)) {
         stateManager->setSauropodPreset("test3");

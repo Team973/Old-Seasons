@@ -19,6 +19,14 @@ inline float limit(float x)
         return x;
 }
 
+inline float degreesToRadians(float degrees) {
+    return degrees * (M_PI/180);
+}
+
+inline float radiansToDegrees(float radians) {
+    return radians * (180/M_PI);
+}
+
 inline float deadband(float x, float threshold)
 {
     if (fabs(x) < threshold)

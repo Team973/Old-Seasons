@@ -10,6 +10,7 @@ namespace frc973 {
 
 class PID;
 class TrapProfile;
+class FlagAccumulator;
 
 class Sauropod {
 
@@ -61,6 +62,8 @@ private:
     std::map<std::string, Gains> gainSchedule;
 
     std::queue<std::string> waypointQueue;
+
+    FlagAccumulator *accumulator;
 
     TrapProfile *profile;
 
