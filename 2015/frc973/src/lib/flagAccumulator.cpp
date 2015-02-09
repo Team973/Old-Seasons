@@ -7,6 +7,10 @@ FlagAccumulator::FlagAccumulator() {
     flagCount = 0;
 }
 
+void FlagAccumulator::reset() {
+    flagCount = 0;
+}
+
 void FlagAccumulator::setThreshold(int threshold_) {
     threshold = threshold_;
 }

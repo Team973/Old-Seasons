@@ -6,6 +6,7 @@ namespace frc973 {
 class FlagAccumulator {
 public:
     FlagAccumulator();
+    void reset();
     void setThreshold(int threshold_);
     bool update(bool current);
 private:
