@@ -64,7 +64,9 @@ private:
 
     FlagAccumulator *accumulator;
 
-    TrapProfile *profile;
+    TrapProfile *armProfile;
+
+    float kArmVelFF;
 
     Timer *loopTimer;
 };
