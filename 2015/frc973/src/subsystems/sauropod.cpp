@@ -159,9 +159,9 @@ void Sauropod::addToQueue(std::string preset) {
     }
 }
 
-bool Sauropod::executeQueue() {
+void Sauropod::executeQueue() {
     if (waypointQueue.empty()) {
-        return false;
+        return;
     }
 
     if (atTarget()) {
@@ -169,8 +169,6 @@ bool Sauropod::executeQueue() {
         waypointQueue.pop();
         accumulator->reset();
     }
-
-    return true;
 }
 
 // in feet
@@ -193,14 +191,16 @@ bool Sauropod::isPackSafe() {
 }
 
 bool Sauropod::inCradle() {
-    return getArmAngle() < 1 && getElevatorHeight() < 4.5;
+    return getArmAngle() < 1 && getElevatorHeight() < 4;
 }
 
 void Sauropod::update() {
-    std::string instancePreset = currPreset;
     Preset currTarget = presets[currPreset];
-    addPreset("currHeight", 0, currTarget.height);
-    addPreset("currProjection", currTarget.projection, 6);
+
+    float elevatorInput, armInput;
+
+    float epido = elevatorPID->update(getElevatorHeight());
+    float apido = armPID->update(getArmAngle());
 
     //float currTime = loopTimer->Get();
 
@@ -212,28 +212,21 @@ void Sauropod::update() {
         elevatorPID->setGains(gainSchedule[currGains].up);
     }
 
-    if (!executeQueue()) {
-        if (inCradle() && currTarget.projection > 0) {
-            clearQueue();
-            addToQueue("stow");
-            addToQueue("currProjection");
-            addToQueue(instancePreset);
-        } else if (isPackSafe() && currTarget.height < 5) {
-            if (currTarget.projection > 0) {
-                clearQueue();
-                addToQueue("currProjection");
-                addToQueue(instancePreset);
-            } else {
-                clearQueue();
-                addToQueue("stow");
-                addToQueue(instancePreset);
-            }
+    if (inCradle() && currTarget.projection > 0) {
+        elevatorInput = epido;
+        armInput = -0.1;
+    } else if (isPackSafe() && currTarget.height < 4) {
+        if (getArmAngle() > 0) {
+            elevatorInput = 0.3;
+            armInput = apido;
         }
+    } else {
+        elevatorInput = epido;
+        armInput = apido;
     }
 
-    SmartDashboard::PutString("curr preset: ", currPreset);
+    executeQueue();
 
-    armMotor->Set(-armPID->update(getArmAngle()));
     pdp->UpdateTable();
     SmartDashboard::PutNumber("Elevator Height:", getElevatorHeight());
     SmartDashboard::PutNumber("Elevator Current:", pdp->GetCurrent(3));
@@ -242,7 +235,9 @@ void Sauropod::update() {
     SmartDashboard::PutNumber("Elevator Error:", elevatorPID->getTarget()-getElevatorHeight());
     SmartDashboard::PutNumber("Arm Angle:", getArmAngle());
     SmartDashboard::PutNumber("Arm Target:", armPID->getTarget());
-    elevatorMotor->Set(-limit(elevatorPID->update(getElevatorHeight())));
+
+    armMotor->Set(-armInput);
+    elevatorMotor->Set(-elevatorInput);
 }
 
 }
