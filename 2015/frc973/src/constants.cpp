@@ -28,6 +28,7 @@ void Constants::Extend()
     addConstant("kArmP", 0.0);
     addConstant("kArmI", 0.0);
     addConstant("kArmD", 0.0);
+    addConstant("kArmVelFF", 0.0);
 
     readConstantsFile();
 }
