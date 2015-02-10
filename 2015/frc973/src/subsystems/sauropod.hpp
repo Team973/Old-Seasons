@@ -40,9 +40,8 @@ private:
     void addPreset(std::string name, float horiz, float height);
     void addGain(std::string name, Gains gain);
 
-    bool executeQueue();
+    void executeQueue();
 
-    bool isPackSafe();
     bool inCradle();
 
     PowerDistributionPanel *pdp;
@@ -65,7 +64,9 @@ private:
 
     FlagAccumulator *accumulator;
 
-    TrapProfile *profile;
+    TrapProfile *armProfile;
+
+    float kArmVelFF;
 
     Timer *loopTimer;
 };
