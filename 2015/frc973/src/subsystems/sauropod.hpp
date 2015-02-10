@@ -42,7 +42,6 @@ private:
 
     void executeQueue();
 
-    bool isPackSafe();
     bool inCradle();
 
     PowerDistributionPanel *pdp;

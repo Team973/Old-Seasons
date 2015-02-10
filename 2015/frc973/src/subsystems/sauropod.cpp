@@ -186,10 +186,6 @@ float Sauropod::getArmAngle() {
     return -(armEncoder->Get()/(encoderTicks*gearRatio)*360);
 }
 
-bool Sauropod::isPackSafe() {
-    return getElevatorHeight() > 5;//inches
-}
-
 bool Sauropod::inCradle() {
     return getArmAngle() < 1 && getElevatorHeight() < 4;
 }
@@ -215,7 +211,7 @@ void Sauropod::update() {
     if (inCradle() && currTarget.projection > 0) {
         elevatorInput = epido;
         armInput = -0.1;
-    } else if (isPackSafe() && currTarget.height < 4) {
+    } else if (!inCradle() && currTarget.height < 4) {
         if (getArmAngle() > 0) {
             elevatorInput = 0.3;
             armInput = apido;
