@@ -211,11 +211,9 @@ void Sauropod::update() {
     if (inCradle() && currTarget.projection > 0) {
         elevatorInput = epido;
         armInput = -0.1;
-    } else if (!inCradle() && currTarget.height < 4) {
-        if (getArmAngle() > 0) {
-            elevatorInput = 0.3;
-            armInput = apido;
-        }
+    } else if (!inCradle() && currTarget.height < 4 && getArmAngle() > 1) {
+        elevatorInput = 0.1;
+        armInput = apido;
     } else {
         elevatorInput = epido;
         armInput = apido;
