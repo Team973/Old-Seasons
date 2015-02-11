@@ -11,6 +11,7 @@ namespace frc973 {
 class PID;
 class TrapProfile;
 class FlagAccumulator;
+class RampedOutput;
 
 class Sauropod {
 
@@ -37,6 +38,11 @@ public:
     void update();
 
 private:
+
+    bool equal(Preset lhs, Preset rhs) {
+        return (lhs.projection == rhs.projection) && (lhs.height == rhs.height);
+    }
+
     void addPreset(std::string name, float horiz, float height);
     void addGain(std::string name, Gains gain);
 
@@ -65,6 +71,8 @@ private:
     FlagAccumulator *accumulator;
 
     TrapProfile *armProfile;
+
+    RampedOutput *ramp;
 
     float kArmVelFF;
 

@@ -4,6 +4,7 @@
 #include "../lib/utility.hpp"
 #include "../lib/trapProfile.hpp"
 #include "../lib/flagAccumulator.hpp"
+#include "../lib/rampedOutput.hpp"
 #include "../constants.hpp"
 #include <math.h>
 
@@ -27,7 +28,7 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* eleva
             Constants::getConstant("kArmP")->getDouble(),
             Constants::getConstant("kArmI")->getDouble(),
             Constants::getConstant("kArmD")->getDouble());
-    armPID->setBounds(-1,1);
+    armPID->setBounds(-.5,.5);
     armPID->start();
     elevatorPID = new PID(0,0,0);
     elevatorPID->setBounds(-1,1);
@@ -69,6 +70,8 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* eleva
     setGain("empty");
 
     clearQueue();
+
+    ramp = new RampedOutput(.1,1);
 
     accumulator = new FlagAccumulator();
     accumulator->setThreshold(3);
@@ -124,9 +127,12 @@ void Sauropod::setTarget(Preset target) {
 
     loopTimer->Reset();
 
-    //armPID->setTarget(armTarget);
-    elevatorPID->setTarget(elevatorTarget);
-    armProfile = new TrapProfile(armTarget - getArmAngle(), 6, 1000000, 10000);
+    if (!equal(target, presets[currPreset])) {
+        armPID->setTarget(armTarget);
+        elevatorPID->setTarget(elevatorTarget);
+        ramp->setTarget(armTarget,getArmAngle());
+        //armProfile = new TrapProfile(armTarget - getArmAngle(), 11, 1000000, 10000);
+    }
 }
 
 bool Sauropod::atTarget() {
@@ -204,8 +210,6 @@ void Sauropod::update() {
 
     std::vector<float> armStep = armProfile->getProfile(currTime);
 
-    float armFF = (kArmVelFF*armStep[2]);
-
     if (currTarget.height < getElevatorHeight()) {
         elevatorPID->setGains(gainSchedule[currGains].down);
     } else {
@@ -213,8 +217,7 @@ void Sauropod::update() {
     }
 
     float epido = elevatorPID->update(getElevatorHeight());
-    //float apido = armPID->update(getArmAngle());// + armFF;
-    float apido = armPID->update(getArmAngle() - armStep[1], loopTimer) + armFF;
+    float apido = armPID->update(getArmAngle());
 
     if (inCradle() && currTarget.projection > 0) {
         elevatorInput = epido;
@@ -243,7 +246,7 @@ void Sauropod::update() {
     SmartDashboard::PutNumber("Arm Angle:", getArmAngle());
     SmartDashboard::PutNumber("Arm Target:", armPID->getTarget());
 
-    armMotor->Set(-armInput);
+    armMotor->Set(-ramp->update(getArmAngle(),armInput));
     elevatorMotor->Set(-elevatorInput);
 }
 
