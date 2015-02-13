@@ -42,23 +42,18 @@ float RampedOutput::update(float actual, float input) {
         rampGain = max;
     }
 
-    if (actual < lower) {
-        input *= rampGain; 
-        rampGain += .1 * direction;
-    } else if (actual > upper) {
-        input *= rampGain;
-        rampGain -= .1 * direction;
-    } else {
-        rampGain = 1;
-    }
 
-    /*
-    if (fabs(actual - prev) <= .1) {
-        rampGain += .1 * -direction;
+    if (input > 0.3) {
+        if (actual < lower) {
+            input = rampGain; 
+            rampGain += .1 * direction;
+        } else if (actual > upper) {
+            input = rampGain;
+            rampGain -= .1 * direction;
+        } else {
+            rampGain = input;
+        }
     }
-    */
-
-    prev = actual;
 
     return input*inputDirection;
 }
