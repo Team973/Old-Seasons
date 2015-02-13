@@ -44,7 +44,7 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* eleva
     addPreset("test1", 10, 12);
     addPreset("test2", 12, 20);
     addPreset("test3", 4, 6);
-    addPreset("test4", 12, 15);
+    addPreset("test4", 30, 15);
 
     setPreset("hardStop");
 
@@ -71,7 +71,7 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* eleva
 
     clearQueue();
 
-    ramp = new RampedOutput(.1,1);
+    ramp = new RampedOutput(.3,.5);
 
     accumulator = new FlagAccumulator();
     accumulator->setThreshold(3);
@@ -123,6 +123,8 @@ void Sauropod::setTarget(Preset target) {
 
     if ((elevatorTarget = target.height - deltaY)<0) {
         elevatorTarget = 0;
+    } else if (elevatorTarget > switchThreshold) {
+        elevatorTarget = switchThreshold;
     }
 
     loopTimer->Reset();
@@ -222,12 +224,16 @@ void Sauropod::update() {
     if (inCradle() && currTarget.projection > 0) {
         elevatorInput = epido;
         armInput = -0.1;
-    } else if (!inCradle() && currTarget.height < 4 && getArmAngle() > 1) {
+    } else if (!inCradle() && currTarget.height < 4 && getArmAngle() > 1.5) {
         elevatorInput = 0.1;
         armInput = apido;
     } else {
         elevatorInput = epido;
         armInput = apido;
+    }
+
+    if (getArmAngle() < 1.5 && currTarget.projection == 0) {
+        armInput += -1.0;
     }
 
     executeQueue();
