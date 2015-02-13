@@ -88,10 +88,7 @@ void Sauropod::addPreset(std::string name, float horiz, float height) {
 
 void Sauropod::setPreset(std::string preset) {
     if (presets.find(preset) != presets.end()) {
-        setTarget(presets[preset]);
         currPreset = preset;
-    } else {
-        setTarget(presets[currPreset]);
     }
     
 }
@@ -106,8 +103,9 @@ void Sauropod::setGain(std::string name) {
 void Sauropod::setTarget(Preset target) {
     float switchThreshold = 20; //inches
     float h = 39.25; //inches
-    float e = sqrt((h*h)+(target.projection*target.projection));
-    float deltaY = h - e;
+    float projection = h*(sin(degreesToRadians(getArmAngle())));
+    float e = sqrt((h*h)+(projection*projection));
+    float deltaY = e - h;
     float elevatorTarget, armTarget;
 
     if (target.height > switchThreshold) {
@@ -121,7 +119,9 @@ void Sauropod::setTarget(Preset target) {
         armTarget = radiansToDegrees(asin(target.projection/h));
     }
 
-    if ((elevatorTarget = target.height - deltaY)<0) {
+    elevatorTarget = target.height - deltaY;
+    SmartDashboard::PutNumber("Elevator Target: ", elevatorTarget);
+    if (elevatorTarget < 0) {
         elevatorTarget = 0;
     } else if (elevatorTarget > switchThreshold) {
         elevatorTarget = switchThreshold;
@@ -129,12 +129,10 @@ void Sauropod::setTarget(Preset target) {
 
     loopTimer->Reset();
 
-    if (!equal(target, presets[currPreset])) {
-        armPID->setTarget(armTarget);
-        elevatorPID->setTarget(elevatorTarget);
-        ramp->setTarget(armTarget,getArmAngle());
-        //armProfile = new TrapProfile(armTarget - getArmAngle(), 11, 1000000, 10000);
-    }
+    armPID->setTarget(armTarget);
+    elevatorPID->setTarget(elevatorTarget);
+    ramp->setTarget(armTarget,getArmAngle());
+    //armProfile = new TrapProfile(armTarget - getArmAngle(), 11, 1000000, 10000);
 }
 
 bool Sauropod::atTarget() {
@@ -147,9 +145,9 @@ bool Sauropod::atTarget() {
     float height = 0;
 
     if (p.height > switchThreshold) {
-        height = ((h-e)+(e*2)) + getElevatorHeight();
+        height = ((e-h)+(e*2)) + getElevatorHeight();
     } else {
-        height = (h-e) + getElevatorHeight();
+        height = (e-h) + getElevatorHeight();
     }
     
     SmartDashboard::PutNumber("current height: ", height);
@@ -205,6 +203,7 @@ bool Sauropod::inCradle() {
 
 void Sauropod::update() {
     Preset currTarget = presets[currPreset];
+    setTarget(currTarget);
 
     float elevatorInput, armInput;
 
