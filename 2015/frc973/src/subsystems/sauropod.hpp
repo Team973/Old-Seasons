@@ -14,6 +14,9 @@ class FlagAccumulator;
 class RampedOutput;
 
 class Sauropod {
+#define IDLE 1
+#define PICKUP 2
+#define SCORE 3
 
     struct Preset {
         float projection;
@@ -36,6 +39,7 @@ public:
     float getElevatorHeight();
     float getArmAngle();
     void update();
+    void createPath(int state);
 
 private:
 

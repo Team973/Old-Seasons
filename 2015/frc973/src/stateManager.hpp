@@ -14,6 +14,7 @@ public:
     void setIntakeFromControls(float manual);
     void setSauropodPreset(std::string preset);
     void update();
+    void setElevatorPath();
 private:
     Drive *drive;
     Sauropod *sauropod;

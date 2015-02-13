@@ -33,4 +33,8 @@ void StateManager::update() {
     intake->update();
 }
 
+void StateManager::setElevatorPath() {
+    sauropod->createPath(IDLE);
+}
+
 }

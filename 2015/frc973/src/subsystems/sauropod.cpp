@@ -96,6 +96,17 @@ void Sauropod::setPreset(std::string preset) {
     
 }
 
+void Sauropod::createPath(int state) {
+    switch(state) {
+        case SCORE:
+        break;
+        case PICKUP:
+        break;
+        case IDLE:
+        break;
+    }
+}
+
 // this has no way of telling the caller whether or not the gain was found
 void Sauropod::setGain(std::string name) {
     if (gainSchedule.find(name) != gainSchedule.end()) {
