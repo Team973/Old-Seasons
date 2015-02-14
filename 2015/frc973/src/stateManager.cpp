@@ -43,7 +43,6 @@ void StateManager::update() {
 
     switch (intakeState) {
         case INTAKE:
-            intake->setIntake(manualIntakeSpeed);
             break;
         case INTAKE_AUTO:
             intake->setIntake(0);
@@ -53,6 +52,7 @@ void StateManager::update() {
         case HUMAN_LOAD:
             break;
         case INTAKE_IDLE:
+            intake->setIntake(manualIntakeSpeed);
             break;
     }
 
