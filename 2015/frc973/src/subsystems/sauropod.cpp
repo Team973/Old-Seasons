@@ -38,8 +38,9 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* eleva
 
     addPreset("hardStop", 0, 0);
     addPreset("stow", 0, 6);
-    addPreset("currHeight", 0,0);
-    addPreset("currProjection", 0,0);
+    addPreset("load", 0, 2);
+    addPreset("scoreHeight", 0,3);
+    addPreset("scoreProjection", 25,5);
     addPreset("requested",0,0);
     addPreset("test1", 10, 12);
     addPreset("test2", 12, 20);
@@ -94,12 +95,21 @@ void Sauropod::setPreset(std::string preset) {
 }
 
 void Sauropod::createPath(int state) {
+    clearQueue();
+
     switch(state) {
-        case SCORE:
+        case PLATFORM:
+            addToQueue("stow");
+            addToQueue("scoreHeight");
+            addToQueue("scoreProjection");
         break;
         case PICKUP:
+            addToQueue("stow");
+            addToQueue("load");
+            addToQueue("stow");
         break;
         case IDLE:
+            addToQueue("stow");
         break;
     }
 }
