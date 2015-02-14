@@ -36,7 +36,7 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* eleva
 
 
     addPreset("hardStop", 0, 0);
-    addPreset("stow", 0, 6);
+    addPreset("stow", 0, 4);
     addPreset("loadHigh", 0, 20);
     addPreset("loadLow", 0, 5);
     addPreset("scoreHeight", 0,3);
@@ -107,11 +107,11 @@ void Sauropod::createPath(int dest) {
                 break;
             case PICKUP:
                 addToQueue("loadHigh");
-                addToQueue("loadLow");
-                addToQueue("loadHigh");
+                //addToQueue("loadLow");
+                //addToQueue("loadHigh");
                 break;
             case IDLE:
-                addToQueue("loadHigh");
+                addToQueue("stow");
                 break;
         }
         currPath = dest;
@@ -157,7 +157,7 @@ void Sauropod::setTarget(Preset target) {
     armPID->setTarget(armTarget);
     elevatorPID->setTarget(elevatorTarget);
     ramp->setTarget(armTarget,getArmAngle());
-    //armProfile = new TrapProfile(armTarget - getArmAngle(), 11, 1000000, 10000);
+    //armProfile = new TrapProfile(armTarget - getArmAngle(), 10, 10, 10);
 }
 
 bool Sauropod::sequenceDone() {
@@ -204,7 +204,7 @@ void Sauropod::executeQueue() {
         return;
     }
 
-    if (atTarget()) {
+    if (atTarget() && !equal(presets[waypointQueue.front()], presets[currPreset])) {
         setPreset(waypointQueue.front());
         waypointQueue.pop();
         accumulator->reset();
@@ -261,7 +261,11 @@ void Sauropod::update() {
     }
 
     if (getArmAngle() < 1.5 && currTarget.projection == 0) {
-        armInput += -1.0;
+        armInput += -0.1;
+    }
+
+    if (getElevatorHeight() < 5 && getElevatorHeight() > 2) {
+        elevatorInput += 0.08;
     }
 
     executeQueue();
@@ -281,6 +285,7 @@ void Sauropod::update() {
     SmartDashboard::PutNumber("Arm Target:", armPID->getTarget());
 
     armMotor->Set(-ramp->update(getArmAngle(),armInput));
+    //armMotor->Set(-armInput);
     elevatorMotor->Set(-elevatorInput);
 }
 

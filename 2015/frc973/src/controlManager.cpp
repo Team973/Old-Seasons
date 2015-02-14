@@ -18,6 +18,9 @@ void ControlManager::update() {
     if (controls->getCodriverButton(1)) {
         stateManager->setSauropodState(StateManager::LOAD);
     }
+    if (controls->getCodriverButton(2)) {
+        stateManager->setSauropodState(StateManager::SAUROPOD_IDLE);
+    }
 }
 
 } /* namespace frc973 */
