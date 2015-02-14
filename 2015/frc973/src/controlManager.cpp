@@ -15,7 +15,7 @@ void ControlManager::update() {
 
     stateManager->setIntakeFromControls(controls->getCodriverAxis(1));
 
-    if (controls->getDriverButton(8)) {
+    if (controls->getCodriverButton(1)) {
         stateManager->setSauropodState(StateManager::LOAD);
     }
 }
