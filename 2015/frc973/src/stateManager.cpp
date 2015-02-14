@@ -35,6 +35,10 @@ void StateManager::setIntakeState(int state) {
     intakeState = state;
 }
 
+bool StateManager::isSauropodDone() {
+    return sauropod->sequenceDone();
+}
+
 void StateManager::update() {
 
     switch (intakeState) {
