@@ -21,6 +21,7 @@ public:
     const static int EXHAUST = 2;
     const static int HUMAN_LOAD = 3;
     const static int INTAKE_IDLE = 4;
+    const static int INTAKE_AUTO = 5;
 
     // sauropod states
     const static int LOAD = 1;
