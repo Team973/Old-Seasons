@@ -99,22 +99,28 @@ void Sauropod::setPreset(std::string preset) {
 
 void Sauropod::createPath(int dest) {
     if (dest != currPath) {
+        clearQueue();
         switch(dest) {
             case PLATFORM:
                 addToQueue("stow");
-                addToQueue("scoreHeight");
                 addToQueue("scoreProjection");
+                addToQueue("scoreHeight");
+                currPath = PLATFORM;
                 break;
             case PICKUP:
                 addToQueue("loadHigh");
-                //addToQueue("loadLow");
-                //addToQueue("loadHigh");
+                SmartDashboard::PutString("Adding Preset: ", "loadHigh");
+                addToQueue("loadLow");
+                SmartDashboard::PutString("Adding Preset: ", "loadLow");
+                addToQueue("loadHigh");
+                currPath = PICKUP;
                 break;
             case IDLE:
                 addToQueue("stow");
+                SmartDashboard::PutString("Adding Preset: ", "stow");
+                currPath = IDLE;
                 break;
         }
-        currPath = dest;
     }
 }
 
@@ -188,15 +194,11 @@ bool Sauropod::atTarget() {
 
 void Sauropod::clearQueue() {
     std::queue<std::string> dummy;
-    swap(waypointQueue, dummy);
+    waypointQueue.swap(dummy);
 }
 
 void Sauropod::addToQueue(std::string preset) {
-    if (waypointQueue.empty()) {
-        setPreset(preset);
-    } else {
-        waypointQueue.push(preset);
-    }
+    waypointQueue.push(preset);
 }
 
 void Sauropod::executeQueue() {
@@ -204,8 +206,9 @@ void Sauropod::executeQueue() {
         return;
     }
 
-    if (atTarget() && !equal(presets[waypointQueue.front()], presets[currPreset])) {
+    if (atTarget()) {
         setPreset(waypointQueue.front());
+        SmartDashboard::PutString("Curr Preset: ", waypointQueue.front());
         waypointQueue.pop();
         accumulator->reset();
     }
@@ -231,6 +234,9 @@ bool Sauropod::inCradle() {
 }
 
 void Sauropod::update() {
+
+    executeQueue();
+
     Preset currTarget = presets[currPreset];
     setTarget(currTarget);
 
@@ -266,9 +272,9 @@ void Sauropod::update() {
 
     if (getElevatorHeight() < 5 && getElevatorHeight() > 2) {
         elevatorInput += 0.08;
+    } else if (getElevatorHeight() > 18 && getElevatorHeight() < 21) {
+        elevatorInput += -0.1;
     }
-
-    executeQueue();
 
     pdp->UpdateTable();
     SmartDashboard::PutNumber("Elevator Input:", elevatorInput);
