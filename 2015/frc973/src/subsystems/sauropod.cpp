@@ -34,7 +34,6 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* eleva
     elevatorPID->setBounds(-1,1);
     elevatorPID->start();
 
-    currPreset = "hardStop";
 
     addPreset("hardStop", 0, 0);
     addPreset("stow", 0, 6);
@@ -49,7 +48,6 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* eleva
 
     setPreset("hardStop");
 
-    currGains = "empty";
 
     Gains empty = {
         {Constants::getConstant("kUpElevatorP")->getFloat(),
@@ -69,6 +67,10 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* eleva
     addGain("oneTote", oneTote);
 
     setGain("empty");
+
+    currPreset = "hardStop";
+    currGains = "empty";
+    currPath = IDLE;
 
     clearQueue();
 
@@ -94,23 +96,24 @@ void Sauropod::setPreset(std::string preset) {
     
 }
 
-void Sauropod::createPath(int state) {
-    clearQueue();
-
-    switch(state) {
-        case PLATFORM:
-            addToQueue("stow");
-            addToQueue("scoreHeight");
-            addToQueue("scoreProjection");
-        break;
-        case PICKUP:
-            addToQueue("stow");
-            addToQueue("load");
-            addToQueue("stow");
-        break;
-        case IDLE:
-            addToQueue("stow");
-        break;
+void Sauropod::createPath(int dest) {
+    if (dest != currPath) {
+        switch(dest) {
+            case PLATFORM:
+                addToQueue("stow");
+                addToQueue("scoreHeight");
+                addToQueue("scoreProjection");
+                break;
+            case PICKUP:
+                addToQueue("stow");
+                addToQueue("load");
+                addToQueue("stow");
+                break;
+            case IDLE:
+                addToQueue("stow");
+                break;
+        }
+        currPath = dest;
     }
 }
 
@@ -156,6 +159,10 @@ void Sauropod::setTarget(Preset target) {
     //armProfile = new TrapProfile(armTarget - getArmAngle(), 11, 1000000, 10000);
 }
 
+bool Sauropod::sequenceDone() {
+    return atTarget() && waypointQueue.empty();
+}
+
 bool Sauropod::atTarget() {
     Preset p = presets[currPreset];
 
@@ -170,7 +177,7 @@ bool Sauropod::atTarget() {
     } else {
         height = (e-h) + getElevatorHeight();
     }
-    
+
     SmartDashboard::PutNumber("current height: ", height);
     SmartDashboard::PutNumber("current projection: ", projection);
 
@@ -261,7 +268,7 @@ void Sauropod::update() {
     pdp->UpdateTable();
     SmartDashboard::PutNumber("Elevator Input:", elevatorInput);
     SmartDashboard::PutNumber("Arm Input:", armInput);
-    
+
     SmartDashboard::PutNumber("Arm Error: ", armPID->getTarget()-getArmAngle());
 
     SmartDashboard::PutNumber("Elevator Height:", getElevatorHeight());

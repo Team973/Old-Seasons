@@ -30,6 +30,7 @@ public:
     void setPreset(std::string preset);
     void setGain(std::string name);
     void setTarget(Preset target);
+    bool sequenceDone();
     bool atTarget();
     void addToQueue(std::string preset);
     void clearQueue();
@@ -67,6 +68,7 @@ private:
 
     std::string currPreset;
     std::string currGains;
+    int currPath;
 
     std::map<std::string, Preset> presets;
     std::map<std::string, Gains> gainSchedule;

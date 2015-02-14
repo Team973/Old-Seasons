@@ -27,6 +27,7 @@ void StateManager::setIntakeFromControls(float manual) {
 }
 
 void StateManager::setSauropodState(int state) {
+    sauropod->clearQueue();
     sauropodState = state;
 }
 
@@ -35,10 +36,13 @@ void StateManager::setIntakeState(int state) {
 }
 
 void StateManager::update() {
-    intake->setIntake(manualIntakeSpeed);
 
     switch (intakeState) {
         case INTAKE:
+            intake->setIntake(manualIntakeSpeed);
+            break;
+        case INTAKE_AUTO:
+            intake->setIntake(0);
             break;
         case EXHAUST:
             break;
