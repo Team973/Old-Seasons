@@ -16,7 +16,7 @@ void ControlManager::update() {
     stateManager->setIntakeFromControls(controls->getCodriverAxis(1));
 
     if (controls->getDriverButton(8)) {
-        stateManager->setRobotState(StateManager::SCORE_PLATFORM);
+        stateManager->setSauropodState(StateManager::LOAD);
     }
 }
 

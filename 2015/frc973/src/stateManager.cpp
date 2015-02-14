@@ -12,7 +12,6 @@ StateManager::StateManager(Drive *drive_, Sauropod *sauropod_, Intake *intake_) 
     sauropod = sauropod_;
     intake = intake_;
 
-    robotState = IDLE;
     intakeState = INTAKE_IDLE;
     sauropodState = SAUROPOD_IDLE;
 
@@ -27,21 +26,16 @@ void StateManager::setIntakeFromControls(float manual) {
     manualIntakeSpeed = manual;
 }
 
-void StateManager::setRobotState(int state) {
-    robotState = state;
+void StateManager::setSauropodState(int state) {
+    sauropodState = state;
+}
+
+void StateManager::setIntakeState(int state) {
+    intakeState = state;
 }
 
 void StateManager::update() {
     intake->setIntake(manualIntakeSpeed);
-
-    switch (robotState) {
-        case SCORE_STEP:
-            break;
-        case SCORE_PLATFORM:
-            break;
-        case IDLE: // this state will transition to any other state depending on the situation
-            break;
-    }
 
     switch (intakeState) {
         case INTAKE:
@@ -58,9 +52,9 @@ void StateManager::update() {
         case LOAD:
             sauropod->createPath(Sauropod::PICKUP);
             break;
-        case STEP:
+        case SCORE_STEP:
             break;
-        case PLATFORM:
+        case SCORE_PLATFORM:
             sauropod->createPath(Sauropod::PLATFORM);
             break;
         case SAUROPOD_IDLE:

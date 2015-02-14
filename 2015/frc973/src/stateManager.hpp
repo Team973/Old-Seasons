@@ -12,13 +12,9 @@ public:
     StateManager(Drive *drive_, Sauropod *sauropod_, Intake *intake_);
     void setDriveFromControls(double throttle, double turn, bool quickTurn);
     void setIntakeFromControls(float manual);
-    void setRobotState(int state);
+    void setSauropodState(int state);
+    void setIntakeState(int state);
     void update();
-
-    // robot states
-    const static int SCORE_STEP = 1;
-    const static int SCORE_PLATFORM = 2;
-    const static int IDLE = 3;
 
     // intake states
     const static int INTAKE = 1;
@@ -28,8 +24,8 @@ public:
 
     // sauropod states
     const static int LOAD = 1;
-    const static int STEP = 2;
-    const static int PLATFORM = 3;
+    const static int SCORE_STEP = 2;
+    const static int SCORE_PLATFORM = 3;
     const static int SAUROPOD_IDLE = 4;
 private:
     Drive *drive;
