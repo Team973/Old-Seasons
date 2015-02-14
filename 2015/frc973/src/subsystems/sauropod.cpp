@@ -37,7 +37,8 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* eleva
 
     addPreset("hardStop", 0, 0);
     addPreset("stow", 0, 6);
-    addPreset("load", 0, 2);
+    addPreset("loadHigh", 0, 20);
+    addPreset("loadLow", 0, 5);
     addPreset("scoreHeight", 0,3);
     addPreset("scoreProjection", 25,5);
     addPreset("requested",0,0);
@@ -105,12 +106,12 @@ void Sauropod::createPath(int dest) {
                 addToQueue("scoreProjection");
                 break;
             case PICKUP:
-                addToQueue("stow");
-                addToQueue("load");
-                addToQueue("stow");
+                addToQueue("loadHigh");
+                addToQueue("loadLow");
+                addToQueue("loadHigh");
                 break;
             case IDLE:
-                addToQueue("stow");
+                addToQueue("loadHigh");
                 break;
         }
         currPath = dest;
