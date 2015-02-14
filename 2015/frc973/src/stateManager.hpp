@@ -14,6 +14,7 @@ public:
     void setIntakeFromControls(float manual);
     void setSauropodState(int state);
     void setIntakeState(int state);
+    bool isSauropodDone();
     void update();
 
     // intake states
