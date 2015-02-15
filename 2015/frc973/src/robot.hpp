@@ -12,6 +12,7 @@ class ControlMap;
 class AutoManager;
 class StateManager;
 class ControlManager;
+class SPIGyro;
 
 class Robot : public IterativeRobot
 {
@@ -45,6 +46,8 @@ private:
     Encoder *gyro;
     Encoder *elevatorEncoder;
     Encoder *armEncoder;
+
+    SPIGyro *aGyro;
 
     Joystick *driver;
     Joystick *coDriver;

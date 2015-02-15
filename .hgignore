@@ -6,3 +6,6 @@
 ^frctool/frctool$
 (^|/)PPC603gnu/
 (^|/)\.metadata/
+
+syntax: glob
+*.o

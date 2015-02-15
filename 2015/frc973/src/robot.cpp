@@ -8,6 +8,8 @@
 #include "lib/utility.hpp"
 #include "lib/logger.hpp"
 #include "lib/txtFileIO.hpp"
+#include "lib/gyro.hpp"
+#include "lib/gyro_sender.hpp"
 #include "subsystems/drive.hpp"
 #include "subsystems/sauropod.hpp"
 #include "subsystems/intake.hpp"
@@ -43,6 +45,9 @@ Robot::Robot()
     pthread_t parsingThread;
     pthread_create(&parsingThread, NULL, runTxtIO, NULL);
 
+    //pthread_t gyroThread;
+    //pthread_create(&gyroThread, NULL, GyroSender::processor_executor, new GyroSender());
+
     Logger::Log(MESSAGE, "Boot complete, initializing objects...\n");
 
     driver = new Joystick(0);
@@ -65,6 +70,8 @@ Robot::Robot()
 
     elevatorEncoder = new Encoder(5,6);
     armEncoder = new Encoder(7,8);
+
+    aGyro = new SPIGyro();
 
     locator = new Locator(leftDriveEncoder, rightDriveEncoder, gyro);
 

@@ -6,6 +6,11 @@
 
 namespace frc973 {
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
+
 /*
  * Task that continually checks the gyro and serves that data out
  */
@@ -16,7 +21,7 @@ class SPIGyro {
          * Constructor initializes gyroscope, starts a thread to continually
          * update values, and then returns.
          */
-        SPIGyro(int size);
+        SPIGyro();
 
         /*
          * Returns the latest angle reading from the gyro.
@@ -27,6 +32,13 @@ class SPIGyro {
          * Returns the the latest angular momentum reading from the gyro.
          */
         double GetDegreesPerSec();
+
+        /*
+         * Zero the gyroscope by averaging all readings over 2 seconds.
+         * If a lot of those ended up in error, at least make sure we have ~.5
+         * seconds worth of data before continuing.
+         */
+        void ZeroAngle();
 
         /*
          * Notify gyro to start shutdown sequence soon.
@@ -48,11 +60,11 @@ class SPIGyro {
         bool InitializeGyro();
 
         /*
-         * Zero the gyroscope by averaging all readings over 2 seconds.
-         * If a lot of those ended up in error, at least make sure we have ~.5
-         * seconds worth of data before continuing.
+         * Collects all the anglular momentum readings from the last 6 seconds
+         * so that when the user calls ZeroAngle (on autoInit) it has the data
+         * to average.
          */
-        void ZeroAngle();
+        void CollectZeroData();
 
         /*
          * Pulls the angular rate from the gyro, checks for errors, and then 
@@ -111,6 +123,8 @@ class SPIGyro {
          */
         uint32_t ReadPartID();
 
+        // Readings per second.
+        static const int kReadingRate = 200;
 
         pthread_mutex_t mutex;
         SPI *gyro;
@@ -120,9 +134,10 @@ class SPIGyro {
         long timeLastUpdate;
         bool run_;
         double zero_offset;
-        
-        // Readings per second.
-        static const int kReadingRate = 200;
+
+        unsigned int zeroing_points_collected = 0;
+        static const unsigned int zero_data_buffer_size = 6 * kReadingRate;
+        double zeroing_data[zero_data_buffer_size];
 };
 
 }

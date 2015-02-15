@@ -29,7 +29,7 @@ void StateManager::setSauropodPreset(std::string preset) {
 
 void StateManager::update() {
     intake->setIntake(manualIntakeSpeed);
-
+/*
     switch (intakeState) {
         case INTAKE:
             break;
@@ -47,7 +47,7 @@ void StateManager::update() {
         case SCORE_PLATFORM:
             break;
     }
-
+*/
     sauropod->update();
     intake->update();
 }

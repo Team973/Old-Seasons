@@ -15,7 +15,7 @@ namespace frc973 {
  * Constructor initializes gyroscope, starts a thread to continually
  * update values, and then returns.
  */
-SPIGyro::SPIGyro(int size): mutex(PTHREAD_MUTEX_INITIALIZER), 
+SPIGyro::SPIGyro(): mutex(PTHREAD_MUTEX_INITIALIZER),
     gyro(new SPI(SPI::kOnboardCS0)),
     timer()
 {
@@ -28,6 +28,8 @@ SPIGyro::SPIGyro(int size): mutex(PTHREAD_MUTEX_INITIALIZER),
     gyro->SetClockActiveHigh();
     gyro->SetSampleDataOnRising();
     gyro->SetMSBFirst();
+
+    zeroing_points_collected = 0;
 
 
     pthread_t updateThread;
@@ -56,6 +58,32 @@ double SPIGyro::GetDegreesPerSec()
     return ret;
 }
 
+
+/*
+ * Zero the gyroscope by averaging all readings over 2 seconds.
+ * If a lot of those ended up in error, at least make sure we have ~.5
+ * seconds worth of data before continuing.
+ */
+void SPIGyro::ZeroAngle()
+{
+	unsigned int num_samples = zeroing_points_collected;
+	if (zeroing_points_collected > zero_data_buffer_size)
+		num_samples = zero_data_buffer_size;
+
+	zero_offset = 0;
+	for (unsigned int i = 0; i < num_samples; i++) {
+		zero_offset -= zeroing_data[i];
+	}
+	zero_offset /= static_cast<double>(num_samples);
+
+	pthread_mutex_lock(&mutex);
+	angle = 0;
+	pthread_mutex_unlock(&mutex);
+
+	printf("Total zero offset: %f\n", zero_offset);
+    Logger::Log(MESSAGE, "gyro zeroed successfully\n");
+}
+
 /*
  * Notify gyro to start shutdown sequence soon. 
  */
@@ -75,22 +103,40 @@ void* SPIGyro::Run(void *p)
     inst->timer.Reset();
     inst->timer.Start();
 
-    while (inst->run_ && !inst->InitializeGyro()) {
-        usleep(50000);
-    }
-    Logger::Log(MESSAGE, "gyro initialized successfully\n");
+    usleep(100000);
 
-    inst->ZeroAngle();
+    while (inst->run_ && !inst->InitializeGyro()) {
+        usleep(500000);
+        printf("retrying initialization\n");
+    }
+    Logger::Log(MESSAGE, "gyro initialized successfully!\n");
+    printf("The Gyro has been successfully initialized\n");
+
+    printf("Gyro ID: %u\n", inst->ReadPartID());
+
+    int cyc = 0;
 
     while (inst->run_) {
         inst->timer.Reset();
         inst->timer.Start();
 
+        inst->CollectZeroData();
+
+        if (inst->zeroing_points_collected == inst->zero_data_buffer_size)
+        	inst->ZeroAngle();
+
         inst->UpdateReading();
 
+		if (cyc++ == 50) {
+			cyc = 0;
+		    SmartDashboard::PutNumber("Gyro angle: ", inst>GetDegrees());
+			printf("angle is %f, momentum is %f\n", inst->GetDegrees(), inst->GetDegreesPerSec());
+		}
+
         //Wait till the next 1/kReadingRate us period to make next reading
-        usleep((unsigned int) ((float) 10e6 / (float) inst->kReadingRate)
-        		 - inst->timer.Get());
+        usleep((unsigned int) (((double) 1.0 / (double) inst->kReadingRate)
+        		 	 	 	 	 - inst->timer.Get())
+				 * (double) 1e6);
     }
     return NULL;
 }
@@ -113,8 +159,8 @@ bool SPIGyro::InitializeGyro()
         printf("gyro unexpected initial response 0x%X\n", result);
     }
 
-    // Wait for it to assert the fault conditions before reading them.
-    usleep(50000000);
+    // Wait 50ms for it to assert the fault conditions before reading them.
+    usleep(50000);
 
     if (!DoTransaction(0x20000000, &result)) {
         printf("failed to clear latched non-fault data\n");
@@ -135,6 +181,8 @@ bool SPIGyro::InitializeGyro()
             result);
         return false;
     }
+    printf("Value was test data yay!\n");
+
 
     if (!DoTransaction(0x20000000, &result)) {
         printf("failed to clear latched self-test data\n");
@@ -145,37 +193,29 @@ bool SPIGyro::InitializeGyro()
             result);
         return false;
     }
+    printf("Second value was test data again yay!\n");
 
     return true;
 }
 
 /*
- * Zero the gyroscope by averaging all readings over 2 seconds.
- * If a lot of those ended up in error, at least make sure we have ~.5
- * seconds worth of data before continuing.
+ * Collects all the anglular momentum readings from the last 6 seconds
+ * so that when the user calls ZeroAngle (on autoInit) it has the data
+ * to average.
  */
-void SPIGyro::ZeroAngle() {
-    const int num_samples = 2 * kReadingRate,
-          min_samples = 0.5 * kReadingRate;
-    double zeroing_data[num_samples];
-    size_t zeroing_index = 0;
+void SPIGyro::CollectZeroData() {
+    static unsigned int zeroing_index = 0;
 
-    for (int i = 0; i < num_samples && i > min_samples; i++) {
-        const uint32_t result = GetReading();
-        if (CheckErrors(result) == false) {
-            const double new_angle =
-                ExtractAngle(result) / static_cast<double>(kReadingRate);
-            zeroing_data[zeroing_index] = new_angle;
-            zeroing_index++;
-        }
+    const uint32_t result = GetReading();
+    if (CheckErrors(result) == false) {
+        const double new_angle =
+            ExtractAngle(result) / static_cast<double>(kReadingRate);
+        zeroing_data[zeroing_index] = new_angle;
+        zeroing_points_collected++;
     }
     
-    zero_offset = 0;
-    for (unsigned int i = 0; i < zeroing_index; i++) {
-        zero_offset -= zeroing_data[i];
-    }
-    zero_offset /= zeroing_index;
-    printf("Total zero offset: %f\n", zero_offset);
+    if (++zeroing_index > zero_data_buffer_size)
+    	zeroing_index = 0;
 }
 
 /*
@@ -183,8 +223,15 @@ void SPIGyro::ZeroAngle() {
  * updates this object to serve out that data.
  */
 void SPIGyro::UpdateReading() {
+	static int startup_cycles_left = 2 * kReadingRate;
+
     const uint32_t result = GetReading();
+    if (startup_cycles_left > 0) {
+    	startup_cycles_left--;
+    	return;
+    }
     if (CheckErrors(result) == false) {
+
 		double new_angle =
 			ExtractAngle(result) / (double) kReadingRate;
 		new_angle += zero_offset;
@@ -192,6 +239,7 @@ void SPIGyro::UpdateReading() {
 		pthread_mutex_lock(&mutex);
 		angle += new_angle;
 		angularMomentum = new_angle;
+
 		pthread_mutex_unlock(&mutex);
     }
 }
@@ -203,6 +251,7 @@ void SPIGyro::UpdateReading() {
 uint32_t SPIGyro::GetReading() {
     uint32_t result;
     if (!DoTransaction(0x20000000, &result)) {
+    	printf("Lost comm while trying to get reading\n");
         return 0;
     }
     return result;
@@ -242,7 +291,7 @@ bool SPIGyro::CheckErrors(uint32_t result) {
     }
     switch (ExtractStatus(result)) {
         case 0:
-            printf("gyro says data is bad\n");
+            printf("gyro says data is bad: 0x%X -> 0x%X from %f\n", result, ExtractStatus(result), ExtractAngle(result));
             return true;
         case 1:
             break;
@@ -275,16 +324,18 @@ bool SPIGyro::CheckErrors(uint32_t result) {
             printf("gyro gave unexpected self-test mode\n");
         }
         return true;
+
     }
     return false;
 }
 
 /* 
  * Returns the anglular rate contained in value.
+ * unit degrees per sec
  */
 double SPIGyro::ExtractAngle(uint32_t value) {
   const int16_t reading = -(int16_t)(value >> 10 & 0xFFFF);
-  return static_cast<double>(reading) * 2.0 * M_PI / 360.0 / 80.0;
+  return static_cast<double>(reading) / 80.0;
 }
 
 /* 
@@ -303,7 +354,7 @@ bool SPIGyro::DoTransaction(uint32_t to_write, uint32_t *result) {
         to_write |= 1;
 
     uint8_t to_send[kBytes], to_receive[kBytes];
-    const uint32_t to_write_flipped = __bswap_32(to_write);
+    const uint32_t to_write_flipped = __builtin_bswap32(to_write);
     memcpy(to_send, &to_write_flipped, kBytes);
 
     switch (gyro->Transaction(to_send, to_receive, kBytes)) {
@@ -327,7 +378,7 @@ bool SPIGyro::DoTransaction(uint32_t to_write, uint32_t *result) {
         return false;
     }
 
-    *result = __bswap_32(*result);
+    *result = __builtin_bswap32(*result);
     return true;
 }
 
