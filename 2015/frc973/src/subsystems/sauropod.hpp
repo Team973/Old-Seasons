@@ -35,7 +35,9 @@ public:
     void addToQueue(std::string preset);
     void clearQueue();
     float getElevatorHeight();
+    float getElevatorVelocity();
     float getArmAngle();
+    float getArmVelocity();
     void update();
     void createPath(int state);
 
