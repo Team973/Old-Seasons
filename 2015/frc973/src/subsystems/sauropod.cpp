@@ -37,8 +37,8 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* eleva
 
     addPreset("hardStop", 0, 0);
     addPreset("stow", 0, 4);
-    addPreset("loadHigh", 0, 20);
-    addPreset("loadLow", 0, 5);
+    addPreset("loadHigh", 0, 19);
+    addPreset("loadLow", 0, 3);
     addPreset("scoreHeight", 0,3);
     addPreset("scoreProjection", 25,5);
     addPreset("requested",0,0);
@@ -109,10 +109,8 @@ void Sauropod::createPath(int dest) {
                 break;
             case PICKUP:
                 addToQueue("loadHigh");
-                SmartDashboard::PutString("Adding Preset: ", "loadHigh");
-                addToQueue("loadLow");
-                SmartDashboard::PutString("Adding Preset: ", "loadLow");
-                addToQueue("loadHigh");
+                //addToQueue("loadLow");
+                //addToQueue("loadHigh");
                 currPath = PICKUP;
                 break;
             case IDLE:
@@ -187,9 +185,14 @@ bool Sauropod::atTarget() {
 
     SmartDashboard::PutNumber("current height: ", height);
     SmartDashboard::PutNumber("current projection: ", projection);
+        accumulator->reset();
 
 
-    return fabs(p.height - height) <= .5 && fabs(p.projection - projection) <= .5;
+    if ((fabs(p.height - height) <= 1 && fabs(p.projection - projection) <= 1) || (accumulator->update(getElevatorVelocity() < .5 && getArmVelocity() < .5))) {
+        return true;
+    }
+
+    return false;
 }
 
 void Sauropod::clearQueue() {
@@ -210,7 +213,6 @@ void Sauropod::executeQueue() {
         setPreset(waypointQueue.front());
         SmartDashboard::PutString("Curr Preset: ", waypointQueue.front());
         waypointQueue.pop();
-        accumulator->reset();
     }
 }
 
@@ -223,10 +225,22 @@ float Sauropod::getElevatorHeight() {
     return ((elevatorEncoder->Get()/(encoderTicks*gearRatio))*distancePerRevolution);
 }
 
+float Sauropod::getElevatorVelocity() {
+    float diameter = 1.27;
+    float encoderTicks = 360;
+    return elevatorEncoder->GetRate() / encoderTicks * M_PI / 12 * diameter;
+}
+
 float Sauropod::getArmAngle() {
     float encoderTicks = 360;
     float gearRatio = 5;
     return -(armEncoder->Get()/(encoderTicks*gearRatio)*360);
+}
+
+float Sauropod::getArmVelocity() {
+    float encoderTicks = 360;
+    float gearRatio = 5;
+    return armEncoder->GetRate() / (encoderTicks*gearRatio) * M_PI / 12;
 }
 
 bool Sauropod::inCradle() {
@@ -267,7 +281,7 @@ void Sauropod::update() {
     }
 
     if (getArmAngle() < 1.5 && currTarget.projection == 0) {
-        armInput += -0.1;
+        armInput += -0.3;
     }
 
     if (getElevatorHeight() < 5 && getElevatorHeight() > 2) {
