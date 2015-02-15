@@ -37,8 +37,8 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* eleva
 
     addPreset("hardStop", 0, 0);
     addPreset("stow", 0, 4);
-    addPreset("loadHigh", 0, 20);
-    addPreset("loadLow", 0, 5);
+    addPreset("loadHigh", 0, 19);
+    addPreset("loadLow", 0, 3);
     addPreset("scoreHeight", 0,3);
     addPreset("scoreProjection", 25,5);
     addPreset("requested",0,0);
@@ -99,22 +99,26 @@ void Sauropod::setPreset(std::string preset) {
 
 void Sauropod::createPath(int dest) {
     if (dest != currPath) {
+        clearQueue();
         switch(dest) {
             case PLATFORM:
                 addToQueue("stow");
-                addToQueue("scoreHeight");
                 addToQueue("scoreProjection");
+                addToQueue("scoreHeight");
+                currPath = PLATFORM;
                 break;
             case PICKUP:
                 addToQueue("loadHigh");
                 //addToQueue("loadLow");
                 //addToQueue("loadHigh");
+                currPath = PICKUP;
                 break;
             case IDLE:
                 addToQueue("stow");
+                SmartDashboard::PutString("Adding Preset: ", "stow");
+                currPath = IDLE;
                 break;
         }
-        currPath = dest;
     }
 }
 
@@ -181,22 +185,23 @@ bool Sauropod::atTarget() {
 
     SmartDashboard::PutNumber("current height: ", height);
     SmartDashboard::PutNumber("current projection: ", projection);
+        accumulator->reset();
 
 
-    return fabs(p.height - height) <= .5 && fabs(p.projection - projection) <= .5;
+    if ((fabs(p.height - height) <= 1 && fabs(p.projection - projection) <= 1) || (accumulator->update(getElevatorVelocity() < .5 && getArmVelocity() < .5))) {
+        return true;
+    }
+
+    return false;
 }
 
 void Sauropod::clearQueue() {
     std::queue<std::string> dummy;
-    swap(waypointQueue, dummy);
+    waypointQueue.swap(dummy);
 }
 
 void Sauropod::addToQueue(std::string preset) {
-    if (waypointQueue.empty()) {
-        setPreset(preset);
-    } else {
-        waypointQueue.push(preset);
-    }
+    waypointQueue.push(preset);
 }
 
 void Sauropod::executeQueue() {
@@ -204,10 +209,10 @@ void Sauropod::executeQueue() {
         return;
     }
 
-    if (atTarget() && !equal(presets[waypointQueue.front()], presets[currPreset])) {
+    if (atTarget()) {
         setPreset(waypointQueue.front());
+        SmartDashboard::PutString("Curr Preset: ", waypointQueue.front());
         waypointQueue.pop();
-        accumulator->reset();
     }
 }
 
@@ -220,10 +225,22 @@ float Sauropod::getElevatorHeight() {
     return ((elevatorEncoder->Get()/(encoderTicks*gearRatio))*distancePerRevolution);
 }
 
+float Sauropod::getElevatorVelocity() {
+    float diameter = 1.27;
+    float encoderTicks = 360;
+    return elevatorEncoder->GetRate() / encoderTicks * M_PI / 12 * diameter;
+}
+
 float Sauropod::getArmAngle() {
     float encoderTicks = 360;
     float gearRatio = 5;
     return -(armEncoder->Get()/(encoderTicks*gearRatio)*360);
+}
+
+float Sauropod::getArmVelocity() {
+    float encoderTicks = 360;
+    float gearRatio = 5;
+    return armEncoder->GetRate() / (encoderTicks*gearRatio) * M_PI / 12;
 }
 
 bool Sauropod::inCradle() {
@@ -231,6 +248,9 @@ bool Sauropod::inCradle() {
 }
 
 void Sauropod::update() {
+
+    executeQueue();
+
     Preset currTarget = presets[currPreset];
     setTarget(currTarget);
 
@@ -261,14 +281,14 @@ void Sauropod::update() {
     }
 
     if (getArmAngle() < 1.5 && currTarget.projection == 0) {
-        armInput += -0.1;
+        armInput += -0.3;
     }
 
     if (getElevatorHeight() < 5 && getElevatorHeight() > 2) {
         elevatorInput += 0.08;
+    } else if (getElevatorHeight() > 18 && getElevatorHeight() < 21) {
+        elevatorInput += -0.1;
     }
-
-    executeQueue();
 
     pdp->UpdateTable();
     SmartDashboard::PutNumber("Elevator Input:", elevatorInput);

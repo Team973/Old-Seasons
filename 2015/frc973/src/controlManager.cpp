@@ -16,10 +16,10 @@ void ControlManager::update() {
     stateManager->setIntakeFromControls(controls->getCodriverAxis(1));
 
     if (controls->getCodriverButton(1)) {
-        stateManager->setSauropodState(StateManager::LOAD);
+        stateManager->setRobotState(StateManager::LOAD);
     }
     if (controls->getCodriverButton(2)) {
-        stateManager->setSauropodState(StateManager::SAUROPOD_IDLE);
+        stateManager->setRobotState(StateManager::IDLE);
     }
 }
 
