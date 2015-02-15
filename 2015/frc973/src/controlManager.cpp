@@ -2,6 +2,7 @@
 #include "controlManager.hpp"
 #include "controlMap.hpp"
 #include "stateManager.hpp"
+#include "subsystems/sauropod.hpp"
 
 namespace frc973 {
 
@@ -16,10 +17,16 @@ void ControlManager::update() {
     stateManager->setIntakeFromControls(controls->getCodriverAxis(1));
 
     if (controls->getCodriverButton(1)) {
-        stateManager->setRobotState(StateManager::LOAD);
+        stateManager->setSauropodPath(Sauropod::READY);
     }
     if (controls->getCodriverButton(2)) {
-        stateManager->setRobotState(StateManager::IDLE);
+        stateManager->setSauropodPath(Sauropod::IDLE);
+    }
+    if (controls->getCodriverButton(3)) {
+        stateManager->setSauropodPath(Sauropod::PICKUP);
+    }
+    if (controls->getCodriverButton(4)) {
+        stateManager->setSauropodPath(Sauropod::RESTING);
     }
 }
 

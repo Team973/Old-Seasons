@@ -32,6 +32,15 @@ void StateManager::setRobotState(int state) {
     fromControls = true;
 }
 
+void StateManager::setSauropodPath(int path) {
+    if (fromControls) {
+        sauropod->createPath(path);
+        fromControls = false;
+    } else {
+        fromControls = true;
+    }
+}
+
 bool StateManager::isSauropodDone() {
     return sauropod->sequenceDone();
 }
@@ -40,17 +49,11 @@ void StateManager::update() {
 
     switch (robotState) {
         case LOAD:
-            if (fromControls) {
-                sauropod->createPath(Sauropod::PICKUP);
-                fromControls = false;
-            }
             intake->setIntake(manualIntakeSpeed);
             break;
         case SCORE:
-            sauropod->createPath(Sauropod::PLATFORM);
             break;
         case IDLE:
-            sauropod->createPath(Sauropod::IDLE);
             intake->setIntake(0);
             break;
     }

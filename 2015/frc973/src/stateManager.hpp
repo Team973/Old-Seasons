@@ -13,6 +13,7 @@ public:
     void setDriveFromControls(double throttle, double turn, bool quickTurn);
     void setIntakeFromControls(float manual);
     void setRobotState(int state);
+    void setSauropodPath(int path);
     bool isSauropodDone();
     void update();
 

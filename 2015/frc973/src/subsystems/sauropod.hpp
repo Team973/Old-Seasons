@@ -36,6 +36,7 @@ public:
     void clearQueue();
     float getElevatorHeight();
     float getElevatorVelocity();
+    float getElevatorCurrent();
     float getArmAngle();
     float getArmVelocity();
     void update();
@@ -44,6 +45,8 @@ public:
     const static int IDLE = 1;
     const static int PICKUP = 2;
     const static int PLATFORM = 3;
+    const static int READY = 4;
+    const static int RESTING = 5;
 
 private:
 
@@ -86,6 +89,8 @@ private:
     float kArmVelFF;
 
     Timer *loopTimer;
+
+    int numTotes;
 };
 
 }
