@@ -1,0 +1,4 @@
+kangaccelff = 500
+klinvelff = 0.09
+kangvelff = 0.123
+klinaccelff = 123
