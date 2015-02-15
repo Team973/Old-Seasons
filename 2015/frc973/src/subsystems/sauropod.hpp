@@ -39,7 +39,7 @@ public:
     float getArmAngle();
     float getArmVelocity();
     void update();
-    void createPath(int state);
+    void createPath(int dest);
 
     const static int IDLE = 1;
     const static int PICKUP = 2;
