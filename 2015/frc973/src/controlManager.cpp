@@ -16,16 +16,10 @@ void ControlManager::update() {
     stateManager->setIntakeFromControls(controls->getCodriverAxis(1));
 
     if (controls->getCodriverButton(1)) {
-        stateManager->setSauropodPreset("test1");
+        stateManager->setSauropodState(StateManager::LOAD);
     }
     if (controls->getCodriverButton(2)) {
-        stateManager->setSauropodPreset("hardStop");
-    }
-    if (controls->getCodriverButton(3)) {
-        stateManager->setSauropodPreset("test3");
-    }
-    if (controls->getCodriverButton(4)) {
-        stateManager->setSauropodPreset("test4");
+        stateManager->setSauropodState(StateManager::SAUROPOD_IDLE);
     }
 }
 
