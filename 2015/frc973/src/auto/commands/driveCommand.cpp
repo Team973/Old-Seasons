@@ -10,6 +10,26 @@ DriveCommand::DriveCommand(float target_, float timeout_)
 
     target = target_;
 
+    cmdSeq = NULL;
+    percent = 0.0;
+
+    done = true;
+
+    accumulator = new FlagAccumulator();
+    accumulator->setThreshold(3);
+
+    setTimeout(timeout_);
+}
+
+DriveCommand::DriveCommand(AutoCommand *cmdSeq_, float percent_, float target_, float timeout_) {
+    xyManager = XYManager::getInstance();
+
+    cmdSeq = cmdSeq_;
+
+    percent = percent_;
+
+    target = target_;
+
     accumulator = new FlagAccumulator();
     accumulator->setThreshold(3);
 
@@ -26,7 +46,11 @@ void DriveCommand::init()
 
 bool DriveCommand::taskPeriodic()
 {
-    if (accumulator->update(xyManager->isMovementDone()) || timer->Get() >= timeout)
+    if (cmdSeq != NULL && (xyManager->getDistanceFromTarget() >= (xyManager->getDistanceFromTarget()*(percent/10)))) {
+        done = cmdSeq->run();
+    }
+
+    if ((accumulator->update(xyManager->isMovementDone()) || timer->Get() >= timeout) && done)
     {
         return true;
     }

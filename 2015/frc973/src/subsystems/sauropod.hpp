@@ -47,6 +47,7 @@ public:
     const static int PLATFORM = 3;
     const static int READY = 4;
     const static int RESTING = 5;
+    const static int RETURN = 6;
 
 private:
 
@@ -89,6 +90,7 @@ private:
     float kArmVelFF;
 
     Timer *loopTimer;
+    Timer *doneTimer;
 
     int numTotes;
 };

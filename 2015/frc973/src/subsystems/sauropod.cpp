@@ -20,6 +20,9 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* eleva
     loopTimer = new Timer();
     loopTimer->Start();
 
+    doneTimer = new Timer();
+    doneTimer->Start();
+
     pdp = new PowerDistributionPanel();
 
     kArmVelFF = Constants::getConstant("kArmVelFF")->getFloat();
@@ -39,8 +42,8 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* eleva
     addPreset("stow", 0, 0);
     addPreset("loadHigh", 0, 18);
     addPreset("loadLow", 0, 1);
-    addPreset("scoreHeight", 15, 3);
-    addPreset("scoreProjection", 15, 2);
+    addPreset("scoreHeight", 11, 6);
+    addPreset("scoreProjection", 11, 6);
     addPreset("rest",0,6);
 
     setPreset("hardStop");
@@ -74,7 +77,7 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* eleva
     ramp = new RampedOutput(.3,.5);
 
     accumulator = new FlagAccumulator();
-    accumulator->setThreshold(1);
+    accumulator->setThreshold(3);
 
     numTotes = 0;
 }
@@ -120,6 +123,12 @@ void Sauropod::createPath(int dest) {
             case RESTING:
                 addToQueue("rest");
                 break;
+            case RETURN:
+                addToQueue("scoreHeight");
+                addToQueue("scoreProjection");
+                addToQueue("rest");
+                currPath = RETURN;
+                break;
             case IDLE:
                 addToQueue("stow");
                 currPath = IDLE;
@@ -155,12 +164,12 @@ void Sauropod::setTarget(Preset target) {
     }
 
     elevatorTarget = target.height - deltaY;
-    SmartDashboard::PutNumber("Elevator Target: ", elevatorTarget);
     if (elevatorTarget < 0) {
         elevatorTarget = 0;
     } else if (elevatorTarget > switchThreshold) {
         elevatorTarget = switchThreshold;
     }
+    SmartDashboard::PutNumber("Elevator Target: ", elevatorTarget);
 
     loopTimer->Reset();
 
@@ -191,11 +200,16 @@ bool Sauropod::atTarget() {
 
     SmartDashboard::PutNumber("current height: ", height);
     SmartDashboard::PutNumber("current projection: ", projection);
-        accumulator->reset();
+
+    SmartDashboard::PutNumber("height error: ", fabs(p.height-height));
+    SmartDashboard::PutNumber("projection error: ", fabs(p.projection-projection));
 
 
-    //if ((fabs(p.height - height) <= .6 && fabs(p.projection - projection) <= .6) || (accumulator->update(getElevatorVelocity() < 1 && getArmVelocity() < 1))) {
-    if (getElevatorVelocity() < 1 && getArmVelocity() < 1) {
+    if ((fabs(p.height - height) <= 2 && fabs(p.projection - projection) <= 2)) {
+        if (accumulator->update(fabs(getElevatorVelocity()) < .1 && fabs(getArmVelocity()) < .1)) {
+            return true;
+        }
+    } else if (doneTimer->Get() > 5) {
         return true;
     }
 
@@ -217,8 +231,9 @@ void Sauropod::executeQueue() {
     }
 
     if (atTarget()) {
+        accumulator->reset();
+        doneTimer->Reset();
         setPreset(waypointQueue.front());
-        SmartDashboard::PutString("Curr Preset: ", waypointQueue.front());
         waypointQueue.pop();
     }
 }
@@ -284,7 +299,15 @@ void Sauropod::update() {
     float epido = elevatorPID->update(getElevatorHeight()) + voltageFF;
     float apido = armPID->update(getArmAngle());
 
-    if (inCradle() && currTarget.projection > 0) {
+    if (currTarget.height < 4 && currTarget.projection > 0 && getArmAngle() < 11) {
+        if (getElevatorHeight() < 5) {
+            elevatorInput = 0.3;
+            armInput = 0.0;
+        } else {
+            elevatorInput = epido;
+            armInput = apido;
+        }
+    } else if (inCradle() && currTarget.projection > 0) {
         elevatorInput = epido;
         armInput = -0.1;
     } else if (!inCradle() && currTarget.height < 4 && getArmAngle() > 1.5) {
@@ -296,13 +319,15 @@ void Sauropod::update() {
     }
 
     if (getArmAngle() < 1.5 && currTarget.projection == 0) {
-        armInput += -0.3;
+        armInput += -0.1;
     }
 
     if (getElevatorHeight() < 5 && getElevatorHeight() > 2 && fabs(getElevatorVelocity()) > 1) {
-        elevatorInput += 0.07;
+        elevatorInput += 0.3;
     } else if (getElevatorHeight() > 18 && getElevatorHeight() < 21) {
         elevatorInput += -0.2;
+    } else if (getElevatorHeight() < 2 && currTarget.height == 0) {
+        elevatorInput = 0.0;
     }
 
     if (getElevatorCurrent() > 5.2) {

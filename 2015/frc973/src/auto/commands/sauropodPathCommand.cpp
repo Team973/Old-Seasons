@@ -13,7 +13,7 @@ SauropodPathCommand::SauropodPathCommand(StateManager *manager_, int path_, floa
 void SauropodPathCommand::init() {
     timer->Start();
     timer->Reset();
-    //manager->setSauropodState(path);
+    manager->setSauropodPath(path);
 }
 
 bool SauropodPathCommand::taskPeriodic() {

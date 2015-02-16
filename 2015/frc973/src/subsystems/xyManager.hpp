@@ -25,6 +25,7 @@ public:
     void setTargetAngle(float angle_);
     void startProfile();
     XYManager::MotorValue* getValues();
+    float getDistanceFromTarget();
     void update();
 
 private:
@@ -48,6 +49,8 @@ private:
     float  kLinAccelFF;
     float kAngVelFF;
     float kAngAccelFF;
+
+    float relativeDistance;
 
     bool done;
 };
