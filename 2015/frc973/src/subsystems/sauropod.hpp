@@ -89,6 +89,7 @@ private:
     float kArmVelFF;
 
     Timer *loopTimer;
+    Timer *doneTimer;
 
     int numTotes;
 };

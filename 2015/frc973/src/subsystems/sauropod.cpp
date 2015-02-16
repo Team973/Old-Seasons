@@ -20,6 +20,9 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* eleva
     loopTimer = new Timer();
     loopTimer->Start();
 
+    doneTimer = new Timer();
+    doneTimer->Start();
+
     pdp = new PowerDistributionPanel();
 
     kArmVelFF = Constants::getConstant("kArmVelFF")->getFloat();
@@ -74,7 +77,7 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* eleva
     ramp = new RampedOutput(.3,.5);
 
     accumulator = new FlagAccumulator();
-    accumulator->setThreshold(1);
+    accumulator->setThreshold(3);
 
     numTotes = 0;
 }
@@ -193,9 +196,11 @@ bool Sauropod::atTarget() {
     SmartDashboard::PutNumber("current projection: ", projection);
 
 
-    //if ((fabs(p.height - height) <= .6 && fabs(p.projection - projection) <= .6) || (accumulator->update(getElevatorVelocity() < 1 && getArmVelocity() < 1))) {
-    if (accumulator->update(getElevatorVelocity() < 1 && getArmVelocity() < 1)) {
-        accumulator->reset();
+    if ((fabs(p.height - height) <= 2 && fabs(p.projection - projection) <= 2)) {
+        if (accumulator->update(fabs(getElevatorVelocity()) < .1 && fabs(getArmVelocity()) < .1)) {
+            return true;
+        }
+    } else if (doneTimer->Get() > 5) {
         return true;
     }
 
@@ -213,11 +218,12 @@ void Sauropod::addToQueue(std::string preset) {
 
 void Sauropod::executeQueue() {
     if (waypointQueue.empty()) {
-        accumulator->reset();
         return;
     }
 
     if (atTarget()) {
+        accumulator->reset();
+        doneTimer->Reset();
         setPreset(waypointQueue.front());
         waypointQueue.pop();
     }
@@ -296,13 +302,15 @@ void Sauropod::update() {
     }
 
     if (getArmAngle() < 1.5 && currTarget.projection == 0) {
-        armInput += -0.3;
+        armInput += -0.1;
     }
 
     if (getElevatorHeight() < 5 && getElevatorHeight() > 2 && fabs(getElevatorVelocity()) > 1) {
-        elevatorInput += 0.07;
+        elevatorInput += 0.05;
     } else if (getElevatorHeight() > 18 && getElevatorHeight() < 21) {
         elevatorInput += -0.2;
+    } else if (getElevatorHeight() < 2 && currTarget.height == 0) {
+        elevatorInput = 0.0;
     }
 
     if (getElevatorCurrent() > 5.2) {
