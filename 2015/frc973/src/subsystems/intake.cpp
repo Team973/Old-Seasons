@@ -36,9 +36,8 @@ void Intake::actuateHumanFeederSolenoids(bool actuate) {
 void Intake::update() {
     rightIntakeMotor->Set(motorSpeed);
     leftIntakeMotor->Set(motorSpeed);
+
     humanFeederIntakeMotor->Set(motorSpeed);
-    floorSolenoid->Set(floorSolenoidCondtion);
-    humanFeederSolenoid->Set(feederSolenoidCondtion);
 }
 
 } /* namespace frc973 */
