@@ -66,12 +66,11 @@ Robot::Robot()
 
     leftDriveEncoder = new Encoder(0,1);
     rightDriveEncoder = new Encoder(2,3);
-    gyro = new Encoder(14,15);
 
     elevatorEncoder = new Encoder(5,6);
     armEncoder = new Encoder(7,8);
 
-    aGyro = new SPIGyro();
+    gyro = new SPIGyro();
 
     locator = new Locator(leftDriveEncoder, rightDriveEncoder, gyro);
 
@@ -102,7 +101,7 @@ void Robot::dashboardUpdate()
     SmartDashboard::PutString("DB/String 1", asString(rightDriveEncoder->Get()));
     SmartDashboard::PutString("DB/String 2", autoManager->getCurrentName());
     SmartDashboard::PutString("DB/String 3", asString(sauropod->getElevatorHeight()));
-    SmartDashboard::PutString("DB/String 4", asString(gyro->Get()));
+    SmartDashboard::PutString("DB/String 4", asString(gyro->GetDegrees()));
     SmartDashboard::PutNumber("raw arm encoder: ", armEncoder->Get());
     SmartDashboard::PutBoolean("is sauropod done: ", sauropod->atTarget());
 }

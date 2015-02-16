@@ -30,6 +30,7 @@ SPIGyro::SPIGyro(): mutex(PTHREAD_MUTEX_INITIALIZER),
     gyro->SetMSBFirst();
 
     zeroing_points_collected = 0;
+    zero_offset = 0;
 
 
     pthread_t updateThread;
@@ -56,6 +57,16 @@ double SPIGyro::GetDegreesPerSec()
     double ret = angularMomentum;
     pthread_mutex_unlock(&mutex);
     return ret;
+}
+
+/*
+ * Sets the current gyro heading to zero
+ */
+void SPIGyro::Reset()
+{
+    pthread_mutex_lock(&mutex);
+    angle = 0;
+    pthread_mutex_unlock(&mutex);
 }
 
 
@@ -129,7 +140,7 @@ void* SPIGyro::Run(void *p)
 
 		if (cyc++ == 50) {
 			cyc = 0;
-		    //SmartDashboard::PutNumber("Gyro angle: ", inst>GetDegrees());
+		    SmartDashboard::PutNumber("Gyro angle: ", inst->GetDegrees());
 			printf("angle is %f, momentum is %f\n", inst->GetDegrees(), inst->GetDegreesPerSec());
 		}
 
