@@ -30,7 +30,14 @@ void Intake::actuateHumanFeederSolenoids(bool actuate) {
 void Intake::update() {
     rightIntakeMotor->Set(motorSpeed);
     leftIntakeMotor->Set(motorSpeed);
-    humanFeederIntakeMotor->Set(motorSpeed);
+
+    if(feederSolenoidCondtion) {
+        humanFeederIntakeMotor->Set(motorSpeed);
+    }
+    else {
+        humanFeederIntakeMotor->Set(0);
+    }
+
     floorSolenoid->Set(floorSolenoidCondtion);
     humanFeederSolenoid->Set(feederSolenoidCondtion);
 }
