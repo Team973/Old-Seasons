@@ -13,7 +13,7 @@ public:
     void addSequential(AutoCommand* command);
     void addConcurrent(AutoCommand* command);
     void init();
-    bool run();
+    bool taskPeriodic();
 private:
 
     struct COMMAND {

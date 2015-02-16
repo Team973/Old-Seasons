@@ -11,12 +11,16 @@ class FlagAccumulator;
 class DriveCommand : public AutoCommand {
 public:
     DriveCommand(float target_, float timeout_);
+    DriveCommand(AutoCommand *cmdSeq_, float percent_, float target_, float timeout_);
     void init();
     bool taskPeriodic();
 private:
+    AutoCommand *cmdSeq;
+    float percent;
     float target;
     XYManager *xyManager;
     FlagAccumulator *accumulator;
+    bool done;
 };
 
 }

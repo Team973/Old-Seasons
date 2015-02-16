@@ -42,7 +42,7 @@ void AutoSequencer::init()
 {
 }
 
-bool AutoSequencer::run()
+bool AutoSequencer::taskPeriodic()
 {
     if (sequence.size() == 0)
     {
