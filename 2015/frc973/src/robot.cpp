@@ -63,6 +63,9 @@ Robot::Robot()
 
     leftIntakeMotor = new VictorSP(8);
     rightIntakeMotor = new VictorSP(9);
+    humanFeederIntakeMotor = new VictorSP(10);
+    humanFeederSolenoid = new Solenoid(0);
+    floorSolenoid = new Solenoid(1);
 
     leftDriveEncoder = new Encoder(0,1);
     rightDriveEncoder = new Encoder(2,3);
@@ -79,7 +82,7 @@ Robot::Robot()
 
     drive = new Drive(leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive);
     sauropod = new Sauropod(elevatorMotor, armMotor, elevatorEncoder,  armEncoder);
-    intake = new Intake(leftIntakeMotor, rightIntakeMotor);
+    intake = new Intake(leftIntakeMotor, rightIntakeMotor, humanFeederIntakeMotor, floorSolenoid, humanFeederSolenoid);
 
     controls = new ControlMap(driver, coDriver);
 
