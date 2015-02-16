@@ -51,6 +51,8 @@ XYManager::XYManager()
     turnPID->start();
     turnPID->setBounds(-.5,.5);
 
+    relativeDistance = 0;
+
     printf("Profile Pos, Profile Vel, Profile Accel, Actual Pos, Actual Vel\n");
 }
 
@@ -92,6 +94,10 @@ XYManager::MotorValue* XYManager::getValues()
     return updateValue;
 }
 
+float XYManager::getDistanceFromTarget() {
+    return relativeDistance;
+}
+
 void XYManager::update()
 {
     locator->update();
@@ -106,7 +112,7 @@ void XYManager::update()
     float linearFF = (kLinVelFF*linearStep[2]) + (kLinAccelFF*linearStep[3]);
     float angularFF = (kAngVelFF*angularStep[2]) + (kAngAccelFF*angularStep[3]);
 
-    float relativeDistance = currPoint.distance - origPoint.distance;
+    relativeDistance = currPoint.distance - origPoint.distance;
 
     float baseError = angularProfile->getTarget() - currPoint.angle;
 

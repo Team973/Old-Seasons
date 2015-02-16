@@ -6,12 +6,10 @@
 
 namespace frc973 {
 
-Drive::Drive(VictorSP *leftFrontMotor_, VictorSP *rightFrontMotor_, VictorSP *leftBackMotor_, VictorSP *rightBackMotor_)
+Drive::Drive(VictorSP *left_, VictorSP *right_)
 {
-    leftFrontMotor = leftFrontMotor_;
-    rightFrontMotor = rightFrontMotor_;
-    leftBackMotor = leftBackMotor_;
-    rightBackMotor = rightBackMotor_;
+    leftMotor = left_;
+    rightMotor = right_;
 
     xyManager = XYManager::getInstance();
 
@@ -22,10 +20,8 @@ Drive::Drive(VictorSP *leftFrontMotor_, VictorSP *rightFrontMotor_, VictorSP *le
 
 void Drive::setDriveMotors(float left, float right)
 {
-    leftFrontMotor->Set(limit(right));
-    rightFrontMotor->Set(-limit(left));
-    leftBackMotor->Set(limit(right));
-    rightBackMotor->Set(-limit(left));
+    leftMotor->Set(limit(right));
+    rightMotor->Set(-limit(left));
 }
 
 void Drive::arcade(float move_, float rotate_)
