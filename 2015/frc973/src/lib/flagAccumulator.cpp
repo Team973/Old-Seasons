@@ -15,6 +15,10 @@ void FlagAccumulator::setThreshold(int threshold_) {
     threshold = threshold_;
 }
 
+int FlagAccumulator::getFlagCount() {
+    return flagCount;
+}
+
 bool FlagAccumulator::update(bool current) {
     if (current) {
         flagCount += 1;

@@ -38,9 +38,9 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* eleva
     addPreset("hardStop", 0, 0);
     addPreset("stow", 0, 0);
     addPreset("loadHigh", 0, 18);
-    addPreset("loadLow", 0, 0);
-    addPreset("scoreHeight", 0,3);
-    addPreset("scoreProjection", 25,5);
+    addPreset("loadLow", 0, 1);
+    addPreset("scoreHeight", 15, 3);
+    addPreset("scoreProjection", 15, 2);
     addPreset("rest",0,6);
 
     setPreset("hardStop");
@@ -74,7 +74,7 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* eleva
     ramp = new RampedOutput(.3,.5);
 
     accumulator = new FlagAccumulator();
-    accumulator->setThreshold(3);
+    accumulator->setThreshold(1);
 
     numTotes = 0;
 }
@@ -100,7 +100,7 @@ void Sauropod::createPath(int dest) {
         clearQueue();
         switch(dest) {
             case PLATFORM:
-                addToQueue("stow");
+                addToQueue("rest");
                 addToQueue("scoreProjection");
                 addToQueue("scoreHeight");
                 currPath = PLATFORM;
@@ -194,7 +194,8 @@ bool Sauropod::atTarget() {
         accumulator->reset();
 
 
-    if ((fabs(p.height - height) <= 1 && fabs(p.projection - projection) <= 1) || (accumulator->update(getElevatorVelocity() < .5 && getArmVelocity() < .5))) {
+    //if ((fabs(p.height - height) <= .6 && fabs(p.projection - projection) <= .6) || (accumulator->update(getElevatorVelocity() < 1 && getArmVelocity() < 1))) {
+    if (getElevatorVelocity() < 1 && getArmVelocity() < 1) {
         return true;
     }
 
@@ -270,13 +271,17 @@ void Sauropod::update() {
 
     std::vector<float> armStep = armProfile->getProfile(currTime);
 
+    float voltageFF;
+
     if (currTarget.height < getElevatorHeight()) {
         elevatorPID->setGains(gainSchedule[currGains].down);
+        voltageFF = -0.02;
     } else {
         elevatorPID->setGains(gainSchedule[currGains].up);
+        voltageFF = 0.1;
     }
 
-    float epido = elevatorPID->update(getElevatorHeight()) + 0.1;
+    float epido = elevatorPID->update(getElevatorHeight()) + voltageFF;
     float apido = armPID->update(getArmAngle());
 
     if (inCradle() && currTarget.projection > 0) {
@@ -294,8 +299,8 @@ void Sauropod::update() {
         armInput += -0.3;
     }
 
-    if (getElevatorHeight() < 5 && getElevatorHeight() > 2) {
-        elevatorInput += 0.08;
+    if (getElevatorHeight() < 5 && getElevatorHeight() > 2 && fabs(getElevatorVelocity()) > 1) {
+        elevatorInput += 0.07;
     } else if (getElevatorHeight() > 18 && getElevatorHeight() < 21) {
         elevatorInput += -0.2;
     }
@@ -310,6 +315,7 @@ void Sauropod::update() {
         numTotes = 0;
     }
     SmartDashboard::PutNumber("Num Totes: ", numTotes);
+    SmartDashboard::PutNumber("Num Flags: ", accumulator->getFlagCount());
 
     pdp->UpdateTable();
     SmartDashboard::PutNumber("Elevator Input:", elevatorInput);

@@ -28,6 +28,9 @@ void ControlManager::update() {
     if (controls->getCodriverButton(4)) {
         stateManager->setSauropodPath(Sauropod::RESTING);
     }
+    if (controls->getCodriverButton(5)) {
+        stateManager->setSauropodPath(Sauropod::PLATFORM);
+    }
 }
 
 } /* namespace frc973 */
