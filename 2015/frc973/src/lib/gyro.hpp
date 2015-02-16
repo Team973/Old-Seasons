@@ -34,6 +34,11 @@ class SPIGyro {
         double GetDegreesPerSec();
 
         /*
+         * Sets the current gyro heading to zero
+         */
+        void Reset();
+
+        /*
          * Zero the gyroscope by averaging all readings over 2 seconds.
          * If a lot of those ended up in error, at least make sure we have ~.5
          * seconds worth of data before continuing.
@@ -133,9 +138,9 @@ class SPIGyro {
         double angularMomentum;
         long timeLastUpdate;
         bool run_;
-        double zero_offset;
+        double zero_offset;	//used for zeroing the gyro
 
-        unsigned int zeroing_points_collected = 0;
+        unsigned int zeroing_points_collected;
         static const unsigned int zero_data_buffer_size = 6 * kReadingRate;
         double zeroing_data[zero_data_buffer_size];
 };

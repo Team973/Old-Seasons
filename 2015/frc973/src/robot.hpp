@@ -43,11 +43,10 @@ private:
 
     Encoder *leftDriveEncoder;
     Encoder *rightDriveEncoder;
-    Encoder *gyro;
     Encoder *elevatorEncoder;
     Encoder *armEncoder;
 
-    SPIGyro *aGyro;
+    SPIGyro *gyro;
 
     Joystick *driver;
     Joystick *coDriver;

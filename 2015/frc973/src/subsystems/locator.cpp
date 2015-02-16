@@ -4,7 +4,7 @@
 
 namespace frc973 {
 
-Locator::Locator(Encoder *leftEncoder_, Encoder *rightEncoder_, Encoder *gyro_)
+Locator::Locator(Encoder *leftEncoder_, Encoder *rightEncoder_, SPIGyro *gyro_)
 {
     leftEncoder = leftEncoder_;
     rightEncoder = rightEncoder_;
@@ -72,8 +72,7 @@ float Locator::normalizeAngle(float theta)
 // in degrees
 float Locator::getAngle()
 {
-    float gyroTicks = 1024;
-    return normalizeAngle(gyro->Get() * (360/gyroTicks));
+    return normalizeAngle(gyro->GetDegrees());
 }
 
 Locator::Point Locator::getPoint()
@@ -83,7 +82,7 @@ Locator::Point Locator::getPoint()
 
 void Locator::update()
 {
-    SmartDashboard::PutString("DB/String 0", asString(gyro->Get() * (360.0/1024.0)));
+    SmartDashboard::PutString("DB/String 0", asString(gyro->GetDegrees()));
     currPoint->angle = getAngle();
     currPoint->distance = getMovedDistance();
 }
