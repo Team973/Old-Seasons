@@ -32,10 +32,8 @@ private:
 
     void dashboardUpdate();
 
-    VictorSP *leftFrontDrive;
-    VictorSP *rightFrontDrive;
-    VictorSP *leftBackDrive;
-    VictorSP *rightBackDrive;
+    VictorSP *leftDriveMotors;
+    VictorSP *rightDriveMotors;
     VictorSP *elevatorMotor;
     VictorSP *armMotor;
     VictorSP *leftIntakeMotor;
