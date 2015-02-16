@@ -8,6 +8,7 @@ public:
     FlagAccumulator();
     void reset();
     void setThreshold(int threshold_);
+    int getFlagCount();
     bool update(bool current);
 private:
     int threshold;
