@@ -191,11 +191,11 @@ bool Sauropod::atTarget() {
 
     SmartDashboard::PutNumber("current height: ", height);
     SmartDashboard::PutNumber("current projection: ", projection);
-        accumulator->reset();
 
 
     //if ((fabs(p.height - height) <= .6 && fabs(p.projection - projection) <= .6) || (accumulator->update(getElevatorVelocity() < 1 && getArmVelocity() < 1))) {
-    if (getElevatorVelocity() < 1 && getArmVelocity() < 1) {
+    if (accumulator->update(getElevatorVelocity() < 1 && getArmVelocity() < 1)) {
+        accumulator->reset();
         return true;
     }
 
@@ -213,12 +213,12 @@ void Sauropod::addToQueue(std::string preset) {
 
 void Sauropod::executeQueue() {
     if (waypointQueue.empty()) {
+        accumulator->reset();
         return;
     }
 
     if (atTarget()) {
         setPreset(waypointQueue.front());
-        SmartDashboard::PutString("Curr Preset: ", waypointQueue.front());
         waypointQueue.pop();
     }
 }
