@@ -40,6 +40,10 @@ private:
     VictorSP *armMotor;
     VictorSP *leftIntakeMotor;
     VictorSP *rightIntakeMotor;
+    VictorSP *humanFeederIntakeMotor;
+
+    Solenoid *humanFeederSolenoid;
+    Solenoid *floorSolenoid;
 
     Encoder *leftDriveEncoder;
     Encoder *rightDriveEncoder;
