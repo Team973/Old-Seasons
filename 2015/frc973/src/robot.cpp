@@ -64,6 +64,9 @@ Robot::Robot()
     leftIntakeMotor = new VictorSP(8);
     rightIntakeMotor = new VictorSP(9);
     humanFeederIntakeMotor = new VictorSP(10);
+
+    whipMotor = new VictorSP(3);
+
     humanFeederSolenoid = new Solenoid(0);
     floorSolenoid = new Solenoid(1);
 
@@ -75,6 +78,10 @@ Robot::Robot()
 
     gyro = new SPIGyro();
 
+    whipPot = new AnalogInput(2);
+
+    toteSensor = new DigitalInput(2);
+
     locator = new Locator(leftDriveEncoder, rightDriveEncoder, gyro);
 
     xyManager = XYManager::getInstance();
@@ -82,7 +89,7 @@ Robot::Robot()
 
     drive = new Drive(leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive);
     sauropod = new Sauropod(elevatorMotor, armMotor, elevatorEncoder,  armEncoder);
-    intake = new Intake(leftIntakeMotor, rightIntakeMotor, humanFeederIntakeMotor, floorSolenoid, humanFeederSolenoid);
+    intake = new Intake(leftIntakeMotor, rightIntakeMotor, humanFeederIntakeMotor, whipMotor, floorSolenoid, humanFeederSolenoid, whipPot, toteSensor);
 
     controls = new ControlMap(driver, coDriver);
 

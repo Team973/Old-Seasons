@@ -41,6 +41,7 @@ private:
     VictorSP *leftIntakeMotor;
     VictorSP *rightIntakeMotor;
     VictorSP *humanFeederIntakeMotor;
+    VictorSP *whipMotor;
 
     Solenoid *humanFeederSolenoid;
     Solenoid *floorSolenoid;
@@ -51,6 +52,10 @@ private:
     Encoder *armEncoder;
 
     SPIGyro *gyro;
+
+    AnalogInput *whipPot;
+
+    DigitalInput *toteSensor;
 
     Joystick *driver;
     Joystick *coDriver;
