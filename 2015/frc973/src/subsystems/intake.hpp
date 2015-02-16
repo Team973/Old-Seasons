@@ -1,17 +1,25 @@
-#ifndef INTAKE_HPP_
-#define INTAKE_HPP_
+#ifndef INTAKE_HPP
+#define INTAKE_HPP
 
 namespace frc973 {
 
 class Intake {
+
 public:
-    Intake(VictorSP *leftMotor_, VictorSP *rightMotor_);
+    Intake(VictorSP* leftIntakeMotor_, VictorSP* rightIntakeMotor_, VictorSP* humanFeederIntakeMotor_, Solenoid* floorSolenoid_, Solenoid* humanFeederSolenoid_);
     void update();
     void setIntake(float indicatedSpeed);
+    void actuateFloorSolenoids(bool actuate);
+    void actuateHumanFeederSolenoids(bool actuate);
 private:
     float motorSpeed;
-    VictorSP *rightMotor;
-    VictorSP *leftMotor;
+    bool feederSolenoidCondtion;
+    bool floorSolenoidCondtion;
+    VictorSP *rightIntakeMotor;
+    VictorSP *leftIntakeMotor;
+    VictorSP *humanFeederIntakeMotor;
+    Solenoid *floorSolenoid;
+    Solenoid *humanFeederSolenoid;
 };
 
 } /* namespace frc973 */
