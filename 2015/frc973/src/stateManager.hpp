@@ -14,6 +14,7 @@ public:
     void setIntakeFromControls(float manual);
     void setRobotState(int state);
     void setSauropodPath(int path);
+    void setWhipPosition(float position);
     bool isSauropodDone();
     void update();
 

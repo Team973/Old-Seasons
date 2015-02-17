@@ -34,6 +34,12 @@ void ControlManager::update() {
     if (controls->getCodriverButton(6)) {
         stateManager->setSauropodPath(Sauropod::RETURN);
     }
+    if (controls->getCodriverButton(7)) {
+        stateManager->setWhipPosition(290);
+    }
+    if (controls->getCodriverButton(8)) {
+        stateManager->setWhipPosition(243);
+    }
 }
 
 } /* namespace frc973 */

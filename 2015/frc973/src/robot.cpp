@@ -78,7 +78,7 @@ Robot::Robot()
 
     whipPot = new AnalogInput(2);
 
-    toteSensor = new DigitalInput(2);
+    toteSensor = new DigitalInput(14);
 
     locator = new Locator(leftDriveEncoder, rightDriveEncoder, gyro);
 
@@ -112,6 +112,8 @@ void Robot::dashboardUpdate()
     SmartDashboard::PutString("DB/String 4", asString(gyro->GetDegrees()));
     SmartDashboard::PutNumber("raw arm encoder: ", armEncoder->Get());
     SmartDashboard::PutBoolean("is sauropod done: ", sauropod->atTarget());
+    SmartDashboard::PutNumber("Whip Angle: ", intake->getWhipAngle());
+    SmartDashboard::PutNumber("Whip Voltage: ", whipPot->GetVoltage());
 }
 
 void Robot::RobotInit()
