@@ -3,6 +3,8 @@
 
 namespace frc973 {
 
+class PID;
+
 class Intake {
 
 public:
@@ -11,10 +13,14 @@ public:
     void setIntake(float indicatedSpeed);
     void actuateFloorSolenoids(bool actuate);
     void actuateHumanFeederSolenoids(bool actuate);
+    void setWhipTarget(float target);
+    float getWhipAngle(); 
 private:
-    float motorSpeed;
-    bool feederSolenoidCondtion;
-    bool floorSolenoidCondtion;
+    float intakeMotorSpeed;
+    float whipMotorSpeed;
+    bool isFeederSolenoidExtended;
+    bool isFloorSolenoidExtended;
+    bool isRetracted;
 
     VictorSP *rightIntakeMotor;
     VictorSP *leftIntakeMotor;
@@ -26,6 +32,8 @@ private:
 
     AnalogInput *whipPot;
     DigitalInput *toteSensor;
+
+    PID *whipPID;
 };
 
 } /* namespace frc973 */
