@@ -1,10 +1,11 @@
 #include "WPILib.h"
 #include "intake.hpp"
+#include "../lib/pid.hpp"
 
 namespace frc973 {
 
 Intake::Intake(VictorSP* leftIntakeMotor_, VictorSP* rightIntakeMotor_, VictorSP* humanFeederIntakeMotor_, VictorSP *whipMotor_, Solenoid* floorSolenoid_, Solenoid* humanFeederSolenoid_, AnalogInput *whipPot_, DigitalInput *toteSensor_) {
-    
+     
     rightIntakeMotor = rightIntakeMotor_;
     leftIntakeMotor = leftIntakeMotor_;
     humanFeederIntakeMotor = humanFeederIntakeMotor_;
@@ -14,35 +15,67 @@ Intake::Intake(VictorSP* leftIntakeMotor_, VictorSP* rightIntakeMotor_, VictorSP
     whipPot = whipPot_;
     toteSensor = toteSensor_;
 
-    motorSpeed = 0;
+    intakeMotorSpeed = 0;
+    whipMotorSpeed = 0;
+    whipPID = new PID(0,0,0);
 
-    feederSolenoidCondtion = false;
-    floorSolenoidCondtion = false;
+    isFeederSolenoidExtended = false;
+    isFloorSolenoidExtended = false;
+    isRetracted = false;
 }
 
 void Intake::setIntake(float indicatedSpeed) {
-    motorSpeed = indicatedSpeed;
+    intakeMotorSpeed = indicatedSpeed;
 }
 
 void Intake::actuateFloorSolenoids(bool actuate) {
-        floorSolenoidCondtion = actuate;
+        isFloorSolenoidExtended = actuate;
         floorSolenoid->Set(actuate);
 }
 void Intake::actuateHumanFeederSolenoids(bool actuate) {
-        feederSolenoidCondtion = actuate;
+        isFeederSolenoidExtended = actuate;
         humanFeederSolenoid->Set(actuate);
 }
 
-void Intake::update() {
-    rightIntakeMotor->Set(motorSpeed);
-    leftIntakeMotor->Set(motorSpeed);
+float Intake::getWhipAngle() {
+    int numTurns = 5;
+    return whipPot->GetVoltage() * 360 * (numTurns/5);
+}
 
-    if(feederSolenoidCondtion) {
-        humanFeederIntakeMotor->Set(motorSpeed);
+void Intake::setWhipTarget(float target) {
+    whipPID->setTarget(target);
+
+    if (target < 5) { 
+        isRetracted = true;
+    }
+    else if (target > 5) { 
+        isRetracted = false;
+    }
+}
+
+void Intake::update() {
+    rightIntakeMotor->Set(intakeMotorSpeed);
+    leftIntakeMotor->Set(intakeMotorSpeed);
+
+    if (isFeederSolenoidExtended) {
+        humanFeederIntakeMotor->Set(intakeMotorSpeed);
     }
     else {
         humanFeederIntakeMotor->Set(0);
     }
+    
+    if (getWhipAngle() > 3 && isRetracted) {
+
+        if (isFeederSolenoidExtended) {
+                setWhipTarget(3);
+        }
+        else { 
+                setWhipTarget(2);
+        }
+        
+    }
+
+    whipMotor->Set(whipPID->update(whipPot->GetVoltage()));
 }
 
 } /* namespace frc973 */
