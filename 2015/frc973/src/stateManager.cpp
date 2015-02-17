@@ -41,6 +41,10 @@ void StateManager::setSauropodPath(int path) {
     }
 }
 
+void StateManager::setWhipPosition(float position) {
+    intake->setWhipTarget(position);
+}
+
 bool StateManager::isSauropodDone() {
     return sauropod->sequenceDone();
 }
