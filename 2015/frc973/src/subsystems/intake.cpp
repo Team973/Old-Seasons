@@ -25,6 +25,10 @@ Intake::Intake(VictorSP* leftIntakeMotor_, VictorSP* rightIntakeMotor_, VictorSP
     isFeederSolenoidExtended = false;
     isFloorSolenoidExtended = false;
     isRetracted = false;
+
+    toteTimer = new Timer();
+
+    hasTote = false;
 }
 
 void Intake::setIntake(float indicatedSpeed) {
@@ -55,6 +59,10 @@ void Intake::setWhipTarget(float target) {
     }
 }
 
+bool Intake::gotTote() {
+    return hasTote;
+}
+
 void Intake::update() {
     rightIntakeMotor->Set(intakeMotorSpeed);
     leftIntakeMotor->Set(intakeMotorSpeed);
@@ -75,6 +83,18 @@ void Intake::update() {
                 setWhipTarget(245);
         }
         
+    }
+
+    if (!hasTote && toteSensor->Get()) {
+        toteTimer->Start();
+        if (toteTimer->Get() >= 0.5) {
+            hasTote = true;
+        }
+    } else if (hasTote && !toteSensor->Get()) {
+        hasTote = false;
+    } else {
+        toteTimer->Stop();
+        toteTimer->Reset();
     }
 
     whipMotor->Set(-whipPID->update(getWhipAngle()));

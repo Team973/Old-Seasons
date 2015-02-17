@@ -15,6 +15,7 @@ public:
     void actuateHumanFeederSolenoids(bool actuate);
     void setWhipTarget(float target);
     float getWhipAngle(); 
+    bool gotTote();
 private:
     float intakeMotorSpeed;
     float whipMotorSpeed;
@@ -34,6 +35,9 @@ private:
     DigitalInput *toteSensor;
 
     PID *whipPID;
+
+    Timer *toteTimer;
+    bool hasTote;
 };
 
 } /* namespace frc973 */
