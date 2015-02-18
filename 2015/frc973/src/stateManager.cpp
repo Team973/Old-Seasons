@@ -55,9 +55,10 @@ void StateManager::update() {
 
     switch (robotState) {
         case LOAD:
-            /*
+
             intake->setIntake(manualIntakeSpeed);
 
+            // auto stack
             if (intake->gotTote() && !sauropod->inCradle()) {
                 intake->setIntake(0);
                 if (sauropod->getCurrPath() != Sauropod::PICKUP) {
@@ -67,7 +68,6 @@ void StateManager::update() {
                 numTotes += 1;
                 setSauropodPath(Sauropod::READY);
             }
-            */
 
             break;
         case SCORE:
@@ -76,6 +76,14 @@ void StateManager::update() {
             intake->setIntake(0);
             break;
     }
+
+    // num totes logic check
+    if (!sauropod->lotsoTotes() && numTotes > 3) {
+        numTotes = 0;
+    } else if (sauropod->lotsoTotes() && numTotes < 3) {
+        numTotes = 3;
+    }
+
     sauropod->update();
     intake->update();
 }
