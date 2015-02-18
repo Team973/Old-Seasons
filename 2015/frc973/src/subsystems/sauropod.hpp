@@ -41,6 +41,9 @@ public:
     float getArmVelocity();
     void update();
     void createPath(int dest);
+    int getCurrPath();
+    bool inCradle();
+    bool lotsoTotes();
 
     const static int IDLE = 1;
     const static int PICKUP = 2;
@@ -59,8 +62,6 @@ private:
     void addGain(std::string name, Gains gain);
 
     void executeQueue();
-
-    bool inCradle();
 
     PowerDistributionPanel *pdp;
 
@@ -92,7 +93,9 @@ private:
     Timer *loopTimer;
     Timer *doneTimer;
 
+    FlagAccumulator *toteAccumulator;
     int numTotes;
+    bool muchoTotes;
 };
 
 }

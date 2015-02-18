@@ -80,6 +80,9 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* eleva
     accumulator->setThreshold(3);
 
     numTotes = 0;
+    muchoTotes = false;
+    toteAccumulator = new FlagAccumulator();
+    toteAccumulator->setThreshold(5);
 }
 
 void Sauropod::addGain(std::string name, Gains gain) {
@@ -135,6 +138,10 @@ void Sauropod::createPath(int dest) {
                 break;
         }
     }
+}
+
+int Sauropod::getCurrPath() {
+    return currPath;
 }
 
 // this has no way of telling the caller whether or not the gain was found
@@ -273,6 +280,10 @@ bool Sauropod::inCradle() {
     return getArmAngle() < 1 && getElevatorHeight() < 4;
 }
 
+bool Sauropod::lotsoTotes() {
+    return muchoTotes;
+}
+
 void Sauropod::update() {
 
     executeQueue();
@@ -330,16 +341,18 @@ void Sauropod::update() {
         elevatorInput = 0.0;
     }
 
-    if (getElevatorCurrent() > 5.2) {
-        numTotes = 6;
-    } else if (getElevatorCurrent() > 4.2) {
-        numTotes = 5;
-    } else if (getElevatorCurrent() > 3.2) {
-        numTotes = 4;
+    if (fabs(getElevatorVelocity()) < .1) {
+        if (getElevatorCurrent() > 4.1) {
+            numTotes = 6;
+        } else {
+            numTotes = 0;
+        }
     } else {
-        numTotes = 0;
+        toteAccumulator->reset();
     }
-    SmartDashboard::PutNumber("Num Totes: ", numTotes);
+    muchoTotes = toteAccumulator->update(numTotes != 0);
+
+    SmartDashboard::PutNumber("Mucho Totes: ", muchoTotes);
     SmartDashboard::PutNumber("Num Flags: ", accumulator->getFlagCount());
 
     pdp->UpdateTable();
