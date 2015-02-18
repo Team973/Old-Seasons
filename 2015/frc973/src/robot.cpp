@@ -61,24 +61,38 @@ Robot::Robot()
 
     leftIntakeMotor = new VictorSP(8);
     rightIntakeMotor = new VictorSP(9);
-    humanFeederIntakeMotor = new VictorSP(10);
+    humanFeederIntakeMotor = new VictorSP(5);
 
     whipMotor = new VictorSP(3);
+    containerGrabberMotor = new VictorSP(4);
 
     humanFeederSolenoid = new Solenoid(0);
     floorSolenoid = new Solenoid(1);
 
-    leftDriveEncoder = new Encoder(0,1);
-    rightDriveEncoder = new Encoder(2,3);
+    airPressureSwitch = new DigitalInput(0);
+    compressor = new Relay(0);
 
-    elevatorEncoder = new Encoder(5,6);
-    armEncoder = new Encoder(7,8);
+    leftDriveEncoder = new Encoder(11,12);
+    rightDriveEncoder = new Encoder(13,14);
 
-    gyro = new SPIGyro();
+    elevatorZeroPulse = new DigitalInput(1);
+    elevatorEncoder = new Encoder(15,16);
+    elevatorPot = new AnalogInput(1);
+
+    armUpPulse = new DigitalInput(5);
+    armZeroPulse = new DigitalInput(6);
+    armEncoder = new Encoder(17,18);
+    armPot = new AnalogInput(0);
+
+    //gyro = new SPIGyro();
 
     whipPot = new AnalogInput(2);
 
-    toteSensor = new DigitalInput(14);
+    toteSensor = new DigitalInput(2);
+
+    containerGrabberUP = new DigitalInput(3);
+    containerGrabberDOWN = new DigitalInput(4);
+    containerGrabberPot = new AnalogInput(3);
 
     locator = new Locator(leftDriveEncoder, rightDriveEncoder, gyro);
 
