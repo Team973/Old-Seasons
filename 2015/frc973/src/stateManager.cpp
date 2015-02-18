@@ -17,6 +17,8 @@ StateManager::StateManager(Drive *drive_, Sauropod *sauropod_, Intake *intake_) 
     robotState = IDLE;
 
     manualIntakeSpeed = 0;
+
+    numTotes = 0;
 }
 
 void StateManager::setDriveFromControls(double throttle, double turn, bool quickTurn) {
@@ -53,7 +55,20 @@ void StateManager::update() {
 
     switch (robotState) {
         case LOAD:
+            /*
             intake->setIntake(manualIntakeSpeed);
+
+            if (intake->gotTote() && !sauropod->inCradle()) {
+                intake->setIntake(0);
+                if (sauropod->getCurrPath() != Sauropod::PICKUP) {
+                    setSauropodPath(Sauropod::PICKUP);
+                }
+            } else if (sauropod->sequenceDone() && sauropod->getCurrPath() == Sauropod::PICKUP) {
+                numTotes += 1;
+                setSauropodPath(Sauropod::READY);
+            }
+            */
+
             break;
         case SCORE:
             break;

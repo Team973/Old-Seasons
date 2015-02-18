@@ -31,6 +31,8 @@ private:
     bool fromControls;
 
     float manualIntakeSpeed;
+
+    int numTotes;
 };
 
 }
