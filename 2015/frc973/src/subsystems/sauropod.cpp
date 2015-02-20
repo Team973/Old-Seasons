@@ -230,6 +230,7 @@ bool Sauropod::atTarget() {
 void Sauropod::clearQueue() {
     std::queue<std::string> dummy;
     waypointQueue.swap(dummy);
+    forceNewTarget = true;
 }
 
 void Sauropod::addToQueue(std::string preset) {
@@ -241,11 +242,12 @@ void Sauropod::executeQueue() {
         return;
     }
 
-    if (atTarget()) {
+    if (atTarget() || forceNewTarget) {
         accumulator->reset();
         doneTimer->Reset();
         setPreset(waypointQueue.front());
         waypointQueue.pop();
+        forceNewTarget = false;
     }
 }
 
