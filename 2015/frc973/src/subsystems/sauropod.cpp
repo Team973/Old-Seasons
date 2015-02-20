@@ -173,9 +173,8 @@ void Sauropod::setTarget(Preset target) {
     elevatorTarget = target.height - deltaY;
     if (elevatorTarget < 0) {
         elevatorTarget = 0;
-    } else if (elevatorTarget > switchThreshold) {
-        elevatorTarget = switchThreshold;
     }
+
     SmartDashboard::PutNumber("Elevator Target: ", elevatorTarget);
 
     loopTimer->Reset();
