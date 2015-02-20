@@ -285,6 +285,10 @@ bool Sauropod::lotsoTotes() {
     return muchoTotes;
 }
 
+void Sauropod::setNumTotes(int num) {
+    numTotes = num;
+}
+
 void Sauropod::update() {
 
     executeQueue();
@@ -343,15 +347,10 @@ void Sauropod::update() {
     }
 
     if (fabs(getElevatorVelocity()) < .1) {
-        if (getElevatorCurrent() > 4.1) {
-            numTotes = 6;
-        } else {
-            numTotes = 0;
-        }
+        muchoTotes = toteAccumulator->update(fabs(getElevatorCurrent() > 4.1));
     } else {
         toteAccumulator->reset();
     }
-    muchoTotes = toteAccumulator->update(numTotes != 0);
 
     SmartDashboard::PutNumber("Mucho Totes: ", muchoTotes);
     SmartDashboard::PutNumber("Num Flags: ", accumulator->getFlagCount());

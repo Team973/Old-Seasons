@@ -44,6 +44,7 @@ public:
     int getCurrPath();
     bool inCradle();
     bool lotsoTotes();
+    void setNumTotes(int num);
 
     const static int IDLE = 1;
     const static int PICKUP = 2;
