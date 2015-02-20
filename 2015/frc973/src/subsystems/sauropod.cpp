@@ -116,11 +116,14 @@ void Sauropod::createPath(int dest) {
                     addToQueue("loadHigh");
                 }
                 addToQueue("loadLow");
-                addToQueue("loadHigh");
                 currPath = PICKUP;
                 break;
             case READY:
-                addToQueue("loadHigh");
+                if (numTotes >= 6) {
+                    addToQueue("rest");
+                } else {
+                    addToQueue("loadHigh");
+                }
                 currPath = READY;
                 break;
             case RESTING:
