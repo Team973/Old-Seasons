@@ -83,6 +83,7 @@ void StateManager::update() {
     } else if (sauropod->lotsoTotes() && numTotes < 3) {
         numTotes = 3;
     }
+    sauropod->setNumTotes(numTotes);
 
     sauropod->update();
     intake->update();
