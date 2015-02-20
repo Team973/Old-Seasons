@@ -81,6 +81,7 @@ private:
     std::map<std::string, Preset> presets;
     std::map<std::string, Gains> gainSchedule;
 
+    bool forceNewTarget;
     std::queue<std::string> waypointQueue;
 
     FlagAccumulator *accumulator;
