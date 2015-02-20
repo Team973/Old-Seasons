@@ -83,6 +83,8 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* eleva
     muchoTotes = false;
     toteAccumulator = new FlagAccumulator();
     toteAccumulator->setThreshold(5);
+    
+    forceNewTarget = false;
 }
 
 void Sauropod::addGain(std::string name, Gains gain) {
@@ -104,6 +106,7 @@ void Sauropod::setPreset(std::string preset) {
 void Sauropod::createPath(int dest) {
     if (dest != currPath || sequenceDone()) {
         clearQueue();
+        forceNewTarget = true;
         switch(dest) {
             case PLATFORM:
                 addToQueue("rest");
@@ -230,7 +233,6 @@ bool Sauropod::atTarget() {
 void Sauropod::clearQueue() {
     std::queue<std::string> dummy;
     waypointQueue.swap(dummy);
-    forceNewTarget = true;
 }
 
 void Sauropod::addToQueue(std::string preset) {
