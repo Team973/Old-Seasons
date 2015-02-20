@@ -173,6 +173,8 @@ void Sauropod::setTarget(Preset target) {
     elevatorTarget = target.height - deltaY;
     if (elevatorTarget < 0) {
         elevatorTarget = 0;
+    } else if (deltaY > target.height) {
+        elevatorTarget = target.height;
     }
 
     SmartDashboard::PutNumber("Elevator Target: ", elevatorTarget);
