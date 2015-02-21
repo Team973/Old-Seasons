@@ -48,15 +48,14 @@ float Intake::getWhipAngle() {
     return (360 * whipPot->GetVoltage())/5;
 }
 
-void Intake::setWhipTarget(float target) {
-    whipPID->setTarget(target);
+void Intake::retractWhip() {
+    whipPID->setTarget(16);
+    isRetracted = true;
+}
 
-    if (target < 16) { 
-        isRetracted = true;
-    }
-    else if (target > 16) { 
-        isRetracted = false;
-    }
+void Intake::extendWhip() {
+    whipPID->setTarget(30);
+    isRetracted = false;
 }
 
 bool Intake::gotTote() {
@@ -77,10 +76,8 @@ void Intake::update() {
     if (isRetracted) {
 
         if (isFeederSolenoidExtended) {
-                setWhipTarget(15);
         }
         else { 
-                setWhipTarget(16);
         }
         
     }

@@ -13,7 +13,8 @@ public:
     void setIntake(float indicatedSpeed);
     void actuateFloorSolenoids(bool actuate);
     void actuateHumanFeederSolenoids(bool actuate);
-    void setWhipTarget(float target);
+    void extendWhip();
+    void retractWhip();
     float getWhipAngle(); 
     bool gotTote();
 private:

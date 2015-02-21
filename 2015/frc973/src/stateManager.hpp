@@ -15,7 +15,7 @@ public:
     void setIntakePosition(bool open);
     void setRobotState(int state);
     void setSauropodPath(int path);
-    void setWhipPosition(float position);
+    void setWhipPosition(std::string position);
     bool isSauropodDone();
     void update();
 

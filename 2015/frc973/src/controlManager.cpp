@@ -35,10 +35,10 @@ void ControlManager::update() {
         stateManager->setSauropodPath(Sauropod::RETURN);
     }
     if (controls->getCodriverButton(7)) {
-        stateManager->setWhipPosition(290);
+        stateManager->setWhipPosition("extend");
     }
     if (controls->getCodriverButton(8)) {
-        stateManager->setWhipPosition(243);
+        stateManager->setWhipPosition("retract");
     }
 }
 
