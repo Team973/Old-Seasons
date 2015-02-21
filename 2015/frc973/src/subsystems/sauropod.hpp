@@ -46,6 +46,7 @@ public:
     bool lotsoTotes();
     void setNumTotes(int num);
 
+    const static int NONE = -1;
     const static int IDLE = 1;
     const static int PICKUP = 2;
     const static int PLATFORM = 3;

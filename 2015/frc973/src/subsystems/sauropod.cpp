@@ -70,7 +70,7 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* eleva
 
     currPreset = "hardStop";
     currGains = "empty";
-    currPath = IDLE;
+    currPath = NONE;
 
     clearQueue();
 
@@ -104,7 +104,7 @@ void Sauropod::setPreset(std::string preset) {
 }
 
 void Sauropod::createPath(int dest) {
-    if (dest != currPath || sequenceDone()) {
+    if (dest != currPath) {
         clearQueue();
         forceNewTarget = true;
         switch(dest) {
@@ -241,6 +241,7 @@ void Sauropod::addToQueue(std::string preset) {
 
 void Sauropod::executeQueue() {
     if (waypointQueue.empty()) {
+        currPath = NONE;
         return;
     }
 
