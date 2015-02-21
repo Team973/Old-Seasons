@@ -58,7 +58,7 @@ void StateManager::update() {
                 if (sauropod->getCurrPath() != Sauropod::PICKUP) {
                     setSauropodPath(Sauropod::PICKUP);
                 }
-            } else if (sauropod->sequenceDone() && hadTote && sauropod->getCurrPath() == Sauropod::PICKUP) {
+            } else if (sauropod->sequenceDone() && hadTote && sauropod->inCradle()) {
                 numTotes += 1;
                 setSauropodPath(Sauropod::READY);
                 hadTote = false;
