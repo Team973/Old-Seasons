@@ -12,12 +12,11 @@ StateManager::StateManager(Drive *drive_, Sauropod *sauropod_, Intake *intake_) 
     sauropod = sauropod_;
     intake = intake_;
 
-    fromControls = false;
-
     robotState = IDLE;
 
-    manualIntakeSpeed = 0;
+    intakeSpeed = 0;
 
+    hadTote = false;
     numTotes = 0;
 }
 
@@ -25,26 +24,28 @@ void StateManager::setDriveFromControls(double throttle, double turn, bool quick
     drive->CheesyDrive(deadband(throttle, 0.1), -deadband(turn, 0.1), false, quickTurn);
 }
 
-void StateManager::setIntakeFromControls(float manual) {
-    manualIntakeSpeed = manual;
+void StateManager::setIntakeSpeed(float speed) {
+    intakeSpeed = speed;
+}
+
+void StateManager::setIntakePosition(bool open) {
+    intake->actuateFloorSolenoids(open);
 }
 
 void StateManager::setRobotState(int state) {
     robotState = state;
-    fromControls = true;
 }
 
 void StateManager::setSauropodPath(int path) {
-    if (fromControls) {
-        sauropod->createPath(path);
-        fromControls = false;
-    } else {
-        fromControls = true;
-    }
+    sauropod->createPath(path);
 }
 
-void StateManager::setWhipPosition(float position) {
-    intake->setWhipTarget(position);
+void StateManager::setWhipPosition(std::string position) {
+    if (position == "extend") {
+        intake->extendWhip();
+    } else {
+        intake->retractWhip();
+    }
 }
 
 bool StateManager::isSauropodDone() {
@@ -56,17 +57,19 @@ void StateManager::update() {
     switch (robotState) {
         case LOAD:
 
-            intake->setIntake(manualIntakeSpeed);
+            intake->setIntake(intakeSpeed);
 
             // auto stack
             if (intake->gotTote() && !sauropod->inCradle()) {
+                hadTote = true;
                 intake->setIntake(0);
                 if (sauropod->getCurrPath() != Sauropod::PICKUP) {
                     setSauropodPath(Sauropod::PICKUP);
                 }
-            } else if (sauropod->sequenceDone() && sauropod->getCurrPath() == Sauropod::PICKUP) {
+            } else if (sauropod->sequenceDone() && hadTote && sauropod->inCradle()) {
                 numTotes += 1;
                 setSauropodPath(Sauropod::READY);
+                hadTote = false;
             }
 
             break;
@@ -83,6 +86,7 @@ void StateManager::update() {
     } else if (sauropod->lotsoTotes() && numTotes < 3) {
         numTotes = 3;
     }
+    sauropod->setNumTotes(numTotes);
 
     sauropod->update();
     intake->update();

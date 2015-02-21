@@ -11,10 +11,11 @@ class StateManager {
 public:
     StateManager(Drive *drive_, Sauropod *sauropod_, Intake *intake_);
     void setDriveFromControls(double throttle, double turn, bool quickTurn);
-    void setIntakeFromControls(float manual);
+    void setIntakeSpeed(float speed);
+    void setIntakePosition(bool open);
     void setRobotState(int state);
     void setSauropodPath(int path);
-    void setWhipPosition(float position);
+    void setWhipPosition(std::string position);
     bool isSauropodDone();
     void update();
 
@@ -28,11 +29,10 @@ private:
 
     int robotState;
 
-    bool fromControls;
-
-    float manualIntakeSpeed;
+    float intakeSpeed;
 
     int numTotes;
+    bool hadTote;
 };
 
 }

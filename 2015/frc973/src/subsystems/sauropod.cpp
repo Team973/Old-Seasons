@@ -70,7 +70,7 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* eleva
 
     currPreset = "hardStop";
     currGains = "empty";
-    currPath = IDLE;
+    currPath = NONE;
 
     clearQueue();
 
@@ -83,6 +83,8 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* eleva
     muchoTotes = false;
     toteAccumulator = new FlagAccumulator();
     toteAccumulator->setThreshold(5);
+    
+    forceNewTarget = false;
 }
 
 void Sauropod::addGain(std::string name, Gains gain) {
@@ -102,8 +104,9 @@ void Sauropod::setPreset(std::string preset) {
 }
 
 void Sauropod::createPath(int dest) {
-    if (dest != currPath || sequenceDone()) {
+    if (dest != currPath) {
         clearQueue();
+        forceNewTarget = true;
         switch(dest) {
             case PLATFORM:
                 addToQueue("rest");
@@ -116,11 +119,14 @@ void Sauropod::createPath(int dest) {
                     addToQueue("loadHigh");
                 }
                 addToQueue("loadLow");
-                addToQueue("loadHigh");
                 currPath = PICKUP;
                 break;
             case READY:
-                addToQueue("loadHigh");
+                if (numTotes >= 6) {
+                    addToQueue("rest");
+                } else {
+                    addToQueue("loadHigh");
+                }
                 currPath = READY;
                 break;
             case RESTING:
@@ -173,9 +179,10 @@ void Sauropod::setTarget(Preset target) {
     elevatorTarget = target.height - deltaY;
     if (elevatorTarget < 0) {
         elevatorTarget = 0;
-    } else if (elevatorTarget > switchThreshold) {
-        elevatorTarget = switchThreshold;
+    } else if (deltaY > target.height) {
+        elevatorTarget = target.height;
     }
+
     SmartDashboard::PutNumber("Elevator Target: ", elevatorTarget);
 
     loopTimer->Reset();
@@ -234,14 +241,16 @@ void Sauropod::addToQueue(std::string preset) {
 
 void Sauropod::executeQueue() {
     if (waypointQueue.empty()) {
+        currPath = NONE;
         return;
     }
 
-    if (atTarget()) {
+    if (atTarget() || forceNewTarget) {
         accumulator->reset();
         doneTimer->Reset();
         setPreset(waypointQueue.front());
         waypointQueue.pop();
+        forceNewTarget = false;
     }
 }
 
@@ -282,6 +291,10 @@ bool Sauropod::inCradle() {
 
 bool Sauropod::lotsoTotes() {
     return muchoTotes;
+}
+
+void Sauropod::setNumTotes(int num) {
+    numTotes = num;
 }
 
 void Sauropod::update() {
@@ -342,15 +355,10 @@ void Sauropod::update() {
     }
 
     if (fabs(getElevatorVelocity()) < .1) {
-        if (getElevatorCurrent() > 4.1) {
-            numTotes = 6;
-        } else {
-            numTotes = 0;
-        }
+        muchoTotes = toteAccumulator->update(fabs(getElevatorCurrent() > 4.1));
     } else {
         toteAccumulator->reset();
     }
-    muchoTotes = toteAccumulator->update(numTotes != 0);
 
     SmartDashboard::PutNumber("Mucho Totes: ", muchoTotes);
     SmartDashboard::PutNumber("Num Flags: ", accumulator->getFlagCount());

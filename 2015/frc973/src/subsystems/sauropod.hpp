@@ -44,7 +44,9 @@ public:
     int getCurrPath();
     bool inCradle();
     bool lotsoTotes();
+    void setNumTotes(int num);
 
+    const static int NONE = -1;
     const static int IDLE = 1;
     const static int PICKUP = 2;
     const static int PLATFORM = 3;
@@ -80,6 +82,7 @@ private:
     std::map<std::string, Preset> presets;
     std::map<std::string, Gains> gainSchedule;
 
+    bool forceNewTarget;
     std::queue<std::string> waypointQueue;
 
     FlagAccumulator *accumulator;
