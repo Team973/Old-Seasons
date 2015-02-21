@@ -40,8 +40,12 @@ void StateManager::setSauropodPath(int path) {
     sauropod->createPath(path);
 }
 
-void StateManager::setWhipPosition(float position) {
-    intake->setWhipTarget(position);
+void StateManager::setWhipPosition(std::string position) {
+    if (position == "extend") {
+        intake->extendWhip();
+    } else {
+        intake->retractWhip();
+    }
 }
 
 bool StateManager::isSauropodDone() {

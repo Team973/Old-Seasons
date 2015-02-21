@@ -84,7 +84,7 @@ Robot::Robot()
     armEncoder = new Encoder(17,18);
     armPot = new AnalogInput(0);
 
-    //gyro = new SPIGyro();
+    gyro = new SPIGyro();
 
     whipPot = new AnalogInput(2);
 
