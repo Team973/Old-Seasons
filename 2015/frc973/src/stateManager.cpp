@@ -14,7 +14,7 @@ StateManager::StateManager(Drive *drive_, Sauropod *sauropod_, Intake *intake_) 
 
     robotState = IDLE;
 
-    manualIntakeSpeed = 0;
+    intakeSpeed = 0;
 
     hadTote = false;
     numTotes = 0;
@@ -24,8 +24,12 @@ void StateManager::setDriveFromControls(double throttle, double turn, bool quick
     drive->CheesyDrive(deadband(throttle, 0.1), -deadband(turn, 0.1), false, quickTurn);
 }
 
-void StateManager::setIntakeFromControls(float manual) {
-    manualIntakeSpeed = manual;
+void StateManager::setIntakeSpeed(float speed) {
+    intakeSpeed = speed;
+}
+
+void StateManager::setIntakePosition(bool open) {
+    intake->actuateFloorSolenoids(open);
 }
 
 void StateManager::setRobotState(int state) {
@@ -49,7 +53,7 @@ void StateManager::update() {
     switch (robotState) {
         case LOAD:
 
-            intake->setIntake(manualIntakeSpeed);
+            intake->setIntake(intakeSpeed);
 
             // auto stack
             if (intake->gotTote() && !sauropod->inCradle()) {
