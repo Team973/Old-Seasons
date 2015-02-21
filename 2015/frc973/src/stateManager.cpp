@@ -12,12 +12,11 @@ StateManager::StateManager(Drive *drive_, Sauropod *sauropod_, Intake *intake_) 
     sauropod = sauropod_;
     intake = intake_;
 
-    fromControls = false;
-
     robotState = IDLE;
 
     manualIntakeSpeed = 0;
 
+    hadTote = false;
     numTotes = 0;
 }
 
@@ -31,16 +30,10 @@ void StateManager::setIntakeFromControls(float manual) {
 
 void StateManager::setRobotState(int state) {
     robotState = state;
-    fromControls = true;
 }
 
 void StateManager::setSauropodPath(int path) {
-    if (fromControls) {
-        sauropod->createPath(path);
-        fromControls = false;
-    } else {
-        fromControls = true;
-    }
+    sauropod->createPath(path);
 }
 
 void StateManager::setWhipPosition(float position) {
@@ -60,13 +53,15 @@ void StateManager::update() {
 
             // auto stack
             if (intake->gotTote() && !sauropod->inCradle()) {
+                hadTote = true;
                 intake->setIntake(0);
                 if (sauropod->getCurrPath() != Sauropod::PICKUP) {
                     setSauropodPath(Sauropod::PICKUP);
                 }
-            } else if (sauropod->sequenceDone() && sauropod->getCurrPath() == Sauropod::PICKUP) {
+            } else if (sauropod->sequenceDone() && hadTote && sauropod->getCurrPath() == Sauropod::PICKUP) {
                 numTotes += 1;
                 setSauropodPath(Sauropod::READY);
+                hadTote = false;
             }
 
             break;
