@@ -31,6 +31,14 @@ template <class T> class Channel {
       pthread_mutex_unlock(&m);
       return success;
     }
+
+    int size() {
+    	pthread_mutex_lock(&m);
+    	int sz = q.size();
+    	pthread_cond_signal(&cond);
+    	pthread_mutex_unlock(&m);
+    	return sz;
+    }
  
     T recv() {
       pthread_mutex_lock(&m);

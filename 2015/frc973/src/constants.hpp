@@ -3,6 +3,7 @@
 
 #include <string>
 #include "lib/utility.hpp"
+#include "lib/socketClient.hpp"
 #include <vector>
 
 namespace frc973 {
@@ -45,6 +46,7 @@ public:
             void setValue(double value_)
             {
                 value = value_;
+				SocketClient::UpdateDash(name, value);
             }
 
             std::string toString()

@@ -49,6 +49,7 @@ Constants::Constant* Constants::getConstant(std::string name)
 void Constants::addConstant(std::string name, double value)
 {
     constants.push_back(new Constants::Constant(name, value));
+	SocketClient::UpdateDash(name, value);
 }
 
 void Constants::readConstantsFile()

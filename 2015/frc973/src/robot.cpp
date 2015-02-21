@@ -10,6 +10,7 @@
 #include "lib/txtFileIO.hpp"
 #include "lib/gyro.hpp"
 #include "lib/gyro_sender.hpp"
+#include "lib/socketClient.hpp"
 #include "subsystems/drive.hpp"
 #include "subsystems/sauropod.hpp"
 #include "subsystems/intake.hpp"
@@ -33,6 +34,12 @@ void* Robot::runTxtIO(void*)
     return NULL;
 }
 
+void* Robot::runServer(void*)
+{
+    SocketClient::Run(NULL);
+    return NULL;
+}
+
 Robot::Robot()
 {
     Constants::Extend();
@@ -44,6 +51,9 @@ Robot::Robot()
 
     pthread_t parsingThread;
     pthread_create(&parsingThread, NULL, runTxtIO, NULL);
+
+    pthread_t serverThread;
+    pthread_create(&serverThread, NULL, runServer, NULL);
 
     //pthread_t gyroThread;
     //pthread_create(&gyroThread, NULL, GyroSender::processor_executor, new GyroSender());

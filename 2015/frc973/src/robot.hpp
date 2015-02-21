@@ -29,6 +29,7 @@ public:
 private:
     static void* runLogger(void*);
     static void* runTxtIO(void*);
+    static void* runServer(void*);
 
     void dashboardUpdate();
 
