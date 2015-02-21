@@ -28,11 +28,10 @@ private:
 
     int robotState;
 
-    bool fromControls;
-
     float manualIntakeSpeed;
 
     int numTotes;
+    bool hadTote;
 };
 
 }
