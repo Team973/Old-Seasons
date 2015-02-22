@@ -54,7 +54,7 @@ void Intake::retractWhip() {
 }
 
 void Intake::extendWhip() {
-    whipPID->setTarget(210);
+    whipPID->setTarget(214);
     isRetracted = false;
 }
 
