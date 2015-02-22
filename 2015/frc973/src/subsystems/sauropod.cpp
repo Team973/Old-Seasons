@@ -40,7 +40,7 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* eleva
 
     addPreset("hardStop", 0, 0);
     addPreset("stow", 0, 0);
-    addPreset("loadHigh", 0, 18);
+    addPreset("loadHigh", 0, 20);
     addPreset("loadLow", 0, 1);
     addPreset("scoreHeight", 11, 6);
     addPreset("scoreProjection", 11, 6);
