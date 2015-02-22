@@ -21,7 +21,7 @@ StateManager::StateManager(Drive *drive_, Sauropod *sauropod_, Intake *intake_) 
 }
 
 void StateManager::setDriveFromControls(double throttle, double turn, bool quickTurn) {
-    drive->CheesyDrive(deadband(throttle, 0.1), -deadband(turn, 0.1), false, quickTurn);
+    drive->controlInterface(deadband(throttle, 0.1), deadband(turn, 0.1), false, quickTurn);
 }
 
 void StateManager::setIntakeSpeed(float speed) {
