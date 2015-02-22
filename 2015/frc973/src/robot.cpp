@@ -155,6 +155,7 @@ void Robot::DisabledPeriodic()
 
 void Robot::AutonomousInit()
 {
+    autoManager->setMode("Test");
     locator->resetEncoders();
     autoManager->getCurrentMode()->init();
 }

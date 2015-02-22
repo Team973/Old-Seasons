@@ -4,7 +4,11 @@
 #include "auto/commands/waitCommand.hpp"
 #include "auto/commands/driveCommand.hpp"
 #include "auto/commands/turnCommand.hpp"
+#include "auto/commands/sauropodPathCommand.hpp"
+#include "auto/commands/whipCommand.hpp"
+#include "auto/commands/intakeCommand.hpp"
 #include "subsystems/drive.hpp"
+#include "subsystems/sauropod.hpp"
 
 namespace frc973 {
 
@@ -19,17 +23,13 @@ void AutoManager::setModes() {
     modes["Drive"] = new AutoSequencer();
     modes["Turn"] = new AutoSequencer();
 
-    //modes["Test"]->addSequential(new TurnCommand(90, 10));
+    modes["Test"]->addConcurrent(new IntakeCommand(stateManager, -1.0, false, 1));
+    modes["Test"]->addConcurrent(new SauropodPathCommand(stateManager, Sauropod::READY, 2));
+    modes["Test"]->addSequential(new IntakeCommand(stateManager, 0, false, 0));
+    modes["Test"]->addSequential(new WhipCommand(stateManager, "extend", 5));
+    modes["Test"]->addSequential(new WhipCommand(stateManager, "retract", 5));
 
-    modes["Drive"]->addSequential(new DriveCommand(3, 5));
-    modes["Drive"]->addSequential(new TurnCommand(90, 5));
-    modes["Drive"]->addSequential(new DriveCommand(3, 5));
-    modes["Drive"]->addConcurrent(new TurnCommand(0, 5));
-    modes["Drive"]->addConcurrent(new WaitCommand(10));
-    modes["Drive"]->addSequential(new DriveCommand(3, 5));
-    modes["Drive"]->addSequential(new TurnCommand(-90, 3));
-
-    //modes["Turn"]->addSequential(new TurnCommand(90, 10));
+    modes["Turn"]->addSequential(new TurnCommand(90, 10));
 
     it = modes.begin();
 }
@@ -37,6 +37,10 @@ void AutoManager::setModes() {
 void AutoManager::resetModes() {
     modes.clear();
     setModes();
+}
+
+void AutoManager::setMode(std::string mode) {
+    it = modes.find(mode);
 }
 
 AutoSequencer* AutoManager::getCurrentMode()

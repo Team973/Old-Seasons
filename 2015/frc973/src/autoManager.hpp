@@ -14,6 +14,7 @@ class AutoManager
 public:
     AutoManager(StateManager* stateManager_);
     void resetModes();
+    void setMode(std::string mode);
     void setModes();
     void nextMode();
     AutoSequencer* getCurrentMode();
