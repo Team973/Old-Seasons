@@ -11,7 +11,7 @@ DriveCommand::DriveCommand(float target_, float timeout_)
     target = target_;
 
     cmdSeq = NULL;
-    percent = 0.0;
+    distance = 0.0;
 
     done = true;
 
@@ -21,12 +21,12 @@ DriveCommand::DriveCommand(float target_, float timeout_)
     setTimeout(timeout_);
 }
 
-DriveCommand::DriveCommand(AutoCommand *cmdSeq_, float percent_, float target_, float timeout_) {
+DriveCommand::DriveCommand(AutoCommand *cmdSeq_, float distance_, float target_, float timeout_) {
     xyManager = XYManager::getInstance();
 
     cmdSeq = cmdSeq_;
 
-    percent = percent_;
+    distance = distance_;
 
     target = target_;
 
@@ -46,7 +46,7 @@ void DriveCommand::init()
 
 bool DriveCommand::taskPeriodic()
 {
-    if (cmdSeq != NULL && (xyManager->getDistanceFromTarget() >= (xyManager->getDistanceFromTarget()*(percent/10)))) {
+    if (cmdSeq != NULL && (fabs(xyManager->getDistanceFromTarget()) >= distance)) {
         done = cmdSeq->run();
     }
 
