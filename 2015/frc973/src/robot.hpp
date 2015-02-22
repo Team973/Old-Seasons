@@ -50,8 +50,9 @@ private:
     Encoder *rightDriveEncoder;
     Encoder *elevatorEncoder;
     Encoder *armEncoder;
+    Encoder *gyro;
 
-    SPIGyro *gyro;
+    //SPIGyro *gyro;
 
     AnalogInput *whipPot;
     AnalogInput *armPot;
@@ -59,12 +60,7 @@ private:
     AnalogInput *containerGrabberPot;
 
     DigitalInput *toteSensor;
-    DigitalInput *elevatorZeroPulse;
-    DigitalInput *armZeroPulse;
-    DigitalInput *armUpPulse;
     DigitalInput *airPressureSwitch;
-    DigitalInput *containerGrabberUP;
-    DigitalInput *containerGrabberDOWN;
 
     Relay *compressor;
 

@@ -20,7 +20,7 @@ Intake::Intake(VictorSP* leftIntakeMotor_, VictorSP* rightIntakeMotor_, VictorSP
     whipPID = new PID(0.3,0,0);
     whipPID->start();
     whipPID->setBounds(-1,1);
-    whipPID->setTarget(16);
+    whipPID->setTarget(173);
 
     isFeederSolenoidExtended = false;
     isFloorSolenoidExtended = false;
@@ -49,12 +49,12 @@ float Intake::getWhipAngle() {
 }
 
 void Intake::retractWhip() {
-    whipPID->setTarget(16);
+    whipPID->setTarget(167);
     isRetracted = true;
 }
 
 void Intake::extendWhip() {
-    whipPID->setTarget(30);
+    whipPID->setTarget(210);
     isRetracted = false;
 }
 
@@ -84,7 +84,7 @@ void Intake::update() {
 
     if (!hasTote && toteSensor->Get()) {
         toteTimer->Start();
-        if (toteTimer->Get() >= 0.5) {
+        if (toteTimer->Get() >= 0.25) {
             hasTote = true;
         }
     } else if (hasTote && !toteSensor->Get()) {
@@ -94,7 +94,7 @@ void Intake::update() {
         toteTimer->Reset();
     }
 
-    //whipMotor->Set(-whipPID->update(getWhipAngle()));
+    whipMotor->Set(-whipPID->update(getWhipAngle()));
 }
 
 } /* namespace frc973 */
