@@ -57,6 +57,10 @@ bool StateManager::isSauropodDone() {
     return sauropod->sequenceDone();
 }
 
+bool StateManager::isWhipDone() {
+    return intake->whipDone();
+}
+
 void StateManager::update() {
 
     intake->setIntake(intakeSpeed);

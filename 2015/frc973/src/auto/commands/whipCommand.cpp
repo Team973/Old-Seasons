@@ -17,7 +17,7 @@ void WhipCommand::init() {
 }
 
 bool WhipCommand::taskPeriodic() {
-    if (timer->Get() >= timeout) {
+    if (manager->isWhipDone() || timer->Get() >= timeout) {
         return true;
     }
 

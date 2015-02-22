@@ -62,6 +62,10 @@ bool Intake::gotTote() {
     return hasTote;
 }
 
+bool Intake::whipDone() {
+    return fabs(whipPID->getTarget() - getWhipAngle()) < 3;
+}
+
 void Intake::update() {
     rightIntakeMotor->Set(intakeMotorSpeed);
     leftIntakeMotor->Set(intakeMotorSpeed);
