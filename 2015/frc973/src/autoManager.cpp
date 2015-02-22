@@ -26,7 +26,8 @@ void AutoManager::setModes() {
     modes["Test"]->addConcurrent(new IntakeCommand(stateManager, -1.0, false, 1));
     modes["Test"]->addConcurrent(new SauropodPathCommand(stateManager, Sauropod::READY, 2));
     modes["Test"]->addSequential(new IntakeCommand(stateManager, 0, false, 0));
-    modes["Test"]->addSequential(new WhipCommand(stateManager, "extend", 5));
+    modes["Test"]->addConcurrent(new DriveCommand( .33, 2));
+    modes["Test"]->addConcurrent(new WhipCommand(stateManager, "extend", 4));
     modes["Test"]->addSequential(new WhipCommand(stateManager, "retract", 5));
 
     modes["Turn"]->addSequential(new TurnCommand(90, 10));
