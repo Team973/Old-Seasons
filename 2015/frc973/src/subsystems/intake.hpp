@@ -17,6 +17,8 @@ public:
     void retractWhip();
     float getWhipAngle(); 
     bool gotTote();
+    bool whipDone();
+
 private:
     float intakeMotorSpeed;
     float whipMotorSpeed;

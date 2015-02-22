@@ -17,6 +17,7 @@ public:
     void setSauropodPath(int path);
     void setWhipPosition(std::string position);
     bool isSauropodDone();
+    bool isWhipDone();
     void update();
 
     const static int LOAD = 1;
