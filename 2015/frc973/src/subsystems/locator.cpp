@@ -69,6 +69,11 @@ float Locator::normalizeAngle(float theta)
     return theta;
 }
 
+float Locator::getEncoderGyro() {
+    float driveWidth = 25;
+    return radiansToDegrees((getDistance(rightEncoder) - getDistance(leftEncoder))/driveWidth);
+}
+
 // in degrees
 float Locator::getAngle()
 {

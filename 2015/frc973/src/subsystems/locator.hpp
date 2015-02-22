@@ -20,6 +20,7 @@ public:
     float getMovedDistance();
     float getLinearVelocity();
     float normalizeAngle(float theta);
+    float getEncoderGyro();
     float getAngle();
     Locator::Point getPoint();
     void update();
