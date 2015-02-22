@@ -20,8 +20,8 @@ Drive::Drive(VictorSP *left_, VictorSP *right_)
 
 void Drive::setDriveMotors(float left, float right)
 {
-    leftMotor->Set(limit(right));
-    rightMotor->Set(-limit(left));
+    leftMotor->Set(limit(left));
+    rightMotor->Set(-limit(right));
 }
 
 void Drive::arcade(float move_, float rotate_)
@@ -56,6 +56,25 @@ void Drive::arcade(float move_, float rotate_)
         }
     }
     setDriveMotors(left, right);
+}
+
+float Drive::signSquare(float x) {
+    if (x < 0) {
+        return -x*x;
+    }
+    return x*x;
+}
+
+void Drive::controlInterface(double throttle, double wheel, bool highGear, bool quickTurn) {
+    double move = signSquare(throttle);
+    double rotate = signSquare(wheel);
+    if (fabs(move) > 0.6) {
+        move = 0.6;
+    }
+    if (fabs(rotate) > 0.6) {
+        rotate = 0.6;
+    }
+    CheesyDrive(move, rotate, highGear, quickTurn);
 }
 
 void Drive::CheesyDrive(double throttle, double wheel, bool highGear, bool quickTurn) {
