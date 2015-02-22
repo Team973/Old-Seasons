@@ -38,6 +38,11 @@ void StateManager::setRobotState(int state) {
 
 void StateManager::setSauropodPath(int path) {
     sauropod->createPath(path);
+    switch (path) {
+        case Sauropod::READY:
+            robotState = LOAD;
+        break;
+    }
 }
 
 void StateManager::setWhipPosition(std::string position) {
@@ -54,38 +59,40 @@ bool StateManager::isSauropodDone() {
 
 void StateManager::update() {
 
+    intake->setIntake(intakeSpeed);
+
     switch (robotState) {
         case LOAD:
 
-            intake->setIntake(intakeSpeed);
-
             // auto stack
-            if (intake->gotTote() && !sauropod->inCradle()) {
+            if (intake->gotTote() && !sauropod->inCradle() && !hadTote && sauropod->sequenceDone()) {
                 hadTote = true;
-                intake->setIntake(0);
                 if (sauropod->getCurrPath() != Sauropod::PICKUP) {
                     setSauropodPath(Sauropod::PICKUP);
                 }
             } else if (sauropod->sequenceDone() && hadTote && sauropod->inCradle()) {
                 numTotes += 1;
+                sauropod->setNumTotes(numTotes);
                 setSauropodPath(Sauropod::READY);
                 hadTote = false;
+            }
+
+            if (intake->gotTote()) {
+                intake->setIntake(0);
+            }
+
+            if (numTotes >= 6) {
+                robotState = IDLE;
             }
 
             break;
         case SCORE:
             break;
         case IDLE:
-            intake->setIntake(0);
             break;
     }
 
-    // num totes logic check
-    if (!sauropod->lotsoTotes() && numTotes > 3) {
-        numTotes = 0;
-    } else if (sauropod->lotsoTotes() && numTotes < 3) {
-        numTotes = 3;
-    }
+    SmartDashboard::PutNumber("Num Totes: ", numTotes);
     sauropod->setNumTotes(numTotes);
 
     sauropod->update();

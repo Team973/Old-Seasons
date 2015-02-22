@@ -141,7 +141,7 @@ void* SPIGyro::Run(void *p)
 		if (cyc++ == 50) {
 			cyc = 0;
 		    SmartDashboard::PutNumber("Gyro angle: ", inst->GetDegrees());
-			printf("angle is %f, momentum is %f\n", inst->GetDegrees(), inst->GetDegreesPerSec());
+			//printf("angle is %f, momentum is %f\n", inst->GetDegrees(), inst->GetDegreesPerSec());
 		}
 
         //Wait till the next 1/kReadingRate us period to make next reading

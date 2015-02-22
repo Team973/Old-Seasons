@@ -83,8 +83,6 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* eleva
     muchoTotes = false;
     toteAccumulator = new FlagAccumulator();
     toteAccumulator->setThreshold(5);
-    
-    forceNewTarget = false;
 }
 
 void Sauropod::addGain(std::string name, Gains gain) {
@@ -104,9 +102,8 @@ void Sauropod::setPreset(std::string preset) {
 }
 
 void Sauropod::createPath(int dest) {
-    if (dest != currPath) {
+    if (dest != currPath || sequenceDone()) {
         clearQueue();
-        forceNewTarget = true;
         switch(dest) {
             case PLATFORM:
                 addToQueue("rest");
@@ -241,16 +238,14 @@ void Sauropod::addToQueue(std::string preset) {
 
 void Sauropod::executeQueue() {
     if (waypointQueue.empty()) {
-        currPath = NONE;
         return;
     }
 
-    if (atTarget() || forceNewTarget) {
+    if (atTarget()) {
         accumulator->reset();
         doneTimer->Reset();
         setPreset(waypointQueue.front());
         waypointQueue.pop();
-        forceNewTarget = false;
     }
 }
 
@@ -301,6 +296,7 @@ void Sauropod::update() {
 
     executeQueue();
 
+    SmartDashboard::PutString("curr preset: ", currPreset);
     Preset currTarget = presets[currPreset];
     setTarget(currTarget);
 

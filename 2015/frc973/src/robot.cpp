@@ -79,30 +79,25 @@ Robot::Robot()
     humanFeederSolenoid = new Solenoid(0);
     floorSolenoid = new Solenoid(1);
 
-    airPressureSwitch = new DigitalInput(0);
+    //airPressureSwitch = new DigitalInput(0);
     compressor = new Relay(0);
 
-    leftDriveEncoder = new Encoder(11,12);
-    rightDriveEncoder = new Encoder(13,14);
+    leftDriveEncoder = new Encoder(4,5);
+    rightDriveEncoder = new Encoder(2,3);
 
-    elevatorZeroPulse = new DigitalInput(1);
-    elevatorEncoder = new Encoder(15,16);
+    elevatorEncoder = new Encoder(6,7);
     elevatorPot = new AnalogInput(1);
 
-    armUpPulse = new DigitalInput(5);
-    armZeroPulse = new DigitalInput(6);
-    armEncoder = new Encoder(17,18);
+    armEncoder = new Encoder(0,1);
     armPot = new AnalogInput(0);
 
-    gyro = new SPIGyro();
+    gyro = new Encoder(14,15,false,CounterBase::k2X);
+
+    //gyro = new SPIGyro();
 
     whipPot = new AnalogInput(2);
 
-    toteSensor = new DigitalInput(2);
-
-    containerGrabberUP = new DigitalInput(3);
-    containerGrabberDOWN = new DigitalInput(4);
-    containerGrabberPot = new AnalogInput(3);
+    toteSensor = new DigitalInput(8);
 
     locator = new Locator(leftDriveEncoder, rightDriveEncoder, gyro);
 
@@ -133,11 +128,15 @@ void Robot::dashboardUpdate()
     SmartDashboard::PutString("DB/String 1", asString(rightDriveEncoder->Get()));
     SmartDashboard::PutString("DB/String 2", autoManager->getCurrentName());
     SmartDashboard::PutString("DB/String 3", asString(sauropod->getElevatorHeight()));
-    SmartDashboard::PutString("DB/String 4", asString(gyro->GetDegrees()));
     SmartDashboard::PutNumber("raw arm encoder: ", armEncoder->Get());
+    SmartDashboard::PutNumber("raw elevator encoder: ", elevatorEncoder->Get());
+    SmartDashboard::PutNumber("raw left encoder: ", leftDriveEncoder->Get());
+    SmartDashboard::PutNumber("raw right encoder: ", rightDriveEncoder->Get());
     SmartDashboard::PutBoolean("is sauropod done: ", sauropod->atTarget());
     SmartDashboard::PutNumber("Whip Angle: ", intake->getWhipAngle());
     SmartDashboard::PutNumber("Whip Voltage: ", whipPot->GetVoltage());
+    SmartDashboard::PutBoolean("tote sensor: ", toteSensor->Get());
+    SmartDashboard::PutNumber("anaglog tote sensor: ", elevatorPot->GetVoltage());
 }
 
 void Robot::RobotInit()
