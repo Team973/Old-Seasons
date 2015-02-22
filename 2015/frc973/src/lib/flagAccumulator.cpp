@@ -20,7 +20,7 @@ int FlagAccumulator::getFlagCount() {
 }
 
 bool FlagAccumulator::update(bool current) {
-    if (current) {
+    if (current && flagCount < threshold) {
         flagCount += 1;
     }
 
