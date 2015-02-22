@@ -28,7 +28,7 @@ void AutoManager::setModes() {
     modes["Test"]->addSequential(new IntakeCommand(stateManager, 0, false, 0));
     modes["Test"]->addConcurrent(new DriveCommand( .33, 2));
     modes["Test"]->addConcurrent(new WhipCommand(stateManager, "extend", 4));
-    modes["Test"]->addSequential(new WhipCommand(stateManager, "retract", 5));
+    modes["Test"]->addSequential(new WhipCommand(stateManager, "retract", 0));
 
     modes["Turn"]->addSequential(new TurnCommand(90, 10));
 
