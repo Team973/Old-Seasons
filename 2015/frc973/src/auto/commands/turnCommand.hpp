@@ -6,14 +6,17 @@
 namespace frc973 {
 
 class XYManager;
+class StateManager;
 
 class TurnCommand : public AutoCommand {
 public:
-    TurnCommand(float target_, float timeout_);
+    TurnCommand(StateManager *manager_, float target_, float timeout_);
     void init();
     bool taskPeriodic();
 private:
     XYManager *xyManager;
+
+    StateManager *manager;
 
     float target;
 };

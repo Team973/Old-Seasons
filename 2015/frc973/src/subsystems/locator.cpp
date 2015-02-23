@@ -34,16 +34,18 @@ void Locator::resetEncoders()
 // in inches
 float Locator::getDistance(Encoder *encoder)
 {
-    float diameter = 2.5;
+    float diameter = 4;
     float encoderTicks = 360;
     float distancePerRevolution = M_PI * diameter;
-    return ((encoder->Get() / encoderTicks) * distancePerRevolution);
+    float gearRatio = ((12/54)*(40/70));
+    return (((encoder->Get() * gearRatio) / encoderTicks) * distancePerRevolution);
 }
 
 float Locator::getVelocity(Encoder *encoder) {
-    float diameter = 2.5;
+    float diameter = 4;
     float encoderTicks = 360;
-    return encoder->GetRate() / encoderTicks * M_PI / 12 * diameter;
+    float gearRatio = 12/54*40/70;
+    return (encoder->GetRate()*gearRatio) / encoderTicks * M_PI / 12 * diameter;
 }
 
 // in feet

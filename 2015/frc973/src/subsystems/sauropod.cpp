@@ -281,7 +281,7 @@ float Sauropod::getArmVelocity() {
 }
 
 bool Sauropod::inCradle() {
-    return getArmAngle() < 1 && getElevatorHeight() < 4;
+    return getArmAngle() < 2 && getElevatorHeight() < 4;
 }
 
 bool Sauropod::lotsoTotes() {
@@ -330,7 +330,7 @@ void Sauropod::update() {
     } else if (inCradle() && currTarget.projection > 0) {
         elevatorInput = epido;
         armInput = -0.1;
-    } else if (!inCradle() && currTarget.height < 4 && getArmAngle() > 1.5) {
+    } else if (!inCradle() && currTarget.height < 4 && getArmAngle() > 2) {
         elevatorInput = 0.1;
         armInput = apido;
     } else {
@@ -339,7 +339,7 @@ void Sauropod::update() {
     }
 
     if (getArmAngle() < 1.5 && currTarget.projection == 0) {
-        armInput += -0.1;
+        armInput = -0.2;
     }
 
     if (getElevatorHeight() < 5 && getElevatorHeight() > 2 && fabs(getElevatorVelocity()) > 1) {
@@ -363,7 +363,7 @@ void Sauropod::update() {
     SmartDashboard::PutNumber("Elevator Input:", elevatorInput);
     SmartDashboard::PutNumber("Arm Input:", armInput);
 
-    SmartDashboard::PutNumber("Arm Error: ", armPID->getTarget()-getArmAngle());
+    SmartDashboard::PutNumber("Arm Error: ", armPID->getTarget() - getArmAngle());
 
     SmartDashboard::PutNumber("Arm Velocity: ", getArmVelocity());
     SmartDashboard::PutNumber("Elevator Velocity: ", getElevatorVelocity());

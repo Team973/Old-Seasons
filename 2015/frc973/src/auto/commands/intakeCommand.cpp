@@ -14,11 +14,11 @@ IntakeCommand::IntakeCommand(StateManager *manager_, float speed_, bool open_, f
 void IntakeCommand::init() {
     timer->Start();
     timer->Reset();
-    manager->setIntakePosition(open);
 }
 
 bool IntakeCommand::taskPeriodic() {
     manager->setIntakeSpeed(speed);
+    manager->setIntakePosition(open);
 
     if (timer->Get() >= timeout) {
         return true;

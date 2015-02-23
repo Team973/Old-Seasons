@@ -12,7 +12,8 @@ ControlManager::ControlManager(ControlMap *controls_, StateManager *stateManager
 }
 
 void ControlManager::update() {
-    stateManager->setDriveFromControls(controls->getThrottle(), -controls->getTurn(), controls->getQuickturn());
+    stateManager->setDriveFromControls(-controls->getThrottle(), controls->getTurn(), controls->getQuickturn());
+    stateManager->vTecKickedInYo(controls->getDriverButton(6));
 
     stateManager->setIntakeSpeed(-controls->getCodriverAxis(1));
 
@@ -28,18 +29,10 @@ void ControlManager::update() {
     if (controls->getCodriverButton(4)) {
         stateManager->setSauropodPath(Sauropod::RESTING);
     }
-    if (controls->getCodriverButton(5)) {
-        stateManager->setSauropodPath(Sauropod::PLATFORM);
-    }
-    if (controls->getCodriverButton(6)) {
-        stateManager->setSauropodPath(Sauropod::RETURN);
-    }
-    if (controls->getCodriverButton(7)) {
-        stateManager->setWhipPosition("extend");
-    }
-    if (controls->getCodriverButton(8)) {
-        stateManager->setWhipPosition("retract");
-    }
+
+    stateManager->dropHumanIntake(controls->getCodriverButton(7));
+
+    stateManager->setIntakePosition(controls->getCodriverButton(8));
 }
 
 } /* namespace frc973 */

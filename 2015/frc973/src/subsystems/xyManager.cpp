@@ -43,7 +43,7 @@ XYManager::XYManager()
             Constants::getConstant("kDriveI")->getDouble(),
             Constants::getConstant("kDriveD")->getDouble());
     drivePID->start();
-    drivePID->setBounds(-1,1);
+    drivePID->setBounds(-.6,.6);
     turnPID = new PID(
             Constants::getConstant("kTurnP")->getDouble(),
             Constants::getConstant("kTurnI")->getDouble(),
@@ -54,6 +54,14 @@ XYManager::XYManager()
     relativeDistance = 0;
 
     printf("Profile Pos, Profile Vel, Profile Accel, Actual Pos, Actual Vel\n");
+}
+
+void XYManager::setSpeed(bool fast) {
+    if (fast) {
+        drivePID->setBounds(-.6, .6);
+    } else {
+        drivePID->setBounds(-.5, .5);
+    }
 }
 
 void XYManager::injectLocator(Locator* locator_)
@@ -83,10 +91,17 @@ void XYManager::setTargetAngle(float angle_)
     done = false;
 }
 
+void XYManager::resetProfile() {
+    loopTimer->Reset();
+}
+
 void XYManager::startProfile()
 {
     loopTimer->Start();
-    loopTimer->Reset();
+}
+
+void XYManager::pauseProfile() {
+    loopTimer->Stop();
 }
 
 XYManager::MotorValue* XYManager::getValues()
@@ -95,7 +110,7 @@ XYManager::MotorValue* XYManager::getValues()
 }
 
 float XYManager::getDistanceFromTarget() {
-    return relativeDistance;
+    return fabs(relativeDistance - linearProfile->getTarget());
 }
 
 void XYManager::update()
@@ -118,7 +133,7 @@ void XYManager::update()
 
     float angleError = baseError;
 
-    if ( fabs(linearProfile->getTarget() - relativeDistance) <= .5 && angleError <= 2 && locator->getLinearVelocity() < 2) {
+    if ( fabs(relativeDistance - linearProfile->getTarget()) <= .5 && angleError <= 2 && locator->getLinearVelocity() < 2) {
         done = true;
     }
 
@@ -135,8 +150,6 @@ void XYManager::update()
 
     driveInput = drivePID->update(relativeDistance - linearStep[1], loopTimer) + linearFF;
     angularInput = (turnPID->update(locator->normalizeAngle(angleError), loopTimer)) + angularFF;
-
-    SmartDashboard::PutString("DB/String 9", asString(angularInput));
 
     updateValue->throttle = driveInput;
     updateValue->turn = angularInput;

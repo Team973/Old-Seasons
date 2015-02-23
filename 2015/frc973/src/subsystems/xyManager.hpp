@@ -20,10 +20,13 @@ public:
     XYManager();
     static XYManager* getInstance();
     void injectLocator(Locator* locator_);
+    void setSpeed(bool fast);
     bool isMovementDone();
     void setTargetDistance(float distance_);
     void setTargetAngle(float angle_);
     void startProfile();
+    void pauseProfile();
+    void resetProfile();
     XYManager::MotorValue* getValues();
     float getDistanceFromTarget();
     void update();

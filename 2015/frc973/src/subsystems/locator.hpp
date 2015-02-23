@@ -18,6 +18,7 @@ public:
     void resetGyro();
     void resetEncoders();
     float getMovedDistance();
+    float getDistance(Encoder *encoder);
     float getLinearVelocity();
     float normalizeAngle(float theta);
     float getEncoderGyro();
@@ -26,7 +27,6 @@ public:
     void update();
 
 private:
-    float getDistance(Encoder *encoder);
     float getVelocity(Encoder *encoder);
 
     Point *currPoint;

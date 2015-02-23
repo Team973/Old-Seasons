@@ -13,13 +13,32 @@ Drive::Drive(VictorSP *left_, VictorSP *right_)
 
     xyManager = XYManager::getInstance();
 
+    locked = false;
+
     oldWheel = 0;
     negInertiaAccumulator = 0;
     quickStopAccumulator = 0;
 }
 
+void Drive::lock() {
+    locked = true;
+}
+
+void Drive::unlock() {
+    locked = false;
+}
+
+bool Drive::isLocked() {
+    return locked;
+}
+
 void Drive::setDriveMotors(float left, float right)
 {
+    if (locked) {
+        left = 0;
+        right = 0;
+    }
+
     leftMotor->Set(limit(left));
     rightMotor->Set(-limit(right));
 }
@@ -69,10 +88,18 @@ void Drive::controlInterface(double throttle, double wheel, bool highGear, bool 
     double move = signSquare(throttle);
     double rotate = signSquare(wheel);
     if (fabs(move) > 0.6) {
-        move = 0.6;
+        if (move < 0) {
+            move = -0.6;
+        } else {
+            move = 0.6;
+        }
     }
     if (fabs(rotate) > 0.6) {
-        rotate = 0.6;
+        if (rotate < 0) {
+            rotate = -0.6;
+        } else {
+            rotate = 0.6;
+        }
     }
     CheesyDrive(move, rotate, highGear, quickTurn);
 }
@@ -201,7 +228,7 @@ void Drive::CheesyDrive(double throttle, double wheel, bool highGear, bool quick
 void Drive::update()
 {
     XYManager::MotorValue* values = xyManager->getValues();
-    arcade(values->throttle, values->turn);
+    arcade(-values->throttle, -values->turn);
 }
 
 }
