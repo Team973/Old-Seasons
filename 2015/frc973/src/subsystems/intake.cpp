@@ -17,10 +17,10 @@ Intake::Intake(VictorSP* leftIntakeMotor_, VictorSP* rightIntakeMotor_, VictorSP
 
     intakeMotorSpeed = 0;
     whipMotorSpeed = 0;
-    whipPID = new PID(0.3,0,0);
+    whipPID = new PID(0.06,0,0);
     whipPID->start();
     whipPID->setBounds(-1,1);
-    whipPID->setTarget(173);
+    whipPID->setTarget(107);
 
     isFeederSolenoidExtended = false;
     isFloorSolenoidExtended = false;
@@ -45,16 +45,17 @@ void Intake::actuateHumanFeederSolenoids(bool actuate) {
 }
 
 float Intake::getWhipAngle() {
-    return (360 * whipPot->GetVoltage())/5;
+    float offset = 872;
+    return (5 * ((360 * whipPot->GetVoltage())/5)) - offset;
 }
 
 void Intake::retractWhip() {
-    whipPID->setTarget(167);
+    whipPID->setTarget(107);
     isRetracted = true;
 }
 
 void Intake::extendWhip() {
-    whipPID->setTarget(214);
+    whipPID->setTarget(211);
     isRetracted = false;
 }
 
@@ -70,7 +71,7 @@ void Intake::update() {
     rightIntakeMotor->Set(intakeMotorSpeed);
     leftIntakeMotor->Set(intakeMotorSpeed);
 
-    if (isFeederSolenoidExtended) {
+    if (!isFeederSolenoidExtended) {
         humanFeederIntakeMotor->Set(intakeMotorSpeed);
     }
     else {

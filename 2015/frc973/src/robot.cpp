@@ -76,8 +76,8 @@ Robot::Robot()
     whipMotor = new VictorSP(3);
     containerGrabberMotor = new VictorSP(4);
 
-    humanFeederSolenoid = new Solenoid(0);
-    floorSolenoid = new Solenoid(1);
+    humanFeederSolenoid = new Solenoid(1);
+    floorSolenoid = new Solenoid(0);
 
     //airPressureSwitch = new DigitalInput(0);
     compressor = new Relay(0);
@@ -128,6 +128,8 @@ void Robot::dashboardUpdate()
     SmartDashboard::PutString("DB/String 1", asString(rightDriveEncoder->Get()));
     SmartDashboard::PutString("DB/String 2", autoManager->getCurrentName());
     SmartDashboard::PutString("DB/String 3", asString(sauropod->getElevatorHeight()));
+    SmartDashboard::PutNumber("drive distance: ", locator->getMovedDistance());
+    SmartDashboard::PutNumber("left drive distance: ", locator->getDistance(leftDriveEncoder));
     SmartDashboard::PutNumber("raw arm encoder: ", armEncoder->Get());
     SmartDashboard::PutNumber("raw elevator encoder: ", elevatorEncoder->Get());
     SmartDashboard::PutNumber("raw left encoder: ", leftDriveEncoder->Get());
@@ -157,6 +159,7 @@ void Robot::AutonomousInit()
 {
     autoManager->setMode("Test");
     locator->resetEncoders();
+    //stateManager->disableAutoStacking();
     autoManager->getCurrentMode()->init();
 }
 
@@ -166,12 +169,14 @@ void Robot::AutonomousPeriodic()
 
     xyManager->update();
     stateManager->update();
+    drive->update();
 
     dashboardUpdate();
 }
 
 void Robot::TeleopInit()
 {
+    stateManager->enableAutoStacking();
 }
 
 void Robot::TeleopPeriodic()

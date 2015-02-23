@@ -1,11 +1,14 @@
 #include "turnCommand.hpp"
 #include "../../subsystems/xyManager.hpp"
+#include "../../stateManager.hpp"
 
 namespace frc973 {
 
-TurnCommand::TurnCommand(float target_, float timeout_)
+TurnCommand::TurnCommand(StateManager *manager_, float target_, float timeout_)
 {
     xyManager = XYManager::getInstance();
+
+    manager = manager_;
 
     target = target_;
 
@@ -17,14 +20,22 @@ void TurnCommand::init()
     timer->Start();
     timer->Reset();
     xyManager->setTargetAngle(target);
+    xyManager->resetProfile();
     xyManager->startProfile();
 }
 
 bool TurnCommand::taskPeriodic()
 {
-    if (xyManager->isMovementDone() || timer->Get() >= timeout)
-    {
-        return true;
+    if (!manager->isDriveLocked()) {
+        timer->Start();
+        xyManager->startProfile();
+        if (xyManager->isMovementDone() || timer->Get() >= timeout)
+        {
+            return true;
+        }
+    } else {
+        timer->Reset();
+        xyManager->pauseProfile();
     }
 
     return false;
