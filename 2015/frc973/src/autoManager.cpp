@@ -33,19 +33,33 @@ void AutoManager::setModes() {
     //modes["Test"]->addSequential(new IntakeCommand(stateManager, -1.0, true, 10));
 
     // tote one
-    modes["Test"]->addSequential(new SauropodPathCommand(stateManager, Sauropod::READY, 2));
+    modes["Test"]->addConcurrent(new IntakeCommand(stateManager, -1.0, false, 0));
+    modes["Test"]->addConcurrent(new SauropodPathCommand(stateManager, Sauropod::READY, 2));
+    modes["Test"]->addSequential(new IntakeCommand(stateManager, 0.0, false, 0));
     modes["Test"]->addConcurrent(new DriveCommand(stateManager, .33, false, 2));
     modes["Test"]->addConcurrent(new WhipCommand(stateManager, "extend", 4));
-    modes["Test"]->addSequential(new WhipCommand(stateManager, "retract", 0));
+    modes["Test"]->addConcurrent(new IntakeCommand(stateManager, 1.0, false, 2));
+    modes["Test"]->addSequential(new IntakeCommand(stateManager, 0.0, false, 0));
+    modes["Test"]->addConcurrent(new WhipCommand(stateManager, "retract", 0));
     // tote two
     modes["Test"]->addConcurrent(new DriveCommand(stateManager, 5.5 + driveOffset, true, 0));
-    modes["Test"]->addSequential(new DriveCommand(stateManager, 2, false, 3));
+    modes["Test"]->addConcurrent(new IntakeCommand(stateManager, -1.0, true, 2));
+    modes["Test"]->addSequential(new WaitCommand(0.0));//dummy command
+    modes["Test"]->addConcurrent(new DriveCommand(stateManager, 2, false, 3));
+    modes["Test"]->addConcurrent(new IntakeCommand(stateManager, -1.0, false, 1));
+    modes["Test"]->addSequential(new IntakeCommand(stateManager, 0.0, false, 0));
     modes["Test"]->addConcurrent(new DriveCommand(stateManager, .33, false, 2));
     modes["Test"]->addConcurrent(new WhipCommand(stateManager, "extend", 4));
-    modes["Test"]->addSequential(new WhipCommand(stateManager, "retract", 0));
+    modes["Test"]->addConcurrent(new IntakeCommand(stateManager, 1.0, false, 2));
+    modes["Test"]->addSequential(new IntakeCommand(stateManager, 0.0, false, 0));
+    modes["Test"]->addConcurrent(new WhipCommand(stateManager, "retract", 0));
     // tote three
     modes["Test"]->addConcurrent(new DriveCommand(stateManager, 5.5 + driveOffset, true, 3));
-    modes["Test"]->addSequential(new DriveCommand(stateManager, 2, false, 3));
+    modes["Test"]->addConcurrent(new IntakeCommand(stateManager, -1.0, true, 2));
+    modes["Test"]->addSequential(new WaitCommand(0.0));//dummy command
+    modes["Test"]->addConcurrent(new DriveCommand(stateManager, 2, false, 3));
+    modes["Test"]->addConcurrent(new IntakeCommand(stateManager, -1.0, false, 1));
+    modes["Test"]->addSequential(new IntakeCommand(stateManager, 0.0, false, 0));
     /*
     modes["Test"]->addSequential(new TurnCommand(90, 3));
     modes["Test"]->addSequential(new DriveCommand(new SauropodPathCommand(stateManager, Sauropod::RESTING, 2), 5, -6, 4));
