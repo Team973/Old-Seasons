@@ -17,10 +17,10 @@ void IntakeCommand::init() {
 }
 
 bool IntakeCommand::taskPeriodic() {
-    manager->setIntakeSpeed(speed);
-    manager->setIntakePosition(open);
 
     if (timer->Get() >= timeout) {
+        manager->setIntakeSpeed(speed);
+        manager->setIntakePosition(open);
         return true;
     }
 
