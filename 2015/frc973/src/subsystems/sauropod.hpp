@@ -44,7 +44,6 @@ public:
     int getCurrPath();
     bool inCradle();
     bool lotsoTotes();
-    void setNumTotes(int num);
 
     const static int NONE = -1;
     const static int IDLE = 1;
@@ -96,7 +95,6 @@ private:
     Timer *doneTimer;
 
     FlagAccumulator *toteAccumulator;
-    int numTotes;
     bool muchoTotes;
 };
 
