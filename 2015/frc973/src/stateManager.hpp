@@ -20,6 +20,7 @@ public:
     void dropHumanIntake(bool dropped);
     void setRobotState(int state);
     void setSauropodPath(int path);
+    void setLastTote(bool lastTote);
     void setWhipPosition(std::string position);
     bool isSauropodDone();
     bool isWhipDone();
@@ -41,6 +42,8 @@ private:
     bool isAutoStack;
 
     int robotState;
+
+    int restingPath;
 
     float intakeSpeed;
 

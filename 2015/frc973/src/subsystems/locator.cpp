@@ -37,14 +37,14 @@ float Locator::getDistance(Encoder *encoder)
     float diameter = 4;
     float encoderTicks = 360;
     float distancePerRevolution = M_PI * diameter;
-    float gearRatio = ((12/54)*(40/70));
+    float gearRatio = ((12.0/54.0)*(40.0/70.0));
     return (((encoder->Get() * gearRatio) / encoderTicks) * distancePerRevolution);
 }
 
 float Locator::getVelocity(Encoder *encoder) {
     float diameter = 4;
     float encoderTicks = 360;
-    float gearRatio = 12/54*40/70;
+    float gearRatio = (12.0/54.0)*(40.0/70.0);
     return (encoder->GetRate()*gearRatio) / encoderTicks * M_PI / 12 * diameter;
 }
 

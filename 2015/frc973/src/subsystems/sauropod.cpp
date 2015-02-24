@@ -79,7 +79,6 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* eleva
     accumulator = new FlagAccumulator();
     accumulator->setThreshold(3);
 
-    numTotes = 0;
     muchoTotes = false;
     toteAccumulator = new FlagAccumulator();
     toteAccumulator->setThreshold(5);
@@ -119,11 +118,7 @@ void Sauropod::createPath(int dest) {
                 currPath = PICKUP;
                 break;
             case READY:
-                if (numTotes >= 6) {
-                    addToQueue("rest");
-                } else {
-                    addToQueue("loadHigh");
-                }
+                addToQueue("loadHigh");
                 currPath = READY;
                 break;
             case RESTING:
@@ -286,10 +281,6 @@ bool Sauropod::inCradle() {
 
 bool Sauropod::lotsoTotes() {
     return muchoTotes;
-}
-
-void Sauropod::setNumTotes(int num) {
-    numTotes = num;
 }
 
 void Sauropod::update() {

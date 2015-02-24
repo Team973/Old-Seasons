@@ -17,11 +17,12 @@ StateManager::StateManager(Drive *drive_, Sauropod *sauropod_, Intake *intake_) 
     intakeSpeed = 0;
 
     hadTote = false;
-    numTotes = 0;
 
     lockTimer = new Timer();
 
     isAutoStack = true;
+
+    restingPath = Sauropod::READY;
 
     vTec_yo = false;
 }
@@ -78,6 +79,14 @@ void StateManager::setSauropodPath(int path) {
     }
 }
 
+void StateManager::setLastTote(bool lastTote) {
+    if (lastTote) {
+        restingPath = Sauropod::RESTING;
+    } else {
+        restingPath = Sauropod::READY;
+    }
+}
+
 void StateManager::setWhipPosition(std::string position) {
     if (position == "extend") {
         intake->extendWhip();
@@ -104,7 +113,7 @@ void StateManager::update() {
 
     switch (robotState) {
         case LOAD:
-
+            //
             // auto stack
             //if (isAutoStack) {
                 if (intake->gotTote() && !sauropod->inCradle() && !hadTote && sauropod->sequenceDone()) {
@@ -115,9 +124,7 @@ void StateManager::update() {
                         setSauropodPath(Sauropod::PICKUP);
                     }
                 } else if (sauropod->sequenceDone() && hadTote && sauropod->inCradle()) {
-                    numTotes += 1;
-                    sauropod->setNumTotes(numTotes);
-                    setSauropodPath(Sauropod::READY);
+                    setSauropodPath(restingPath);
                     hadTote = false;
                 } else if (!intake->gotTote() && !hadTote && !sauropod->inCradle()) {
                     lockTimer->Stop();
@@ -132,22 +139,20 @@ void StateManager::update() {
                 if (intake->gotTote() && intakeSpeed < 0) {
                     intake->setIntake(0);
                 }
-
-                if (numTotes >= 6) {
-                    robotState = IDLE;
-                }
             //}
 
             break;
         case SCORE:
+            drive->unlock();
             break;
         case IDLE:
-            numTotes = 0;
+            drive->unlock();
             break;
     }
 
-    SmartDashboard::PutNumber("Num Totes: ", numTotes);
-    sauropod->setNumTotes(numTotes);
+    if (lockTimer->Get() > 5) {
+        drive->unlock();
+    }
 
     sauropod->update();
     intake->update();

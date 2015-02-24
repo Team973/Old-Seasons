@@ -30,6 +30,8 @@ void ControlManager::update() {
         stateManager->setSauropodPath(Sauropod::RESTING);
     }
 
+    stateManager->setLastTote(controls->getCodriverButton(5));
+
     stateManager->dropHumanIntake(controls->getCodriverButton(7));
 
     stateManager->setIntakePosition(controls->getCodriverButton(8));
