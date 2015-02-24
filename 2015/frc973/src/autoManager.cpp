@@ -7,7 +7,6 @@
 #include "auto/commands/sauropodPathCommand.hpp"
 #include "auto/commands/whipCommand.hpp"
 #include "auto/commands/intakeCommand.hpp"
-#include "auto/commands/waitForToteCommand.hpp"
 #include "subsystems/drive.hpp"
 #include "subsystems/sauropod.hpp"
 
