@@ -84,21 +84,30 @@ float Drive::signSquare(float x) {
     return x*x;
 }
 
-void Drive::controlInterface(double throttle, double wheel) {
-    double move = signSquare(throttle)*0.4;
-    double rotate = signSquare(wheel)*0.7;
-    if (fabs(move) > 0.4) {
+void Drive::controlInterface(double throttle, double wheel, bool lowGear) {
+    float turnCap, driveCap;
+    if (lowGear) {
+        driveCap = 0.2;
+        turnCap = 0.5;
+    } else {
+        driveCap = 0.4;
+        turnCap = 0.7;
+    }
+
+    double move = signSquare(throttle)*driveCap;
+    double rotate = signSquare(wheel)*turnCap;
+    if (fabs(move) > driveCap) {
         if (move < 0) {
-            move = -0.4;
+            move = -driveCap;
         } else {
-            move = 0.4;
+            move = driveCap;
         }
     }
-    if (fabs(rotate) > 0.7) {
+    if (fabs(rotate) > turnCap) {
         if (rotate < 0) {
-            rotate = -0.7;
+            rotate = -turnCap;
         } else {
-            rotate = 0.7;
+            rotate = turnCap;
         }
     }
     arcade(move, rotate);

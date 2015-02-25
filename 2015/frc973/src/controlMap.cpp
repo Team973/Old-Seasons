@@ -16,7 +16,7 @@ float ControlMap::getTurn() {
     return driver->GetRawAxis(2);
 }
 
-bool ControlMap::getQuickturn() {
+bool ControlMap::getLowGear() {
     return driver->GetRawButton(5);
 }
 

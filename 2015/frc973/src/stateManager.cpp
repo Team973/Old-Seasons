@@ -34,11 +34,11 @@ void StateManager::vTecKickedInYo(bool kickedInYo) {
     vTec_yo = kickedInYo;
 }
 
-void StateManager::setDriveFromControls(double throttle, double turn) {
+void StateManager::setDriveFromControls(double throttle, double turn, bool lowGear) {
     if (vTec_yo) {
         drive->arcade(deadband(throttle, 0.1), deadband(turn, 0.1));
     } else {
-        drive->controlInterface(deadband(throttle, 0.1), deadband(turn, 0.1));
+        drive->controlInterface(deadband(throttle, 0.1), deadband(turn, 0.1), lowGear);
     }
 }
 
