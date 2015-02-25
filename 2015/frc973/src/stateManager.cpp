@@ -22,6 +22,8 @@ StateManager::StateManager(Drive *drive_, Sauropod *sauropod_, Intake *intake_) 
 
     isAutoStack = true;
 
+    wantCap = false;
+
     restingPath = Sauropod::READY;
     pickupPath = Sauropod::CONTAINER;
 
@@ -108,6 +110,14 @@ void StateManager::setWhipPosition(std::string position) {
     }
 }
 
+void StateManager::setCap(bool wantCap_) {
+    if (wantCap_) {
+        setSauropodPath(Sauropod::CAP);
+        robotState = CAPPING;
+    }
+    wantCap = wantCap_;
+}
+
 bool StateManager::isSauropodDone() {
     return sauropod->sequenceDone();
 }
@@ -164,6 +174,12 @@ void StateManager::update() {
                 setSauropodPath(pickupPath);
             }
 
+            break;
+        case CAPPING:
+            if (!wantCap) {
+                setSauropodPath(Sauropod::DROP_CAP);
+                robotState = IDLE;
+            }
             break;
         case SCORE:
             drive->unlock();

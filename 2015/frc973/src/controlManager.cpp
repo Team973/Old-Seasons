@@ -30,9 +30,7 @@ void ControlManager::update() {
     stateManager->setLastTote(controls->getCodriverButton(5));
     stateManager->setContainerPickup(controls->getCodriverButton(3));
 
-    if (controls->getCodriverButton(6)) {
-        stateManager->setWhipPosition("stow");
-    }
+    stateManager->setCap(controls->getCodriverButton(6));
 
     stateManager->dropHumanIntake(controls->getCodriverButton(7));
 

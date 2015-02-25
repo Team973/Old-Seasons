@@ -21,6 +21,7 @@ public:
     void setRobotState(int state);
     void setSauropodPath(int path);
     void setLastTote(bool lastTote);
+    void setCap(bool wantCap_);
     void setContainerPickup(bool container);
     void setWhipPosition(std::string position);
     bool isSauropodDone();
@@ -33,6 +34,7 @@ public:
     const static int LOAD = 1;
     const static int SCORE = 2;
     const static int IDLE = 3;
+    const static int CAPPING = 4;
 private:
     Drive *drive;
     Sauropod *sauropod;
@@ -53,6 +55,8 @@ private:
 
     int numTotes;
     bool hadTote;
+
+    bool wantCap;
 };
 
 }

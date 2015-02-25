@@ -45,6 +45,9 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* eleva
     addPreset("containerLoad", 0, 0);
     addPreset("scoreHeight", 11, 6);
     addPreset("scoreProjection", 11, 6);
+    addPreset("capHeight", 0, 20);
+    addPreset("capExtension",30, 78.2);
+    addPreset("capPlace", 30, 76.2);
     addPreset("rest",0,6);
 
     setPreset("hardStop");
@@ -122,6 +125,13 @@ void Sauropod::createPath(int dest) {
                 addToQueue("containerLoad");
                 currPath = CONTAINER;
                 break;
+            case CAP:
+                addToQueue("capHeight");
+                addToQueue("capExtension");
+                break;
+            case DROP_CAP:
+                addToQueue("capPlace");
+                break;
             case READY:
                 addToQueue("loadHigh");
                 currPath = READY;
@@ -155,7 +165,7 @@ void Sauropod::setGain(std::string name) {
 }
 
 void Sauropod::setTarget(Preset target) {
-    float switchThreshold = 20; //inches
+    float switchThreshold = 21; //inches
     float h = 39.25; //inches
     float projection = h*(sin(degreesToRadians(getArmAngle())));
     float e = sqrt((h*h)+(projection*projection));
