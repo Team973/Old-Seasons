@@ -80,7 +80,7 @@ void XYManager::setTargetDistance(float distance_)
 {
     currPoint = locator->getPoint();
     origPoint = locator->getPoint();
-    linearProfile = new TrapProfile(distance_, 8.0, 10.0, 15.0);
+    linearProfile = new TrapProfile(distance_ - currPoint.distance, 8.0, 10.0, 15.0);
     angularProfile = new TrapProfile(currPoint.angle, 100000, 100000,10000); // this is purposfully blown up do not change the numbers
     done = false;
 }
