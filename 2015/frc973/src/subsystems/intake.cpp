@@ -51,12 +51,17 @@ float Intake::getWhipAngle() {
 
 void Intake::retractWhip() {
     whipPID->setTarget(107);
-    isRetracted = true;
+    isRetracted = false;
 }
 
 void Intake::extendWhip() {
     whipPID->setTarget(211);
     isRetracted = false;
+}
+
+void Intake::stowWhip() {
+    whipPID->setTarget(0);
+    isRetracted = true;
 }
 
 bool Intake::gotTote() {

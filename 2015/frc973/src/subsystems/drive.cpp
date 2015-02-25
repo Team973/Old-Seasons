@@ -84,24 +84,24 @@ float Drive::signSquare(float x) {
     return x*x;
 }
 
-void Drive::controlInterface(double throttle, double wheel, bool highGear, bool quickTurn) {
-    double move = signSquare(throttle);
-    double rotate = signSquare(wheel);
-    if (fabs(move) > 0.6) {
+void Drive::controlInterface(double throttle, double wheel) {
+    double move = signSquare(throttle)*0.4;
+    double rotate = signSquare(wheel)*0.7;
+    if (fabs(move) > 0.4) {
         if (move < 0) {
-            move = -0.6;
+            move = -0.4;
         } else {
-            move = 0.6;
+            move = 0.4;
         }
     }
-    if (fabs(rotate) > 0.6) {
+    if (fabs(rotate) > 0.7) {
         if (rotate < 0) {
-            rotate = -0.6;
+            rotate = -0.7;
         } else {
-            rotate = 0.6;
+            rotate = 0.7;
         }
     }
-    CheesyDrive(move, rotate, highGear, quickTurn);
+    arcade(move, rotate);
 }
 
 void Drive::CheesyDrive(double throttle, double wheel, bool highGear, bool quickTurn) {

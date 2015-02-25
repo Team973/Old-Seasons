@@ -11,7 +11,7 @@ public:
     void lock();
     void unlock();
     bool isLocked();
-    void controlInterface(double throttle, double wheel, bool highGear, bool quickTurn);
+    void controlInterface(double throttle, double wheel);
     void arcade(float move_, float rotate_);
     void CheesyDrive(double throttle, double wheel, bool highGear, bool quickTurn);
     void update();

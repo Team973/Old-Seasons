@@ -14,10 +14,12 @@ void WhipCommand::init() {
     timer->Start();
     timer->Reset();
     manager->setWhipPosition(position);
+    manager->lockDrive();
 }
 
 bool WhipCommand::taskPeriodic() {
     if (manager->isWhipDone() || timer->Get() >= timeout) {
+        manager->unlockDrive();
         return true;
     }
 

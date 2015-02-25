@@ -11,7 +11,7 @@ class StateManager {
 public:
     StateManager(Drive *drive_, Sauropod *sauropod_, Intake *intake_);
     void vTecKickedInYo(bool kickedInYo);
-    void setDriveFromControls(double throttle, double turn, bool quickTurn);
+    void setDriveFromControls(double throttle, double turn);
     void disableAutoStacking();
     void enableAutoStacking();
     void setIntakeSpeed(float speed);
@@ -21,10 +21,13 @@ public:
     void setRobotState(int state);
     void setSauropodPath(int path);
     void setLastTote(bool lastTote);
+    void setContainerPickup(bool container);
     void setWhipPosition(std::string position);
     bool isSauropodDone();
     bool isWhipDone();
     bool isDriveLocked();
+    void lockDrive();
+    void unlockDrive();
     void update();
 
     const static int LOAD = 1;
@@ -44,6 +47,7 @@ private:
     int robotState;
 
     int restingPath;
+    int pickupPath;
 
     float intakeSpeed;
 

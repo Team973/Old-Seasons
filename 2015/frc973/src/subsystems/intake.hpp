@@ -15,6 +15,7 @@ public:
     void actuateHumanFeederSolenoids(bool actuate);
     void extendWhip();
     void retractWhip();
+    void stowWhip();
     float getWhipAngle(); 
     bool gotTote();
     bool whipDone();

@@ -42,6 +42,7 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* eleva
     addPreset("stow", 0, 0);
     addPreset("loadHigh", 0, 20);
     addPreset("loadLow", 0, 1);
+    addPreset("containerLoad", 0, 0);
     addPreset("scoreHeight", 11, 6);
     addPreset("scoreProjection", 11, 6);
     addPreset("rest",0,6);
@@ -116,6 +117,10 @@ void Sauropod::createPath(int dest) {
                 }
                 addToQueue("loadLow");
                 currPath = PICKUP;
+                break;
+            case CONTAINER:
+                addToQueue("containerLoad");
+                currPath = CONTAINER;
                 break;
             case READY:
                 addToQueue("loadHigh");
@@ -345,6 +350,10 @@ void Sauropod::update() {
         muchoTotes = toteAccumulator->update(fabs(getElevatorCurrent() > 4.1));
     } else {
         toteAccumulator->reset();
+    }
+
+    if (currPath == CONTAINER) {
+        elevatorInput += -0.5;
     }
 
     SmartDashboard::PutNumber("Mucho Totes: ", muchoTotes);
