@@ -53,6 +53,8 @@ public:
     const static int RESTING = 5;
     const static int RETURN = 6;
     const static int CONTAINER = 7;
+    const static int CAP = 8;
+    const static int DROP_CAP = 9;
 
 private:
 
