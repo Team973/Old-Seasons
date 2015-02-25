@@ -72,14 +72,16 @@ void StateManager::setRobotState(int state) {
 
 void StateManager::setSauropodPath(int path) {
     sauropod->createPath(path);
-    switch (path) {
-        case Sauropod::READY:
-            robotState = LOAD;
-        break;
-        case Sauropod::RESTING:
-            robotState = IDLE;
-        break;
-    }
+}
+
+void StateManager::setLoadReady() {
+    setSauropodPath(Sauropod::READY);
+    robotState = IDLE;
+}
+
+void StateManager::setAutoLoadReady() {
+    setSauropodPath(Sauropod::READY);
+    robotState = LOAD;
 }
 
 void StateManager::setLastTote(bool lastTote) {
