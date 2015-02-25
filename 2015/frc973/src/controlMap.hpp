@@ -8,7 +8,7 @@ public:
     ControlMap(Joystick *coDriver_, Joystick *driver_);
     float getThrottle();
     float getTurn();
-    bool getQuickturn();
+    bool getLowGear();
     bool getCodriverButton(int button);
     float getCodriverAxis(int axis);
     bool getDriverButton(int button);

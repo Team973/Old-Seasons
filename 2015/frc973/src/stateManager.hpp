@@ -11,7 +11,7 @@ class StateManager {
 public:
     StateManager(Drive *drive_, Sauropod *sauropod_, Intake *intake_);
     void vTecKickedInYo(bool kickedInYo);
-    void setDriveFromControls(double throttle, double turn);
+    void setDriveFromControls(double throttle, double turn, bool lowGear);
     void disableAutoStacking();
     void enableAutoStacking();
     void setIntakeSpeed(float speed);
