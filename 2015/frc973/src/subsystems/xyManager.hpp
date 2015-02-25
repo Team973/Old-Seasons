@@ -55,6 +55,8 @@ private:
 
     float relativeDistance;
 
+    float speedLimit;
+
     bool done;
 };
 

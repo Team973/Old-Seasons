@@ -42,8 +42,9 @@ void AutoManager::setModes() {
     modes["Test"]->addConcurrent(new DriveCommand(stateManager, 6 + driveOffset, true, 0));
     modes["Test"]->addConcurrent(new IntakeCommand(stateManager, -1.0, true, .4));
     modes["Test"]->addSequential(new WaitCommand(0.0));//dummy command
-    modes["Test"]->addConcurrent(new DriveCommand(stateManager, 3, false, 3));
+    modes["Test"]->addConcurrent(new DriveCommand(stateManager, 4, false, 3));
     modes["Test"]->addConcurrent(new IntakeCommand(stateManager, -1.0, false, .5));
+    modes["Test"]->addSequential(new WaitCommand(0.9));
     modes["Test"]->addSequential(new IntakeCommand(stateManager, 0.0, false, 0));
     /*
     modes["Test"]->addConcurrent(new DriveCommand(stateManager, .33, false, 2));

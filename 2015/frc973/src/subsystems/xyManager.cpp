@@ -53,14 +53,16 @@ XYManager::XYManager()
 
     relativeDistance = 0;
 
+    speedLimit = 0.6;
+
     printf("Profile Pos, Profile Vel, Profile Accel, Actual Pos, Actual Vel\n");
 }
 
 void XYManager::setSpeed(bool fast) {
     if (fast) {
-        drivePID->setBounds(-.6, .6);
+        speedLimit = 0.8;
     } else {
-        drivePID->setBounds(-.5, .5);
+        speedLimit = 0.6;
     }
 }
 
@@ -150,6 +152,12 @@ void XYManager::update()
 
     driveInput = drivePID->update(relativeDistance - linearStep[1], loopTimer) + linearFF;
     angularInput = (turnPID->update(locator->normalizeAngle(angleError), loopTimer)) + angularFF;
+
+    if (driveInput > speedLimit) {
+        driveInput = speedLimit;
+    } else if (driveInput < -speedLimit) {
+        driveInput = -speedLimit;
+    }
 
     updateValue->throttle = driveInput;
     updateValue->turn = angularInput;
