@@ -20,6 +20,8 @@ public:
     void dropHumanIntake(bool dropped);
     void setRobotState(int state);
     void setSauropodPath(int path);
+    void setLoadReady();
+    void setAutoLoadReady();
     void setLastTote(bool lastTote);
     void setCap(bool wantCap_);
     void setContainerPickup(bool container);

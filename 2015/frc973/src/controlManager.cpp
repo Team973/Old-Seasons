@@ -18,17 +18,20 @@ void ControlManager::update() {
     stateManager->setIntakeSpeed(-controls->getCodriverAxis(1));
 
     if (controls->getCodriverButton(1)) {
-        stateManager->setSauropodPath(Sauropod::READY);
+        stateManager->setAutoLoadReady();
     }
+
+    stateManager->setContainerPickup(controls->getCodriverButton(3));
+
     if (controls->getCodriverButton(2)) {
         stateManager->setSauropodPath(Sauropod::IDLE);
     }
+
     if (controls->getCodriverButton(4)) {
-        stateManager->setSauropodPath(Sauropod::RESTING);
+        stateManager->setLoadReady();
     }
 
     stateManager->setLastTote(controls->getCodriverButton(5));
-    stateManager->setContainerPickup(controls->getCodriverButton(3));
 
     stateManager->setCap(controls->getCodriverButton(6));
 
