@@ -52,6 +52,7 @@ public:
     const static int READY = 4;
     const static int RESTING = 5;
     const static int RETURN = 6;
+    const static int CONTAINER = 7;
 
 private:
 

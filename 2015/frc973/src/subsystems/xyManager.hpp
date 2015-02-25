@@ -57,6 +57,8 @@ private:
 
     float speedLimit;
 
+    bool isPaused;
+
     bool done;
 };
 

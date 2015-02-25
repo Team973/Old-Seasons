@@ -23,6 +23,7 @@ StateManager::StateManager(Drive *drive_, Sauropod *sauropod_, Intake *intake_) 
     isAutoStack = true;
 
     restingPath = Sauropod::READY;
+    pickupPath = Sauropod::CONTAINER;
 
     vTec_yo = false;
 }
@@ -31,11 +32,11 @@ void StateManager::vTecKickedInYo(bool kickedInYo) {
     vTec_yo = kickedInYo;
 }
 
-void StateManager::setDriveFromControls(double throttle, double turn, bool quickTurn) {
+void StateManager::setDriveFromControls(double throttle, double turn) {
     if (vTec_yo) {
-        drive->CheesyDrive(deadband(throttle, 0.1), deadband(turn, 0.1), false, quickTurn);
+        drive->arcade(deadband(throttle, 0.1), deadband(turn, 0.1));
     } else {
-        drive->controlInterface(deadband(throttle, 0.1), deadband(turn, 0.1), false, quickTurn);
+        drive->controlInterface(deadband(throttle, 0.1), deadband(turn, 0.1));
     }
 }
 
@@ -87,11 +88,23 @@ void StateManager::setLastTote(bool lastTote) {
     }
 }
 
+void StateManager::setContainerPickup(bool container) {
+    if (container) {
+        pickupPath = Sauropod::CONTAINER;
+        isAutoStack = false;
+    } else {
+        pickupPath = Sauropod::PICKUP;
+        isAutoStack = true;
+    }
+}
+
 void StateManager::setWhipPosition(std::string position) {
     if (position == "extend") {
         intake->extendWhip();
-    } else {
+    } else if (position == "retract") {
         intake->retractWhip();
+    } else {
+        intake->stowWhip();
     }
 }
 
@@ -107,6 +120,14 @@ bool StateManager::isDriveLocked() {
     return drive->isLocked();
 }
 
+void StateManager::lockDrive() {
+    drive->lock();
+}
+
+void StateManager::unlockDrive() {
+    drive->unlock();
+}
+
 void StateManager::update() {
 
     intake->setIntake(intakeSpeed);
@@ -115,7 +136,7 @@ void StateManager::update() {
         case LOAD:
             //
             // auto stack
-            //if (isAutoStack) {
+            if (isAutoStack) {
                 if (intake->gotTote() && !sauropod->inCradle() && !hadTote && sauropod->sequenceDone()) {
                     hadTote = true;
                     drive->lock();
@@ -139,7 +160,9 @@ void StateManager::update() {
                 if (intake->gotTote() && intakeSpeed < 0) {
                     intake->setIntake(0);
                 }
-            //}
+            } else {
+                setSauropodPath(pickupPath);
+            }
 
             break;
         case SCORE:

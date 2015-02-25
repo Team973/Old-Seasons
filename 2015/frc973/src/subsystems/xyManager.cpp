@@ -53,6 +53,8 @@ XYManager::XYManager()
 
     relativeDistance = 0;
 
+    isPaused = true;
+
     speedLimit = 0.6;
 
     printf("Profile Pos, Profile Vel, Profile Accel, Actual Pos, Actual Vel\n");
@@ -60,9 +62,9 @@ XYManager::XYManager()
 
 void XYManager::setSpeed(bool fast) {
     if (fast) {
-        speedLimit = 0.8;
+        speedLimit = 0.5;
     } else {
-        speedLimit = 0.6;
+        speedLimit = 0.3;
     }
 }
 
@@ -80,7 +82,7 @@ void XYManager::setTargetDistance(float distance_)
 {
     currPoint = locator->getPoint();
     origPoint = locator->getPoint();
-    linearProfile = new TrapProfile(distance_ - currPoint.distance, 8.0, 10.0, 15.0);
+    linearProfile = new TrapProfile(distance_ - currPoint.distance, 10000, 10000, 10000);
     angularProfile = new TrapProfile(currPoint.angle, 100000, 100000,10000); // this is purposfully blown up do not change the numbers
     done = false;
 }
@@ -100,10 +102,12 @@ void XYManager::resetProfile() {
 void XYManager::startProfile()
 {
     loopTimer->Start();
+    isPaused = false;
 }
 
 void XYManager::pauseProfile() {
     loopTimer->Stop();
+    isPaused = true;
 }
 
 XYManager::MotorValue* XYManager::getValues()
@@ -112,7 +116,7 @@ XYManager::MotorValue* XYManager::getValues()
 }
 
 float XYManager::getDistanceFromTarget() {
-    return fabs(relativeDistance - linearProfile->getTarget());
+    return fabs(linearProfile->getTarget() - relativeDistance);
 }
 
 void XYManager::update()
@@ -135,7 +139,7 @@ void XYManager::update()
 
     float angleError = baseError;
 
-    if ( fabs(relativeDistance - linearProfile->getTarget()) <= .5 && angleError <= 2 && locator->getLinearVelocity() < 2) {
+    if (linearProfile->getTarget() - relativeDistance <= .05 && angleError <= 2 && locator->getLinearVelocity() < 2) {
         done = true;
     }
 
@@ -152,6 +156,10 @@ void XYManager::update()
 
     driveInput = drivePID->update(relativeDistance - linearStep[1], loopTimer) + linearFF;
     angularInput = (turnPID->update(locator->normalizeAngle(angleError), loopTimer)) + angularFF;
+
+    if (!isPaused && (linearProfile->getTarget() - relativeDistance) > 0) {
+        driveInput += 0.1;
+    }
 
     if (driveInput > speedLimit) {
         driveInput = speedLimit;

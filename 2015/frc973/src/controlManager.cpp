@@ -12,7 +12,7 @@ ControlManager::ControlManager(ControlMap *controls_, StateManager *stateManager
 }
 
 void ControlManager::update() {
-    stateManager->setDriveFromControls(-controls->getThrottle(), controls->getTurn(), controls->getQuickturn());
+    stateManager->setDriveFromControls(controls->getThrottle(), -controls->getTurn());
     stateManager->vTecKickedInYo(controls->getDriverButton(6));
 
     stateManager->setIntakeSpeed(-controls->getCodriverAxis(1));
@@ -23,14 +23,16 @@ void ControlManager::update() {
     if (controls->getCodriverButton(2)) {
         stateManager->setSauropodPath(Sauropod::IDLE);
     }
-    if (controls->getCodriverButton(3)) {
-        stateManager->setSauropodPath(Sauropod::PICKUP);
-    }
     if (controls->getCodriverButton(4)) {
         stateManager->setSauropodPath(Sauropod::RESTING);
     }
 
     stateManager->setLastTote(controls->getCodriverButton(5));
+    stateManager->setContainerPickup(controls->getCodriverButton(3));
+
+    if (controls->getCodriverButton(6)) {
+        stateManager->setWhipPosition("stow");
+    }
 
     stateManager->dropHumanIntake(controls->getCodriverButton(7));
 
