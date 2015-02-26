@@ -30,7 +30,7 @@ void ControlManager::update() {
     }
 
     if (controls->getCodriverButton(4)) {
-        stateManager->setSauropodPath(Sauropod::RESTING);
+        stateManager->setRestingLoad();
     }
 
     stateManager->setLastTote(controls->getCodriverButton(5));

@@ -184,7 +184,9 @@ void Sauropod::setTarget(Preset target) {
     }
 
     elevatorTarget = target.height - deltaY;
-    if (elevatorTarget < 0) {
+    if (elevatorTarget < 4 && target.height > 12) {
+        elevatorTarget = 10;
+    } else if (elevatorTarget < 0) {
         elevatorTarget = 0;
     } else if (deltaY > target.height) {
         elevatorTarget = target.height;
@@ -360,10 +362,6 @@ void Sauropod::update() {
         muchoTotes = toteAccumulator->update(fabs(getElevatorCurrent() > 4.1));
     } else {
         toteAccumulator->reset();
-    }
-
-    if (currPath == CONTAINER && getElevatorHeight() < 12 && fabs(getElevatorVelocity()) < .4) {
-        elevatorInput += -0.5;
     }
 
     SmartDashboard::PutNumber("Mucho Totes: ", muchoTotes);

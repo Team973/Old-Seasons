@@ -97,6 +97,11 @@ void StateManager::setContainerPickup() {
     robotState = IDLE;
 }
 
+void StateManager::setRestingLoad() {
+    setSauropodPath(Sauropod::RESTING);
+    robotState = IDLE;
+}
+
 void StateManager::setWhipPosition(std::string position) {
     if (position == "extend") {
         intake->extendWhip();
@@ -107,12 +112,12 @@ void StateManager::setWhipPosition(std::string position) {
     }
 }
 
-void StateManager::setCap(bool wantCap_) {
-    if (wantCap_) {
+void StateManager::setCap(bool cap) {
+    if (cap && !wantCap) {
         setSauropodPath(Sauropod::CAP);
         robotState = CAPPING;
     }
-    wantCap = wantCap_;
+    wantCap = cap;
 }
 
 bool StateManager::isSauropodDone() {
