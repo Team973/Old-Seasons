@@ -21,14 +21,16 @@ void ControlManager::update() {
         stateManager->setAutoLoadReady();
     }
 
-    stateManager->setContainerPickup(controls->getCodriverButton(3));
-
     if (controls->getCodriverButton(2)) {
-        stateManager->setSauropodPath(Sauropod::IDLE);
+        stateManager->setContainerPickup();
+    }
+
+    if (controls->getCodriverButton(3)) {
+        stateManager->setLoadReady();
     }
 
     if (controls->getCodriverButton(4)) {
-        stateManager->setLoadReady();
+        stateManager->setSauropodPath(Sauropod::RESTING);
     }
 
     stateManager->setLastTote(controls->getCodriverButton(5));

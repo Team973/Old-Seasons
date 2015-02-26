@@ -177,6 +177,7 @@ void Robot::AutonomousPeriodic()
 void Robot::TeleopInit()
 {
     stateManager->enableAutoStacking();
+    intake->stowWhip();
 }
 
 void Robot::TeleopPeriodic()

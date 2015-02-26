@@ -362,7 +362,7 @@ void Sauropod::update() {
         toteAccumulator->reset();
     }
 
-    if (currPath == CONTAINER && getElevatorHeight() < 12 && fabs(getElevatorVelocity()) < .7) {
+    if (currPath == CONTAINER && getElevatorHeight() < 12 && fabs(getElevatorVelocity()) < .4) {
         elevatorInput += -0.5;
     }
 
