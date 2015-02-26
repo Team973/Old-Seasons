@@ -9,13 +9,14 @@ class StateManager;
 
 class IntakeCommand : public AutoCommand {
 public:
-    IntakeCommand(StateManager *manager_, float speed_, bool open_, float timeout_);
+    IntakeCommand(StateManager *manager_, float speed_, bool open_, bool lastTote_, float timeout_);
     void init();
     bool taskPeriodic();
 private:
     StateManager *manager;
     float speed;
     bool open;
+    bool lastTote;
 };
 
 }
