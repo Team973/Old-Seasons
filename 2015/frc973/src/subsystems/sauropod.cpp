@@ -16,10 +16,6 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* eleva
     elevatorEncoder = elevatorEncoder_;
     armEncoder = armEncoder_;
 
-    armProfile = new TrapProfile(0,0,0,0);
-    loopTimer = new Timer();
-    loopTimer->Start();
-
     doneTimer = new Timer();
     doneTimer->Start();
 
@@ -184,9 +180,7 @@ void Sauropod::setTarget(Preset target) {
     }
 
     elevatorTarget = target.height - deltaY;
-    if (elevatorTarget < 4 && target.height > 12) {
-        elevatorTarget = 10;
-    } else if (elevatorTarget < 0) {
+    if (elevatorTarget < 0) {
         elevatorTarget = 0;
     } else if (deltaY > target.height) {
         elevatorTarget = target.height;
@@ -194,12 +188,9 @@ void Sauropod::setTarget(Preset target) {
 
     SmartDashboard::PutNumber("Elevator Target: ", elevatorTarget);
 
-    loopTimer->Reset();
-
     armPID->setTarget(armTarget);
     elevatorPID->setTarget(elevatorTarget);
     ramp->setTarget(armTarget,getArmAngle());
-    //armProfile = new TrapProfile(armTarget - getArmAngle(), 10, 10, 10);
 }
 
 bool Sauropod::sequenceDone() {
@@ -310,32 +301,20 @@ void Sauropod::update() {
 
     float elevatorInput, armInput;
 
-    float currTime = loopTimer->Get();
-
-    std::vector<float> armStep = armProfile->getProfile(currTime);
-
-    float voltageFF;
+    float voltageFF = 0;
 
     if (currTarget.height < getElevatorHeight()) {
         elevatorPID->setGains(gainSchedule[currGains].down);
-        voltageFF = -0.02;
+        //voltageFF = -0.02;
     } else {
         elevatorPID->setGains(gainSchedule[currGains].up);
-        voltageFF = 0.1;
+        //voltageFF = 0.1;
     }
 
     float epido = elevatorPID->update(getElevatorHeight()) + voltageFF;
     float apido = armPID->update(getArmAngle());
 
-    if (currTarget.height < 4 && currTarget.projection > 0 && getArmAngle() < 11) {
-        if (getElevatorHeight() < 5) {
-            elevatorInput = 0.3;
-            armInput = 0.0;
-        } else {
-            elevatorInput = epido;
-            armInput = apido;
-        }
-    } else if (inCradle() && currTarget.projection > 0) {
+    if (inCradle() && currTarget.projection > 0) {
         elevatorInput = epido;
         armInput = -0.1;
     } else if (!inCradle() && currTarget.height < 4 && getArmAngle() > 2) {
@@ -346,8 +325,8 @@ void Sauropod::update() {
         armInput = apido;
     }
 
-    if (getArmAngle() < 1.5 && currTarget.projection == 0) {
-        armInput = -0.2;
+    if (currTarget.projection == 0) {
+        armInput += -0.2;
     }
 
     if (getElevatorHeight() < 5 && getElevatorHeight() > 2 && fabs(getElevatorVelocity()) > 1) {
@@ -355,7 +334,7 @@ void Sauropod::update() {
     } else if (getElevatorHeight() > 18 && getElevatorHeight() < 21) {
         elevatorInput += -0.2;
     } else if (getElevatorHeight() < 2 && currTarget.height == 0) {
-        elevatorInput = 0.0;
+        elevatorInput += -0.01;
     }
 
     if (fabs(getElevatorVelocity()) < .1) {
