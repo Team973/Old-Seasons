@@ -92,14 +92,9 @@ void StateManager::setLastTote(bool lastTote) {
     }
 }
 
-void StateManager::setContainerPickup(bool container) {
-    if (container) {
-        pickupPath = Sauropod::CONTAINER;
-        isAutoStack = false;
-    } else {
-        pickupPath = Sauropod::PICKUP;
-        isAutoStack = true;
-    }
+void StateManager::setContainerPickup() {
+    setSauropodPath(Sauropod::CONTAINER);
+    robotState = IDLE;
 }
 
 void StateManager::setWhipPosition(std::string position) {
@@ -172,8 +167,6 @@ void StateManager::update() {
                 if (intake->gotTote() && intakeSpeed < 0) {
                     intake->setIntake(0);
                 }
-            } else {
-                setSauropodPath(pickupPath);
             }
 
             break;
