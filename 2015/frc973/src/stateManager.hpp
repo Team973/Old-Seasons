@@ -23,8 +23,9 @@ public:
     void setLoadReady();
     void setAutoLoadReady();
     void setLastTote(bool lastTote);
-    void setCap(bool wantCap_);
+    void setCap(bool cap);
     void setContainerPickup();
+    void setRestingLoad();
     void setWhipPosition(std::string position);
     bool isSauropodDone();
     bool isWhipDone();
