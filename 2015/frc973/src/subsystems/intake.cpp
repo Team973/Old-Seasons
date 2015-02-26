@@ -76,7 +76,7 @@ void Intake::update() {
     rightIntakeMotor->Set(intakeMotorSpeed);
     leftIntakeMotor->Set(intakeMotorSpeed);
 
-    if (!isFeederSolenoidExtended) {
+    if (isFeederSolenoidExtended) {
         humanFeederIntakeMotor->Set(intakeMotorSpeed);
     }
     else {
