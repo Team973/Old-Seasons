@@ -76,11 +76,13 @@ void StateManager::setSauropodPath(int path) {
 
 void StateManager::setLoadReady() {
     setSauropodPath(Sauropod::READY);
+    restingPath = Sauropod::READY;
     robotState = IDLE;
 }
 
 void StateManager::setAutoLoadReady() {
     setSauropodPath(Sauropod::READY);
+    restingPath = Sauropod::READY;
     robotState = LOAD;
 }
 
@@ -90,6 +92,10 @@ void StateManager::setLastTote(bool lastTote) {
     } else {
         restingPath = Sauropod::READY;
     }
+}
+
+void StateManager::autoSetLastTote() {
+    restingPath = Sauropod::RESTING;
 }
 
 void StateManager::setContainerPickup() {

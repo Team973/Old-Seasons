@@ -23,6 +23,7 @@ public:
     void setLoadReady();
     void setAutoLoadReady();
     void setLastTote(bool lastTote);
+    void autoSetLastTote();
     void setCap(bool cap);
     void setContainerPickup();
     void setRestingLoad();
