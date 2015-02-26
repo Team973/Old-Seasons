@@ -88,13 +88,10 @@ private:
 
     FlagAccumulator *accumulator;
 
-    TrapProfile *armProfile;
-
     RampedOutput *ramp;
 
     float kArmVelFF;
 
-    Timer *loopTimer;
     Timer *doneTimer;
 
     FlagAccumulator *toteAccumulator;
