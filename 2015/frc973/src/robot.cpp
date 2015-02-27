@@ -80,7 +80,7 @@ Robot::Robot()
     floorSolenoid = new Solenoid(0);
 
     airPressureSwitch = new DigitalInput(9);
-    compressor = new Relay(0);
+    compressor = new Relay(0, Relay::kForwardOnly);
 
     leftDriveEncoder = new Encoder(4,5);
     rightDriveEncoder = new Encoder(2,3);
@@ -123,7 +123,7 @@ Robot::Robot()
 }
 
 void Robot::runCompressor() {
-    if (airPressureSwitch->Get()) {
+    if (!airPressureSwitch->Get()) {
     	compressor->Set(Relay::kOn);
     } else {
         compressor->Set(Relay::kOff);
@@ -147,6 +147,7 @@ void Robot::dashboardUpdate()
     SmartDashboard::PutNumber("Whip Voltage: ", whipPot->GetVoltage());
     SmartDashboard::PutBoolean("tote sensor: ", toteSensor->Get());
     SmartDashboard::PutNumber("anaglog tote sensor: ", elevatorPot->GetVoltage());
+    SmartDashboard::PutBoolean("pressure: ", airPressureSwitch->Get());
 }
 
 void Robot::RobotInit()
