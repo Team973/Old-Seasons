@@ -164,8 +164,8 @@ void Sauropod::setTarget(Preset target) {
     float switchThreshold = 21; //inches
     float h = 39.25; //inches
     float projection = h*(sin(degreesToRadians(getArmAngle())));
-    float e = sqrt((h*h)+(projection*projection));
-    float deltaY = e - h;
+    float e = sqrt((h*h)-(projection*projection));
+    float deltaY = h - e;
     float elevatorTarget, armTarget;
 
     if (target.height > switchThreshold) {
@@ -203,13 +203,13 @@ bool Sauropod::atTarget() {
     float switchThreshold = 20; //inches
     float h = 39.25; //inches
     float projection = h*(sin(degreesToRadians(getArmAngle())));
-    float e = sqrt((h*h)+(projection*projection));
+    float e = sqrt((h*h)-(projection*projection));
     float height = 0;
 
     if (p.height > switchThreshold) {
-        height = ((e-h)+(e*2)) + getElevatorHeight();
+        height = ((h-e)+(e*2)) + getElevatorHeight();
     } else {
-        height = (e-h) + getElevatorHeight();
+        height = (h-e) + getElevatorHeight();
     }
 
     SmartDashboard::PutNumber("current height: ", height);
@@ -220,7 +220,7 @@ bool Sauropod::atTarget() {
 
 
     if ((fabs(p.height - height) <= 2 && fabs(p.projection - projection) <= 2)) {
-        if (accumulator->update(fabs(getElevatorVelocity()) < .1 && fabs(getArmVelocity()) < .1)) {
+        if (accumulator->update(fabs(getElevatorVelocity()) < .6 && fabs(getArmVelocity()) < .6)) {
             return true;
         }
     } else if (doneTimer->Get() > 5) {
@@ -298,6 +298,12 @@ void Sauropod::update() {
     SmartDashboard::PutString("curr preset: ", currPreset);
     Preset currTarget = presets[currPreset];
     setTarget(currTarget);
+
+    if (currTarget.projection > 4 && getArmAngle() < 1 && elevatorPID->getTarget() < 5) {
+        elevatorPID->setTarget(5);
+    } else if (currTarget.projection == 0 && getArmAngle() > 4 && elevatorPID->getTarget() < 5) {
+        elevatorPID->setTarget(5);
+    }
 
     float elevatorInput, armInput;
 
