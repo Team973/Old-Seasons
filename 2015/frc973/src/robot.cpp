@@ -79,7 +79,7 @@ Robot::Robot()
     humanFeederSolenoid = new Solenoid(1);
     floorSolenoid = new Solenoid(0);
 
-    //airPressureSwitch = new DigitalInput(0);
+    airPressureSwitch = new DigitalInput(9);
     compressor = new Relay(0);
 
     leftDriveEncoder = new Encoder(4,5);

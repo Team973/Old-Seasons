@@ -8,6 +8,7 @@ ControlMap::ControlMap(Joystick *driver_, Joystick *coDriver_) {
     driver = driver_;
 
     prevCodriverDpad = 0.0;
+    prevDriverDpad = 0.0;
 }
 
 float ControlMap::getThrottle() {
@@ -50,6 +51,20 @@ bool ControlMap::getCodriverDpadUp() {
     bool up = axis < -0.5 && prevCodriverDpad >= -0.5;
     prevCodriverDpad = axis;
     return up;
+}
+
+bool ControlMap::getDriverDpadDown() {
+    double axis = driver->GetRawAxis(6);
+    bool down = axis > 0.5 && prevDriverDpad <= 0.5;
+    prevDriverDpad = axis;
+    return down;
+}
+
+bool ControlMap::getDriverDpadUp() {
+    double axis = driver->GetRawAxis(6);
+    bool down = axis < -0.5 && prevDriverDpad >= -0.5;
+    prevDriverDpad = axis;
+    return down;
 }
 
 }
