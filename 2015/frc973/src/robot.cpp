@@ -122,6 +122,14 @@ Robot::Robot()
 
 }
 
+void Robot::runCompressor() {
+    if (airPressureSwitch->Get()) {
+    	compressor->Set(Relay::kOn);
+    } else {
+        compressor->Set(Relay::kOff);
+    }
+}
+
 void Robot::dashboardUpdate()
 {
     SmartDashboard::PutString("DB/String 0", asString(leftDriveEncoder->Get()));
@@ -171,6 +179,8 @@ void Robot::AutonomousPeriodic()
     stateManager->update();
     drive->update();
 
+    runCompressor();
+
     dashboardUpdate();
 }
 
@@ -184,6 +194,9 @@ void Robot::TeleopPeriodic()
 {
     controlManager->update();
     stateManager->update();
+
+    runCompressor();
+
     dashboardUpdate();
 }
 

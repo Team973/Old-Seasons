@@ -31,6 +31,8 @@ private:
     static void* runTxtIO(void*);
     static void* runServer(void*);
 
+    void runCompressor();
+
     void dashboardUpdate();
 
     VictorSP *leftDriveMotors;
