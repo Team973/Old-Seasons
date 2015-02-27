@@ -15,11 +15,14 @@ public:
     float getDriverAxis(int axis);
     bool getCodriverDpadDown();
     bool getCodriverDpadUp();
+    bool getDriverDpadDown();
+    bool getDriverDpadUp();
 private:
     Joystick *coDriver;
     Joystick *driver;
 
     float prevCodriverDpad;
+    float prevDriverDpad;
 };
 
 }
