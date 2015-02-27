@@ -6,6 +6,8 @@ namespace frc973 {
 ControlMap::ControlMap(Joystick *driver_, Joystick *coDriver_) {
     coDriver = coDriver_;
     driver = driver_;
+
+    prevCodriverDpad = 0.0;
 }
 
 float ControlMap::getThrottle() {
@@ -34,6 +36,20 @@ bool ControlMap::getDriverButton(int button) {
 
 float ControlMap::getDriverAxis(int axis) {
     return driver->GetRawAxis(axis);
+}
+
+bool ControlMap::getCodriverDpadDown() {
+    double axis = coDriver->GetRawAxis(6);
+    bool down = axis > 0.5 && prevCodriverDpad <= 0.5;
+    prevCodriverDpad = axis;
+    return down;
+}
+
+bool ControlMap::getCodriverDpadUp() {
+    double axis = coDriver->GetRawAxis(6);
+    bool up = axis < -0.5 && prevCodriverDpad >= -0.5;
+    prevCodriverDpad = axis;
+    return up;
 }
 
 }
