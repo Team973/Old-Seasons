@@ -9,11 +9,13 @@ class StateManager;
 
 class SauropodPathCommand : public AutoCommand {
 public:
-    SauropodPathCommand(StateManager *manager_, int path_, float timeout_);
+    SauropodPathCommand(StateManager *manager_, int path_, float toteTimeout_, float timeout_);
     void init();
     bool taskPeriodic();
 private:
     int path;
+    float toteTimeout;
+    bool moving;
     StateManager *manager;
 };
 
