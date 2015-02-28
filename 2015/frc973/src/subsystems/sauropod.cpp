@@ -122,7 +122,6 @@ void Sauropod::createPath(int dest) {
                 currPath = CONTAINER;
                 break;
             case CAP:
-                addToQueue("capHeight");
                 addToQueue("capExtension");
                 break;
             case DROP_CAP:
@@ -181,7 +180,7 @@ void Sauropod::setTarget(Preset target) {
 
     elevatorTarget = target.height - deltaY;
     if (elevatorTarget < 0) {
-        elevatorTarget = 0;
+        elevatorTarget = 5;
     } else if (deltaY > target.height) {
         elevatorTarget = target.height;
     }
@@ -295,7 +294,6 @@ bool Sauropod::lotsoTotes() {
 }
 
 void Sauropod::update() {
-
     executeQueue();
 
     SmartDashboard::PutString("curr preset: ", currPreset);
@@ -351,6 +349,13 @@ void Sauropod::update() {
     } else {
         toteAccumulator->reset();
     }
+
+    // comment me out
+    /*
+    if (currPreset == "containerLoad" && getElevatorVelocity() < .3 && getElevatorHeight() > 2 && !sequenceDone()) {
+        elevatorInput += -0.7;
+    }
+    */
 
     SmartDashboard::PutNumber("Mucho Totes: ", muchoTotes);
     SmartDashboard::PutNumber("Num Flags: ", accumulator->getFlagCount());
