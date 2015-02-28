@@ -118,7 +118,8 @@ void Sauropod::createPath(int dest) {
                 currPath = PICKUP;
                 break;
             case CONTAINER:
-                addToQueue("containerLoad");
+                //addToQueue("containerLoad");
+                addToQueue("loadLow");
                 currPath = CONTAINER;
                 break;
             case CAP:
@@ -300,11 +301,13 @@ void Sauropod::update() {
     Preset currTarget = presets[currPreset];
     setTarget(currTarget);
 
+    /*
     if (currTarget.projection > 4 && getArmAngle() < 1 && elevatorPID->getTarget() < 5) {
         elevatorPID->setTarget(5);
     } else if (currTarget.projection == 0 && getArmAngle() > 4 && elevatorPID->getTarget() < 5) {
         elevatorPID->setTarget(5);
     }
+    */
 
     float elevatorInput, armInput;
 
@@ -336,6 +339,7 @@ void Sauropod::update() {
         armInput += -0.5;
     }
 
+    /*
     if (getElevatorHeight() < 5 && getElevatorHeight() > 2 && fabs(getElevatorVelocity()) > 1) {
         elevatorInput += 0.3;
     } else if (getElevatorHeight() > 18 && getElevatorHeight() < 21) {
@@ -343,6 +347,7 @@ void Sauropod::update() {
     } else if (getElevatorHeight() < 2 && currTarget.height == 0) {
         elevatorInput += -0.01;
     }
+    */
 
     if (fabs(getElevatorVelocity()) < .1) {
         muchoTotes = toteAccumulator->update(fabs(getElevatorCurrent() > 4.1));

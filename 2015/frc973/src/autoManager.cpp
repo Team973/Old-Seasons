@@ -65,8 +65,8 @@ void AutoManager::setModes() {
     modes["Test"]->addSequential(new DriveCommand(stateManager, threeTote+thirdFudge, false, 2));
     modes["Test"]->addSequential(new IntakeCommand(stateManager, 0.0, false, false, 0));
     modes["Test"]->addSequential(new TurnCommand(stateManager, 90, 3));
-    modes["Test"]->addSequential(new DriveCommand(stateManager, -5, true, 3));
-    modes["Test"]->addSequential(new IntakeCommand(stateManager, 0.0, true, false, 0));
+    //modes["Test"]->addSequential(new DriveCommand(stateManager, -5, true, 3));
+    //modes["Test"]->addSequential(new IntakeCommand(stateManager, 0.0, true, false, 0));
     modes["Test"]->addSequential(new SauropodPathCommand(stateManager, Sauropod::CONTAINER, 3, 2));
 
     modes["Turn"]->addSequential(new SauropodPathCommand(stateManager, Sauropod::READY, 0, 2));
