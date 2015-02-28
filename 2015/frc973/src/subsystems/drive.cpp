@@ -41,6 +41,9 @@ void Drive::setDriveMotors(float left, float right)
 
     leftMotor->Set(limit(left));
     rightMotor->Set(-limit(right));
+
+    SmartDashboard::PutNumber("left drive output: ", limit(left));
+    SmartDashboard::PutNumber("right drive output: ", -limit(right));
 }
 
 void Drive::arcade(float move_, float rotate_)

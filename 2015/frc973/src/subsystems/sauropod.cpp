@@ -114,7 +114,7 @@ void Sauropod::createPath(int dest) {
                 if (currPath != READY) {
                     addToQueue("loadHigh");
                 }
-                addToQueue("loadLow");
+                addToQueue("containerLoad");
                 currPath = PICKUP;
                 break;
             case CONTAINER:
@@ -203,6 +203,9 @@ bool Sauropod::atTarget() {
     float switchThreshold = 20; //inches
     float h = 39.25; //inches
     float projection = h*(sin(degreesToRadians(getArmAngle())));
+    if (getArmAngle() < 0) {
+        projection = 0;
+    }
     float e = sqrt((h*h)-(projection*projection));
     float height = 0;
 
@@ -219,8 +222,8 @@ bool Sauropod::atTarget() {
     SmartDashboard::PutNumber("projection error: ", fabs(p.projection-projection));
 
 
-    if ((fabs(p.height - height) <= 2 && fabs(p.projection - projection) <= 2)) {
-        if (accumulator->update(fabs(getElevatorVelocity()) < .6 && fabs(getArmVelocity()) < .6)) {
+    if ((fabs(p.height - height) <= 1 && fabs(p.projection - projection) <= 1)) {
+        if (accumulator->update(fabs(getElevatorVelocity()) < .8 && fabs(getArmVelocity()) < .8)) {
             return true;
         }
     } else if (doneTimer->Get() > 5) {
@@ -274,7 +277,7 @@ float Sauropod::getElevatorCurrent() {
 float Sauropod::getArmAngle() {
     float encoderTicks = 360;
     float gearRatio = 5;
-    return -(armEncoder->Get()/(encoderTicks*gearRatio)*360);
+    return (armEncoder->Get()/(encoderTicks*gearRatio)*360);
 }
 
 float Sauropod::getArmVelocity() {
@@ -332,7 +335,7 @@ void Sauropod::update() {
     }
 
     if (currTarget.projection == 0) {
-        armInput += -0.2;
+        armInput += -0.5;
     }
 
     if (getElevatorHeight() < 5 && getElevatorHeight() > 2 && fabs(getElevatorVelocity()) > 1) {

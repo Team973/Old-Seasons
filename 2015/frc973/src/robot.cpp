@@ -91,7 +91,7 @@ Robot::Robot()
     armEncoder = new Encoder(0,1);
     armPot = new AnalogInput(0);
 
-    gyro = new Encoder(14,15,false,CounterBase::k2X);
+    gyro = new Encoder(24,25,false,CounterBase::k2X);
 
     //gyro = new SPIGyro();
 
@@ -148,6 +148,7 @@ void Robot::dashboardUpdate()
     SmartDashboard::PutBoolean("tote sensor: ", toteSensor->Get());
     SmartDashboard::PutNumber("anaglog tote sensor: ", elevatorPot->GetVoltage());
     SmartDashboard::PutBoolean("pressure: ", airPressureSwitch->Get());
+    SmartDashboard::PutNumber("gyro angle: ", locator->getAngle());
 }
 
 void Robot::RobotInit()
@@ -166,8 +167,8 @@ void Robot::DisabledPeriodic()
 
 void Robot::AutonomousInit()
 {
-    autoManager->setMode("Test");
-    locator->resetEncoders();
+    autoManager->setMode("Turn");
+    locator->resetAll();
     //stateManager->disableAutoStacking();
     autoManager->getCurrentMode()->init();
 }

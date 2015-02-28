@@ -37,7 +37,7 @@ void Intake::setIntake(float indicatedSpeed) {
 
 void Intake::actuateFloorSolenoids(bool actuate) {
         isFloorSolenoidExtended = actuate;
-        floorSolenoid->Set(actuate);
+        floorSolenoid->Set(!actuate);
 }
 void Intake::actuateHumanFeederSolenoids(bool actuate) {
         isFeederSolenoidExtended = actuate;

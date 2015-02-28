@@ -43,7 +43,6 @@ private:
     Timer* loopTimer;
 
     TrapProfile* linearProfile;
-    TrapProfile* angularProfile;
 
     PID* drivePID;
     PID* turnPID;

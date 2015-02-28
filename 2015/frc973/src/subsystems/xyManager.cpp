@@ -34,7 +34,6 @@ XYManager::XYManager()
     locator = NULL;
 
     linearProfile = new TrapProfile(0, 0, 0, 0);
-    angularProfile = new TrapProfile(0, 0, 0, 0);
 
     loopTimer = new Timer();
 
@@ -83,15 +82,16 @@ void XYManager::setTargetDistance(float distance_)
     currPoint = locator->getPoint();
     origPoint = locator->getPoint();
     linearProfile = new TrapProfile(distance_ - currPoint.distance, 10000, 10000, 10000);
-    angularProfile = new TrapProfile(currPoint.angle, 100000, 100000,10000); // this is purposfully blown up do not change the numbers
+    turnPID->setTarget(currPoint.angle);
+    drivePID->setBounds(-.6,.6);
     done = false;
 }
 
 void XYManager::setTargetAngle(float angle_)
 {
     currPoint = locator->getPoint();
-    angularProfile = new TrapProfile(angle_, 100000, 100000,10000); // this is purposfully blown up do not change the numbers
-    linearProfile = new TrapProfile(currPoint.distance - origPoint.distance, 0, 0, 0); // this means that we don't have to seperate turn and drive in update
+    turnPID->setTarget(angle_);
+    drivePID->setBounds(0.0,0.0);
     done = false;
 }
 
@@ -128,16 +128,12 @@ void XYManager::update()
     float currTime = loopTimer->Get();
 
     std::vector<float> linearStep = linearProfile->getProfile(currTime);
-    std::vector<float> angularStep = angularProfile->getProfile(currTime);
 
     float linearFF = (kLinVelFF*linearStep[2]) + (kLinAccelFF*linearStep[3]);
-    float angularFF = (kAngVelFF*angularStep[2]) + (kAngAccelFF*angularStep[3]);
 
     relativeDistance = currPoint.distance - origPoint.distance;
 
-    float baseError = angularProfile->getTarget() - currPoint.angle;
-
-    float angleError = baseError;
+    float angleError = turnPID->getTarget() - currPoint.angle;
 
     if (linearProfile->getTarget() - relativeDistance <= .05 && angleError <= 2 && locator->getLinearVelocity() < 2) {
         done = true;
@@ -155,7 +151,7 @@ void XYManager::update()
     printf("%f, %f, %f, %f, %f, %f\n",linearStep[0], linearStep[1], linearStep[2], linearStep[3], relativeDistance, locator->getLinearVelocity());
 
     driveInput = drivePID->update(relativeDistance - linearStep[1], loopTimer) + linearFF;
-    angularInput = (turnPID->update(locator->normalizeAngle(angleError), loopTimer)) + angularFF;
+    angularInput = -(turnPID->update(currPoint.angle, loopTimer));
 
     if (!isPaused && (linearProfile->getTarget() - relativeDistance) > 0) {
         driveInput += 0.1;
