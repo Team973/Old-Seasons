@@ -33,6 +33,9 @@ public:
     bool isDriveLocked();
     void lockDrive();
     void unlockDrive();
+    void lockWhip();
+    void unlockWhip();
+    bool isWhipLocked();
     void update();
 
     const static int LOAD = 1;
