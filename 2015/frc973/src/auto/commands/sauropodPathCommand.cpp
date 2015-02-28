@@ -1,6 +1,7 @@
 #include "WPILib.h"
 #include "sauropodPathCommand.hpp"
 #include "../../stateManager.hpp"
+#include "../../subsystems/sauropod.hpp"
 
 namespace frc973 {
 
@@ -13,7 +14,11 @@ SauropodPathCommand::SauropodPathCommand(StateManager *manager_, int path_, floa
 void SauropodPathCommand::init() {
     timer->Start();
     timer->Reset();
-    manager->setSauropodPath(path);
+    if (path == Sauropod::READY) {
+        manager->setAutoLoadReady();
+    } else {
+        manager->setSauropodPath(path);
+    }
 }
 
 bool SauropodPathCommand::taskPeriodic() {

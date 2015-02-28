@@ -18,7 +18,10 @@ public:
     void stowWhip();
     float getWhipAngle(); 
     bool gotTote();
+    void lockWhip();
+    void unlockWhip();
     bool whipDone();
+    bool isWhipLocked();
 
 private:
     float intakeMotorSpeed;
@@ -26,6 +29,8 @@ private:
     bool isFeederSolenoidExtended;
     bool isFloorSolenoidExtended;
     bool isRetracted;
+    
+    bool whipLock;
 
     VictorSP *rightIntakeMotor;
     VictorSP *leftIntakeMotor;

@@ -20,13 +20,15 @@ Intake::Intake(VictorSP* leftIntakeMotor_, VictorSP* rightIntakeMotor_, VictorSP
     whipPID = new PID(0.06,0,0);
     whipPID->start();
     whipPID->setBounds(-1,1);
-    whipPID->setTarget(107);
+    whipPID->setTarget(125);
 
     isFeederSolenoidExtended = false;
     isFloorSolenoidExtended = false;
     isRetracted = false;
 
     toteTimer = new Timer();
+
+    whipLock = false;
 
     hasTote = false;
 }
@@ -45,17 +47,17 @@ void Intake::actuateHumanFeederSolenoids(bool actuate) {
 }
 
 float Intake::getWhipAngle() {
-    float offset = 872;
+    float offset = 820;
     return (5 * ((360 * whipPot->GetVoltage())/5)) - offset;
 }
 
 void Intake::retractWhip() {
-    whipPID->setTarget(107);
+    whipPID->setTarget(125);
     isRetracted = false;
 }
 
 void Intake::extendWhip() {
-    whipPID->setTarget(211);
+    whipPID->setTarget(250);
     isRetracted = false;
 }
 
@@ -66,6 +68,18 @@ void Intake::stowWhip() {
 
 bool Intake::gotTote() {
     return hasTote;
+}
+
+void Intake::lockWhip() {
+    whipLock = true;
+}
+
+void Intake::unlockWhip() {
+    whipLock = false;
+}
+
+bool Intake::isWhipLocked() {
+    return whipLock;
 }
 
 bool Intake::whipDone() {
@@ -85,7 +99,7 @@ void Intake::update() {
     
     if (isRetracted) {
 
-        if (isFeederSolenoidExtended) {
+        if (isFloorSolenoidExtended) {
         }
         else { 
         }
@@ -104,7 +118,11 @@ void Intake::update() {
         toteTimer->Reset();
     }
 
-    whipMotor->Set(-whipPID->update(getWhipAngle()));
+    if (whipLock) {
+        whipMotor->Set(0);
+    } else {
+        whipMotor->Set(-whipPID->update(getWhipAngle()));
+    }
 }
 
 } /* namespace frc973 */

@@ -18,9 +18,11 @@ void WhipCommand::init() {
 }
 
 bool WhipCommand::taskPeriodic() {
-    if (manager->isWhipDone() || timer->Get() >= timeout) {
-        manager->unlockDrive();
-        return true;
+    if (!manager->isWhipLocked()) {
+        if (manager->isWhipDone() || timer->Get() >= timeout) {
+            manager->unlockDrive();
+            return true;
+        }
     }
 
     return false;

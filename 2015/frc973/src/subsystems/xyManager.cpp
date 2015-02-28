@@ -48,7 +48,7 @@ XYManager::XYManager()
             Constants::getConstant("kTurnI")->getDouble(),
             Constants::getConstant("kTurnD")->getDouble());
     turnPID->start();
-    turnPID->setBounds(-.5,.5);
+    turnPID->setBounds(-.7,.7);
 
     relativeDistance = 0;
 
@@ -135,7 +135,7 @@ void XYManager::update()
 
     float angleError = turnPID->getTarget() - currPoint.angle;
 
-    if (linearProfile->getTarget() - relativeDistance <= .05 && angleError <= 2 && locator->getLinearVelocity() < 2) {
+    if (linearProfile->getTarget() - relativeDistance <= .05 && angleError <= 3 && locator->getLinearVelocity() < 2) {
         done = true;
     }
 
