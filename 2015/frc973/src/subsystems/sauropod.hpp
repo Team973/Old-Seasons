@@ -33,6 +33,7 @@ public:
     bool sequenceDone();
     bool atTarget();
     void addToQueue(std::string preset);
+    void setElevatorManual(float speed);
     void clearQueue();
     float getElevatorHeight();
     float getElevatorVelocity();
@@ -93,6 +94,8 @@ private:
     float kArmVelFF;
 
     Timer *doneTimer;
+
+    float manualElevatorSpeed;
 
     FlagAccumulator *toteAccumulator;
     bool muchoTotes;

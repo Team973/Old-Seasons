@@ -119,7 +119,7 @@ void Sauropod::createPath(int dest) {
                 break;
             case CONTAINER:
                 //addToQueue("containerLoad");
-                addToQueue("loadLow");
+                addToQueue("containerLoad");
                 currPath = CONTAINER;
                 break;
             case CAP:
@@ -181,7 +181,7 @@ void Sauropod::setTarget(Preset target) {
 
     elevatorTarget = target.height - deltaY;
     if (elevatorTarget < 0) {
-        elevatorTarget = 5;
+        elevatorTarget = 0;
     } else if (deltaY > target.height) {
         elevatorTarget = target.height;
     }
@@ -191,6 +191,10 @@ void Sauropod::setTarget(Preset target) {
     armPID->setTarget(armTarget);
     elevatorPID->setTarget(elevatorTarget);
     ramp->setTarget(armTarget,getArmAngle());
+}
+
+void Sauropod::setElevatorManual(float speed) {
+    manualElevatorSpeed = speed;
 }
 
 bool Sauropod::sequenceDone() {
@@ -309,7 +313,6 @@ void Sauropod::update() {
     }
     */
 
-    float elevatorInput, armInput;
 
     float voltageFF = 0;
 
@@ -324,6 +327,10 @@ void Sauropod::update() {
     float epido = elevatorPID->update(getElevatorHeight()) + voltageFF;
     float apido = armPID->update(getArmAngle());
 
+    float elevatorInput = 0;
+    float armInput = apido;
+
+    /*
     if (inCradle() && currTarget.projection > 0) {
         elevatorInput = epido;
         armInput = -0.1;
@@ -334,6 +341,7 @@ void Sauropod::update() {
         elevatorInput = epido;
         armInput = apido;
     }
+    */
 
     if (currTarget.projection == 0) {
         armInput += -0.5;
@@ -355,12 +363,9 @@ void Sauropod::update() {
         toteAccumulator->reset();
     }
 
-    // comment me out
-    /*
-    if (currPreset == "containerLoad" && getElevatorVelocity() < .3 && getElevatorHeight() > 2 && !sequenceDone()) {
-        elevatorInput += -0.7;
+    if (currPreset == "containerLoad" && getElevatorVelocity() < .1 && getElevatorHeight() > 2 && !sequenceDone()) {
+        elevatorInput += -0.9;
     }
-    */
 
     SmartDashboard::PutNumber("Mucho Totes: ", muchoTotes);
     SmartDashboard::PutNumber("Num Flags: ", accumulator->getFlagCount());
@@ -384,7 +389,11 @@ void Sauropod::update() {
 
     armMotor->Set(-ramp->update(getArmAngle(),armInput));
     //armMotor->Set(-armInput);
-    elevatorMotor->Set(-limit(elevatorInput));
+    if (manualElevatorSpeed == 0) {
+        elevatorMotor->Set(-limit(epido));
+    } else {
+        elevatorMotor->Set(manualElevatorSpeed);
+    }
 }
 
 }

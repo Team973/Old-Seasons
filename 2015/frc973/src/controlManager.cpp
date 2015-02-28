@@ -17,6 +17,8 @@ void ControlManager::update() {
 
     stateManager->setIntakeSpeed(-controls->getCodriverAxis(1));
 
+    stateManager->setElevatorFromControls(controls->getCodriverAxis(3));
+
     if (controls->getCodriverButton(1)) {
         stateManager->setAutoLoadReady();
     }

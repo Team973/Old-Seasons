@@ -12,6 +12,7 @@ public:
     StateManager(Drive *drive_, Sauropod *sauropod_, Intake *intake_);
     void vTecKickedInYo(bool kickedInYo);
     void setDriveFromControls(double throttle, double turn, bool lowGear);
+    void setElevatorFromControls(float speed);
     void disableAutoStacking();
     void enableAutoStacking();
     void setIntakeSpeed(float speed);
