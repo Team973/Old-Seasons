@@ -42,6 +42,10 @@ void StateManager::setDriveFromControls(double throttle, double turn, bool lowGe
     }
 }
 
+void StateManager::setElevatorFromControls(float speed) {
+    sauropod->setElevatorManual(deadband(speed, 0.2));
+}
+
 void StateManager::disableAutoStacking() {
     isAutoStack = false;
 }
