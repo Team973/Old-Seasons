@@ -5,25 +5,30 @@
 
 namespace frc973 {
 
-SauropodPathCommand::SauropodPathCommand(StateManager *manager_, int path_, float timeout_) {
+SauropodPathCommand::SauropodPathCommand(StateManager *manager_, int path_, float toteTimeout_, float timeout_) {
     manager = manager_;
     path = path_;
+    toteTimeout = toteTimeout_;
     setTimeout(timeout_);
+
+    moving = false;
 }
 
 void SauropodPathCommand::init() {
     timer->Start();
     timer->Reset();
-    if (path == Sauropod::READY) {
-        manager->setAutoLoadReady();
-    } else {
-        manager->setSauropodPath(path);
-    }
 }
 
 bool SauropodPathCommand::taskPeriodic() {
-    if (manager->isSauropodDone() || timer->Get() > timeout) {
-        return true;
+    if (manager->gotTote() || timer->Get() > toteTimeout) {
+        manager->setSauropodPath(path);
+        moving = true;
+    }
+
+    if (moving) {
+        if (manager->isSauropodDone() || timer->Get() > timeout) {
+            return true;
+        }
     }
 
     return false;
