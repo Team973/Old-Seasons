@@ -12,7 +12,7 @@ ControlManager::ControlManager(ControlMap *controls_, StateManager *stateManager
 }
 
 void ControlManager::update() {
-    stateManager->setDriveFromControls(controls->getThrottle(), -controls->getTurn(), controls->getLowGear());
+    stateManager->setDriveFromControls(controls->getThrottle(), -controls->getTurn(), controls->getDriverButton(8));
     stateManager->vTecKickedInYo(controls->getDriverButton(6));
 
     stateManager->setIntakeSpeed(-controls->getCodriverAxis(1));

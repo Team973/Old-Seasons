@@ -59,11 +59,15 @@ XYManager::XYManager()
     printf("Profile Pos, Profile Vel, Profile Accel, Actual Pos, Actual Vel\n");
 }
 
+void XYManager::resetEncoders() {
+    locator->resetEncoders();
+}
+
 void XYManager::setSpeed(bool fast) {
     if (fast) {
-        speedLimit = 0.5;
+        speedLimit = 0.7;
     } else {
-        speedLimit = 0.3;
+        speedLimit = 0.5;
     }
 }
 

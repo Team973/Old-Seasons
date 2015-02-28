@@ -27,6 +27,7 @@ public:
     void startProfile();
     void pauseProfile();
     void resetProfile();
+    void resetEncoders();
     XYManager::MotorValue* getValues();
     float getDistanceFromTarget();
     void update();
