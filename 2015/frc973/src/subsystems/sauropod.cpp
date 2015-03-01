@@ -27,7 +27,7 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* eleva
             Constants::getConstant("kArmP")->getDouble(),
             Constants::getConstant("kArmI")->getDouble(),
             Constants::getConstant("kArmD")->getDouble());
-    armPID->setBounds(-.5,.5);
+    armPID->setBounds(-1,1);
     armPID->start();
     elevatorPID = new PID(0,0,0);
     elevatorPID->setBounds(-1,1);
@@ -42,8 +42,8 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* eleva
     addPreset("scoreHeight", 0, 6);
     addPreset("scoreProjection", 0, 6);
     addPreset("capHeight", 0, 20);
-    addPreset("capExtension", 90, 17);
-    addPreset("capPlace", 0, 0);
+    addPreset("capExtension", 45, 15);
+    addPreset("capPlace", 45, 8);
     addPreset("rest",0,6);
 
     setPreset("hardStop");
@@ -74,10 +74,12 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* eleva
 
     clearQueue();
 
-    ramp = new RampedOutput(.3,.5);
+    ramp = new RampedOutput(.3,.8);
 
     accumulator = new FlagAccumulator();
     accumulator->setThreshold(3);
+
+    elevatorIncrement = 0.0;
 
     muchoTotes = false;
     toteAccumulator = new FlagAccumulator();
@@ -103,6 +105,7 @@ void Sauropod::setPreset(std::string preset) {
 void Sauropod::createPath(int dest) {
     if (dest != currPath || sequenceDone()) {
         clearQueue();
+        elevatorIncrement = 0.0;
         switch(dest) {
             case PLATFORM:
                 addToQueue("rest");
@@ -194,8 +197,12 @@ void Sauropod::setTarget(Preset target) {
     float elevatorTarget = target.height;
 
     armPID->setTarget(armTarget);
-    elevatorPID->setTarget(elevatorTarget);
+    elevatorPID->setTarget(elevatorTarget + elevatorIncrement);
     ramp->setTarget(armTarget,getArmAngle());
+}
+
+void Sauropod::incrementElevator(float increment) {
+    elevatorIncrement += increment;
 }
 
 void Sauropod::setElevatorManual(float speed) {
@@ -207,7 +214,7 @@ bool Sauropod::sequenceDone() {
 }
 
 bool Sauropod::atTarget() {
-    Preset p = presets[currPreset];
+    //Preset p = presets[currPreset];
 
     /*
     float switchThreshold = 20; //inches
@@ -232,6 +239,7 @@ bool Sauropod::atTarget() {
     SmartDashboard::PutNumber("projection error: ", fabs(p.projection-projection));
     */
 
+    /*
     float height = getElevatorHeight();
     float angle = getArmAngle();
 
@@ -243,8 +251,9 @@ bool Sauropod::atTarget() {
     } else if (doneTimer->Get() > 5) {
         return true;
     }
+    */
 
-    return false;
+    return true;
 }
 
 void Sauropod::clearQueue() {
@@ -396,6 +405,8 @@ void Sauropod::update() {
     SmartDashboard::PutNumber("Elevator Error:", elevatorPID->getTarget()-getElevatorHeight());
     SmartDashboard::PutNumber("Arm Angle:", getArmAngle());
     SmartDashboard::PutNumber("Arm Target:", armPID->getTarget());
+
+    SmartDashboard::PutNumber("Elevator Increment: ", elevatorIncrement);
 
     armMotor->Set(-ramp->update(getArmAngle(),armInput));
     //armMotor->Set(-armInput);

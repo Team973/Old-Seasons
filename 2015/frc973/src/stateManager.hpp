@@ -13,6 +13,7 @@ public:
     void vTecKickedInYo(bool kickedInYo);
     void setDriveFromControls(double throttle, double turn, bool lowGear);
     void setElevatorFromControls(float speed);
+    void incrementElevatorHeight(float increment);
     void disableAutoStacking();
     void enableAutoStacking();
     void setIntakeSpeed(float speed);

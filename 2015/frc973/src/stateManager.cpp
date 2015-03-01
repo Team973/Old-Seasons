@@ -46,6 +46,10 @@ void StateManager::setElevatorFromControls(float speed) {
     sauropod->setElevatorManual(deadband(speed, 0.2));
 }
 
+void StateManager::incrementElevatorHeight(float increment) {
+    sauropod->incrementElevator(increment);
+}
+
 void StateManager::disableAutoStacking() {
     isAutoStack = false;
 }
