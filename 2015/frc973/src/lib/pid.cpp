@@ -11,8 +11,8 @@ PID::PID(double p_, double i_, double d_)
     d = d_;
 
     target = 0;
-    min = 0;
-    max = 0;
+    min = -1;
+    max = 1;
 
     integral = 0;
     iterm = 0;
@@ -39,8 +39,8 @@ PID::PID(float gains[3])
     d = gains[2];
 
     target = 0;
-    min = 0;
-    max = 0;
+    min = -1;
+    max = 1;
 
     integral = 0;
     iterm = 0;
@@ -141,11 +141,11 @@ float PID::update(float actual)
     output = pterm + iterm + dterm;
     prevErr = err;
 
-    if (max && (output > max))
+    if ((output > max))
     {
         output = max;
     }
-    if (min && (output < min))
+    if ((output < min))
     {
         output = min;
     }
@@ -183,11 +183,11 @@ float PID::update(float actual, Timer *t)
     output = pterm + iterm + dterm;
     prevErr = err;
 
-    if (max && (output > max))
+    if ((output > max))
     {
         output = max;
     }
-    if (min && (output < min))
+    if ((output < min))
     {
         output = min;
     }
