@@ -39,11 +39,11 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* eleva
     addPreset("loadHigh", 0, 20);
     addPreset("loadLow", 0, 1);
     addPreset("containerLoad", 0, 0);
-    addPreset("scoreHeight", 11, 6);
-    addPreset("scoreProjection", 11, 6);
+    addPreset("scoreHeight", 0, 6);
+    addPreset("scoreProjection", 0, 6);
     addPreset("capHeight", 0, 20);
-    addPreset("capExtension", 38, 17);
-    addPreset("capPlace", 30, 76.2);
+    addPreset("capExtension", 90, 17);
+    addPreset("capPlace", 0, 0);
     addPreset("rest",0,6);
 
     setPreset("hardStop");
@@ -161,6 +161,7 @@ void Sauropod::setGain(std::string name) {
 }
 
 void Sauropod::setTarget(Preset target) {
+    /*
     float switchThreshold = 21; //inches
     float h = 39.25; //inches
     float projection = h*(sin(degreesToRadians(getArmAngle())));
@@ -187,6 +188,10 @@ void Sauropod::setTarget(Preset target) {
     }
 
     SmartDashboard::PutNumber("Elevator Target: ", elevatorTarget);
+    */
+
+    float armTarget = target.angle;
+    float elevatorTarget = target.height;
 
     armPID->setTarget(armTarget);
     elevatorPID->setTarget(elevatorTarget);
@@ -204,6 +209,7 @@ bool Sauropod::sequenceDone() {
 bool Sauropod::atTarget() {
     Preset p = presets[currPreset];
 
+    /*
     float switchThreshold = 20; //inches
     float h = 39.25; //inches
     float projection = h*(sin(degreesToRadians(getArmAngle())));
@@ -224,9 +230,13 @@ bool Sauropod::atTarget() {
 
     SmartDashboard::PutNumber("height error: ", fabs(p.height-height));
     SmartDashboard::PutNumber("projection error: ", fabs(p.projection-projection));
+    */
+
+    float height = getElevatorHeight();
+    float angle = getArmAngle();
 
 
-    if ((fabs(p.height - height) <= 1 && fabs(p.projection - projection) <= 1)) {
+    if ((fabs(p.height - height) <= 1 && fabs(p.angle - angle) <= 1)) {
         if (accumulator->update(fabs(getElevatorVelocity()) < .8 && fabs(getArmVelocity()) < .8)) {
             return true;
         }
@@ -343,7 +353,7 @@ void Sauropod::update() {
     }
     */
 
-    if (currTarget.projection == 0) {
+    if (currTarget.angle == 0) {
         armInput += -0.5;
     }
 

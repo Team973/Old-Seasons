@@ -16,7 +16,7 @@ class RampedOutput;
 class Sauropod {
 
     struct Preset {
-        float projection;
+        float angle;
         float height;
     };
 
@@ -60,7 +60,7 @@ public:
 private:
 
     bool equal(Preset lhs, Preset rhs) {
-        return (lhs.projection == rhs.projection) && (lhs.height == rhs.height);
+        return (lhs.angle == rhs.angle) && (lhs.height == rhs.height);
     }
 
     void addPreset(std::string name, float horiz, float height);
