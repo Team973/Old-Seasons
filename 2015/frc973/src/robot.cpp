@@ -16,6 +16,7 @@
 #include "subsystems/intake.hpp"
 #include "subsystems/locator.hpp"
 #include "subsystems/xyManager.hpp"
+#include "subsystems/containerGrabber.hpp"
 #include <pthread.h>
 #include <unistd.h>
 #include <time.h>
@@ -101,6 +102,8 @@ Robot::Robot()
 
     toteSensor = new DigitalInput(8);
 
+    grabberSolenoid = new Solenoid(3);
+
     locator = new Locator(leftDriveEncoder, rightDriveEncoder, gyro);
 
     xyManager = XYManager::getInstance();
@@ -109,10 +112,11 @@ Robot::Robot()
     drive = new Drive(leftDriveMotors, rightDriveMotors);
     sauropod = new Sauropod(elevatorMotor, armMotor, elevatorEncoder,  armEncoder, containerFinger);
     intake = new Intake(leftIntakeMotor, rightIntakeMotor, humanFeederIntakeMotor, whipMotor, floorSolenoid, humanFeederSolenoid, whipPot, toteSensor);
+    grabber = new ContainerGrabber(grabberSolenoid);
 
     controls = new ControlMap(driver, coDriver);
 
-    stateManager = new StateManager(drive, sauropod, intake);
+    stateManager = new StateManager(drive, sauropod, intake, grabber);
 
     controlManager = new ControlManager(controls, stateManager);
 
