@@ -15,6 +15,7 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* eleva
     armMotor = armMotor_;
     elevatorEncoder = elevatorEncoder_;
     armEncoder = armEncoder_;
+    finger = finger_;
 
     doneTimer = new Timer();
     doneTimer->Start();
