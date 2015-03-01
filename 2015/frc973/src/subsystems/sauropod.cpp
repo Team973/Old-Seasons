@@ -42,7 +42,7 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* eleva
     addPreset("scoreHeight", 11, 6);
     addPreset("scoreProjection", 11, 6);
     addPreset("capHeight", 0, 20);
-    addPreset("capExtension",30, 78.2);
+    addPreset("capExtension", 38, 17);
     addPreset("capPlace", 30, 76.2);
     addPreset("rest",0,6);
 
@@ -164,7 +164,7 @@ void Sauropod::setTarget(Preset target) {
     float switchThreshold = 21; //inches
     float h = 39.25; //inches
     float projection = h*(sin(degreesToRadians(getArmAngle())));
-    float e = sqrt((h*h)-(projection*projection));
+    float e = sqrt((h*h)+(projection*projection));
     float deltaY = h - e;
     float elevatorTarget, armTarget;
 
@@ -210,7 +210,7 @@ bool Sauropod::atTarget() {
     if (getArmAngle() < 0) {
         projection = 0;
     }
-    float e = sqrt((h*h)-(projection*projection));
+    float e = sqrt((h*h)+(projection*projection));
     float height = 0;
 
     if (p.height > switchThreshold) {

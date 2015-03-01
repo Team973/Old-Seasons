@@ -167,7 +167,7 @@ void Robot::DisabledPeriodic()
 
 void Robot::AutonomousInit()
 {
-    autoManager->setMode("Test");
+    autoManager->setMode("Drive");
     locator->resetAll();
     //stateManager->disableAutoStacking();
     autoManager->getCurrentMode()->init();
