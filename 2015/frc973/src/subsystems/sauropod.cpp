@@ -108,44 +108,48 @@ void Sauropod::createPath(int dest) {
         elevatorIncrement = 0.0;
         switch(dest) {
             case PLATFORM:
+                /*
                 addToQueue("rest");
                 addToQueue("scoreProjection");
                 addToQueue("scoreHeight");
+                */
                 currPath = PLATFORM;
                 break;
             case PICKUP:
                 if (currPath != READY) {
-                    addToQueue("loadHigh");
+                    //addToQueue("loadHigh");
                 }
-                addToQueue("containerLoad");
+                setPreset("containerLoad");
                 currPath = PICKUP;
                 break;
             case CONTAINER:
                 //addToQueue("containerLoad");
-                addToQueue("containerLoad");
+                setPreset("containerLoad");
                 currPath = CONTAINER;
                 break;
             case CAP:
-                addToQueue("capExtension");
+                setPreset("capExtension");
                 break;
             case DROP_CAP:
-                addToQueue("capPlace");
+                setPreset("capPlace");
                 break;
             case READY:
-                addToQueue("loadHigh");
+                setPreset("loadHigh");
                 currPath = READY;
                 break;
             case RESTING:
-                addToQueue("rest");
+                setPreset("rest");
                 break;
             case RETURN:
+                /*
                 addToQueue("scoreHeight");
                 addToQueue("scoreProjection");
                 addToQueue("rest");
+                */
                 currPath = RETURN;
                 break;
             case IDLE:
-                addToQueue("stow");
+                setPreset("stow");
                 currPath = IDLE;
                 break;
         }
@@ -214,7 +218,7 @@ bool Sauropod::sequenceDone() {
 }
 
 bool Sauropod::atTarget() {
-    //Preset p = presets[currPreset];
+    Preset p = presets[currPreset];
 
     /*
     float switchThreshold = 20; //inches
@@ -239,21 +243,22 @@ bool Sauropod::atTarget() {
     SmartDashboard::PutNumber("projection error: ", fabs(p.projection-projection));
     */
 
-    /*
     float height = getElevatorHeight();
     float angle = getArmAngle();
+    if (angle < 0) {
+        angle = 0;
+    }
 
 
-    if ((fabs(p.height - height) <= 1 && fabs(p.angle - angle) <= 1)) {
+    if ((fabs(p.height - height) <= 2 && fabs(p.angle - angle) <= 2)) {
         if (accumulator->update(fabs(getElevatorVelocity()) < .8 && fabs(getArmVelocity()) < .8)) {
             return true;
         }
     } else if (doneTimer->Get() > 5) {
         return true;
     }
-    */
 
-    return true;
+    return false;
 }
 
 void Sauropod::clearQueue() {
