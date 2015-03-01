@@ -37,7 +37,8 @@ void ControlManager::update() {
 
     stateManager->setLastTote(controls->getCodriverButton(5));
 
-    stateManager->setCap(controls->getCodriverButton(6));
+    //stateManager->setCap(controls->getCodriverButton(6));
+    stateManager->fingerTheContainer(controls->getCodriverButton(6));
 
     stateManager->dropHumanIntake(controls->getCodriverButton(7));
 

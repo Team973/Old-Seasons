@@ -10,7 +10,7 @@
 
 namespace frc973 {
 
-Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* elevatorEncoder_, Encoder* armEncoder_) {
+Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* elevatorEncoder_, Encoder* armEncoder_, Solenoid *finger_) {
     elevatorMotor = elevatorMotor_;
     armMotor = armMotor_;
     elevatorEncoder = elevatorEncoder_;
@@ -82,6 +82,10 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* eleva
     muchoTotes = false;
     toteAccumulator = new FlagAccumulator();
     toteAccumulator->setThreshold(5);
+}
+
+void Sauropod::setFingerContainer(bool fingering) {
+    finger->Set(fingering);
 }
 
 void Sauropod::addGain(std::string name, Gains gain) {

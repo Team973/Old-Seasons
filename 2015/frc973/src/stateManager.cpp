@@ -46,6 +46,10 @@ void StateManager::setElevatorFromControls(float speed) {
     sauropod->setElevatorManual(deadband(speed, 0.2));
 }
 
+void StateManager::fingerTheContainer(bool fingering) {
+    sauropod->setFingerContainer(fingering);
+}
+
 void StateManager::disableAutoStacking() {
     isAutoStack = false;
 }
