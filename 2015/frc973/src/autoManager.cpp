@@ -7,6 +7,7 @@
 #include "auto/commands/sauropodPathCommand.hpp"
 #include "auto/commands/whipCommand.hpp"
 #include "auto/commands/intakeCommand.hpp"
+#include "auto/commands/grabCommand.hpp"
 #include "subsystems/drive.hpp"
 #include "subsystems/sauropod.hpp"
 
@@ -22,6 +23,7 @@ void AutoManager::setModes() {
     modes["Test"] = new AutoSequencer();
     modes["Drive"] = new AutoSequencer();
     modes["Turn"] = new AutoSequencer();
+    modes["Grab"] = new AutoSequencer();
 
     modes["Pickup"] = new AutoSequencer();
     modes["Pickup"]->addSequential(new SauropodPathCommand(stateManager, Sauropod::READY, 0, 15));
@@ -34,6 +36,11 @@ void AutoManager::setModes() {
     float thirdFudge = 1.0;
 
     modes["Drive"]->addSequential(new DriveCommand(stateManager, -5.0, true, 15));
+
+    modes["Grab"]->addSequential(new GrabCommand(stateManager, true));
+    modes["Grab"]->addSequential(new WaitCommand(1.5));
+    modes["Grab"]->addSequential(new DriveCommand(stateManager, 6, true, 5));
+    modes["Grab"]->addSequential(new GrabCommand(stateManager, false));
 
     modes["Test"]->addConcurrent(new IntakeCommand(stateManager, -1.0, false, false, 0));
     modes["Test"]->addConcurrent(new SauropodPathCommand(stateManager, Sauropod::READY, 0, 2));
