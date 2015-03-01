@@ -323,7 +323,7 @@ void Sauropod::update() {
 
     if (currTarget.height < getElevatorHeight()) {
         elevatorPID->setGains(gainSchedule[currGains].down);
-        elevatorPID->setBounds(-0.5,0.5);
+        elevatorPID->setBounds(-1,1);
         //voltageFF = -0.02;
     } else {
         elevatorPID->setGains(gainSchedule[currGains].up);
