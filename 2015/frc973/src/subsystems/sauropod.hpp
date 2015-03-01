@@ -30,6 +30,7 @@ public:
     void setPreset(std::string preset);
     void setGain(std::string name);
     void setTarget(Preset target);
+    void incrementElevator(float increment);
     bool sequenceDone();
     bool atTarget();
     void addToQueue(std::string preset);
@@ -99,6 +100,8 @@ private:
 
     FlagAccumulator *toteAccumulator;
     bool muchoTotes;
+
+    float elevatorIncrement;
 };
 
 }

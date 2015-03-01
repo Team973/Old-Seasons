@@ -42,6 +42,14 @@ void ControlManager::update() {
     stateManager->dropHumanIntake(controls->getCodriverButton(7));
 
     stateManager->setIntakePosition(controls->getCodriverButton(8));
+
+    if (controls->getCodriverDpadUp()) {
+        stateManager->incrementElevatorHeight(5);
+    }
+
+    if (controls->getCodriverDpadDown()) {
+        stateManager->incrementElevatorHeight(-5);
+    }
 }
 
 } /* namespace frc973 */
