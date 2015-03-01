@@ -47,6 +47,7 @@ private:
 
     Solenoid *humanFeederSolenoid;
     Solenoid *floorSolenoid;
+    Solenoid *containerFinger;
 
     Encoder *leftDriveEncoder;
     Encoder *rightDriveEncoder;

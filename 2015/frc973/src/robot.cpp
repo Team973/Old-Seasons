@@ -79,6 +79,8 @@ Robot::Robot()
     humanFeederSolenoid = new Solenoid(1);
     floorSolenoid = new Solenoid(0);
 
+    containerFinger = new Solenoid(3);
+
     airPressureSwitch = new DigitalInput(9);
     compressor = new Relay(0, Relay::kForwardOnly);
 
@@ -105,7 +107,7 @@ Robot::Robot()
     xyManager->injectLocator(locator);
 
     drive = new Drive(leftDriveMotors, rightDriveMotors);
-    sauropod = new Sauropod(elevatorMotor, armMotor, elevatorEncoder,  armEncoder);
+    sauropod = new Sauropod(elevatorMotor, armMotor, elevatorEncoder,  armEncoder, containerFinger);
     intake = new Intake(leftIntakeMotor, rightIntakeMotor, humanFeederIntakeMotor, whipMotor, floorSolenoid, humanFeederSolenoid, whipPot, toteSensor);
 
     controls = new ControlMap(driver, coDriver);
