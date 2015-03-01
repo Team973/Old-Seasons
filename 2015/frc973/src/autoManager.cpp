@@ -84,7 +84,7 @@ void AutoManager::setModes() {
     modes["Turn"]->addConcurrent(new WhipCommand(stateManager, "stow", 0));
     modes["Turn"]->addSequential(new TurnCommand(stateManager, 90, 10));
 
-    trashCan = 0.3;
+    trashCan = 0.1;
     openOffset = 4.5;
     closedOffset = 1.0;
     twoTote = 81.0/12.0;
