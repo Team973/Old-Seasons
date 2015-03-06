@@ -164,7 +164,6 @@ void Robot::AutonomousInit()
 {
     autoManager->setMode("Test");
     locator->resetAll();
-    //stateManager->disableAutoStacking();
     autoManager->getCurrentMode()->init();
 }
 
@@ -183,7 +182,6 @@ void Robot::AutonomousPeriodic()
 
 void Robot::TeleopInit()
 {
-    stateManager->enableAutoStacking();
 }
 
 void Robot::TeleopPeriodic()
