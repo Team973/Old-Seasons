@@ -86,7 +86,7 @@ void XYManager::setTargetDistance(float distance_)
     currPoint = locator->getPoint();
     origPoint = locator->getPoint();
     linearProfile = new TrapProfile(distance_ - currPoint.distance, 10000, 10000, 10000);
-    turnPID->setTarget(currPoint.angle);
+    turnPID->setTarget(0);
     drivePID->setBounds(-.6,.6);
     done = false;
 }
@@ -155,7 +155,7 @@ void XYManager::update()
     printf("%f, %f, %f, %f, %f, %f\n",linearStep[0], linearStep[1], linearStep[2], linearStep[3], relativeDistance, locator->getLinearVelocity());
 
     driveInput = drivePID->update(relativeDistance - linearStep[1], loopTimer) + linearFF;
-    angularInput = -(turnPID->update(currPoint.angle, loopTimer));
+    angularInput = -(turnPID->update(0, loopTimer));
 
     if (!isPaused && (linearProfile->getTarget() - relativeDistance) > 0) {
         driveInput += 0.1;

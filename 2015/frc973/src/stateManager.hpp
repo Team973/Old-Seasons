@@ -6,13 +6,17 @@ namespace frc973 {
 class Drive;
 class Sauropod;
 class Intake;
+class ContainerGrabber;
 
 class StateManager {
 public:
-    StateManager(Drive *drive_, Sauropod *sauropod_, Intake *intake_);
+    StateManager(Drive *drive_, Sauropod *sauropod_, Intake *intake_, ContainerGrabber *grabber_);
     void vTecKickedInYo(bool kickedInYo);
     void setDriveFromControls(double throttle, double turn, bool lowGear);
     void setElevatorFromControls(float speed);
+    void fingerTheContainer(bool fingering);
+    void dropGrabber();
+    void raiseGrabber();
     void incrementElevatorHeight(float increment);
     void disableAutoStacking();
     void enableAutoStacking();
@@ -48,6 +52,7 @@ private:
     Drive *drive;
     Sauropod *sauropod;
     Intake *intake;
+    ContainerGrabber *grabber;
 
     Timer *lockTimer;
 

@@ -10,11 +10,12 @@
 
 namespace frc973 {
 
-Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* elevatorEncoder_, Encoder* armEncoder_) {
+Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* elevatorEncoder_, Encoder* armEncoder_, Solenoid *finger_) {
     elevatorMotor = elevatorMotor_;
     armMotor = armMotor_;
     elevatorEncoder = elevatorEncoder_;
     armEncoder = armEncoder_;
+    finger = finger_;
 
     doneTimer = new Timer();
     doneTimer->Start();
@@ -84,6 +85,10 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* eleva
     muchoTotes = false;
     toteAccumulator = new FlagAccumulator();
     toteAccumulator->setThreshold(5);
+}
+
+void Sauropod::setFingerContainer(bool fingering) {
+    finger->Set(fingering);
 }
 
 void Sauropod::addGain(std::string name, Gains gain) {
@@ -342,9 +347,11 @@ void Sauropod::update() {
 
     if (currTarget.height < getElevatorHeight()) {
         elevatorPID->setGains(gainSchedule[currGains].down);
+        elevatorPID->setBounds(-1,1);
         //voltageFF = -0.02;
     } else {
         elevatorPID->setGains(gainSchedule[currGains].up);
+        elevatorPID->setBounds(-1,1);
         //voltageFF = 0.1;
     }
 

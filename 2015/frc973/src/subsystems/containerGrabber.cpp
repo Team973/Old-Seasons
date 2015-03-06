@@ -3,12 +3,17 @@
 
 namespace frc973 {
 
-ContainerGrabber::ContainerGrabber(Solenoid* pinSolenoid_) {
+ContainerGrabber::ContainerGrabber(Solenoid* solenoid_) {
     
-    pinSolenoid = pinSolenoid_;
+    solenoid = solenoid_;
 }
 
-void update() { //Put at Bottom
+void ContainerGrabber::grab() {
+    solenoid->Set(true);
+}
+
+void ContainerGrabber::retract() {
+    solenoid->Set(false);
 }
 
 } /* namespace frc973 */
