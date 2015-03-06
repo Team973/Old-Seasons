@@ -22,7 +22,6 @@ public:
     void setIntakeSpeed(float speed);
     void setIntakePosition(bool open);
     bool gotTote();
-    void dropHumanIntake(bool dropped);
     void setRobotState(int state);
     void setSauropodPath(int path);
     void setLoadReady();
@@ -31,15 +30,10 @@ public:
     void autoSetLastTote();
     void setContainerPickup();
     void setRestingLoad();
-    void setWhipPosition(std::string position);
     bool isSauropodDone();
-    bool isWhipDone();
     bool isDriveLocked();
     void lockDrive();
     void unlockDrive();
-    void lockWhip();
-    void unlockWhip();
-    bool isWhipLocked();
     void update();
 
     const static int LOAD = 1;

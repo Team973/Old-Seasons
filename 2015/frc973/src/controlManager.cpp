@@ -37,8 +37,6 @@ void ControlManager::update() {
 
     stateManager->setLastTote(controls->getCodriverButton(5));
 
-    stateManager->dropHumanIntake(controls->getCodriverButton(7));
-
     stateManager->setIntakePosition(controls->getCodriverButton(8));
 
     if (controls->getCodriverDpadUp()) {

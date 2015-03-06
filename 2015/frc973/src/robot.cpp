@@ -71,12 +71,9 @@ Robot::Robot()
 
     leftIntakeMotor = new VictorSP(8);
     rightIntakeMotor = new VictorSP(9);
-    humanFeederIntakeMotor = new VictorSP(5);
 
-    whipMotor = new VictorSP(3);
     containerGrabberMotor = new VictorSP(4);
 
-    humanFeederSolenoid = new Solenoid(1);
     floorSolenoid = new Solenoid(0);
 
     clawClampSolenoid = new Solenoid(2);
@@ -95,8 +92,6 @@ Robot::Robot()
 
     //gyro = new SPIGyro();
 
-    whipPot = new AnalogInput(2);
-
     toteSensor = new DigitalInput(8);
 
     grabberSolenoid = new Solenoid(3);
@@ -108,7 +103,7 @@ Robot::Robot()
 
     drive = new Drive(leftDriveMotors, rightDriveMotors);
     sauropod = new Sauropod(elevatorMotor, elevatorEncoder, clawClampSolenoid, clawBrakeSolenoid);
-    intake = new Intake(leftIntakeMotor, rightIntakeMotor, humanFeederIntakeMotor, whipMotor, floorSolenoid, humanFeederSolenoid, whipPot, toteSensor);
+    intake = new Intake(leftIntakeMotor, rightIntakeMotor, floorSolenoid, toteSensor);
     grabber = new ContainerGrabber(grabberSolenoid);
 
     controls = new ControlMap(driver, coDriver);
@@ -145,8 +140,6 @@ void Robot::dashboardUpdate()
     SmartDashboard::PutNumber("raw left encoder: ", leftDriveEncoder->Get());
     SmartDashboard::PutNumber("raw right encoder: ", rightDriveEncoder->Get());
     SmartDashboard::PutBoolean("is sauropod done: ", sauropod->atTarget());
-    SmartDashboard::PutNumber("Whip Angle: ", intake->getWhipAngle());
-    SmartDashboard::PutNumber("Whip Voltage: ", whipPot->GetVoltage());
     SmartDashboard::PutBoolean("tote sensor: ", toteSensor->Get());
     SmartDashboard::PutNumber("anaglog tote sensor: ", elevatorPot->GetVoltage());
     SmartDashboard::PutBoolean("pressure: ", airPressureSwitch->Get());
@@ -191,7 +184,6 @@ void Robot::AutonomousPeriodic()
 void Robot::TeleopInit()
 {
     stateManager->enableAutoStacking();
-    intake->stowWhip();
 }
 
 void Robot::TeleopPeriodic()

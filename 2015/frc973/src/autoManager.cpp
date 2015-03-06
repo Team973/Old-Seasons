@@ -5,7 +5,6 @@
 #include "auto/commands/driveCommand.hpp"
 #include "auto/commands/turnCommand.hpp"
 #include "auto/commands/sauropodPathCommand.hpp"
-#include "auto/commands/whipCommand.hpp"
 #include "auto/commands/intakeCommand.hpp"
 #include "auto/commands/grabCommand.hpp"
 #include "subsystems/drive.hpp"
@@ -47,10 +46,8 @@ void AutoManager::setModes() {
     modes["ThreeTote"]->addConcurrent(new SauropodPathCommand(stateManager, Sauropod::READY, 0, 2));
     modes["ThreeTote"]->addSequential(new IntakeCommand(stateManager, 0.0, false, false, 0));
     modes["ThreeTote"]->addConcurrent(new DriveCommand(stateManager, 0.0, false, 2)); // change this to trashcan
-    modes["ThreeTote"]->addConcurrent(new WhipCommand(stateManager, "extend", 4));
     modes["ThreeTote"]->addConcurrent(new IntakeCommand(stateManager, 1.0, false, false, .5));
     modes["ThreeTote"]->addSequential(new WaitCommand(0.0));
-    modes["ThreeTote"]->addConcurrent(new WhipCommand(stateManager, "retract", 0));
     modes["ThreeTote"]->addConcurrent(new DriveCommand(stateManager, twoTote - openOffset, true, 3));
     modes["ThreeTote"]->addSequential(new IntakeCommand(stateManager, -1.0, true, false, 0));
     modes["ThreeTote"]->addSequential(new DriveCommand(stateManager, twoTote - closedOffset, false, 2));
@@ -61,9 +58,7 @@ void AutoManager::setModes() {
     modes["ThreeTote"]->addSequential(new IntakeCommand(stateManager, 0.0, false, false, 0));
     modes["ThreeTote"]->addConcurrent(new DriveCommand(stateManager, twoTote + trashCan, false, 2));
     modes["ThreeTote"]->addConcurrent(new IntakeCommand(stateManager, 1.0, false, false, .5));
-    modes["ThreeTote"]->addConcurrent(new WhipCommand(stateManager, "extend", 4));
     modes["ThreeTote"]->addSequential(new WaitCommand(0.0));// dummy
-    modes["ThreeTote"]->addConcurrent(new WhipCommand(stateManager, "stow", 0));
     modes["ThreeTote"]->addConcurrent(new DriveCommand(stateManager, threeTote - openOffset, true, 3));
     modes["ThreeTote"]->addSequential(new IntakeCommand(stateManager, -1.0, true, false, 0));
     modes["ThreeTote"]->addSequential(new DriveCommand(stateManager, threeTote - closedOffset, false, 2));
@@ -86,9 +81,7 @@ void AutoManager::setModes() {
     modes["Turn"]->addSequential(new IntakeCommand(stateManager, 0.0, false, false, 0));
     modes["Turn"]->addConcurrent(new DriveCommand(stateManager, twoTote + trashCan, false, 2));
     modes["Turn"]->addConcurrent(new IntakeCommand(stateManager, 1.0, false, false, .5));
-    modes["Turn"]->addConcurrent(new WhipCommand(stateManager, "extend", 4));
     modes["Turn"]->addSequential(new WaitCommand(0.0));// dummy
-    modes["Turn"]->addConcurrent(new WhipCommand(stateManager, "stow", 0));
     modes["Turn"]->addSequential(new TurnCommand(stateManager, 90, 10));
 
     trashCan = 0.1;
