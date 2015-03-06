@@ -26,7 +26,6 @@ class Sauropod {
 
 public:
     Sauropod(VictorSP* elevatorMotor_, Encoder* elevatorEncoder_, Solenoid *clawClamp_, Solenoid *clawBrake_);
-    void setPreset(std::string preset);
     void setGain(std::string name);
     void setTarget(Preset target);
     void incrementElevator(float increment);
