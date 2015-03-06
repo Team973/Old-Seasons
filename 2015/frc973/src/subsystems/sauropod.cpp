@@ -32,8 +32,6 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, Encoder* elevatorEncoder_, Solenoid
     addPreset("containerLoad", 0);
     addPreset("rest", 6);
 
-    setPreset("hardStop");
-
     Gains empty = {
         {Constants::getConstant("kUpElevatorP")->getFloat(),
          Constants::getConstant("kUpElevatorI")->getFloat(),
@@ -78,38 +76,11 @@ void Sauropod::addPreset(std::string name, float height) {
     presets[name] = p;
 }
 
-void Sauropod::setPreset(std::string preset) {
-    if (presets.find(preset) != presets.end()) {
-        currPreset = preset;
-    }
-    
-}
-
 void Sauropod::createPath(int dest) {
     if (dest != currPath || sequenceDone()) {
+        currPath = dest;
         clearQueue();
         elevatorIncrement = 0.0;
-        switch(dest) {
-            case PICKUP:
-                addToQueue("containerLoad");
-                currPath = PICKUP;
-                break;
-            case CONTAINER:
-                addToQueue("containerLoad");
-                currPath = CONTAINER;
-                break;
-            case READY:
-                addToQueue("loadHigh");
-                currPath = READY;
-                break;
-            case RESTING:
-                addToQueue("rest");
-                break;
-            case IDLE:
-                addToQueue("stow");
-                currPath = IDLE;
-                break;
-        }
     }
 }
 
@@ -175,7 +146,11 @@ void Sauropod::executeQueue() {
     if (atTarget()) {
         accumulator->reset();
         doneTimer->Reset();
-        setPreset(waypointQueue.front());
+        if (presets.find(waypointQueue.front()) != presets.end()) {
+            currPreset = waypointQueue.front();
+        } else {
+            printf("unknown preset: %s\n", waypointQueue.front().c_str());
+        }
         waypointQueue.pop();
     }
 }
@@ -208,6 +183,25 @@ bool Sauropod::lotsoTotes() {
 }
 
 void Sauropod::update() {
+
+    switch(currPath) {
+        case PICKUP:
+            addToQueue("containerLoad");
+            break;
+        case CONTAINER:
+            addToQueue("containerLoad");
+            break;
+        case READY:
+            addToQueue("loadHigh");
+            break;
+        case RESTING:
+            addToQueue("rest");
+            break;
+        case IDLE:
+            addToQueue("stow");
+            break;
+    }
+
     executeQueue();
 
     SmartDashboard::PutString("curr preset: ", currPreset);
