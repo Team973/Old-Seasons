@@ -22,8 +22,6 @@ StateManager::StateManager(Drive *drive_, Sauropod *sauropod_, Intake *intake_, 
 
     lockTimer = new Timer();
 
-    isAutoStack = true;
-
     restingPath = Sauropod::READY;
     pickupPath = Sauropod::CONTAINER;
 
@@ -56,14 +54,6 @@ void StateManager::dropGrabber() {
 
 void StateManager::raiseGrabber() {
     grabber->retract();
-}
-
-void StateManager::disableAutoStacking() {
-    isAutoStack = false;
-}
-
-void StateManager::enableAutoStacking() {
-    isAutoStack = true;
 }
 
 void StateManager::setIntakeSpeed(float speed) {
@@ -106,10 +96,6 @@ void StateManager::setLastTote(bool lastTote) {
     }
 }
 
-void StateManager::autoSetLastTote() {
-    restingPath = Sauropod::RESTING;
-}
-
 void StateManager::setContainerPickup() {
     setSauropodPath(Sauropod::CONTAINER);
     robotState = IDLE;
@@ -142,32 +128,29 @@ void StateManager::update() {
 
     switch (robotState) {
         case LOAD:
-            //
             // auto stack
-            if (isAutoStack) {
-                if (intake->gotTote() && !sauropod->inCradle() && !hadTote && sauropod->sequenceDone()) {
-                    hadTote = true;
-                    drive->lock();
-                    lockTimer->Start();
-                    if (sauropod->getCurrPath() != Sauropod::PICKUP) {
-                        setSauropodPath(Sauropod::PICKUP);
-                    }
-                } else if (sauropod->sequenceDone() && hadTote && sauropod->inCradle()) {
-                    setSauropodPath(restingPath);
-                    hadTote = false;
-                } else if (!intake->gotTote() && !hadTote && !sauropod->inCradle()) {
-                    lockTimer->Stop();
-                    lockTimer->Reset();
-                    drive->unlock();
+            if (intake->gotTote() && !sauropod->inCradle() && !hadTote && sauropod->sequenceDone()) {
+                hadTote = true;
+                drive->lock();
+                lockTimer->Start();
+                if (sauropod->getCurrPath() != Sauropod::PICKUP) {
+                    setSauropodPath(Sauropod::PICKUP);
                 }
+            } else if (sauropod->sequenceDone() && hadTote && sauropod->inCradle()) {
+                setSauropodPath(restingPath);
+                hadTote = false;
+            } else if (!intake->gotTote() && !hadTote && !sauropod->inCradle()) {
+                lockTimer->Stop();
+                lockTimer->Reset();
+                drive->unlock();
+            }
 
-                if (lockTimer->Get() > 5) {
-                    drive->unlock();
-                }
+            if (lockTimer->Get() > 5) {
+                drive->unlock();
+            }
 
-                if (intake->gotTote() && intakeSpeed < 0) {
-                    intake->setIntake(0);
-                }
+            if (intake->gotTote() && intakeSpeed < 0) {
+                intake->setIntake(0);
             }
 
             break;

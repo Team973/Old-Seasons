@@ -17,8 +17,6 @@ public:
     void dropGrabber();
     void raiseGrabber();
     void incrementElevatorHeight(float increment);
-    void disableAutoStacking();
-    void enableAutoStacking();
     void setIntakeSpeed(float speed);
     void setIntakePosition(bool open);
     bool gotTote();
@@ -27,7 +25,6 @@ public:
     void setLoadReady();
     void setAutoLoadReady();
     void setLastTote(bool lastTote);
-    void autoSetLastTote();
     void setContainerPickup();
     void setRestingLoad();
     bool isSauropodDone();
@@ -48,8 +45,6 @@ private:
     Timer *lockTimer;
 
     bool vTec_yo;
-
-    bool isAutoStack;
 
     int robotState;
 
