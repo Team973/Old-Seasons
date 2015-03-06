@@ -68,7 +68,6 @@ Robot::Robot()
     rightDriveMotors = new VictorSP(1);
 
     elevatorMotor = new VictorSP(6);
-    armMotor = new VictorSP(7);
 
     leftIntakeMotor = new VictorSP(8);
     rightIntakeMotor = new VictorSP(9);
@@ -80,7 +79,8 @@ Robot::Robot()
     humanFeederSolenoid = new Solenoid(1);
     floorSolenoid = new Solenoid(0);
 
-    containerFinger = new Solenoid(2);
+    clawClampSolenoid = new Solenoid(2);
+    clawBrakeSolenoid = new Solenoid(4);
 
     airPressureSwitch = new DigitalInput(9);
     compressor = new Relay(0, Relay::kForwardOnly);
@@ -90,9 +90,6 @@ Robot::Robot()
 
     elevatorEncoder = new Encoder(6,7);
     elevatorPot = new AnalogInput(1);
-
-    armEncoder = new Encoder(0,1);
-    armPot = new AnalogInput(0);
 
     gyro = new Encoder(24,25,false,CounterBase::k2X);
 
@@ -110,7 +107,7 @@ Robot::Robot()
     xyManager->injectLocator(locator);
 
     drive = new Drive(leftDriveMotors, rightDriveMotors);
-    sauropod = new Sauropod(elevatorMotor, armMotor, elevatorEncoder,  armEncoder, containerFinger);
+    sauropod = new Sauropod(elevatorMotor, elevatorEncoder, clawClampSolenoid, clawBrakeSolenoid);
     intake = new Intake(leftIntakeMotor, rightIntakeMotor, humanFeederIntakeMotor, whipMotor, floorSolenoid, humanFeederSolenoid, whipPot, toteSensor);
     grabber = new ContainerGrabber(grabberSolenoid);
 
@@ -144,7 +141,6 @@ void Robot::dashboardUpdate()
     SmartDashboard::PutString("DB/String 3", asString(sauropod->getElevatorHeight()));
     SmartDashboard::PutNumber("drive distance: ", locator->getMovedDistance());
     SmartDashboard::PutNumber("left drive distance: ", locator->getDistance(leftDriveEncoder));
-    SmartDashboard::PutNumber("raw arm encoder: ", armEncoder->Get());
     SmartDashboard::PutNumber("raw elevator encoder: ", elevatorEncoder->Get());
     SmartDashboard::PutNumber("raw left encoder: ", leftDriveEncoder->Get());
     SmartDashboard::PutNumber("raw right encoder: ", rightDriveEncoder->Get());

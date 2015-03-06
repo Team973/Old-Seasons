@@ -16,7 +16,6 @@ class RampedOutput;
 class Sauropod {
 
     struct Preset {
-        float angle;
         float height;
     };
 
@@ -26,7 +25,7 @@ class Sauropod {
     };
 
 public:
-    Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* elevatorEncoder_, Encoder* armEncoder_, Solenoid *finger_);
+    Sauropod(VictorSP* elevatorMotor_, Encoder* elevatorEncoder_, Solenoid *clawClamp_, Solenoid *clawBrake_);
     void setPreset(std::string preset);
     void setGain(std::string name);
     void setTarget(Preset target);
@@ -39,33 +38,22 @@ public:
     float getElevatorHeight();
     float getElevatorVelocity();
     float getElevatorCurrent();
-    float getArmAngle();
-    float getArmVelocity();
     void update();
     void createPath(int dest);
     int getCurrPath();
     bool inCradle();
     bool lotsoTotes();
-    void setFingerContainer(bool fingering);
 
     const static int NONE = -1;
     const static int IDLE = 1;
     const static int PICKUP = 2;
-    const static int PLATFORM = 3;
     const static int READY = 4;
     const static int RESTING = 5;
-    const static int RETURN = 6;
     const static int CONTAINER = 7;
-    const static int CAP = 8;
-    const static int DROP_CAP = 9;
 
 private:
 
-    bool equal(Preset lhs, Preset rhs) {
-        return (lhs.angle == rhs.angle) && (lhs.height == rhs.height);
-    }
-
-    void addPreset(std::string name, float horiz, float height);
+    void addPreset(std::string name, float height);
     void addGain(std::string name, Gains gain);
 
     void executeQueue();
@@ -73,12 +61,10 @@ private:
     PowerDistributionPanel *pdp;
 
     VictorSP *elevatorMotor;
-    VictorSP *armMotor;
     Encoder *elevatorEncoder;
-    Encoder *armEncoder;
-    Solenoid *finger;
+    Solenoid *clawClamp;
+    Solenoid *clawBrake;
 
-    PID *armPID;
     PID *elevatorPID;
 
     std::string currPreset;
@@ -91,10 +77,6 @@ private:
     std::queue<std::string> waypointQueue;
 
     FlagAccumulator *accumulator;
-
-    RampedOutput *ramp;
-
-    float kArmVelFF;
 
     Timer *doneTimer;
 

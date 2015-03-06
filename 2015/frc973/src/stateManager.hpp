@@ -14,7 +14,6 @@ public:
     void vTecKickedInYo(bool kickedInYo);
     void setDriveFromControls(double throttle, double turn, bool lowGear);
     void setElevatorFromControls(float speed);
-    void fingerTheContainer(bool fingering);
     void dropGrabber();
     void raiseGrabber();
     void incrementElevatorHeight(float increment);
@@ -30,7 +29,6 @@ public:
     void setAutoLoadReady();
     void setLastTote(bool lastTote);
     void autoSetLastTote();
-    void setCap(bool cap);
     void setContainerPickup();
     void setRestingLoad();
     void setWhipPosition(std::string position);
@@ -47,7 +45,6 @@ public:
     const static int LOAD = 1;
     const static int SCORE = 2;
     const static int IDLE = 3;
-    const static int CAPPING = 4;
 private:
     Drive *drive;
     Sauropod *sauropod;
@@ -69,8 +66,6 @@ private:
 
     int numTotes;
     bool hadTote;
-
-    bool wantCap;
 };
 
 }
