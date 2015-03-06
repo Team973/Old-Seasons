@@ -74,10 +74,6 @@ void StateManager::setIntakePosition(bool open) {
     intake->actuateFloorSolenoids(open);
 }
 
-void StateManager::dropHumanIntake(bool dropped) {
-    intake->actuateHumanFeederSolenoids(dropped);
-}
-
 bool StateManager::gotTote() {
     return intake->gotTote();
 }
@@ -124,22 +120,8 @@ void StateManager::setRestingLoad() {
     robotState = IDLE;
 }
 
-void StateManager::setWhipPosition(std::string position) {
-    if (position == "extend") {
-        intake->extendWhip();
-    } else if (position == "retract") {
-        intake->retractWhip();
-    } else {
-        intake->stowWhip();
-    }
-}
-
 bool StateManager::isSauropodDone() {
     return sauropod->sequenceDone();
-}
-
-bool StateManager::isWhipDone() {
-    return intake->whipDone();
 }
 
 bool StateManager::isDriveLocked() {
@@ -154,18 +136,6 @@ void StateManager::unlockDrive() {
     drive->unlock();
 }
 
-void StateManager::lockWhip() {
-    intake->lockWhip();
-}
-
-void StateManager::unlockWhip() {
-    intake->unlockWhip();
-}
-
-bool StateManager::isWhipLocked() {
-    return intake->isWhipLocked();
-}
-
 void StateManager::update() {
 
     intake->setIntake(intakeSpeed);
@@ -178,7 +148,6 @@ void StateManager::update() {
                 if (intake->gotTote() && !sauropod->inCradle() && !hadTote && sauropod->sequenceDone()) {
                     hadTote = true;
                     drive->lock();
-                    intake->lockWhip();
                     lockTimer->Start();
                     if (sauropod->getCurrPath() != Sauropod::PICKUP) {
                         setSauropodPath(Sauropod::PICKUP);
@@ -190,12 +159,10 @@ void StateManager::update() {
                     lockTimer->Stop();
                     lockTimer->Reset();
                     drive->unlock();
-                    intake->unlockWhip();
                 }
 
                 if (lockTimer->Get() > 5) {
                     drive->unlock();
-                    intake->unlockWhip();
                 }
 
                 if (intake->gotTote() && intakeSpeed < 0) {
@@ -206,17 +173,14 @@ void StateManager::update() {
             break;
         case SCORE:
             drive->unlock();
-            intake->unlockWhip();
             break;
         case IDLE:
             drive->unlock();
-            intake->unlockWhip();
             break;
     }
 
     if (lockTimer->Get() > 5) {
         drive->unlock();
-        intake->unlockWhip();
     }
 
     sauropod->update();

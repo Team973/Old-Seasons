@@ -41,11 +41,8 @@ private:
     VictorSP *elevatorMotor;
     VictorSP *leftIntakeMotor;
     VictorSP *rightIntakeMotor;
-    VictorSP *humanFeederIntakeMotor;
-    VictorSP *whipMotor;
     VictorSP *containerGrabberMotor;
 
-    Solenoid *humanFeederSolenoid;
     Solenoid *floorSolenoid;
     Solenoid *clawClampSolenoid;
     Solenoid *clawBrakeSolenoid;
@@ -58,7 +55,6 @@ private:
 
     //SPIGyro *gyro;
 
-    AnalogInput *whipPot;
     AnalogInput *elevatorPot;
     AnalogInput *containerGrabberPot;
 
