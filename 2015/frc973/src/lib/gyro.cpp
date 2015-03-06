@@ -145,9 +145,10 @@ void* SPIGyro::Run(void *p)
 		}
 
         //Wait till the next 1/kReadingRate us period to make next reading
-        usleep((unsigned int) (((double) 1.0 / (double) inst->kReadingRate)
-        		 	 	 	 	 - inst->timer.Get())
-				 * (double) 1e6);
+        usleep((unsigned int) 
+				(((static_cast<double>(1.0) / static_cast<double>(inst->kReadingRate))
+						 - inst->timer.Get())
+				 * static_cast<double>(1e6)));
     }
     return NULL;
 }
