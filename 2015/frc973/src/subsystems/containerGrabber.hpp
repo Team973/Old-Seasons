@@ -6,11 +6,12 @@ namespace frc973 {
 class ContainerGrabber {
     
 public:
-    ContainerGrabber(Solenoid* pinSolenoid_);
-    void update();
+    ContainerGrabber(Solenoid* solenoid_);
+    void grab();
+    void retract();
 
 private:
-    Solenoid *pinSolenoid;
+    Solenoid *solenoid;
     
 };
 

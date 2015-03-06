@@ -26,7 +26,7 @@ class Sauropod {
     };
 
 public:
-    Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* elevatorEncoder_, Encoder* armEncoder_);
+    Sauropod(VictorSP* elevatorMotor_, VictorSP* armMotor_, Encoder* elevatorEncoder_, Encoder* armEncoder_, Solenoid *finger_);
     void setPreset(std::string preset);
     void setGain(std::string name);
     void setTarget(Preset target);
@@ -46,6 +46,7 @@ public:
     int getCurrPath();
     bool inCradle();
     bool lotsoTotes();
+    void setFingerContainer(bool fingering);
 
     const static int NONE = -1;
     const static int IDLE = 1;
@@ -75,6 +76,7 @@ private:
     VictorSP *armMotor;
     Encoder *elevatorEncoder;
     Encoder *armEncoder;
+    Solenoid *finger;
 
     PID *armPID;
     PID *elevatorPID;

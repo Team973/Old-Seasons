@@ -13,6 +13,7 @@ class AutoManager;
 class StateManager;
 class ControlManager;
 class SPIGyro;
+class ContainerGrabber;
 
 class Robot : public IterativeRobot
 {
@@ -47,6 +48,8 @@ private:
 
     Solenoid *humanFeederSolenoid;
     Solenoid *floorSolenoid;
+    Solenoid *containerFinger;
+    Solenoid *grabberSolenoid;
 
     Encoder *leftDriveEncoder;
     Encoder *rightDriveEncoder;
@@ -76,6 +79,7 @@ private:
     Drive *drive;
     Sauropod *sauropod;
     Intake *intake;
+    ContainerGrabber *grabber;
 
     ControlMap *controls;
 

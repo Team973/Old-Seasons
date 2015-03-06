@@ -4,13 +4,15 @@
 #include "subsystems/drive.hpp"
 #include "subsystems/sauropod.hpp"
 #include "subsystems/intake.hpp"
+#include "subsystems/containerGrabber.hpp"
 
 namespace frc973 {
 
-StateManager::StateManager(Drive *drive_, Sauropod *sauropod_, Intake *intake_) {
+StateManager::StateManager(Drive *drive_, Sauropod *sauropod_, Intake *intake_, ContainerGrabber *grabber_) {
     drive = drive_;
     sauropod = sauropod_;
     intake = intake_;
+    grabber = grabber_;
 
     robotState = IDLE;
 
@@ -46,8 +48,20 @@ void StateManager::setElevatorFromControls(float speed) {
     sauropod->setElevatorManual(deadband(speed, 0.2));
 }
 
+void StateManager::fingerTheContainer(bool fingering) {
+    sauropod->setFingerContainer(fingering);
+}
+
 void StateManager::incrementElevatorHeight(float increment) {
     sauropod->incrementElevator(increment);
+}
+
+void StateManager::dropGrabber() {
+    grabber->grab();
+}
+
+void StateManager::raiseGrabber() {
+    grabber->retract();
 }
 
 void StateManager::disableAutoStacking() {
