@@ -145,7 +145,7 @@ void XYManager::update()
     }
 
     float linearError = linearProfile->getTarget() - relativeDistance;
-    if (linearProfile->getTarget() < 0 ? linearError >= -0.05 : linearError <= 0.5
+    if (linearProfile->getTarget() < relativeDistance ? linearError >= -0.05 : linearError <= 0.5
             && angleError <= 3 && fabs(locator->getLinearVelocity()) < 2) {
         done = true;
     }
