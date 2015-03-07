@@ -138,6 +138,11 @@ void XYManager::update()
     relativeDistance = currPoint.distance - origPoint.distance;
 
     float angleError = turnPID->getTarget() - currPoint.angle;
+    if (fabs(turnPID->getTarget() - currPoint.angle) > fabs(turnPID->getTarget() + currPoint.angle)) {
+        angleError = turnPID->getTarget() + currPoint.angle;
+    } else {
+        angleError = turnPID->getTarget() - currPoint.angle;
+    }
 
     float linearError = linearProfile->getTarget() - relativeDistance;
     if (linearProfile->getTarget() < 0 ? linearError >= -0.05 : linearError <= 0.5
