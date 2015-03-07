@@ -51,7 +51,7 @@ private:
     Encoder *leftDriveEncoder;
     Encoder *rightDriveEncoder;
     Encoder *elevatorEncoder;
-    Encoder *gyro;
+    //Encoder *gyro;
 
     SPIGyro *spiGyro;
 

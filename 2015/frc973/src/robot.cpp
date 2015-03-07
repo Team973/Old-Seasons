@@ -88,7 +88,7 @@ Robot::Robot()
     elevatorEncoder = new Encoder(6,7);
     elevatorPot = new AnalogInput(1);
 
-    gyro = new Encoder(24,25,false,CounterBase::k2X);
+    //gyro = new Encoder(24,25,false,CounterBase::k2X);
 
     spiGyro = new SPIGyro();
 
@@ -96,7 +96,7 @@ Robot::Robot()
 
     grabberSolenoid = new Solenoid(3);
 
-    locator = new Locator(leftDriveEncoder, rightDriveEncoder, gyro);
+    locator = new Locator(leftDriveEncoder, rightDriveEncoder, spiGyro);
 
     xyManager = XYManager::getInstance();
     xyManager->injectLocator(locator);
