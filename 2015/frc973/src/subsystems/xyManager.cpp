@@ -86,7 +86,7 @@ void XYManager::setTargetDistance(float distance_)
     currPoint = locator->getPoint();
     origPoint = locator->getPoint();
     linearProfile = new TrapProfile(distance_ - currPoint.distance, 10000, 10000, 10000);
-    turnPID->setTarget(0);
+    turnPID->setTarget(currPoint.angle);
     drivePID->setBounds(-.6,.6);
     done = false;
 }
@@ -138,31 +138,29 @@ void XYManager::update()
     relativeDistance = currPoint.distance - origPoint.distance;
 
     float angleError = turnPID->getTarget() - currPoint.angle;
+    SmartDashboard::PutNumber("currpoint angle: ", currPoint.angle);
+    SmartDashboard::PutNumber("curr angle error: ", angleError);
+    /*
     if (fabs(turnPID->getTarget() - currPoint.angle) > fabs(turnPID->getTarget() + currPoint.angle)) {
         angleError = turnPID->getTarget() + currPoint.angle;
     } else {
         angleError = turnPID->getTarget() - currPoint.angle;
     }
+    */
 
     float linearError = linearProfile->getTarget() - relativeDistance;
     if (linearProfile->getTarget() < relativeDistance ? linearError >= -0.05 : linearError <= 0.5
-            && angleError <= 3 && fabs(locator->getLinearVelocity()) < 2) {
+            && fabs(locator->getLinearVelocity()) < 2 && fabs(angleError) < 3.0) {
         done = true;
     }
 
     float driveInput = 0;
     float angularInput = 0;
 
-    SmartDashboard::PutString("DB/String 4", asString(currPoint.angle));
-    SmartDashboard::PutString("DB/String 5", asString(relativeDistance));
-    SmartDashboard::PutString("DB/String 6", asString(linearProfile->getTarget()));
-    SmartDashboard::PutString("DB/String 7", asString(currPoint.distance));
-    SmartDashboard::PutString("DB/String 8", asString(origPoint.distance));
-
-    printf("%f, %f, %f, %f, %f, %f\n",linearStep[0], linearStep[1], linearStep[2], linearStep[3], relativeDistance, locator->getLinearVelocity());
+    SmartDashboard::PutNumber("Target Angle: ", turnPID->getTarget());
 
     driveInput = drivePID->update(relativeDistance - linearStep[1], loopTimer) + linearFF;
-    angularInput = -(turnPID->update(0, loopTimer));
+    angularInput = -(turnPID->update(currPoint.angle, loopTimer));
 
     if (!isPaused && (linearProfile->getTarget() - relativeDistance) > 0) {
         driveInput += 0.1;
