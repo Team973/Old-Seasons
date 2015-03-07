@@ -159,7 +159,8 @@ void Robot::DisabledPeriodic()
 
 void Robot::AutonomousInit()
 {
-    autoManager->setMode("Test");
+    autoManager->setMode("Turn");
+    spiGyro->ZeroAngle();
     locator->resetAll();
     autoManager->getCurrentMode()->init();
 }
@@ -179,7 +180,6 @@ void Robot::AutonomousPeriodic()
 
 void Robot::TeleopInit()
 {
-    spiGyro->ZeroAngle();
 }
 
 void Robot::TeleopPeriodic()

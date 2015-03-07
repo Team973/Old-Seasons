@@ -39,6 +39,8 @@ void AutoManager::setModes() {
 
     modes["Turn"]->addSequential(new DriveCommand(stateManager, 10, true, 5));
     modes["Turn"]->addSequential(new DriveCommand(stateManager, 5, true, 5));
+    modes["Turn"]->addSequential(new TurnCommand(stateManager, 90, 5));
+    modes["Turn"]->addSequential(new TurnCommand(stateManager, .1, 5));
 
     modes["Grab"]->addSequential(new GrabCommand(stateManager, true));
     modes["Grab"]->addSequential(new WaitCommand(1.5));
@@ -75,6 +77,7 @@ void AutoManager::setModes() {
     modes["ThreeTote"]->addSequential(new IntakeCommand(stateManager, 0.0, true, 0));
     modes["ThreeTote"]->addSequential(new SauropodPathCommand(stateManager, Sauropod::CONTAINER, 3, 2));
 
+    /*
     modes["Turn"]->addSequential(new SauropodPathCommand(stateManager, Sauropod::READY, 0, 2));
     modes["Turn"]->addConcurrent(new DriveCommand(stateManager, twoTote - openOffset, true, 3));
     modes["Turn"]->addSequential(new IntakeCommand(stateManager, -1.0, true, 0));
@@ -86,6 +89,7 @@ void AutoManager::setModes() {
     modes["Turn"]->addConcurrent(new IntakeCommand(stateManager, 1.0, false, .5));
     modes["Turn"]->addSequential(new WaitCommand(0.0));// dummy
     modes["Turn"]->addSequential(new TurnCommand(stateManager, 90, 10));
+    */
 
     trashCan = 0.1;
     openOffset = 4.5;
