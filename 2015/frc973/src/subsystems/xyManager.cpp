@@ -139,7 +139,9 @@ void XYManager::update()
 
     float angleError = turnPID->getTarget() - currPoint.angle;
 
-    if (linearProfile->getTarget() - relativeDistance <= .05 && angleError <= 3 && locator->getLinearVelocity() < 2) {
+    float linearError = linearProfile->getTarget() - relativeDistance;
+    if (linearProfile->getTarget() < 0 ? linearError >= -0.05 : linearError <= 0.5
+            && angleError <= 3 && fabs(locator->getLinearVelocity()) < 2) {
         done = true;
     }
 
