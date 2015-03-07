@@ -90,7 +90,7 @@ Robot::Robot()
 
     gyro = new Encoder(24,25,false,CounterBase::k2X);
 
-    //gyro = new SPIGyro();
+    spiGyro = new SPIGyro();
 
     toteSensor = new DigitalInput(8);
 
@@ -130,10 +130,6 @@ void Robot::runCompressor() {
 
 void Robot::dashboardUpdate()
 {
-    SmartDashboard::PutString("DB/String 0", asString(leftDriveEncoder->Get()));
-    SmartDashboard::PutString("DB/String 1", asString(rightDriveEncoder->Get()));
-    SmartDashboard::PutString("DB/String 2", autoManager->getCurrentName());
-    SmartDashboard::PutString("DB/String 3", asString(sauropod->getElevatorHeight()));
     SmartDashboard::PutNumber("drive distance: ", locator->getMovedDistance());
     SmartDashboard::PutNumber("left drive distance: ", locator->getDistance(leftDriveEncoder));
     SmartDashboard::PutNumber("raw elevator encoder: ", elevatorEncoder->Get());
@@ -144,6 +140,7 @@ void Robot::dashboardUpdate()
     SmartDashboard::PutNumber("anaglog tote sensor: ", elevatorPot->GetVoltage());
     SmartDashboard::PutBoolean("pressure: ", airPressureSwitch->Get());
     SmartDashboard::PutNumber("gyro angle: ", locator->getAngle());
+    SmartDashboard::PutNumber("spigyro angle: ", spiGyro->GetDegrees());
 }
 
 void Robot::RobotInit()
@@ -182,6 +179,7 @@ void Robot::AutonomousPeriodic()
 
 void Robot::TeleopInit()
 {
+    spiGyro->ZeroAngle();
 }
 
 void Robot::TeleopPeriodic()
