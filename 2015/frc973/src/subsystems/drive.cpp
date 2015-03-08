@@ -34,7 +34,7 @@ bool Drive::isLocked() {
 
 void Drive::setDriveMotors(float left, float right)
 {
-    if (locked) {
+    if (locked && left < 0 && -right < 0) {
         left = 0;
         right = 0;
     }
