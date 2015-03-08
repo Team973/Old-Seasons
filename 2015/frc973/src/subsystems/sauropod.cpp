@@ -28,7 +28,7 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, Encoder* elevatorEncoder_, Solenoid
     addPreset("hardStop", 0);
     addPreset("stow", 0);
     addPreset("loadHigh", 20);
-    addPreset("loadLow", 1);
+    addPreset("loadLow", 0.5);
     addPreset("containerLoad", 0);
     addPreset("rest", 6);
 
@@ -53,9 +53,6 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, Encoder* elevatorEncoder_, Solenoid
 
     currPreset = "hardStop";
     currGains = "empty";
-    currPath = NONE;
-
-    clearQueue();
 
     accumulator = new FlagAccumulator();
     accumulator->setThreshold(3);
@@ -76,16 +73,19 @@ void Sauropod::addPreset(std::string name, float height) {
     presets[name] = p;
 }
 
-void Sauropod::createPath(int dest) {
-    if (dest != currPath || sequenceDone()) {
-        currPath = dest;
-        clearQueue();
-        elevatorIncrement = 0.0;
+void Sauropod::setPreset(std::string name) {
+    if (presets.find(name) != presets.end()) {
+        if (name != currPreset) {
+            doneTimer->Reset();
+        }
+        currPreset = name;
+    } else {
+        printf("unknown preset: %s\n", name.c_str());
     }
 }
 
-int Sauropod::getCurrPath() {
-    return currPath;
+std::string Sauropod::getCurrPreset() {
+    return currPreset;
 }
 
 // this has no way of telling the caller whether or not the gain was found
@@ -109,8 +109,8 @@ void Sauropod::setElevatorManual(float speed) {
     manualElevatorSpeed = speed;
 }
 
-bool Sauropod::sequenceDone() {
-    return atTarget() && waypointQueue.empty();
+bool Sauropod::motionDone() {
+    return atTarget();
 }
 
 bool Sauropod::atTarget() {
@@ -127,32 +127,6 @@ bool Sauropod::atTarget() {
     }
 
     return false;
-}
-
-void Sauropod::clearQueue() {
-    std::queue<std::string> dummy;
-    waypointQueue.swap(dummy);
-}
-
-void Sauropod::addToQueue(std::string preset) {
-    waypointQueue.push(preset);
-}
-
-void Sauropod::executeQueue() {
-    if (waypointQueue.empty()) {
-        return;
-    }
-
-    if (atTarget()) {
-        accumulator->reset();
-        doneTimer->Reset();
-        if (presets.find(waypointQueue.front()) != presets.end()) {
-            currPreset = waypointQueue.front();
-        } else {
-            printf("unknown preset: %s\n", waypointQueue.front().c_str());
-        }
-        waypointQueue.pop();
-    }
 }
 
 // in feet
@@ -183,26 +157,6 @@ bool Sauropod::lotsoTotes() {
 }
 
 void Sauropod::update() {
-
-    switch(currPath) {
-        case PICKUP:
-            addToQueue("containerLoad");
-            break;
-        case CONTAINER:
-            addToQueue("containerLoad");
-            break;
-        case READY:
-            addToQueue("loadHigh");
-            break;
-        case RESTING:
-            addToQueue("rest");
-            break;
-        case IDLE:
-            addToQueue("stow");
-            break;
-    }
-
-    executeQueue();
 
     SmartDashboard::PutString("curr preset: ", currPreset);
     Preset currTarget = presets[currPreset];

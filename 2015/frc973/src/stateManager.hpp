@@ -16,13 +16,13 @@ public:
     void setElevatorFromControls(float speed);
     void dropGrabber();
     void raiseGrabber();
+    void setSauropodPreset(std::string name);
     void incrementElevatorHeight(float increment);
     void setIntakeSpeed(float speed);
     void setIntakeLeftRight(float left, float right);
     void setIntakePosition(bool open);
     bool gotTote();
     void setRobotState(int state);
-    void setSauropodPath(int path);
     void setLoadReady();
     void setAutoLoadReady();
     void setLastTote(bool lastTote);
@@ -49,8 +49,8 @@ private:
 
     int robotState;
 
-    int restingPath;
-    int pickupPath;
+    std::string restingPath;
+    std::string pickupPath;
 
     float leftIntakeSpeed;
     float rightIntakeSpeed;
