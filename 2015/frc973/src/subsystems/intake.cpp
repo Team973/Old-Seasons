@@ -9,7 +9,8 @@ Intake::Intake(VictorSP* leftIntakeMotor_, VictorSP* rightIntakeMotor_, Solenoid
     floorSolenoid =  floorSolenoid_;
     toteSensor = toteSensor_;
 
-    intakeMotorSpeed = 0;
+    leftSpeed = 0;
+    rightSpeed = 0;
 
     isFloorSolenoidExtended = false;
 
@@ -19,7 +20,13 @@ Intake::Intake(VictorSP* leftIntakeMotor_, VictorSP* rightIntakeMotor_, Solenoid
 }
 
 void Intake::setIntake(float indicatedSpeed) {
-    intakeMotorSpeed = indicatedSpeed;
+    leftSpeed = indicatedSpeed;
+    rightSpeed = indicatedSpeed;
+}
+
+void Intake::setIntakeLeftRight(float left, float right) {
+    leftSpeed = left;
+    rightSpeed = right;
 }
 
 void Intake::actuateFloorSolenoids(bool actuate) {
@@ -32,8 +39,8 @@ bool Intake::gotTote() {
 }
 
 void Intake::update() {
-    rightIntakeMotor->Set(intakeMotorSpeed);
-    leftIntakeMotor->Set(intakeMotorSpeed);
+    rightIntakeMotor->Set(rightSpeed);
+    leftIntakeMotor->Set(leftSpeed);
 
     if (!hasTote && toteSensor->Get()) {
         toteTimer->Start();

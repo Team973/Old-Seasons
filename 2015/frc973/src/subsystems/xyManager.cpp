@@ -65,9 +65,9 @@ void XYManager::resetEncoders() {
 
 void XYManager::setSpeed(bool fast) {
     if (fast) {
-        speedLimit = 0.7;
+        speedLimit = 0.3;
     } else {
-        speedLimit = 0.5;
+        speedLimit = 0.18;
     }
 }
 
@@ -150,7 +150,7 @@ void XYManager::update()
 
     float linearError = linearProfile->getTarget() - relativeDistance;
     if (linearProfile->getTarget() < relativeDistance ? linearError >= -0.05 : linearError <= 0.5
-            && fabs(locator->getLinearVelocity()) < 2 && fabs(angleError) < 3.0) {
+            && fabs(locator->getLinearVelocity()) < 2 && fabs(angleError) < 5.0) {
         done = true;
     }
 
@@ -166,6 +166,7 @@ void XYManager::update()
         driveInput += 0.1;
     }
 
+    driveInput += 0.05*(linearProfile->getTarget() < 0 ? -1 : 1);
     if (driveInput > speedLimit) {
         driveInput = speedLimit;
     } else if (driveInput < -speedLimit) {

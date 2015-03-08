@@ -9,11 +9,13 @@ public:
     Intake(VictorSP* leftIntakeMotor_, VictorSP* rightIntakeMotor_, Solenoid* floorSolenoid_, DigitalInput *toteSensor_);
     void update();
     void setIntake(float indicatedSpeed);
+    void setIntakeLeftRight(float left, float right);
     void actuateFloorSolenoids(bool actuate);
     bool gotTote();
 
 private:
-    float intakeMotorSpeed;
+    float leftSpeed;
+    float rightSpeed;
     float whipMotorSpeed;
     bool isFloorSolenoidExtended;
     

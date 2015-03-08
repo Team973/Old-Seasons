@@ -159,7 +159,7 @@ void Robot::DisabledPeriodic()
 
 void Robot::AutonomousInit()
 {
-    autoManager->setMode("Turn");
+    autoManager->setMode("ThreeTote");
     spiGyro->ZeroAngle();
     locator->resetAll();
     autoManager->getCurrentMode()->init();
