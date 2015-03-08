@@ -20,7 +20,6 @@ void ControlManager::update() {
     stateManager->setElevatorFromControls(controls->getCodriverAxis(3));
 
     if (controls->getCodriverButton(1)) {
-        stateManager->setAutoLoadReady();
     }
 
     if (controls->getCodriverButton(2)) {
@@ -34,8 +33,8 @@ void ControlManager::update() {
         stateManager->setRestingLoad();
     }
 
-    stateManager->setLastTote(controls->getCodriverButton(5));
-    stateManager->setContainerPickup(controls->getCodriverButton(6));
+    stateManager->setAutoLoad(controls->getCodriverButton(5));
+    stateManager->setContainerLoad(controls->getCodriverButton(6));
 
     stateManager->setIntakePosition(controls->getCodriverButton(8));
 

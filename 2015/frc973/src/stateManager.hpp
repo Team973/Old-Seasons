@@ -24,9 +24,10 @@ public:
     bool gotTote();
     void setRobotState(int state);
     void setLoadReady();
-    void setAutoLoadReady();
     void setLastTote(bool lastTote);
-    void setContainerPickup(bool wantLoad);
+    void setContainerLoad(bool wantLoad);
+    void setAutoLoad(bool wantLoad);
+    void setHumanLoad(bool wantLoad);
     void setRestingLoad();
     bool isSauropodDone();
     bool isDriveLocked();
@@ -38,22 +39,25 @@ public:
     const static int SCORE = 2;
     const static int IDLE = 3;
     const static int CONTAINER_LOAD = 4;
+    const static int HUMAN_LOAD = 5;
 private:
     Drive *drive;
     Sauropod *sauropod;
     Intake *intake;
     ContainerGrabber *grabber;
 
-    // container states
-    const static int CONTAINER_READY = 1;
-    const static int CONTAINER_RAISE = 2;
+    // secondary states
+    const static int RUNNING = 1;
+    const static int END = 2;
+    const static int DEAD = 3;
 
     Timer *lockTimer;
 
     bool vTec_yo;
 
     int robotState;
-    int containerState;
+    int lastRobotState;
+    int internalState;
 
     std::string restingPath;
     std::string pickupPath;
@@ -62,6 +66,8 @@ private:
     float rightIntakeSpeed;
 
     bool wantContainer;
+    bool wantAutoLoad;
+    bool wantHumanLoad;
 
     int numTotes;
     bool hadTote;
