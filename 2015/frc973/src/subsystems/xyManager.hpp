@@ -59,6 +59,8 @@ private:
 
     bool isPaused;
 
+    bool linearMovement;
+    bool angularMovement;
     bool done;
 };
 

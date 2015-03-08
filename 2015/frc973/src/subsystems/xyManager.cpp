@@ -56,6 +56,9 @@ XYManager::XYManager()
 
     speedLimit = 0.6;
 
+    angularMovement = false;
+    linearMovement = false;
+
     printf("Profile Pos, Profile Vel, Profile Accel, Actual Pos, Actual Vel\n");
 }
 
@@ -89,6 +92,8 @@ void XYManager::setTargetDistance(float distance_)
     turnPID->setTarget(currPoint.angle);
     drivePID->setBounds(-.6,.6);
     done = false;
+    linearMovement = true;
+    angularMovement = false;
 }
 
 void XYManager::setTargetAngle(float angle_)
@@ -97,6 +102,8 @@ void XYManager::setTargetAngle(float angle_)
     turnPID->setTarget(angle_);
     drivePID->setBounds(0.0,0.0);
     done = false;
+    linearMovement = false;
+    angularMovement = true;
 }
 
 void XYManager::resetProfile() {
@@ -149,9 +156,15 @@ void XYManager::update()
     */
 
     float linearError = linearProfile->getTarget() - relativeDistance;
-    if (linearProfile->getTarget() < relativeDistance ? linearError >= -0.05 : linearError <= 0.5
-            && fabs(locator->getLinearVelocity()) < 2 && fabs(angleError) < 5.0) {
-        done = true;
+    if (linearMovement) {
+        if (linearProfile->getTarget() < relativeDistance ? linearError >= -0.05 : linearError <= 0.5
+                && fabs(locator->getLinearVelocity()) < 2 && fabs(angleError) <= 5) {
+            done = true;
+        }
+    } else if (angularMovement) {
+        if (fabs(angleError) <= 3) {
+            done = true;
+        }
     }
 
     float driveInput = 0;
