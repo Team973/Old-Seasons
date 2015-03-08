@@ -88,7 +88,7 @@ void StateManager::setLoadReady() {
 void StateManager::setAutoLoadReady() {
     sauropod->setPreset("loadHigh");
     restingPath = "loadHigh";
-    robotState = LOAD;
+    robotState = AUTO_LOAD;
 }
 
 void StateManager::setLastTote(bool lastTote) {
@@ -134,7 +134,7 @@ void StateManager::update() {
     intake->setIntakeLeftRight(leftIntakeSpeed, rightIntakeSpeed);
 
     switch (robotState) {
-        case LOAD:
+        case AUTO_LOAD:
             // auto stack
             if (intake->gotTote() && !sauropod->inCradle() && !hadTote && sauropod->motionDone()) {
                 hadTote = true;
@@ -160,6 +160,8 @@ void StateManager::update() {
                 intake->setIntake(0);
             }
 
+            break;
+        case CONTAINER_LOAD:
             break;
         case SCORE:
             drive->unlock();
