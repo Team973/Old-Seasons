@@ -18,6 +18,7 @@ public:
     void raiseGrabber();
     void incrementElevatorHeight(float increment);
     void setIntakeSpeed(float speed);
+    void setIntakeLeftRight(float left, float right);
     void setIntakePosition(bool open);
     bool gotTote();
     void setRobotState(int state);
@@ -51,7 +52,8 @@ private:
     int restingPath;
     int pickupPath;
 
-    float intakeSpeed;
+    float leftIntakeSpeed;
+    float rightIntakeSpeed;
 
     int numTotes;
     bool hadTote;

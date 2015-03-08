@@ -5,7 +5,7 @@
 
 namespace frc973 {
 
-DriveCommand::DriveCommand(StateManager *manager_, float target_, bool fast_, float timeout_)
+DriveCommand::DriveCommand(StateManager *manager_, float target_, bool fast_)
 {
     xyManager = XYManager::getInstance();
     xyManager->setSpeed(fast_);
@@ -21,11 +21,9 @@ DriveCommand::DriveCommand(StateManager *manager_, float target_, bool fast_, fl
 
     accumulator = new FlagAccumulator();
     accumulator->setThreshold(3);
-
-    setTimeout(timeout_);
 }
 
-DriveCommand::DriveCommand(StateManager *manager_, AutoCommand *cmdSeq_, float distance_, float target_, bool fast_, float timeout_) {
+DriveCommand::DriveCommand(StateManager *manager_, AutoCommand *cmdSeq_, float distance_, float target_, bool fast_) {
     xyManager = XYManager::getInstance();
 
     manager = manager_;
@@ -38,14 +36,10 @@ DriveCommand::DriveCommand(StateManager *manager_, AutoCommand *cmdSeq_, float d
 
     accumulator = new FlagAccumulator();
     accumulator->setThreshold(3);
-
-    setTimeout(timeout_);
 }
 
 void DriveCommand::init()
 {
-    timer->Start();
-    timer->Reset();
     xyManager->setTargetDistance(target);
     xyManager->resetProfile();
     xyManager->startProfile();
@@ -60,12 +54,11 @@ bool DriveCommand::taskPeriodic()
     if (!manager->isDriveLocked()) {
         timer->Start();
         xyManager->startProfile();
-        if ((accumulator->update(xyManager->isMovementDone()) || timer->Get() >= timeout))
+        if ((accumulator->update(xyManager->isMovementDone())))
         {
             return true;
         }
     } else {
-        timer->Stop();
         xyManager->pauseProfile();
     }
 

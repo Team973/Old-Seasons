@@ -16,7 +16,8 @@ StateManager::StateManager(Drive *drive_, Sauropod *sauropod_, Intake *intake_, 
 
     robotState = IDLE;
 
-    intakeSpeed = 0;
+    leftIntakeSpeed = 0;
+    rightIntakeSpeed = 0;
 
     hadTote = false;
 
@@ -57,7 +58,13 @@ void StateManager::raiseGrabber() {
 }
 
 void StateManager::setIntakeSpeed(float speed) {
-    intakeSpeed = speed;
+    leftIntakeSpeed = speed;
+    rightIntakeSpeed = speed;
+}
+
+void StateManager::setIntakeLeftRight(float left, float right) {
+    leftIntakeSpeed = left;
+    rightIntakeSpeed = right;
 }
 
 void StateManager::setIntakePosition(bool open) {
@@ -124,7 +131,7 @@ void StateManager::unlockDrive() {
 
 void StateManager::update() {
 
-    intake->setIntake(intakeSpeed);
+    intake->setIntakeLeftRight(leftIntakeSpeed, rightIntakeSpeed);
 
     switch (robotState) {
         case LOAD:
@@ -149,7 +156,7 @@ void StateManager::update() {
                 drive->unlock();
             }
 
-            if (intake->gotTote() && intakeSpeed < 0) {
+            if (intake->gotTote() && leftIntakeSpeed < 0 && rightIntakeSpeed < 0) {
                 intake->setIntake(0);
             }
 
