@@ -15,11 +15,14 @@ StateManager::StateManager(Drive *drive_, Sauropod *sauropod_, Intake *intake_, 
     grabber = grabber_;
 
     robotState = IDLE;
+    containerState = CONTAINER_READY;
 
     leftIntakeSpeed = 0;
     rightIntakeSpeed = 0;
 
     hadTote = false;
+
+    wantContainer = false;
 
     lockTimer = new Timer();
 
@@ -99,9 +102,14 @@ void StateManager::setLastTote(bool lastTote) {
     }
 }
 
-void StateManager::setContainerPickup() {
-    sauropod->setPreset("containerLoad");
-    robotState = IDLE;
+void StateManager::setContainerPickup(bool wantLoad) {
+    if (wantLoad) {
+        robotState = CONTAINER_LOAD;
+        containerState = CONTAINER_READY;
+    } else if (wantContainer && !wantLoad) {
+        containerState = CONTAINER_RAISE;
+    }
+    wantContainer = wantLoad;
 }
 
 void StateManager::setRestingLoad() {
@@ -162,6 +170,12 @@ void StateManager::update() {
 
             break;
         case CONTAINER_LOAD:
+            switch (containerState) {
+                case CONTAINER_READY:
+                    break;
+                case CONTAINER_RAISE:
+                    break;
+            }
             break;
         case SCORE:
             drive->unlock();

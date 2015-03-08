@@ -26,7 +26,7 @@ public:
     void setLoadReady();
     void setAutoLoadReady();
     void setLastTote(bool lastTote);
-    void setContainerPickup();
+    void setContainerPickup(bool wantLoad);
     void setRestingLoad();
     bool isSauropodDone();
     bool isDriveLocked();
@@ -44,17 +44,24 @@ private:
     Intake *intake;
     ContainerGrabber *grabber;
 
+    // container states
+    const static int CONTAINER_READY = 1;
+    const static int CONTAINER_RAISE = 2;
+
     Timer *lockTimer;
 
     bool vTec_yo;
 
     int robotState;
+    int containerState;
 
     std::string restingPath;
     std::string pickupPath;
 
     float leftIntakeSpeed;
     float rightIntakeSpeed;
+
+    bool wantContainer;
 
     int numTotes;
     bool hadTote;

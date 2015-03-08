@@ -24,7 +24,6 @@ void ControlManager::update() {
     }
 
     if (controls->getCodriverButton(2)) {
-        stateManager->setContainerPickup();
     }
 
     if (controls->getCodriverButton(3)) {
@@ -36,6 +35,7 @@ void ControlManager::update() {
     }
 
     stateManager->setLastTote(controls->getCodriverButton(5));
+    stateManager->setContainerPickup(controls->getCodriverButton(6));
 
     stateManager->setIntakePosition(controls->getCodriverButton(8));
 
