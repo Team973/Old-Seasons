@@ -1,27 +1,26 @@
 #include "WPILib.h"
-#include "sauropodPathCommand.hpp"
+#include "sauropodCommand.hpp"
 #include "../../stateManager.hpp"
-#include "../../subsystems/sauropod.hpp"
 
 namespace frc973 {
 
-SauropodPathCommand::SauropodPathCommand(StateManager *manager_, int path_, float toteTimeout_, float timeout_) {
+SauropodCommand::SauropodCommand(StateManager *manager_, std::string preset_, float toteTimeout_, float timeout_) {
     manager = manager_;
-    path = path_;
+    preset = preset_;
     toteTimeout = toteTimeout_;
     setTimeout(timeout_);
 
     moving = false;
 }
 
-void SauropodPathCommand::init() {
+void SauropodCommand::init() {
     timer->Start();
     timer->Reset();
 }
 
-bool SauropodPathCommand::taskPeriodic() {
+bool SauropodCommand::taskPeriodic() {
     if (manager->gotTote() || timer->Get() > toteTimeout) {
-        manager->setSauropodPath(path);
+        manager->setSauropodPreset(preset);
         moving = true;
     }
 

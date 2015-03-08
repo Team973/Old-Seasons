@@ -4,7 +4,7 @@
 #include "auto/commands/waitCommand.hpp"
 #include "auto/commands/driveCommand.hpp"
 #include "auto/commands/turnCommand.hpp"
-#include "auto/commands/sauropodPathCommand.hpp"
+#include "auto/commands/sauropodCommand.hpp"
 #include "auto/commands/intakeCommand.hpp"
 #include "auto/commands/grabCommand.hpp"
 #include "subsystems/drive.hpp"
@@ -26,7 +26,7 @@ void AutoManager::setModes() {
     modes["Test"] = new AutoSequencer();
 
     modes["Pickup"] = new AutoSequencer();
-    modes["Pickup"]->addSequential(new SauropodPathCommand(stateManager, Sauropod::READY, 0, 15));
+    modes["Pickup"]->addSequential(new SauropodCommand(stateManager, "loadHigh", 0, 15));
 
     float trashCan = 1.0;
     float openOffset = 2.5;
@@ -47,27 +47,27 @@ void AutoManager::setModes() {
     modes["Grab"]->addSequential(new DriveCommand(stateManager, 6, true));
     modes["Grab"]->addSequential(new GrabCommand(stateManager, false));
 
-    modes["ThreeTote"]->addConcurrent(new SauropodPathCommand(stateManager, Sauropod::READY, 0, 0));
+    modes["ThreeTote"]->addConcurrent(new SauropodCommand(stateManager, "loadHigh", 0, 0));
     modes["ThreeTote"]->addConcurrent(new IntakeCommand(stateManager, 1.0, false, 0));
     modes["ThreeTote"]->addConcurrent(new DriveCommand(stateManager, twoTote - openOffset, false));
     modes["ThreeTote"]->addSequential(new IntakeCommand(stateManager, -1.0, true, 0));
     modes["ThreeTote"]->addSequential(new DriveCommand(stateManager, twoTote - closedOffset, true));
     modes["ThreeTote"]->addSequential(new IntakeCommand(stateManager, -1.0, false, 0));
-    modes["ThreeTote"]->addSequential(new SauropodPathCommand(stateManager, Sauropod::PICKUP, 0.5, 2));
-    modes["ThreeTote"]->addConcurrent(new SauropodPathCommand(stateManager, Sauropod::READY, 0, 0));
+    modes["ThreeTote"]->addSequential(new SauropodCommand(stateManager, "loadLow", 0.5, 2));
+    modes["ThreeTote"]->addConcurrent(new SauropodCommand(stateManager, "loadLow", 0, 0));
     modes["ThreeTote"]->addConcurrent(new IntakeCommand(stateManager, 1.0, false, 0));
     modes["ThreeTote"]->addConcurrent(new DriveCommand(stateManager, threeTote - openOffset, false));
     modes["ThreeTote"]->addSequential(new IntakeCommand(stateManager, -1.0, true, 0));
     modes["ThreeTote"]->addSequential(new DriveCommand(stateManager, threeTote - closedOffset, true));
     modes["ThreeTote"]->addSequential(new IntakeCommand(stateManager, -1.0, false, 0));
 
-    modes["Test"]->addConcurrent(new SauropodPathCommand(stateManager, Sauropod::CONTAINER, 1, 2));
-    modes["Test"]->addSequential(new SauropodPathCommand(stateManager, Sauropod::RESTING, 0, 2));
+    modes["Test"]->addConcurrent(new SauropodCommand(stateManager, "containerLoad", 1, 2));
+    modes["Test"]->addSequential(new SauropodCommand(stateManager, "rest", 0, 2));
     modes["Test"]->addSequential(new IntakeCommand(stateManager, 0.0, false, 0));
     modes["Test"]->addSequential(new TurnCommand(stateManager, 90, 3));
     modes["Test"]->addSequential(new DriveCommand(stateManager, -5, true));
     modes["Test"]->addSequential(new IntakeCommand(stateManager, 0.0, true, 0));
-    modes["Test"]->addSequential(new SauropodPathCommand(stateManager, Sauropod::CONTAINER, 3, 2));
+    modes["Test"]->addSequential(new SauropodCommand(stateManager, "containerLoad", 3, 2));
 
     it = modes.begin();
 }
