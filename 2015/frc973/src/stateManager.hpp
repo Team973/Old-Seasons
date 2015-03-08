@@ -34,9 +34,10 @@ public:
     void unlockDrive();
     void update();
 
-    const static int LOAD = 1;
+    const static int AUTO_LOAD = 1;
     const static int SCORE = 2;
     const static int IDLE = 3;
+    const static int CONTAINER_LOAD = 4;
 private:
     Drive *drive;
     Sauropod *sauropod;
