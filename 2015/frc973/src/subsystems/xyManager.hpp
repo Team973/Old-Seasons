@@ -53,6 +53,8 @@ private:
     float kAngVelFF;
     float kAngAccelFF;
 
+    float angleTarget;
+
     float relativeDistance;
 
     float speedLimit;
