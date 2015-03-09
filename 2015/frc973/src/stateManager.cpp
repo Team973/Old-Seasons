@@ -85,10 +85,13 @@ void StateManager::setRobotState(int state) {
     robotState = state;
 }
 
-void StateManager::setLoadReady() {
+void StateManager::setHigh() {
     sauropod->setPreset("loadHigh");
-    restingPath = "loadHigh";
-    robotState = IDLE;
+}
+
+void StateManager::setScore() {
+    sauropod->setPreset("hardStop");
+    robotState = SCORE;
 }
 
 void StateManager::setAutoLoad(bool wantLoad) {
@@ -117,11 +120,6 @@ void StateManager::setHumanLoad(bool wantLoad) {
         internalState = END;
     }
     wantHumanLoad = wantLoad;
-}
-
-void StateManager::setRestingLoad() {
-    sauropod->setPreset("rest");
-    robotState = IDLE;
 }
 
 bool StateManager::isSauropodDone() {
