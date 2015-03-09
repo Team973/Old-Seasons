@@ -141,6 +141,7 @@ void Robot::dashboardUpdate()
     SmartDashboard::PutBoolean("pressure: ", airPressureSwitch->Get());
     SmartDashboard::PutNumber("gyro angle: ", locator->getAngle());
     SmartDashboard::PutNumber("spigyro angle: ", spiGyro->GetDegrees());
+    SmartDashboard::PutNumber("Elevator Height:", sauropod->getElevatorHeight());
 }
 
 void Robot::RobotInit()

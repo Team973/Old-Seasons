@@ -23,8 +23,8 @@ public:
     void setIntakePosition(bool open);
     bool gotTote();
     void setRobotState(int state);
-    void setLoadReady();
-    void setLastTote(bool lastTote);
+    void setScore();
+    void setHigh();
     void setContainerLoad(bool wantLoad);
     void setAutoLoad(bool wantLoad);
     void setHumanLoad(bool wantLoad);

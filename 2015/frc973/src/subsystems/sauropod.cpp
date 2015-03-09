@@ -27,6 +27,8 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, Encoder* elevatorEncoder_, Solenoid
 
     addPreset("hardStop", 0);
     addPreset("stow", 0);
+    addPreset("humanLoadHigh", 37);
+    addPreset("humanLoadLow", 12);
     addPreset("loadHigh", 20);
     addPreset("loadLow", 0.5);
     addPreset("containerLoad", 0);
@@ -200,7 +202,6 @@ void Sauropod::update() {
 
     SmartDashboard::PutNumber("Elevator Velocity: ", getElevatorVelocity());
 
-    SmartDashboard::PutNumber("Elevator Height:", getElevatorHeight());
     SmartDashboard::PutNumber("Elevator Current:", pdp->GetCurrent(3));
     SmartDashboard::PutNumber("Elevator Output:", limit(elevatorInput));
     SmartDashboard::PutNumber("Total Voltage:", pdp->GetVoltage());

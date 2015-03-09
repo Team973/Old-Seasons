@@ -23,14 +23,14 @@ void ControlManager::update() {
     }
 
     if (controls->getCodriverButton(2)) {
+        stateManager->setScore();
     }
 
     if (controls->getCodriverButton(3)) {
-        stateManager->setLoadReady();
+        stateManager->setHigh();
     }
 
     if (controls->getCodriverButton(4)) {
-        stateManager->setRestingLoad();
     }
 
     stateManager->setAutoLoad(controls->getCodriverButton(5));
