@@ -74,7 +74,8 @@ Robot::Robot()
 
     containerGrabberMotor = new VictorSP(4);
 
-    floorSolenoid = new Solenoid(0);
+    intakeSolenoidA = new Solenoid(0);
+    intakeSolenoidB = new Solenoid(5);
 
     clawClampSolenoid = new Solenoid(2);
     clawBrakeSolenoid = new Solenoid(4);
@@ -103,7 +104,7 @@ Robot::Robot()
 
     drive = new Drive(leftDriveMotors, rightDriveMotors);
     sauropod = new Sauropod(elevatorMotor, elevatorEncoder, clawClampSolenoid, clawBrakeSolenoid);
-    intake = new Intake(leftIntakeMotor, rightIntakeMotor, floorSolenoid, toteSensor);
+    intake = new Intake(leftIntakeMotor, rightIntakeMotor, intakeSolenoidA, intakeSolenoidB, toteSensor);
     grabber = new ContainerGrabber(grabberSolenoid);
 
     controls = new ControlMap(driver, coDriver);

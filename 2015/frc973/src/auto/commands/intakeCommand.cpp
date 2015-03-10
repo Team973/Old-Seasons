@@ -4,19 +4,19 @@
 
 namespace frc973 {
 
-IntakeCommand::IntakeCommand(StateManager *manager_, float speed_, bool open_, float timeout_) {
+IntakeCommand::IntakeCommand(StateManager *manager_, float speed_, std::string position_, float timeout_) {
     manager = manager_;
     leftSpeed = speed_;
     rightSpeed = speed_;
-    open = open_;
+    position = position_;
     setTimeout(timeout_);
 }
 
-IntakeCommand::IntakeCommand(StateManager *manager_, float leftSpeed_, float rightSpeed_, bool open_, float timeout_) {
+IntakeCommand::IntakeCommand(StateManager *manager_, float leftSpeed_, float rightSpeed_, std::string position_, float timeout_) {
     manager = manager_;
     leftSpeed = leftSpeed_;
     rightSpeed = rightSpeed_;
-    open = open_;
+    position = position_;
     setTimeout(timeout_);
 }
 
@@ -29,7 +29,7 @@ bool IntakeCommand::taskPeriodic() {
 
     if (timer->Get() >= timeout) {
         manager->setIntakeLeftRight(leftSpeed, rightSpeed);
-        manager->setIntakePosition(open);
+        manager->setIntakePosition(position);
         return true;
     }
 
