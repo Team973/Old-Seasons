@@ -66,6 +66,14 @@ void StateManager::raiseGrabber() {
 }
 
 void StateManager::setIntakeSpeed(float speed) {
+    if (robotState == HUMAN_LOAD) {
+        speed *= 0.7;
+        if (speed > 0.7) {
+            speed = 0.7;
+        } else if (speed < -0.7) {
+            speed = 0.7;
+        }
+    }
     leftIntakeSpeed = speed;
     rightIntakeSpeed = speed;
 }
@@ -155,8 +163,6 @@ void StateManager::unlockDrive() {
 }
 
 void StateManager::update() {
-
-    intake->setIntakeLeftRight(leftIntakeSpeed, rightIntakeSpeed);
 
     if (robotState != lastRobotState) {
         internalState = RUNNING;
@@ -252,6 +258,8 @@ void StateManager::update() {
             drive->unlock();
             break;
     }
+
+    intake->setIntakeLeftRight(leftIntakeSpeed, rightIntakeSpeed);
 
     SmartDashboard::PutNumber("Current Internal State: ", internalState);
     SmartDashboard::PutBoolean("Last Tote: ", lastTote);
