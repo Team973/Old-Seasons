@@ -20,7 +20,7 @@ public:
     void incrementElevatorHeight(float increment);
     void setIntakeSpeed(float speed);
     void setIntakeLeftRight(float left, float right);
-    void setIntakePosition(bool open);
+    void setIntakePosition(std::string position);
     bool gotTote();
     void setRobotState(int state);
     void setScore();

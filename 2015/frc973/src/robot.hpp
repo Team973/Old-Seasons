@@ -43,7 +43,8 @@ private:
     VictorSP *rightIntakeMotor;
     VictorSP *containerGrabberMotor;
 
-    Solenoid *floorSolenoid;
+    Solenoid *intakeSolenoidA;
+    Solenoid *intakeSolenoidB;
     Solenoid *clawClampSolenoid;
     Solenoid *clawBrakeSolenoid;
     Solenoid *grabberSolenoid;

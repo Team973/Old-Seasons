@@ -9,15 +9,15 @@ class StateManager;
 
 class IntakeCommand : public AutoCommand {
 public:
-    IntakeCommand(StateManager *manager_, float speed_, bool open_, float timeout_);
-    IntakeCommand(StateManager *manager_, float leftSpeed_, float rightSpeed_, bool open_, float timeout_);
+    IntakeCommand(StateManager *manager_, float speed_, std::string position_, float timeout_);
+    IntakeCommand(StateManager *manager_, float leftSpeed_, float rightSpeed_, std::string position_, float timeout_);
     void init();
     bool taskPeriodic();
 private:
     StateManager *manager;
     float leftSpeed;
     float rightSpeed;
-    bool open;
+    std::string position;
 };
 
 }

@@ -36,7 +36,11 @@ void ControlManager::update() {
     stateManager->setAutoLoad(controls->getCodriverButton(5));
     stateManager->setContainerLoad(controls->getCodriverButton(6));
 
-    stateManager->setIntakePosition(controls->getCodriverButton(8));
+    if (controls->getCodriverButton(8)) {
+        stateManager->setIntakePosition("open");
+    } else {
+        stateManager->setIntakePosition("float");
+    }
 
     if (controls->getCodriverDpadUp()) {
         stateManager->incrementElevatorHeight(5);

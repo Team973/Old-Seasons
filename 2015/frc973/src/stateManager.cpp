@@ -73,8 +73,14 @@ void StateManager::setIntakeLeftRight(float left, float right) {
     rightIntakeSpeed = right;
 }
 
-void StateManager::setIntakePosition(bool open) {
-    intake->actuateFloorSolenoids(open);
+void StateManager::setIntakePosition(std::string position) {
+    if (position == "open") {
+        intake->actuateIntake(true, false);
+    } else if (position == "float") {
+        intake->actuateIntake(false, false);
+    } else if (position == "closed") {
+        intake->actuateIntake(true, true);
+    }
 }
 
 bool StateManager::gotTote() {

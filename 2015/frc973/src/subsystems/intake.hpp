@@ -6,23 +6,23 @@ namespace frc973 {
 class Intake {
 
 public:
-    Intake(VictorSP* leftIntakeMotor_, VictorSP* rightIntakeMotor_, Solenoid* floorSolenoid_, DigitalInput *toteSensor_);
+    Intake(VictorSP* leftIntakeMotor_, VictorSP* rightIntakeMotor_, Solenoid* solenoidA_, Solenoid* solenoidB_, DigitalInput *toteSensor_);
     void update();
     void setIntake(float indicatedSpeed);
     void setIntakeLeftRight(float left, float right);
-    void actuateFloorSolenoids(bool actuate);
+    void actuateIntake(bool a, bool b);
     bool gotTote();
 
 private:
     float leftSpeed;
     float rightSpeed;
     float whipMotorSpeed;
-    bool isFloorSolenoidExtended;
     
     VictorSP *rightIntakeMotor;
     VictorSP *leftIntakeMotor;
 
-    Solenoid *floorSolenoid;
+    Solenoid *solenoidA;
+    Solenoid *solenoidB;
 
     DigitalInput *toteSensor;
 
