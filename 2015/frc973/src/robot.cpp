@@ -136,7 +136,7 @@ void Robot::dashboardUpdate()
     SmartDashboard::PutNumber("raw elevator encoder: ", elevatorEncoder->Get());
     SmartDashboard::PutNumber("raw left encoder: ", leftDriveEncoder->Get());
     SmartDashboard::PutNumber("raw right encoder: ", rightDriveEncoder->Get());
-    SmartDashboard::PutBoolean("is sauropod done: ", sauropod->atTarget());
+    SmartDashboard::PutBoolean("is sauropod done: ", sauropod->motionDone());
     SmartDashboard::PutBoolean("tote sensor: ", toteSensor->Get());
     SmartDashboard::PutNumber("anaglog tote sensor: ", elevatorPot->GetVoltage());
     SmartDashboard::PutBoolean("pressure: ", airPressureSwitch->Get());
