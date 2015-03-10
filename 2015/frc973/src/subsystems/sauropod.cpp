@@ -90,6 +90,10 @@ std::string Sauropod::getCurrPreset() {
     return currPreset;
 }
 
+bool Sauropod::isCurrPreset(std::string preset) {
+    return currPreset == preset;
+}
+
 // this has no way of telling the caller whether or not the gain was found
 void Sauropod::setGain(std::string name) {
     if (gainSchedule.find(name) != gainSchedule.end()) {

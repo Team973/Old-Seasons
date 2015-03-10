@@ -30,7 +30,7 @@ StateManager::StateManager(Drive *drive_, Sauropod *sauropod_, Intake *intake_, 
     lockTimer = new Timer();
 
     restingPath = "loadHigh";
-    pickupPath = "containerLoad";
+    pickupPath = "humanLoadHigh";
 
     vTec_yo = false;
 }
@@ -91,21 +91,20 @@ void StateManager::setRobotState(int state) {
     robotState = state;
 }
 
-void StateManager::setHigh() {
-    sauropod->setPreset("loadHigh");
-}
-
 void StateManager::setScore() {
     sauropod->setPreset("hardStop");
     robotState = SCORE;
 }
 
+void StateManager::setResting() {
+    sauropod->setPreset("rest");
+}
+
 void StateManager::setAutoLoad(bool wantLoad) {
     if (wantLoad) {
         robotState = AUTO_LOAD;
+    } else if (wantAutoLoad && wantLoad && !lastTote) {
         restingPath = "loadHigh";
-    } else if (wantAutoLoad && !wantLoad) {
-        internalState = END;
     }
     wantAutoLoad = wantLoad;
 }
@@ -113,8 +112,6 @@ void StateManager::setAutoLoad(bool wantLoad) {
 void StateManager::setContainerLoad(bool wantLoad) {
     if (wantLoad) {
         robotState = CONTAINER_LOAD;
-    } else if (wantContainer && !wantLoad) {
-        internalState = END;
     }
     wantContainer = wantLoad;
 }
@@ -122,10 +119,15 @@ void StateManager::setContainerLoad(bool wantLoad) {
 void StateManager::setHumanLoad(bool wantLoad) {
     if (wantLoad) {
         robotState = HUMAN_LOAD;
-    } else if (wantHumanLoad && !wantLoad) {
-        internalState = END;
+    } else if (!wantHumanLoad && wantLoad && !lastTote) {
+        restingPath = "humanLoadLow";
+        pickupPath = "humandLoadHigh";
     }
     wantHumanLoad = wantLoad;
+}
+
+void StateManager::setLastTote() {
+    lastTote = true;
 }
 
 bool StateManager::isSauropodDone() {
@@ -155,6 +157,10 @@ void StateManager::update() {
     if (robotState != lastRobotState) {
         internalState = RUNNING;
     }
+    
+    if (lastTote) {
+        internalState = END;
+    }
 
     switch (robotState) {
         case AUTO_LOAD:
@@ -170,13 +176,14 @@ void StateManager::update() {
                     } else if (sauropod->motionDone() && hadTote && sauropod->inCradle()) {
                         sauropod->setPreset(restingPath);
                         hadTote = false;
-                        if (restingPath == "rest") {
-                            internalState = DEAD;
-                        }
                     } else if (!intake->gotTote() && !hadTote && !sauropod->inCradle()) {
                         lockTimer->Stop();
                         lockTimer->Reset();
                         drive->unlock();
+                    }
+
+                    if (lastTote && sauropod->isCurrPreset(restingPath)) {
+                        internalState = DEAD;
                     }
                     break;
                 case END:
@@ -184,6 +191,7 @@ void StateManager::update() {
                     internalState = RUNNING;
                     break;
                 case DEAD:
+                    lastTote = false;
                     break;
             }
 
@@ -195,18 +203,40 @@ void StateManager::update() {
         case CONTAINER_LOAD:
             switch (internalState) {
                 case RUNNING:
+                    if (lastTote) {
+                        internalState = DEAD;
+                    }
                     break;
                 case END:
+                    internalState = RUNNING;
+                    break;
+                case DEAD:
                     break;
             }
             break;
         case HUMAN_LOAD:
             switch (internalState) {
                 case RUNNING:
-                    restingPath = "humanLoadHigh";
+                    if (wantHumanLoad && !sauropod->isCurrPreset("humanLoadHigh") && !sauropod->isCurrPreset("humanLoadLow")) {
+                        sauropod->setPreset("humanLoadHigh");
+                    }
+
+                    if (wantHumanLoad && sauropod->motionDone() && !sauropod->isCurrPreset("humanLoadLow")) {
+                        sauropod->setPreset(restingPath);
+                    } else if (sauropod->motionDone() && sauropod->isCurrPreset("humandLoadLow")) {
+                        sauropod->setPreset(pickupPath);
+                    }
+
+                    if (lastTote && sauropod->isCurrPreset(pickupPath)) {
+                        internalState = DEAD;
+                    }
                     break;
                 case END:
                     restingPath = "rest";
+                    pickupPath = "loadLow";
+                    break;
+                case DEAD:
+                    lastTote = false;
                     break;
             }
             break;
