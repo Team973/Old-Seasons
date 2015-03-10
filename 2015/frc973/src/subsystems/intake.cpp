@@ -41,12 +41,13 @@ void Intake::update() {
     rightIntakeMotor->Set(rightSpeed);
     leftIntakeMotor->Set(leftSpeed);
 
-    if (!hasTote && toteSensor->Get()) {
+    // flip the toteSensor gets
+    if (!hasTote && !toteSensor->Get()) {
         toteTimer->Start();
         if (toteTimer->Get() >= 0.25) {
             hasTote = true;
         }
-    } else if (hasTote && !toteSensor->Get()) {
+    } else if (hasTote && toteSensor->Get()) {
         hasTote = false;
     } else {
         toteTimer->Stop();

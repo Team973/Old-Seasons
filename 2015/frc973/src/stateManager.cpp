@@ -27,10 +27,12 @@ StateManager::StateManager(Drive *drive_, Sauropod *sauropod_, Intake *intake_, 
     wantAutoLoad = false;
     wantHumanLoad = false;
 
+    lastTote = false;
+
     lockTimer = new Timer();
 
     restingPath = "loadHigh";
-    pickupPath = "humanLoadHigh";
+    pickupPath = "loadLow";
 
     vTec_yo = false;
 }
@@ -119,15 +121,17 @@ void StateManager::setContainerLoad(bool wantLoad) {
 void StateManager::setHumanLoad(bool wantLoad) {
     if (wantLoad) {
         robotState = HUMAN_LOAD;
-    } else if (!wantHumanLoad && wantLoad && !lastTote) {
-        restingPath = "humanLoadLow";
-        pickupPath = "humandLoadHigh";
+        if (!lastTote) {
+            restingPath = "humanLoadLow";
+            pickupPath = "humanLoadHigh";
+        }
     }
     wantHumanLoad = wantLoad;
 }
 
 void StateManager::setLastTote() {
     lastTote = true;
+    internalState = END;
 }
 
 bool StateManager::isSauropodDone() {
@@ -158,14 +162,14 @@ void StateManager::update() {
         internalState = RUNNING;
     }
     
-    if (lastTote) {
-        internalState = END;
-    }
-
     switch (robotState) {
         case AUTO_LOAD:
             switch (internalState) {
                 case RUNNING:
+                    if (wantAutoLoad && !sauropod->isCurrPreset("loadHigh")) {
+                            sauropod->setPreset("loadHigh");
+                    }
+
                     if (intake->gotTote() && !sauropod->inCradle() && !hadTote && sauropod->motionDone()) {
                         hadTote = true;
                         drive->lock();
@@ -176,15 +180,15 @@ void StateManager::update() {
                     } else if (sauropod->motionDone() && hadTote && sauropod->inCradle()) {
                         sauropod->setPreset(restingPath);
                         hadTote = false;
+                        if (lastTote) {
+                            internalState = DEAD;
+                        }
                     } else if (!intake->gotTote() && !hadTote && !sauropod->inCradle()) {
                         lockTimer->Stop();
                         lockTimer->Reset();
                         drive->unlock();
                     }
 
-                    if (lastTote && sauropod->isCurrPreset(restingPath)) {
-                        internalState = DEAD;
-                    }
                     break;
                 case END:
                     restingPath = "rest";
@@ -217,23 +221,24 @@ void StateManager::update() {
         case HUMAN_LOAD:
             switch (internalState) {
                 case RUNNING:
-                    if (wantHumanLoad && !sauropod->isCurrPreset("humanLoadHigh") && !sauropod->isCurrPreset("humanLoadLow")) {
-                        sauropod->setPreset("humanLoadHigh");
-                    }
-
-                    if (wantHumanLoad && sauropod->motionDone() && !sauropod->isCurrPreset("humanLoadLow")) {
-                        sauropod->setPreset(restingPath);
-                    } else if (sauropod->motionDone() && sauropod->isCurrPreset("humandLoadLow")) {
+                    if (wantHumanLoad && !sauropod->isCurrPreset(pickupPath) && !sauropod->isCurrPreset(restingPath) && !lastTote) {
                         sauropod->setPreset(pickupPath);
                     }
 
-                    if (lastTote && sauropod->isCurrPreset(pickupPath)) {
-                        internalState = DEAD;
+                    if (wantHumanLoad && sauropod->motionDone() && !sauropod->isCurrPreset(restingPath)) {
+                        sauropod->setPreset(restingPath);
+                    } else if (sauropod->motionDone() && sauropod->isCurrPreset(restingPath)) {
+                        sauropod->setPreset(pickupPath);
+                        if (lastTote) {
+                            internalState = DEAD;
+                        }
                     }
+
                     break;
                 case END:
-                    restingPath = "rest";
-                    pickupPath = "loadLow";
+                    restingPath = "loadLow";
+                    pickupPath = "rest";
+                    internalState = RUNNING;
                     break;
                 case DEAD:
                     lastTote = false;
@@ -247,6 +252,11 @@ void StateManager::update() {
             drive->unlock();
             break;
     }
+
+    SmartDashboard::PutNumber("Current Internal State: ", internalState);
+    SmartDashboard::PutBoolean("Last Tote: ", lastTote);
+    SmartDashboard::PutString("Resting Path: ", restingPath.c_str());
+    SmartDashboard::PutString("Pickup Path: ", pickupPath.c_str());
 
     if (lockTimer->Get() > 5) {
         drive->unlock();
