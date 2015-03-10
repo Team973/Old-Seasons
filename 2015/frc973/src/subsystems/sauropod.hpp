@@ -30,6 +30,7 @@ public:
     void setTarget(Preset target);
     void setPreset(std::string name);
     std::string getCurrPreset();
+    bool isCurrPreset(std::string preset);
     void incrementElevator(float increment);
     bool motionDone();
     bool atTarget();

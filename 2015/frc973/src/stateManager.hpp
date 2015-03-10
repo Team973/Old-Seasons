@@ -21,10 +21,11 @@ public:
     void setIntakeSpeed(float speed);
     void setIntakeLeftRight(float left, float right);
     void setIntakePosition(std::string position);
+    void setLastTote();
     bool gotTote();
     void setRobotState(int state);
     void setScore();
-    void setHigh();
+    void setResting();
     void setContainerLoad(bool wantLoad);
     void setAutoLoad(bool wantLoad);
     void setHumanLoad(bool wantLoad);
@@ -71,6 +72,7 @@ private:
 
     int numTotes;
     bool hadTote;
+    bool lastTote;
 };
 
 }

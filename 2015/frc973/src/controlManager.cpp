@@ -19,21 +19,22 @@ void ControlManager::update() {
 
     stateManager->setElevatorFromControls(controls->getCodriverAxis(3));
 
-    if (controls->getCodriverButton(1)) {
-    }
+    stateManager->setAutoLoad(controls->getCodriverButton(1));
 
     if (controls->getCodriverButton(2)) {
         stateManager->setScore();
     }
 
-    if (controls->getCodriverButton(3)) {
-        stateManager->setHigh();
-    }
+    stateManager->setHumanLoad(controls->getCodriverButton(3));
 
     if (controls->getCodriverButton(4)) {
+        stateManager->setResting();
     }
 
-    stateManager->setAutoLoad(controls->getCodriverButton(5));
+    if (controls->getCodriverButton(5)) {
+        stateManager->setLastTote();
+    }
+
     stateManager->setContainerLoad(controls->getCodriverButton(6));
 
     if (controls->getCodriverButton(8)) {
