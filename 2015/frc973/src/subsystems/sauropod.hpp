@@ -40,6 +40,7 @@ public:
     float getElevatorCurrent();
     void setClawBrake(bool brake);
     void clampClaw(bool clamped);
+    std::string getClawPosition();
     void update();
     bool inCradle();
     bool lotsoTotes();
@@ -72,6 +73,9 @@ private:
 
     FlagAccumulator *toteAccumulator;
     bool muchoTotes;
+
+    bool isClawBraked;
+    std::string clawPosition;
 
     float elevatorIncrement;
 };
