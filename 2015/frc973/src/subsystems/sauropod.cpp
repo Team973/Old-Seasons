@@ -32,6 +32,7 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, Encoder* elevatorEncoder_, Solenoid
     addPreset("loadHigh", 20);
     addPreset("loadLow", 0.5);
     addPreset("containerLoad", 0);
+    addPreset("upperLimit", 48);
     addPreset("rest", 6);
 
     Gains empty = {

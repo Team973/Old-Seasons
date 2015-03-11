@@ -144,6 +144,13 @@ void StateManager::actuateClaw(bool clamp) {
 void StateManager::setLastTote() {
     lastTote = true;
     internalState = END;
+    if (robotState != CONTAINER_LOAD) {
+        sauropod->setClawBrake(true);
+    }
+}
+
+void StateManager::setRepack() {
+    robotState = REPACK;
 }
 
 bool StateManager::isSauropodDone() {
@@ -171,7 +178,7 @@ void StateManager::update() {
     if (robotState != lastRobotState) {
         internalState = RUNNING;
     }
-    
+
     switch (robotState) {
         case AUTO_LOAD:
             switch (internalState) {
@@ -255,6 +262,23 @@ void StateManager::update() {
                 case DEAD:
                     lastTote = false;
                     break;
+            }
+            break;
+        case REPACK:
+            switch (internalState) {
+                case RUNNING:
+                    sauropod->setPreset("upperLimit");
+                    if (sauropod->motionDone()) {
+                        sauropod->setClawBrake(false);
+                        internalState = END;
+                    }
+                break;
+                case END:
+                    sauropod->setPreset("rest");
+                    internalState = DEAD;
+                break;
+                case DEAD:
+                break;
             }
             break;
         case SCORE:
