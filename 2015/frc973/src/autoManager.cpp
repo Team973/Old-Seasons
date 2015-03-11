@@ -28,7 +28,6 @@ void AutoManager::setModes() {
     modes["Pickup"] = new AutoSequencer();
     modes["Pickup"]->addSequential(new SauropodCommand(stateManager, "loadHigh", 0, 15));
 
-    float trashCan = 1.0;
     float openOffset = 2.5;
     float closedOffset = 1.0;
     float twoTote = 81.0/12.0;
@@ -54,12 +53,19 @@ void AutoManager::setModes() {
     modes["ThreeTote"]->addSequential(new DriveCommand(stateManager, twoTote - closedOffset, true));
     modes["ThreeTote"]->addSequential(new IntakeCommand(stateManager, -1.0, "float", 0));
     modes["ThreeTote"]->addSequential(new SauropodCommand(stateManager, "loadLow", 0.5, 2));
-    modes["ThreeTote"]->addConcurrent(new SauropodCommand(stateManager, "loadLow", 0, 0));
+    modes["ThreeTote"]->addConcurrent(new SauropodCommand(stateManager, "loadHigh", 0, 0));
     modes["ThreeTote"]->addConcurrent(new IntakeCommand(stateManager, 1.0, "float", 0));
     modes["ThreeTote"]->addConcurrent(new DriveCommand(stateManager, threeTote - openOffset, false));
     modes["ThreeTote"]->addSequential(new IntakeCommand(stateManager, -1.0, "open", 0));
     modes["ThreeTote"]->addSequential(new DriveCommand(stateManager, threeTote - closedOffset, true));
     modes["ThreeTote"]->addSequential(new IntakeCommand(stateManager, -1.0, "float", 0));
+    modes["ThreeTote"]->addSequential(new SauropodCommand(stateManager, "loadLow", 0.5, 2));
+    modes["ThreeTote"]->addConcurrent(new IntakeCommand(stateManager, 0.0, "closed", 0));
+    modes["ThreeTote"]->addConcurrent(new SauropodCommand(stateManager, "rest", 0, 1));
+    modes["ThreeTote"]->addSequential(new TurnCommand(stateManager, 90, 5));
+    modes["ThreeTote"]->addSequential(new DriveCommand(stateManager, twoTote + closedOffset, true));
+    modes["ThreeTote"]->addSequential(new IntakeCommand(stateManager, 0.0, "open", 0));
+    modes["ThreeTote"]->addSequential(new DriveCommand(stateManager, twoTote - closedOffset, true));
 
     modes["Test"]->addConcurrent(new SauropodCommand(stateManager, "containerLoad", 1, 2));
     modes["Test"]->addSequential(new SauropodCommand(stateManager, "rest", 0, 2));
