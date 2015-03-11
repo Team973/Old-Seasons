@@ -137,6 +137,10 @@ void StateManager::setHumanLoad(bool wantLoad) {
     wantHumanLoad = wantLoad;
 }
 
+void StateManager::actuateClaw(bool clamp) {
+    sauropod->clampClaw(clamp);
+}
+
 void StateManager::setLastTote() {
     lastTote = true;
     internalState = END;

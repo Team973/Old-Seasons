@@ -162,6 +162,14 @@ bool Sauropod::lotsoTotes() {
     return muchoTotes;
 }
 
+void Sauropod::setClawBrake(bool brake) {
+    clawBrake->Set(brake);
+}
+
+void Sauropod::clampClaw(bool clamped) {
+    clawClamp->Set(clamped);
+}
+
 void Sauropod::update() {
 
     SmartDashboard::PutString("curr preset: ", currPreset);
