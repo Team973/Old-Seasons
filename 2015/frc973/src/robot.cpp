@@ -74,11 +74,11 @@ Robot::Robot()
 
     containerGrabberMotor = new VictorSP(4);
 
-    intakeSolenoidA = new Solenoid(0);
-    intakeSolenoidB = new Solenoid(5);
-    footSolenoid = new Solenoid(6);
+    intakeSolenoidA = new Solenoid(1);
+    intakeSolenoidB = new Solenoid(2);
+    footSolenoid = new Solenoid(3);
 
-    clawClampSolenoid = new Solenoid(2);
+    clawClampSolenoid = new Solenoid(5);
     clawBrakeSolenoid = new Solenoid(4);
 
     airPressureSwitch = new DigitalInput(9);

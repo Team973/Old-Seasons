@@ -85,11 +85,11 @@ void StateManager::setIntakeLeftRight(float left, float right) {
 
 void StateManager::setIntakePosition(std::string position) {
     if (position == "open") {
-        intake->actuateIntake(true, false);
+        intake->actuateIntake(false, true);
     } else if (position == "float") {
         intake->actuateIntake(false, false);
     } else if (position == "closed") {
-        intake->actuateIntake(true, true);
+        intake->actuateIntake(true, false);
     }
 }
 
@@ -177,6 +177,7 @@ void StateManager::update() {
 
     if (robotState != lastRobotState) {
         internalState = RUNNING;
+        lastTote = false;
     }
 
     switch (robotState) {
@@ -267,14 +268,13 @@ void StateManager::update() {
         case REPACK:
             switch (internalState) {
                 case RUNNING:
-                    sauropod->setPreset("upperLimit");
+                    sauropod->setPreset(sauropod->getClawPosition());
                     if (sauropod->motionDone()) {
                         sauropod->setClawBrake(false);
                         internalState = END;
                     }
                 break;
                 case END:
-                    sauropod->setPreset("rest");
                     internalState = DEAD;
                 break;
                 case DEAD:

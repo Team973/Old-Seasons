@@ -62,6 +62,9 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, Encoder* elevatorEncoder_, Solenoid
 
     elevatorIncrement = 0.0;
 
+    isClawBraked = false;
+    clawPosition = "none";
+
     muchoTotes = false;
     toteAccumulator = new FlagAccumulator();
     toteAccumulator->setThreshold(5);
@@ -165,6 +168,11 @@ bool Sauropod::lotsoTotes() {
 
 void Sauropod::setClawBrake(bool brake) {
     clawBrake->Set(brake);
+    isClawBraked = brake;
+}
+
+std::string Sauropod::getClawPosition() {
+    return clawPosition;
 }
 
 void Sauropod::clampClaw(bool clamped) {
@@ -176,6 +184,15 @@ void Sauropod::update() {
     SmartDashboard::PutString("curr preset: ", currPreset);
     Preset currTarget = presets[currPreset];
     setTarget(currTarget);
+
+    if (isClawBraked && clawPosition == "none") {
+        clawPosition = currPreset;
+    } else if (!isClawBraked) {
+        clawPosition = "none";
+    }
+
+
+    SmartDashboard::PutString("Claw Position: ", clawPosition);
 
     float voltageFF = 0;
 
