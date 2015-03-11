@@ -45,6 +45,7 @@ private:
 
     Solenoid *intakeSolenoidA;
     Solenoid *intakeSolenoidB;
+    Solenoid *footSolenoid;
     Solenoid *clawClampSolenoid;
     Solenoid *clawBrakeSolenoid;
     Solenoid *grabberSolenoid;

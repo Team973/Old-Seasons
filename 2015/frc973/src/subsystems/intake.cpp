@@ -3,12 +3,13 @@
 
 namespace frc973 {
 
-Intake::Intake(VictorSP* leftIntakeMotor_, VictorSP* rightIntakeMotor_, Solenoid* solenoidA_, Solenoid* solenoidB_, DigitalInput *toteSensor_) {
+Intake::Intake(VictorSP* leftIntakeMotor_, VictorSP* rightIntakeMotor_, Solenoid* solenoidA_, Solenoid* solenoidB_, Solenoid* foot_, DigitalInput *toteSensor_) {
     rightIntakeMotor = rightIntakeMotor_;
     leftIntakeMotor = leftIntakeMotor_;
     solenoidA = solenoidA_;
     solenoidB = solenoidB_;
     toteSensor = toteSensor_;
+    foot = foot_;
 
     leftSpeed = 0;
     rightSpeed = 0;
@@ -31,6 +32,10 @@ void Intake::setIntakeLeftRight(float left, float right) {
 void Intake::actuateIntake(bool a, bool b) {
         solenoidA->Set(!a);
         solenoidB->Set(!b);
+}
+
+void Intake::actuateFoot(bool actuate) {
+    foot->Set(actuate);
 }
 
 bool Intake::gotTote() {
