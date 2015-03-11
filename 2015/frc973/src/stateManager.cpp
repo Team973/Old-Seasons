@@ -237,7 +237,9 @@ void StateManager::update() {
                 case END:
                     setIntakePosition("closed");
                     intake->actuateFoot(true);
-                    internalState = DEAD;
+                    if (sauropod->getClawClamped()) {
+                        internalState = DEAD;
+                    }
                     break;
                 case DEAD:
                     break;
