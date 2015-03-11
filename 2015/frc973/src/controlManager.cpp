@@ -46,6 +46,10 @@ void ControlManager::update() {
     }
 
     if (controls->getCodriverButton(9)) {
+        stateManager->brakeClaw();
+    }
+
+    if (controls->getCodriverButton(10)) {
         stateManager->setRepack();
     }
 

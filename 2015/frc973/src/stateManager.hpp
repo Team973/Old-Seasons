@@ -31,6 +31,7 @@ public:
     void setHumanLoad(bool wantLoad);
     void setRestingLoad();
     void setRepack();
+    void brakeClaw();
     void actuateClaw(bool clamp);
     bool isSauropodDone();
     bool isDriveLocked();

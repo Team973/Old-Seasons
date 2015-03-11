@@ -144,13 +144,14 @@ void StateManager::actuateClaw(bool clamp) {
 void StateManager::setLastTote() {
     lastTote = true;
     internalState = END;
-    if (robotState != CONTAINER_LOAD) {
-        //sauropod->setClawBrake(true);
-    }
 }
 
 void StateManager::setRepack() {
     robotState = REPACK;
+}
+
+void StateManager::brakeClaw() {
+    sauropod->setClawBrake(true);
 }
 
 bool StateManager::isSauropodDone() {
