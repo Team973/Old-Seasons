@@ -145,7 +145,7 @@ void StateManager::setLastTote() {
     lastTote = true;
     internalState = END;
     if (robotState != CONTAINER_LOAD) {
-        sauropod->setClawBrake(true);
+        //sauropod->setClawBrake(true);
     }
 }
 

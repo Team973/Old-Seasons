@@ -96,7 +96,7 @@ Robot::Robot()
 
     toteSensor = new DigitalInput(8);
 
-    grabberSolenoid = new Solenoid(3);
+    grabberSolenoid = new Solenoid(6);
 
     locator = new Locator(leftDriveEncoder, rightDriveEncoder, spiGyro);
 
