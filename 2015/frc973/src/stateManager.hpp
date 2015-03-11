@@ -30,6 +30,7 @@ public:
     void setAutoLoad(bool wantLoad);
     void setHumanLoad(bool wantLoad);
     void setRestingLoad();
+    void setRepack();
     void actuateClaw(bool clamp);
     bool isSauropodDone();
     bool isDriveLocked();
@@ -42,6 +43,7 @@ public:
     const static int IDLE = 3;
     const static int CONTAINER_LOAD = 4;
     const static int HUMAN_LOAD = 5;
+    const static int REPACK = 6;
 private:
     Drive *drive;
     Sauropod *sauropod;
