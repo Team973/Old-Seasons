@@ -180,6 +180,10 @@ void StateManager::update() {
         lastTote = false;
     }
 
+    if (robotState != CONTAINER_LOAD) {
+        intake->actuateFoot(false);
+    }
+
     switch (robotState) {
         case AUTO_LOAD:
             switch (internalState) {
@@ -231,7 +235,7 @@ void StateManager::update() {
                     break;
                 case END:
                     setIntakePosition("closed");
-                    intake->actuateFoot(false);
+                    intake->actuateFoot(true);
                     internalState = DEAD;
                     break;
                 case DEAD:
