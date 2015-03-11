@@ -38,6 +38,8 @@ public:
     float getElevatorHeight();
     float getElevatorVelocity();
     float getElevatorCurrent();
+    void setClawBrake(bool brake);
+    void clampClaw(bool clamped);
     void update();
     bool inCradle();
     bool lotsoTotes();

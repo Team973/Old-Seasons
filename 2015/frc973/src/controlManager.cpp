@@ -37,6 +37,8 @@ void ControlManager::update() {
 
     stateManager->setContainerLoad(controls->getCodriverButton(6));
 
+    stateManager->actuateClaw(controls->getCodriverButton(7));
+
     if (controls->getCodriverButton(8)) {
         stateManager->setIntakePosition("open");
     } else {

@@ -30,6 +30,7 @@ public:
     void setAutoLoad(bool wantLoad);
     void setHumanLoad(bool wantLoad);
     void setRestingLoad();
+    void actuateClaw(bool clamp);
     bool isSauropodDone();
     bool isDriveLocked();
     void lockDrive();
