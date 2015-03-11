@@ -64,6 +64,7 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, Encoder* elevatorEncoder_, Solenoid
 
     isClawBraked = false;
     clawPosition = "none";
+    isClawClamped = false;
 
     muchoTotes = false;
     toteAccumulator = new FlagAccumulator();
@@ -177,6 +178,11 @@ std::string Sauropod::getClawPosition() {
 
 void Sauropod::clampClaw(bool clamped) {
     clawClamp->Set(clamped);
+    isClawClamped = clamped;
+}
+
+bool Sauropod::getClawClamped() {
+    return isClawClamped;
 }
 
 void Sauropod::update() {

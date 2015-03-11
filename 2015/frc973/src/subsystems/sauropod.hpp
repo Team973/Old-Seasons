@@ -40,6 +40,7 @@ public:
     float getElevatorCurrent();
     void setClawBrake(bool brake);
     void clampClaw(bool clamped);
+    bool getClawClamped();
     std::string getClawPosition();
     void update();
     bool inCradle();
@@ -76,6 +77,7 @@ private:
 
     bool isClawBraked;
     std::string clawPosition;
+    bool isClawClamped;
 
     float elevatorIncrement;
 };
