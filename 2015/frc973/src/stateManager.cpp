@@ -213,12 +213,14 @@ void StateManager::update() {
         case CONTAINER_LOAD:
             switch (internalState) {
                 case RUNNING:
-                    if (lastTote) {
-                        internalState = DEAD;
-                    }
+                    sauropod->setPreset("hardStop");
+                    setIntakePosition("float");
+                    intake->actuateFoot(true);
                     break;
                 case END:
-                    internalState = RUNNING;
+                    setIntakePosition("closed");
+                    intake->actuateFoot(false);
+                    internalState = DEAD;
                     break;
                 case DEAD:
                     break;

@@ -76,6 +76,7 @@ Robot::Robot()
 
     intakeSolenoidA = new Solenoid(0);
     intakeSolenoidB = new Solenoid(5);
+    footSolenoid = new Solenoid(6);
 
     clawClampSolenoid = new Solenoid(2);
     clawBrakeSolenoid = new Solenoid(4);
@@ -104,7 +105,7 @@ Robot::Robot()
 
     drive = new Drive(leftDriveMotors, rightDriveMotors);
     sauropod = new Sauropod(elevatorMotor, elevatorEncoder, clawClampSolenoid, clawBrakeSolenoid);
-    intake = new Intake(leftIntakeMotor, rightIntakeMotor, intakeSolenoidA, intakeSolenoidB, toteSensor);
+    intake = new Intake(leftIntakeMotor, rightIntakeMotor, intakeSolenoidA, intakeSolenoidB, footSolenoid, toteSensor);
     grabber = new ContainerGrabber(grabberSolenoid);
 
     controls = new ControlMap(driver, coDriver);
