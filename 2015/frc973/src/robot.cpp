@@ -75,11 +75,11 @@ Robot::Robot()
     containerGrabberMotor = new VictorSP(4);
 
     intakeSolenoidA = new Solenoid(1);
-    intakeSolenoidB = new Solenoid(2);
-    footSolenoid = new Solenoid(3);
+    intakeSolenoidB = new Solenoid(0);
+    footSolenoid = new Solenoid(4);
 
-    clawClampSolenoid = new Solenoid(5);
-    clawBrakeSolenoid = new Solenoid(4);
+    clawClampSolenoid = new Solenoid(2);
+    clawBrakeSolenoid = new Solenoid(3);
 
     airPressureSwitch = new DigitalInput(9);
     compressor = new Relay(0, Relay::kForwardOnly);
@@ -96,7 +96,7 @@ Robot::Robot()
 
     toteSensor = new DigitalInput(8);
 
-    grabberSolenoid = new Solenoid(6);
+    grabberSolenoid = new Solenoid(5);
 
     locator = new Locator(leftDriveEncoder, rightDriveEncoder, spiGyro);
 
