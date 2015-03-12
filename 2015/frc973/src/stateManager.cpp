@@ -87,7 +87,8 @@ void StateManager::setIntakePosition(std::string position) {
     if (position == "open") {
         intake->actuateIntake(false, true);
     } else if (position == "float") {
-        intake->actuateIntake(false, false);
+        //intake->actuateIntake(false, false);
+        intake->actuateIntake(true, false);
     } else if (position == "closed") {
         intake->actuateIntake(true, false);
     }
