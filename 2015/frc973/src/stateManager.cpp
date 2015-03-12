@@ -33,6 +33,7 @@ StateManager::StateManager(Drive *drive_, Sauropod *sauropod_, Intake *intake_, 
 
     restingPath = "loadHigh";
     pickupPath = "loadLow";
+    intakePosition = "float";
 
     vTec_yo = false;
 }
@@ -67,11 +68,11 @@ void StateManager::raiseGrabber() {
 
 void StateManager::setIntakeSpeed(float speed) {
     if (robotState == HUMAN_LOAD) {
-        speed *= 0.7;
-        if (speed > 0.7) {
-            speed = 0.7;
-        } else if (speed < -0.7) {
-            speed = 0.7;
+        speed *= 0.4;
+        if (speed > 0.4) {
+            speed = 0.4;
+        } else if (speed < -0.4) {
+            speed = -0.4;
         }
     }
     leftIntakeSpeed = speed;
@@ -84,14 +85,7 @@ void StateManager::setIntakeLeftRight(float left, float right) {
 }
 
 void StateManager::setIntakePosition(std::string position) {
-    if (position == "open") {
-        intake->actuateIntake(false, true);
-    } else if (position == "float") {
-        //intake->actuateIntake(false, false);
-        intake->actuateIntake(true, false);
-    } else if (position == "closed") {
-        intake->actuateIntake(true, false);
-    }
+    intakePosition = position;
 }
 
 bool StateManager::gotTote() {
@@ -194,6 +188,10 @@ void StateManager::update() {
                             sauropod->setPreset("loadHigh");
                     }
 
+                    if (sauropod->isCurrPreset(restingPath) && !sauropod->motionDone()) {
+                        intakePosition = "open";
+                    }
+
                     if (intake->gotTote() && !sauropod->inCradle() && !hadTote && sauropod->motionDone()) {
                         hadTote = true;
                         drive->lock();
@@ -276,7 +274,7 @@ void StateManager::update() {
         case REPACK:
             switch (internalState) {
                 case RUNNING:
-                    sauropod->setPreset(sauropod->getClawPosition());
+                    sauropod->setPreset("repack");
                     if (sauropod->motionDone()) {
                         sauropod->setClawBrake(false);
                         internalState = END;
@@ -298,6 +296,15 @@ void StateManager::update() {
     }
 
     intake->setIntakeLeftRight(leftIntakeSpeed, rightIntakeSpeed);
+
+    if (intakePosition == "open") {
+        intake->actuateIntake(false, true);
+    } else if (intakePosition == "float") {
+        //intake->actuateIntake(false, false);
+        intake->actuateIntake(true, false);
+    } else if (intakePosition == "closed") {
+        intake->actuateIntake(true, false);
+    }
 
     SmartDashboard::PutNumber("Current Internal State: ", internalState);
     SmartDashboard::PutBoolean("Last Tote: ", lastTote);

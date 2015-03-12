@@ -66,6 +66,7 @@ private:
 
     std::string restingPath;
     std::string pickupPath;
+    std::string intakePosition;
 
     float leftIntakeSpeed;
     float rightIntakeSpeed;
