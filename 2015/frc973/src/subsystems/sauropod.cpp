@@ -26,11 +26,12 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, Encoder* elevatorEncoder_, Solenoid
     elevatorPID->start();
 
     addPreset("hardStop", 0);
-    addPreset("stow", 0);
-    addPreset("humanLoadHigh", 37);
-    addPreset("humanLoadLow", 12);
-    addPreset("loadHigh", 20);
-    addPreset("loadLow", 0.5);
+    addPreset("stow", -1);
+    addPreset("humanLoadHigh", 31);
+    addPreset("humanLoadLow", 10);
+    addPreset("repack", 50);
+    addPreset("loadHigh", 16);
+    addPreset("loadLow", -1);
     addPreset("containerLoad", 0);
     addPreset("upperLimit", 48);
     addPreset("rest", 6);
@@ -129,7 +130,7 @@ bool Sauropod::atTarget() {
 
     float height = getElevatorHeight();
 
-    if ((fabs(p.height - height) <= 2)) {
+    if ((fabs(p.height - height) <= 1.5)) {
         if (accumulator->update(fabs(getElevatorVelocity()) < .8)) {
             return true;
         }
