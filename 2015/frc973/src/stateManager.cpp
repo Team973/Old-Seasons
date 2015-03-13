@@ -275,7 +275,11 @@ void StateManager::update() {
         case REPACK:
             switch (internalState) {
                 case RUNNING:
-                    sauropod->setPreset("repack");
+                    if (sauropod->isCurrPreset("autoScore")) {
+                        sauropod->setPreset("humanLoadLow");
+                    } else {
+                        sauropod->setPreset("repack");
+                    }
                     if (sauropod->motionDone()) {
                         sauropod->setClawBrake(false);
                         internalState = END;
