@@ -20,7 +20,7 @@ public:
     XYManager();
     static XYManager* getInstance();
     void injectLocator(Locator* locator_);
-    void setSpeed(bool fast);
+    void setSpeed(std::string speed);
     bool isMovementDone();
     void setTargetDistance(float distance_);
     void setTargetAngle(float angle_);

@@ -11,8 +11,8 @@ class StateManager;
 
 class DriveCommand : public AutoCommand {
 public:
-    DriveCommand(StateManager *manager_, float target_, bool fast_);
-    DriveCommand(StateManager *manager_, AutoCommand *cmdSeq_, float distance_, float target_, bool fast_);
+    DriveCommand(StateManager *manager_, float target_, std::string speed_);
+    DriveCommand(StateManager *manager_, AutoCommand *cmdSeq_, float distance_, float target_, std::string speed_);
     void init();
     bool taskPeriodic();
 private:

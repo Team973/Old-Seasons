@@ -67,11 +67,13 @@ void XYManager::resetEncoders() {
     locator->resetEncoders();
 }
 
-void XYManager::setSpeed(bool fast) {
-    if (fast) {
+void XYManager::setSpeed(std::string speed) {
+    if (speed == "fast") {
         speedLimit = 0.3;
-    } else {
+    } else if (speed == "slow") {
         speedLimit = 0.18;
+    } else if (speed == "hellaFast") {
+        speedLimit = 0.9;
     }
 }
 

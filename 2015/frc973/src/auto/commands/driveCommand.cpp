@@ -5,10 +5,10 @@
 
 namespace frc973 {
 
-DriveCommand::DriveCommand(StateManager *manager_, float target_, bool fast_)
+DriveCommand::DriveCommand(StateManager *manager_, float target_, std::string speed_)
 {
     xyManager = XYManager::getInstance();
-    xyManager->setSpeed(fast_);
+    xyManager->setSpeed(speed_);
         
     manager = manager_;
 
@@ -23,8 +23,9 @@ DriveCommand::DriveCommand(StateManager *manager_, float target_, bool fast_)
     accumulator->setThreshold(3);
 }
 
-DriveCommand::DriveCommand(StateManager *manager_, AutoCommand *cmdSeq_, float distance_, float target_, bool fast_) {
+DriveCommand::DriveCommand(StateManager *manager_, AutoCommand *cmdSeq_, float distance_, float target_, std::string speed_) {
     xyManager = XYManager::getInstance();
+    xyManager->setSpeed(speed_);
 
     manager = manager_;
 
