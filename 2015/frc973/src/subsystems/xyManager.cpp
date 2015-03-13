@@ -100,7 +100,7 @@ void XYManager::setTargetDistance(float distance_)
 void XYManager::setTargetAngle(float angle_)
 {
     currPoint = locator->getPoint();
-    angleTarget = 0.0;
+    angleTarget = angle_;
     drivePID->setBounds(0.0,0.0);
     done = false;
     linearMovement = false;
@@ -174,7 +174,7 @@ void XYManager::update()
     SmartDashboard::PutNumber("Target Angle: ", turnPID->getTarget());
 
     driveInput = drivePID->update(relativeDistance - linearStep[1], loopTimer) + linearFF;
-    angularInput = -(turnPID->update(angleError, loopTimer));
+    angularInput = (turnPID->update(angleError, loopTimer));
 
     if (!isPaused && (linearProfile->getTarget() - relativeDistance) > 0) {
         driveInput += 0.1;

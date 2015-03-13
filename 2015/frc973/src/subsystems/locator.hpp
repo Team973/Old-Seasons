@@ -15,7 +15,7 @@ public:
         float distance = 0;
     };
 
-    Locator(Encoder *leftEncoder_, Encoder *rightEncoder_, SPIGyro *gyro_);
+    Locator(Encoder *leftEncoder_, Encoder *rightEncoder_, SPIGyro *gyro_, Encoder *colinGyro_);
     void resetAll();
     void resetGyro();
     void resetEncoders();
@@ -36,6 +36,7 @@ private:
     Encoder *leftEncoder;
     Encoder *rightEncoder;
     SPIGyro *gyro;
+    Encoder *colinGyro;
 };
 
 }
