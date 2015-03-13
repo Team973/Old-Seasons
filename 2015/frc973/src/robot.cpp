@@ -185,6 +185,7 @@ void Robot::AutonomousPeriodic()
 
 void Robot::TeleopInit()
 {
+    stateManager->unBrakeClaw();
 }
 
 void Robot::TeleopPeriodic()
