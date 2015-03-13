@@ -23,6 +23,7 @@ private:
     XYManager *xyManager;
     FlagAccumulator *accumulator;
     bool done;
+    std::string speed;
 };
 
 }

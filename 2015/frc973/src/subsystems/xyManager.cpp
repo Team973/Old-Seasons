@@ -71,9 +71,11 @@ void XYManager::setSpeed(std::string speed) {
     if (speed == "fast") {
         speedLimit = 0.3;
     } else if (speed == "slow") {
-        speedLimit = 0.18;
+        speedLimit = 0.25;
     } else if (speed == "hellaFast") {
         speedLimit = 0.9;
+    } else {
+        speedLimit = 0.0;
     }
 }
 

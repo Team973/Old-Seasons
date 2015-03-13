@@ -8,7 +8,7 @@ namespace frc973 {
 DriveCommand::DriveCommand(StateManager *manager_, float target_, std::string speed_)
 {
     xyManager = XYManager::getInstance();
-    xyManager->setSpeed(speed_);
+    speed = speed_;
         
     manager = manager_;
 
@@ -25,7 +25,7 @@ DriveCommand::DriveCommand(StateManager *manager_, float target_, std::string sp
 
 DriveCommand::DriveCommand(StateManager *manager_, AutoCommand *cmdSeq_, float distance_, float target_, std::string speed_) {
     xyManager = XYManager::getInstance();
-    xyManager->setSpeed(speed_);
+    speed = speed_;
 
     manager = manager_;
 
@@ -42,6 +42,7 @@ DriveCommand::DriveCommand(StateManager *manager_, AutoCommand *cmdSeq_, float d
 void DriveCommand::init()
 {
     xyManager->setTargetDistance(target);
+    xyManager->setSpeed(speed);
     xyManager->resetProfile();
     xyManager->startProfile();
 }
