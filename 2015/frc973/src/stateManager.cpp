@@ -184,7 +184,7 @@ void StateManager::update() {
         case AUTO_LOAD:
             switch (internalState) {
                 case RUNNING:
-                    if (wantAutoLoad && !sauropod->isCurrPreset("loadHigh")) {
+                    if (wantAutoLoad && !sauropod->isCurrPreset("loadHigh") && !intake->gotTote()) {
                             sauropod->setPreset("loadHigh");
                     }
 
@@ -192,7 +192,7 @@ void StateManager::update() {
                         intakePosition = "open";
                     }
 
-                    if (intake->gotTote() && !sauropod->inCradle() && !hadTote && sauropod->motionDone()) {
+                    if (wantAutoLoad && intake->gotTote() && !sauropod->inCradle() && !hadTote && sauropod->motionDone()) {
                         hadTote = true;
                         drive->lock();
                         lockTimer->Start();
