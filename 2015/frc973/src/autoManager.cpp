@@ -62,7 +62,8 @@ void AutoManager::setModes() {
     modes["ThreeTote"]->addSequential(new TurnCommand(stateManager, 90, 5));
     modes["ThreeTote"]->addSequential(new DriveCommand(stateManager, twoTote + closedOffset, true));
     modes["ThreeTote"]->addSequential(new IntakeCommand(stateManager, 0.0, "open", 0));
-    modes["ThreeTote"]->addSequential(new DriveCommand(stateManager, twoTote - closedOffset, true));
+    modes["ThreeTote"]->addSequential(new SauropodCommand(stateManager, "stow", 0, 1));
+    modes["ThreeTote"]->addSequential(new DriveCommand(stateManager, twoTote - openOffset, true));
 
     openOffset = .5;
     closedOffset = .25;
