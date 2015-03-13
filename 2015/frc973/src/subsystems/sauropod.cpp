@@ -247,10 +247,10 @@ void Sauropod::update() {
 
     SmartDashboard::PutNumber("Elevator Increment: ", elevatorIncrement);
 
-    if (manualElevatorSpeed == 0) {
-        elevatorMotor->Set(-limit(epido));
-    } else {
+    if (manualElevatorSpeed != 0) {
         elevatorMotor->Set(manualElevatorSpeed);
+    } else {
+        elevatorMotor->Set(-limit(epido));
     }
 }
 
