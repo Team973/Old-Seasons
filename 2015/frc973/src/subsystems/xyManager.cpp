@@ -48,7 +48,7 @@ XYManager::XYManager()
             Constants::getConstant("kTurnI")->getDouble(),
             Constants::getConstant("kTurnD")->getDouble());
     turnPID->start();
-    turnPID->setBounds(-.7,.7);
+    turnPID->setBounds(-.9,.9);
     angleTarget = 0;
 
     relativeDistance = 0;
@@ -167,7 +167,7 @@ void XYManager::update()
             done = true;
         }
     } else if (angularMovement) {
-        if (fabs(angleError) <= 3) {
+        if (fabs(angleError) <= 5) {
             done = true;
         }
     }
