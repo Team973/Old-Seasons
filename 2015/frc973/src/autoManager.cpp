@@ -32,6 +32,8 @@ void AutoManager::setModes() {
     float closedOffset = 1.0;
     float twoTote = 81.0/12.0;
     float threeTote = (twoTote*2.0);
+    float dropOffset = 2.5;
+    float driveOffset = 4.0;
     //float thirdFudge = 1.0;
 
     modes["Drive"]->addSequential(new DriveCommand(stateManager, -5.0, "fast"));
@@ -60,10 +62,10 @@ void AutoManager::setModes() {
     modes["ThreeTote"]->addConcurrent(new IntakeCommand(stateManager, 0.0, "closed", 0));
     modes["ThreeTote"]->addConcurrent(new SauropodCommand(stateManager, "rest", 0, true, 1));
     modes["ThreeTote"]->addSequential(new TurnCommand(stateManager, 90, 5));
-    modes["ThreeTote"]->addSequential(new DriveCommand(stateManager, twoTote - closedOffset, "hellaFast"));
+    modes["ThreeTote"]->addSequential(new DriveCommand(stateManager, twoTote - dropOffset, "hellaFast"));
     modes["ThreeTote"]->addSequential(new IntakeCommand(stateManager, 0.0, "open", 0));
     modes["ThreeTote"]->addSequential(new SauropodCommand(stateManager, "autoScore", 0, false, 1));
-    modes["ThreeTote"]->addSequential(new DriveCommand(stateManager, twoTote - openOffset, "hellaFast"));
+    modes["ThreeTote"]->addSequential(new DriveCommand(stateManager, twoTote - driveOffset, "hellaFast"));
 
     it = modes.begin();
 }
