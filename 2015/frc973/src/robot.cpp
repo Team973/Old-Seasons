@@ -90,7 +90,7 @@ Robot::Robot()
     elevatorEncoder = new Encoder(6,7);
     elevatorPot = new AnalogInput(1);
 
-    //gyro = new Encoder(24,25,false,CounterBase::k2X);
+    gyro = new Encoder(0,1,false,CounterBase::k2X);
 
     spiGyro = new SPIGyro();
 
@@ -98,7 +98,7 @@ Robot::Robot()
 
     grabberSolenoid = new Solenoid(5);
 
-    locator = new Locator(leftDriveEncoder, rightDriveEncoder, spiGyro);
+    locator = new Locator(leftDriveEncoder, rightDriveEncoder, spiGyro, gyro);
 
     xyManager = XYManager::getInstance();
     xyManager->injectLocator(locator);
@@ -132,6 +132,7 @@ void Robot::runCompressor() {
 
 void Robot::dashboardUpdate()
 {
+    SmartDashboard::PutString("DB/String 1", asString(spiGyro->GetDegrees()));
     SmartDashboard::PutNumber("drive distance: ", locator->getMovedDistance());
     SmartDashboard::PutNumber("left drive distance: ", locator->getDistance(leftDriveEncoder));
     SmartDashboard::PutNumber("raw elevator encoder: ", elevatorEncoder->Get());
@@ -162,8 +163,9 @@ void Robot::DisabledPeriodic()
 
 void Robot::AutonomousInit()
 {
-    autoManager->setMode("ThreeTote");
+    autoManager->setMode("Turn");
     spiGyro->ZeroAngle();
+    locator->resetGyro();
     locator->resetAll();
     autoManager->getCurrentMode()->init();
 }

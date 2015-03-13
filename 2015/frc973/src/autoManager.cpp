@@ -36,10 +36,7 @@ void AutoManager::setModes() {
 
     modes["Drive"]->addSequential(new DriveCommand(stateManager, -5.0, true));
 
-    modes["Turn"]->addSequential(new DriveCommand(stateManager, 10, true));
-    modes["Turn"]->addSequential(new DriveCommand(stateManager, 5, true));
-    modes["Turn"]->addSequential(new TurnCommand(stateManager, 90, 5));
-    modes["Turn"]->addSequential(new TurnCommand(stateManager, .1, 5));
+    modes["Turn"]->addSequential(new TurnCommand(stateManager, 90, 15));
 
     modes["Grab"]->addSequential(new GrabCommand(stateManager, true));
     modes["Grab"]->addSequential(new WaitCommand(1.5));
