@@ -241,6 +241,7 @@ void StateManager::update() {
                     }
                     break;
                 case DEAD:
+                    intake->actuateFoot(false);
                     break;
             }
             break;
