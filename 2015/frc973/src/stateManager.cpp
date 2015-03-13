@@ -149,6 +149,10 @@ void StateManager::brakeClaw() {
     sauropod->setClawBrake(true);
 }
 
+void StateManager::unBrakeClaw() {
+    sauropod->setClawBrake(false);
+}
+
 bool StateManager::isSauropodDone() {
     return sauropod->motionDone();
 }
@@ -275,11 +279,7 @@ void StateManager::update() {
         case REPACK:
             switch (internalState) {
                 case RUNNING:
-                    if (sauropod->isCurrPreset("autoScore")) {
-                        sauropod->setPreset("humanLoadLow");
-                    } else {
-                        sauropod->setPreset("repack");
-                    }
+                    sauropod->setPreset("repack");
                     if (sauropod->motionDone()) {
                         sauropod->setClawBrake(false);
                         internalState = END;

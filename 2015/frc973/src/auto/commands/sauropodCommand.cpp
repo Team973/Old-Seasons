@@ -28,6 +28,7 @@ bool SauropodCommand::taskPeriodic() {
     if (moving) {
         if (manager->isSauropodDone() || timer->Get() > timeout) {
             if (braked && manager->isSauropodDone()) {
+                manager->brakeClaw();
                 return true;
             } else if (!braked) {
                 return true;
