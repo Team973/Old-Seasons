@@ -76,7 +76,7 @@ Robot::Robot()
 
     intakeSolenoidA = new Solenoid(1);
     intakeSolenoidB = new Solenoid(0);
-    footSolenoid = new Solenoid(4);
+    footSolenoid = new Solenoid(7);
 
     clawClampSolenoid = new Solenoid(2);
     clawBrakeSolenoid = new Solenoid(3);
@@ -163,7 +163,7 @@ void Robot::DisabledPeriodic()
 
 void Robot::AutonomousInit()
 {
-    autoManager->setMode("ThreeTote");
+    autoManager->setMode("None");
     spiGyro->ZeroAngle();
     locator->resetGyro();
     locator->resetAll();
