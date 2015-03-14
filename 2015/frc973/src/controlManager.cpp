@@ -15,13 +15,13 @@ void ControlManager::update() {
     stateManager->setDriveFromControls(controls->getThrottle(), -controls->getTurn(), controls->getDriverButton(10));
     stateManager->vTecKickedInYo(controls->getDriverButton(6));
 
-    if (controls->getDriverButton(5)) {
+    if (controls->getDriverButton(4)) {
         stateManager->setScore();
     }
 
     if (!controls->getCodriverButton(7)) {
-        stateManager->actuateClaw(!controls->getDriverButton(7));
-    } else if (!controls->getDriverButton(7)) {
+        stateManager->actuateClaw(!controls->getDriverButton(3));
+    } else if (!controls->getDriverButton(3)) {
         stateManager->actuateClaw(!controls->getCodriverButton(7));
     } else {
         stateManager->actuateClaw(true);
