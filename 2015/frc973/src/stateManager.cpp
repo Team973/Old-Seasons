@@ -234,11 +234,9 @@ void StateManager::update() {
             switch (internalState) {
                 case RUNNING:
                     sauropod->setPreset("hardStop");
-                    setIntakePosition("float");
                     intake->actuateFoot(true);
                     break;
                 case END:
-                    setIntakePosition("closed");
                     intake->actuateFoot(true);
                     if (sauropod->getClawClamped()) {
                         internalState = DEAD;
