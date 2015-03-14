@@ -163,7 +163,7 @@ void Robot::DisabledPeriodic()
 
 void Robot::AutonomousInit()
 {
-    autoManager->setMode("None");
+    autoManager->setMode("Grab");
     spiGyro->ZeroAngle();
     locator->resetGyro();
     locator->resetAll();
