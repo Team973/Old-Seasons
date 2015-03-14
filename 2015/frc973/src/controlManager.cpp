@@ -19,7 +19,14 @@ void ControlManager::update() {
         stateManager->setScore();
     }
 
-    stateManager->actuateClaw(!controls->getDriverButton(7));
+    if (!controls->getCodriverButton(7)) {
+        stateManager->actuateClaw(!controls->getDriverButton(7));
+    } else if (!controls->getDriverButton(7)) {
+        stateManager->actuateClaw(!controls->getCodriverButton(7));
+    } else {
+        stateManager->actuateClaw(true);
+    }
+
     if (controls->getDriverButton(8)) {
         stateManager->unBrakeClaw();
     }
@@ -46,9 +53,6 @@ void ControlManager::update() {
 
     stateManager->setContainerLoad(controls->getCodriverButton(6));
 
-    if (!controls->getDriverButton(7)) {
-        stateManager->actuateClaw(!controls->getCodriverButton(7));
-    }
 
     if (controls->getCodriverButton(8)) {
         stateManager->setIntakePosition("open");
