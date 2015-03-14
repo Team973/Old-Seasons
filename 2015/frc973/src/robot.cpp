@@ -96,7 +96,7 @@ Robot::Robot()
 
     toteSensor = new DigitalInput(8);
 
-    grabberSolenoid = new Solenoid(5);
+    grabberSolenoid = new Solenoid(6);
 
     locator = new Locator(leftDriveEncoder, rightDriveEncoder, spiGyro, gyro);
 
@@ -163,7 +163,7 @@ void Robot::DisabledPeriodic()
 
 void Robot::AutonomousInit()
 {
-    autoManager->setMode("None");
+    autoManager->setMode("Grab");
     spiGyro->ZeroAngle();
     locator->resetGyro();
     locator->resetAll();
