@@ -43,7 +43,7 @@ void AutoManager::setModes() {
 
     modes["Grab"]->addSequential(new GrabCommand(stateManager, true));
     modes["Grab"]->addSequential(new WaitCommand(1.5));
-    modes["Grab"]->addSequential(new DriveCommand(stateManager, 6, "fast"));
+    modes["Grab"]->addSequential(new DriveCommand(stateManager, 6, "hellaFast"));
     modes["Grab"]->addSequential(new GrabCommand(stateManager, false));
 
     modes["None"]->addSequential(new WaitCommand(10000));
