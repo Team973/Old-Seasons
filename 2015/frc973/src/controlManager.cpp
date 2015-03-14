@@ -12,9 +12,15 @@ ControlManager::ControlManager(ControlMap *controls_, StateManager *stateManager
 }
 
 void ControlManager::update() {
-    stateManager->setDriveFromControls(controls->getThrottle(), -controls->getTurn(), controls->getDriverButton(8));
+    stateManager->setDriveFromControls(controls->getThrottle(), -controls->getTurn(), controls->getDriverButton(10));
     stateManager->vTecKickedInYo(controls->getDriverButton(6));
-    if (controls->getDriverButton(7)) {
+
+    if (controls->getDriverButton(5)) {
+        stateManager->setScore();
+    }
+
+    stateManager->actuateClaw(!controls->getDriverButton(7));
+    if (controls->getDriverButton(8)) {
         stateManager->unBrakeClaw();
     }
 
@@ -40,7 +46,9 @@ void ControlManager::update() {
 
     stateManager->setContainerLoad(controls->getCodriverButton(6));
 
-    stateManager->actuateClaw(!controls->getCodriverButton(7));
+    if (!controls->getDriverButton(7)) {
+        stateManager->actuateClaw(!controls->getCodriverButton(7));
+    }
 
     if (controls->getCodriverButton(8)) {
         stateManager->setIntakePosition("open");
