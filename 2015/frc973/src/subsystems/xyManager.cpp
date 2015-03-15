@@ -94,7 +94,8 @@ void XYManager::setTargetDistance(float distance_)
     currPoint = locator->getPoint();
     origPoint = locator->getPoint();
     linearProfile = new TrapProfile(distance_ - currPoint.distance, 10000, 10000, 10000);
-    angleTarget = currPoint.angle;
+    //TODO (oliver): revert to currPoint.angle
+    angleTarget = 0;//currPoint.angle;
     drivePID->setBounds(-.6,.6);
     done = false;
     linearMovement = true;
@@ -178,7 +179,9 @@ void XYManager::update()
     SmartDashboard::PutNumber("Target Angle: ", turnPID->getTarget());
 
     driveInput = drivePID->update(relativeDistance - linearStep[1], loopTimer) + linearFF;
-    angularInput = (turnPID->update(angleError, loopTimer));
+    //TODO (oliver): revert back to normal angular input
+    //angularInput = (turnPID->update(angleError, loopTimer));
+    angularInput = 0.0;
 
     if (!isPaused && (linearProfile->getTarget() - relativeDistance) > 0) {
         driveInput += 0.1;
