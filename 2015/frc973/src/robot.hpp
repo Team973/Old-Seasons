@@ -42,6 +42,8 @@ private:
     VictorSP *leftIntakeMotor;
     VictorSP *rightIntakeMotor;
     VictorSP *containerGrabberMotor;
+    
+    CANTalon *grabberMotor;
 
     Solenoid *intakeSolenoidA;
     Solenoid *intakeSolenoidB;

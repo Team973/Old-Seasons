@@ -96,6 +96,7 @@ Robot::Robot()
 
     toteSensor = new DigitalInput(8);
 
+    grabberMotor = new CANTalon(0);
     grabberSolenoid = new Solenoid(6);
 
     locator = new Locator(leftDriveEncoder, rightDriveEncoder, spiGyro, gyro);
@@ -106,7 +107,7 @@ Robot::Robot()
     drive = new Drive(leftDriveMotors, rightDriveMotors);
     sauropod = new Sauropod(elevatorMotor, elevatorEncoder, clawClampSolenoid, clawBrakeSolenoid);
     intake = new Intake(leftIntakeMotor, rightIntakeMotor, intakeSolenoidA, intakeSolenoidB, footSolenoid, toteSensor);
-    grabber = new ContainerGrabber(grabberSolenoid);
+    grabber = new ContainerGrabber(grabberSolenoid, grabberMotor);
 
     controls = new ControlMap(driver, coDriver);
 
