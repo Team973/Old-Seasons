@@ -92,14 +92,18 @@ Robot::Robot()
 
     gyro = new Encoder(0,1,false,CounterBase::k2X);
 
-    spiGyro = new SPIGyro();
+    //spiGyro = new SPIGyro();
 
     toteSensor = new DigitalInput(8);
 
-    grabberMotor = new CANTalon(0);
+    grabberMotorA = new CANTalon(0);
+    grabberMotorB = new CANTalon(1);
     grabberSolenoid = new Solenoid(6);
 
-    locator = new Locator(leftDriveEncoder, rightDriveEncoder, spiGyro, gyro);
+    grabberEncoderA = new Encoder(24,25);
+    grabberEncoderB = new Encoder(22,23);
+
+    locator = new Locator(leftDriveEncoder, rightDriveEncoder, gyro);//spiGyro, gyro);
 
     xyManager = XYManager::getInstance();
     xyManager->injectLocator(locator);
@@ -107,7 +111,7 @@ Robot::Robot()
     drive = new Drive(leftDriveMotors, rightDriveMotors);
     sauropod = new Sauropod(elevatorMotor, elevatorEncoder, clawClampSolenoid, clawBrakeSolenoid);
     intake = new Intake(leftIntakeMotor, rightIntakeMotor, intakeSolenoidA, intakeSolenoidB, footSolenoid, toteSensor);
-    grabber = new ContainerGrabber(grabberSolenoid, grabberMotor);
+    grabber = new ContainerGrabber(grabberSolenoid, grabberMotorA, grabberMotorB, grabberEncoderA, grabberEncoderB);
 
     controls = new ControlMap(driver, coDriver);
 
@@ -133,7 +137,7 @@ void Robot::runCompressor() {
 
 void Robot::dashboardUpdate()
 {
-    SmartDashboard::PutString("DB/String 1", asString(spiGyro->GetDegrees()));
+    SmartDashboard::PutString("DB/String 1", asString(grabberEncoderA->Get()));
     SmartDashboard::PutNumber("drive distance: ", locator->getMovedDistance());
     SmartDashboard::PutNumber("left drive distance: ", locator->getDistance(leftDriveEncoder));
     SmartDashboard::PutNumber("raw elevator encoder: ", elevatorEncoder->Get());
@@ -144,7 +148,7 @@ void Robot::dashboardUpdate()
     SmartDashboard::PutNumber("anaglog tote sensor: ", elevatorPot->GetVoltage());
     SmartDashboard::PutBoolean("pressure: ", airPressureSwitch->Get());
     SmartDashboard::PutNumber("gyro angle: ", locator->getAngle());
-    SmartDashboard::PutNumber("spigyro angle: ", spiGyro->GetDegrees());
+    //SmartDashboard::PutNumber("spigyro angle: ", spiGyro->GetDegrees());
     SmartDashboard::PutNumber("Elevator Height:", sauropod->getElevatorHeight());
 }
 
@@ -165,7 +169,7 @@ void Robot::DisabledPeriodic()
 void Robot::AutonomousInit()
 {
     autoManager->setMode("Grab");
-    spiGyro->ZeroAngle();
+    //spiGyro->ZeroAngle();
     locator->resetGyro();
     locator->resetAll();
     autoManager->getCurrentMode()->init();
@@ -193,6 +197,8 @@ void Robot::TeleopPeriodic()
 {
     controlManager->update();
     stateManager->update();
+
+    grabber->testMotor(0.5);
 
     runCompressor();
 

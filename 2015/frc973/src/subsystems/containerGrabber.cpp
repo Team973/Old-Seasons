@@ -1,15 +1,31 @@
 #include "WPILib.h"
 #include "containerGrabber.hpp"
+#include "../lib/pid.hpp"
 
 namespace frc973 {
 
-ContainerGrabber::ContainerGrabber(Solenoid* solenoid_, CANTalon* motor_) {
+ContainerGrabber::ContainerGrabber(Solenoid* solenoid_, CANTalon* motorA_, CANTalon* motorB_, Encoder* encoderA_, Encoder* encoderB_) {
     solenoid = solenoid_;
-    motor = motor_;
+    motorA = motorA_;
+    motorB = motorB_;
+    encoderA = encoderA;
+    encoderB = encoderB;
+
+    grabberPID = new PID(0.0,0.0,0.0);
+    grabberPID->start();
 }
 
 void ContainerGrabber::testMotor(float speed) {
-    motor->Set(speed);
+    motorA->Set(speed);
+    motorB->Set(speed);
+}
+
+void ContainerGrabber::testSetPositionTarget(float position) {
+    grabberPID->setTarget(position);
+}
+
+void ContainerGrabber::testMotorClosedLoop(float position) {
+    motorA->Set(grabberPID->update(encoderA->Get()));
 }
 
 void ContainerGrabber::grab() {
