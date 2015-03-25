@@ -43,7 +43,8 @@ private:
     VictorSP *rightIntakeMotor;
     VictorSP *containerGrabberMotor;
     
-    CANTalon *grabberMotor;
+    CANTalon *grabberMotorA;
+    CANTalon *grabberMotorB;
 
     Solenoid *intakeSolenoidA;
     Solenoid *intakeSolenoidB;
@@ -56,8 +57,10 @@ private:
     Encoder *rightDriveEncoder;
     Encoder *elevatorEncoder;
     Encoder *gyro;
+    Encoder *grabberEncoderA;
+    Encoder *grabberEncoderB;
 
-    SPIGyro *spiGyro;
+    //SPIGyro *spiGyro;
 
     AnalogInput *elevatorPot;
     AnalogInput *containerGrabberPot;
