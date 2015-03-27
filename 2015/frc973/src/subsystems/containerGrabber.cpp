@@ -11,6 +11,8 @@ ContainerGrabber::ContainerGrabber(Solenoid* solenoid_, CANTalon* motorA_, CANTa
     encoderA = encoderA;
     encoderB = encoderB;
 
+    grabberState = IDLE;
+
     grabberPID = new PID(0.0,0.0,0.0);
     grabberPID->start();
 }
@@ -34,6 +36,17 @@ void ContainerGrabber::grab() {
 
 void ContainerGrabber::retract() {
     solenoid->Set(false);
+}
+
+void ContainerGrabber::update() {
+    switch (grabberState) {
+        case DROP:
+            break;
+        case SETTLE:
+            break;
+        case PULL:
+            break;
+    }
 }
 
 } /* namespace frc973 */
