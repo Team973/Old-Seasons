@@ -69,6 +69,7 @@ private:
     DigitalInput *airPressureSwitch;
 
     Relay *compressor;
+    Relay *statusLED;
 
     Joystick *driver;
     Joystick *coDriver;

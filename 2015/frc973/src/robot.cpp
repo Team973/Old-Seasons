@@ -84,10 +84,12 @@ Robot::Robot()
     airPressureSwitch = new DigitalInput(9);
     compressor = new Relay(0, Relay::kForwardOnly);
 
+    statusLED = new Relay(1, Relay::kBothDirections);
+
     leftDriveEncoder = new Encoder(4,5);
     rightDriveEncoder = new Encoder(2,3);
 
-    elevatorEncoder = new Encoder(6,7);
+    elevatorEncoder = new Encoder(6,7, false, CounterBase::k2X);
     elevatorPot = new AnalogInput(1);
 
     gyro = new Encoder(0,1,false,CounterBase::k2X);
@@ -98,6 +100,8 @@ Robot::Robot()
 
     grabberMotorA = new CANTalon(0);
     grabberMotorB = new CANTalon(1);
+    grabberMotorB->SetControlMode(CANSpeedController::kFollower);
+    grabberMotorB->Set(0);
     grabberSolenoid = new Solenoid(6);
 
     grabberEncoderA = new Encoder(24,25);
@@ -137,7 +141,7 @@ void Robot::runCompressor() {
 
 void Robot::dashboardUpdate()
 {
-    SmartDashboard::PutString("DB/String 1", asString(grabberEncoderA->Get()));
+    SmartDashboard::PutNumber("Grabber Encoder: ", grabberEncoderA->Get());
     SmartDashboard::PutNumber("drive distance: ", locator->getMovedDistance());
     SmartDashboard::PutNumber("left drive distance: ", locator->getDistance(leftDriveEncoder));
     SmartDashboard::PutNumber("raw elevator encoder: ", elevatorEncoder->Get());
@@ -191,6 +195,7 @@ void Robot::AutonomousPeriodic()
 void Robot::TeleopInit()
 {
     stateManager->unBrakeClaw();
+    statusLED->Set(Relay::kOn);
 }
 
 void Robot::TeleopPeriodic()
@@ -198,7 +203,7 @@ void Robot::TeleopPeriodic()
     controlManager->update();
     stateManager->update();
 
-    grabber->testMotor(0.5);
+    grabber->testMotor(1);
 
     runCompressor();
 

@@ -17,7 +17,7 @@ ContainerGrabber::ContainerGrabber(Solenoid* solenoid_, CANTalon* motorA_, CANTa
 
 void ContainerGrabber::testMotor(float speed) {
     motorA->Set(speed);
-    motorB->Set(speed);
+    //motorB->Set(speed);
 }
 
 void ContainerGrabber::testSetPositionTarget(float position) {
