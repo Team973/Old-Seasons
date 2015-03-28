@@ -63,7 +63,6 @@ private:
     //SPIGyro *spiGyro;
 
     AnalogInput *elevatorPot;
-    AnalogInput *containerGrabberPot;
 
     DigitalInput *toteSensor;
     DigitalInput *airPressureSwitch;
