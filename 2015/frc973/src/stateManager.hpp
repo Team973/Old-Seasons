@@ -76,7 +76,6 @@ private:
     bool wantAutoLoad;
     bool wantHumanLoad;
 
-    int numTotes;
     bool hadTote;
     bool lastTote;
 };
