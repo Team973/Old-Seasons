@@ -1,6 +1,7 @@
 #include "WPILib.h"
 #include "containerGrabber.hpp"
 #include "../lib/pid.hpp"
+#include "../constants.hpp"
 
 namespace frc973 {
 
@@ -8,8 +9,8 @@ ContainerGrabber::ContainerGrabber(Solenoid* solenoid_, CANTalon* motorA_, CANTa
     solenoid = solenoid_;
     motorA = motorA_;
     motorB = motorB_;
-    encoderA = encoderA;
-    encoderB = encoderB;
+    encoderA = encoderA_;
+    encoderB = encoderB_;
 
     grabberState = IDLE;
 
@@ -30,12 +31,37 @@ void ContainerGrabber::testMotorClosedLoop(float position) {
     motorA->Set(grabberPID->update(encoderA->Get()));
 }
 
+void ContainerGrabber::setControlMode(std::string mode) {
+    if (mode == "position") {
+        motorA->SetControlMode(CANSpeedController::kPosition);
+        motorB->SetControlMode(CANSpeedController::kPosition);
+        motorA->SetFeedbackDevice(CANTalon::QuadEncoder);
+        motorB->SetFeedbackDevice(CANTalon::QuadEncoder);
+    } else if (mode == "openLoop") {
+        motorA->SetControlMode(CANSpeedController::kSpeed);
+        motorB->SetControlMode(CANSpeedController::kSpeed);
+    }
+}
+
+void ContainerGrabber::setPIDSlot(int slot) {
+    motorA->SelectProfileSlot(slot);
+    motorB->SelectProfileSlot(slot);
+}
+
+void ContainerGrabber::setPIDTarget(float target) {
+    motorA->Set(target);
+    motorB->Set(target);
+}
+
 void ContainerGrabber::grab() {
-    solenoid->Set(true);
+    setControlMode("position");
+    setPIDSlot(0);
+    setPIDTarget(Constants::getConstant("kGrabberDropTarget")->getFloat());
+    grabberState = DROP;
 }
 
 void ContainerGrabber::retract() {
-    solenoid->Set(false);
+    grabberState = RETRACT;
 }
 
 void ContainerGrabber::update() {
@@ -45,6 +71,10 @@ void ContainerGrabber::update() {
         case SETTLE:
             break;
         case PULL:
+            break;
+        case RETRACT:
+            break;
+        case IDLE:
             break;
     }
 }

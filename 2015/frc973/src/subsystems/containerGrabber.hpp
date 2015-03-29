@@ -20,6 +20,7 @@ public:
     const static int DROP = 1;
     const static int SETTLE = 2;
     const static int PULL = 3;
+    const static int RETRACT = 4;
 private:
     Solenoid *solenoid;
     CANTalon *motorA;
