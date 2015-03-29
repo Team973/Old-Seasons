@@ -29,6 +29,10 @@ void Constants::Extend()
     addConstant("kArmI", 0.0);
     addConstant("kArmD", 0.0);
     addConstant("kArmVelFF", 0.0);
+    addConstant("kGrabberDropTarget", 0.0);
+    addConstant("kGrabberFloatTarget", 0.0);
+    addConstant("kGrabberPullTarget", 0.0);
+    addConstant("kGrabberP", 0.0);
 
     readConstantsFile();
 }
