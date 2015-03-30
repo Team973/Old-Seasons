@@ -14,6 +14,9 @@ public:
     void testMotor(float speed);
     void testSetPositionTarget(float position);
     void testMotorClosedLoop(float position);
+    void setControlMode(std::string mode);
+    void setPIDSlot(int slot);
+    void setPIDTarget(float target);
     void update();
 
     const static int IDLE = 0;

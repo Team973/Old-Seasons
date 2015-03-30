@@ -86,10 +86,10 @@ Robot::Robot()
 
     statusLED = new Relay(1, Relay::kBothDirections);
 
-    leftDriveEncoder = new Encoder(4,5);
-    rightDriveEncoder = new Encoder(2,3);
+    leftDriveEncoder = new Encoder(4,5, false, CounterBase::k2X);
+    rightDriveEncoder = new Encoder(2,3, false, CounterBase::k2X);
 
-    elevatorEncoder = new Encoder(6,7, false, CounterBase::k2X);
+    elevatorEncoder = new Encoder(6,7);
     elevatorPot = new AnalogInput(1);
 
     gyro = new Encoder(0,1,false,CounterBase::k2X);
@@ -104,8 +104,8 @@ Robot::Robot()
     grabberMotorB->Set(0);
     grabberSolenoid = new Solenoid(6);
 
-    grabberEncoderA = new Encoder(24,25);
-    grabberEncoderB = new Encoder(22,23);
+    grabberEncoderA = new Encoder(24,25, false, CounterBase::k2X);
+    grabberEncoderB = new Encoder(22,23, false, CounterBase::k2X);
 
     locator = new Locator(leftDriveEncoder, rightDriveEncoder, gyro);//spiGyro, gyro);
 
