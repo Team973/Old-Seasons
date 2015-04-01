@@ -43,22 +43,23 @@ private:
     VictorSP *rightIntakeMotor;
     VictorSP *containerGrabberMotor;
     
-    CANTalon *grabberMotorA;
-    CANTalon *grabberMotorB;
+    CANTalon *leftGrabberMotorA;
+    CANTalon *leftGrabberMotorB;
+    CANTalon *rightGrabberMotorA;
+    CANTalon *rightGrabberMotorB;
 
     Solenoid *intakeSolenoidA;
     Solenoid *intakeSolenoidB;
     Solenoid *footSolenoid;
     Solenoid *clawClampSolenoid;
     Solenoid *clawBrakeSolenoid;
-    Solenoid *grabberSolenoid;
 
     Encoder *leftDriveEncoder;
     Encoder *rightDriveEncoder;
     Encoder *elevatorEncoder;
     Encoder *gyro;
-    Encoder *grabberEncoderA;
-    Encoder *grabberEncoderB;
+    Encoder *leftGrabberEncoder;
+    Encoder *rightGrabberEncoder;
 
     //SPIGyro *spiGyro;
 

@@ -5,22 +5,42 @@
 
 namespace frc973 {
 
-ContainerGrabber::ContainerGrabber(Solenoid* solenoid_, CANTalon* motorA_, CANTalon* motorB_, Encoder* encoderA_, Encoder* encoderB_) {
-    solenoid = solenoid_;
-    motorA = motorA_;
-    motorB = motorB_;
-    encoderA = encoderA_;
-    encoderB = encoderB_;
+ContainerGrabber::ContainerGrabber(CANTalon* leftMotorA_, CANTalon* leftMotorB_, CANTalon* rightMotorA_, CANTalon* rightMotorB_, Encoder* leftEncoder_, Encoder* rightEncoder_) {
+    leftMotorA = leftMotorA_;
+    leftMotorB = leftMotorB_;
+    rightMotorA = rightMotorA_;
+    rightMotorB = rightMotorB_;
+    leftEncoder = leftEncoder_;
+    rightEncoder = rightEncoder_;
 
-    grabberState = IDLE;
+    leftArm = {
+        IDLE,
+        leftMotorA,
+        leftMotorB,
+        leftEncoder,
+        false,
+        new Timer(),
+    };
+
+    rightArm = {
+        IDLE,
+        rightMotorA,
+        rightMotorB,
+        rightEncoder,
+        false,
+        new Timer(),
+    };
+
 
     grabberPID = new PID(0.0,0.0,0.0);
     grabberPID->start();
 }
 
 void ContainerGrabber::testMotor(float speed) {
+    /*
     motorA->Set(speed);
-    //motorB->Set(speed);
+    motorB->Set(speed);
+    */
 }
 
 void ContainerGrabber::testSetPositionTarget(float position) {
@@ -28,53 +48,97 @@ void ContainerGrabber::testSetPositionTarget(float position) {
 }
 
 void ContainerGrabber::testMotorClosedLoop(float position) {
+    /*
     motorA->Set(grabberPID->update(encoderA->Get()));
+    */
 }
 
 void ContainerGrabber::setControlMode(std::string mode) {
     if (mode == "position") {
+        /*
         motorA->SetControlMode(CANSpeedController::kPosition);
         motorB->SetControlMode(CANSpeedController::kPosition);
+        */
     } else if (mode == "openLoop") {
+        /*
         motorA->SetControlMode(CANSpeedController::kSpeed);
         motorB->SetControlMode(CANSpeedController::kSpeed);
+        */
     }
 }
 
-void ContainerGrabber::setPIDSlot(int slot) {
+void ContainerGrabber::setPIDslot(int slot) {
+    /*
     motorA->SelectProfileSlot(slot);
     motorB->SelectProfileSlot(slot);
+    */
+}
+
+void ContainerGrabber::setPositionTarget(float target) {
+    /*
+    motorA->Set(target);
+    motorB->Set(target);
+    */
 }
 
 void ContainerGrabber::setPIDTarget(float target) {
-    motorA->Set(target);
-    motorB->Set(target);
+    grabberPID->setTarget(target);
 }
 
 void ContainerGrabber::grab() {
     setControlMode("position");
-    setPIDSlot(0);
-    setPIDTarget(Constants::getConstant("kGrabberDropTarget")->getFloat());
-    grabberState = DROP;
+    setPIDslot(0);
+    setPositionTarget(Constants::getConstant("kGrabberDropTarget")->getFloat());
+    leftArm.state = DROP;
+    rightArm.state = DROP;
+    leftArm.timer->Start();
+    leftArm.timer->Reset();
+    rightArm.timer->Start();
+    rightArm.timer->Reset();
 }
 
 void ContainerGrabber::retract() {
-    grabberState = RETRACT;
+    leftArm.state = RETRACT;
+    rightArm.state = RETRACT;
+}
+
+void ContainerGrabber::stateHandler(Arm arm) {
+    float angleFaultCheck = Constants::getConstant("kGrabberFaultAngle")->getFloat();
+    float faultCheckTime = Constants::getConstant("kGrabberFaultTime")->getFloat();
+    bool stateChanged = false;
+
+    do {
+        stateChanged = false;
+        switch (arm.state) {
+            case DROP:
+                if (arm.timer->Get() > faultCheckTime) {
+                    if (arm.encoder->Get() < angleFaultCheck) {
+                        arm.angleFault = true;
+                    }
+                }
+
+                if (arm.encoder->Get() > Constants::getConstant("kGrabberDropTarget")->getFloat()) {
+                    arm.state = SETTLE;
+                    stateChanged = true;
+                }
+                break;
+            case SETTLE:
+                setPIDslot(1);
+                setPositionTarget(Constants::getConstant("kGrabberSettleTarget")->getFloat());
+                break;
+            case PULL:
+                break;
+            case RETRACT:
+                break;
+            case IDLE:
+                break;
+        }
+    } while (stateChanged == false);
 }
 
 void ContainerGrabber::update() {
-    switch (grabberState) {
-        case DROP:
-            break;
-        case SETTLE:
-            break;
-        case PULL:
-            break;
-        case RETRACT:
-            break;
-        case IDLE:
-            break;
-    }
+    stateHandler(leftArm);
+    stateHandler(rightArm);
 }
 
 } /* namespace frc973 */

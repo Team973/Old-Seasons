@@ -98,16 +98,21 @@ Robot::Robot()
 
     toteSensor = new DigitalInput(8);
 
-    grabberMotorA = new CANTalon(0);
-    grabberMotorA->SetFeedbackDevice(CANTalon::QuadEncoder);
-    grabberMotorA->SetControlMode(CANSpeedController::kPosition);
-    grabberMotorB = new CANTalon(1);
-    grabberMotorB->SetFeedbackDevice(CANTalon::QuadEncoder);
-    grabberMotorB->SetControlMode(CANSpeedController::kPosition);
-    grabberSolenoid = new Solenoid(6);
+    leftGrabberMotorA = new CANTalon(0);
+    leftGrabberMotorA->SetFeedbackDevice(CANTalon::QuadEncoder);
+    leftGrabberMotorA->SetControlMode(CANSpeedController::kPosition);
+    leftGrabberMotorB = new CANTalon(1);
+    leftGrabberMotorB->SetFeedbackDevice(CANTalon::QuadEncoder);
+    leftGrabberMotorB->SetControlMode(CANSpeedController::kPosition);
+    rightGrabberMotorA = new CANTalon(2);
+    rightGrabberMotorA->SetFeedbackDevice(CANTalon::QuadEncoder);
+    rightGrabberMotorA->SetControlMode(CANSpeedController::kPosition);
+    rightGrabberMotorB = new CANTalon(3);
+    rightGrabberMotorB->SetFeedbackDevice(CANTalon::QuadEncoder);
+    rightGrabberMotorB->SetControlMode(CANSpeedController::kPosition);
 
-    grabberEncoderA = new Encoder(24,25, false, CounterBase::k2X);
-    grabberEncoderB = new Encoder(22,23, false, CounterBase::k2X);
+    leftGrabberEncoder = new Encoder(24,25, false, CounterBase::k2X);
+    rightGrabberEncoder = new Encoder(22,23, false, CounterBase::k2X);
 
     locator = new Locator(leftDriveEncoder, rightDriveEncoder, gyro);//spiGyro, gyro);
 
@@ -117,7 +122,7 @@ Robot::Robot()
     drive = new Drive(leftDriveMotors, rightDriveMotors);
     sauropod = new Sauropod(elevatorMotor, elevatorEncoder, clawClampSolenoid, clawBrakeSolenoid);
     intake = new Intake(leftIntakeMotor, rightIntakeMotor, intakeSolenoidA, intakeSolenoidB, footSolenoid, toteSensor);
-    grabber = new ContainerGrabber(grabberSolenoid, grabberMotorA, grabberMotorB, grabberEncoderA, grabberEncoderB);
+    grabber = new ContainerGrabber(leftGrabberMotorA, leftGrabberMotorB, rightGrabberMotorA, rightGrabberMotorB, leftGrabberEncoder, rightGrabberEncoder);
 
     controls = new ControlMap(driver, coDriver);
 
@@ -143,7 +148,7 @@ void Robot::runCompressor() {
 
 void Robot::dashboardUpdate()
 {
-    SmartDashboard::PutNumber("Grabber Encoder: ", grabberEncoderA->Get());
+    SmartDashboard::PutNumber("Grabber Encoder: ", leftGrabberEncoder->Get());
     SmartDashboard::PutNumber("drive distance: ", locator->getMovedDistance());
     SmartDashboard::PutNumber("left drive distance: ", locator->getDistance(leftDriveEncoder));
     SmartDashboard::PutNumber("raw elevator encoder: ", elevatorEncoder->Get());
