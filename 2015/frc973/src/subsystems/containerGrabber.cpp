@@ -35,8 +35,6 @@ void ContainerGrabber::setControlMode(std::string mode) {
     if (mode == "position") {
         motorA->SetControlMode(CANSpeedController::kPosition);
         motorB->SetControlMode(CANSpeedController::kPosition);
-        motorA->SetFeedbackDevice(CANTalon::QuadEncoder);
-        motorB->SetFeedbackDevice(CANTalon::QuadEncoder);
     } else if (mode == "openLoop") {
         motorA->SetControlMode(CANSpeedController::kSpeed);
         motorB->SetControlMode(CANSpeedController::kSpeed);

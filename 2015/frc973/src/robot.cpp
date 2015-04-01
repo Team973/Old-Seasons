@@ -99,9 +99,11 @@ Robot::Robot()
     toteSensor = new DigitalInput(8);
 
     grabberMotorA = new CANTalon(0);
+    grabberMotorA->SetFeedbackDevice(CANTalon::QuadEncoder);
+    grabberMotorA->SetControlMode(CANSpeedController::kPosition);
     grabberMotorB = new CANTalon(1);
-    grabberMotorB->SetControlMode(CANSpeedController::kFollower);
-    grabberMotorB->Set(0);
+    grabberMotorB->SetFeedbackDevice(CANTalon::QuadEncoder);
+    grabberMotorB->SetControlMode(CANSpeedController::kPosition);
     grabberSolenoid = new Solenoid(6);
 
     grabberEncoderA = new Encoder(24,25, false, CounterBase::k2X);
