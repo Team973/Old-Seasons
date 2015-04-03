@@ -5,19 +5,16 @@
 
 namespace frc973 {
 
-ContainerGrabber::ContainerGrabber(CANTalon* leftMotorA_, CANTalon* leftMotorB_, CANTalon* rightMotorA_, CANTalon* rightMotorB_, Encoder* leftEncoder_, Encoder* rightEncoder_) {
+ContainerGrabber::ContainerGrabber(CANTalon* leftMotorA_, CANTalon* leftMotorB_, CANTalon* rightMotorA_, CANTalon* rightMotorB_) {
     leftMotorA = leftMotorA_;
     leftMotorB = leftMotorB_;
     rightMotorA = rightMotorA_;
     rightMotorB = rightMotorB_;
-    leftEncoder = leftEncoder_;
-    rightEncoder = rightEncoder_;
 
     leftArm = {
         IDLE,
         leftMotorA,
         leftMotorB,
-        leftEncoder,
         false,
         new Timer(),
     };
@@ -26,59 +23,45 @@ ContainerGrabber::ContainerGrabber(CANTalon* leftMotorA_, CANTalon* leftMotorB_,
         IDLE,
         rightMotorA,
         rightMotorB,
-        rightEncoder,
         false,
         new Timer(),
     };
 
 
-    grabberPID = new PID(0.0,0.0,0.0);
+    grabberPID = new PID(0.001,0.0,0.0);
     grabberPID->start();
 }
 
 void ContainerGrabber::testMotor(float speed) {
-    /*
-    motorA->Set(speed);
-    motorB->Set(speed);
-    */
+    leftArm.motorA->Set(speed);
 }
 
 void ContainerGrabber::testSetPositionTarget(float position) {
     grabberPID->setTarget(position);
 }
 
-void ContainerGrabber::testMotorClosedLoop(float position) {
-    /*
-    motorA->Set(grabberPID->update(encoderA->Get()));
-    */
+void ContainerGrabber::testMotorClosedLoop() {
+    leftArm.motorA->Set(-grabberPID->update(-leftArm.motorA->GetEncPosition()));
 }
 
 void ContainerGrabber::setControlMode(std::string mode) {
     if (mode == "position") {
-        /*
-        motorA->SetControlMode(CANSpeedController::kPosition);
-        motorB->SetControlMode(CANSpeedController::kPosition);
-        */
+        leftArm.motorA->SetControlMode(CANSpeedController::kPosition);
+        //leftArm.motorB->SetControlMode(CANSpeedController::kPosition);
     } else if (mode == "openLoop") {
-        /*
-        motorA->SetControlMode(CANSpeedController::kSpeed);
-        motorB->SetControlMode(CANSpeedController::kSpeed);
-        */
+        leftArm.motorA->SetControlMode(CANSpeedController::kPercentVbus);
+        //leftArm.motorB->SetControlMode(CANSpeedController::kPercentVbus);
     }
 }
 
 void ContainerGrabber::setPIDslot(int slot) {
-    /*
-    motorA->SelectProfileSlot(slot);
-    motorB->SelectProfileSlot(slot);
-    */
+    leftArm.motorA->SelectProfileSlot(slot);
+    //leftArm.motorB->SelectProfileSlot(slot);
 }
 
 void ContainerGrabber::setPositionTarget(float target) {
-    /*
-    motorA->Set(target);
-    motorB->Set(target);
-    */
+    leftArm.motorA->Set(target);
+    //leftArm.motorB->Set(target);
 }
 
 void ContainerGrabber::setPIDTarget(float target) {
@@ -112,15 +95,19 @@ void ContainerGrabber::stateHandler(Arm arm) {
         switch (arm.state) {
             case DROP:
                 if (arm.timer->Get() > faultCheckTime) {
+                    /*
                     if (arm.encoder->Get() < angleFaultCheck) {
                         arm.angleFault = true;
                     }
+                    */
                 }
 
+                /*
                 if (arm.encoder->Get() > Constants::getConstant("kGrabberDropTarget")->getFloat()) {
                     arm.state = SETTLE;
                     stateChanged = true;
                 }
+                */
                 break;
             case SETTLE:
                 setPIDslot(1);

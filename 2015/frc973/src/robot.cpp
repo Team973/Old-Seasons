@@ -63,6 +63,7 @@ Robot::Robot()
 
     driver = new Joystick(0);
     coDriver = new Joystick(1);
+    oliverStick = new Joystick(2);
 
     leftDriveMotors = new VictorSP(0);
     rightDriveMotors = new VictorSP(1);
@@ -99,20 +100,18 @@ Robot::Robot()
     toteSensor = new DigitalInput(8);
 
     leftGrabberMotorA = new CANTalon(0);
-    leftGrabberMotorA->SetFeedbackDevice(CANTalon::QuadEncoder);
     leftGrabberMotorA->SetControlMode(CANSpeedController::kPosition);
+    leftGrabberMotorA->SetFeedbackDevice(CANTalon::QuadEncoder);
+    leftGrabberMotorA->SetSensorDirection(false);
     leftGrabberMotorB = new CANTalon(1);
-    leftGrabberMotorB->SetFeedbackDevice(CANTalon::QuadEncoder);
-    leftGrabberMotorB->SetControlMode(CANSpeedController::kPosition);
+    //leftGrabberMotorB->SetFeedbackDevice(CANTalon::QuadEncoder);
+    //leftGrabberMotorB->SetControlMode(CANSpeedController::kPosition);
     rightGrabberMotorA = new CANTalon(2);
-    rightGrabberMotorA->SetFeedbackDevice(CANTalon::QuadEncoder);
-    rightGrabberMotorA->SetControlMode(CANSpeedController::kPosition);
+    //rightGrabberMotorA->SetFeedbackDevice(CANTalon::QuadEncoder);
+    //rightGrabberMotorA->SetControlMode(CANSpeedController::kPosition);
     rightGrabberMotorB = new CANTalon(3);
-    rightGrabberMotorB->SetFeedbackDevice(CANTalon::QuadEncoder);
-    rightGrabberMotorB->SetControlMode(CANSpeedController::kPosition);
-
-    leftGrabberEncoder = new Encoder(24,25, false, CounterBase::k2X);
-    rightGrabberEncoder = new Encoder(22,23, false, CounterBase::k2X);
+    //rightGrabberMotorB->SetFeedbackDevice(CANTalon::QuadEncoder);
+    //rightGrabberMotorB->SetControlMode(CANSpeedController::kPosition);
 
     locator = new Locator(leftDriveEncoder, rightDriveEncoder, gyro);//spiGyro, gyro);
 
@@ -122,7 +121,7 @@ Robot::Robot()
     drive = new Drive(leftDriveMotors, rightDriveMotors);
     sauropod = new Sauropod(elevatorMotor, elevatorEncoder, clawClampSolenoid, clawBrakeSolenoid);
     intake = new Intake(leftIntakeMotor, rightIntakeMotor, intakeSolenoidA, intakeSolenoidB, footSolenoid, toteSensor);
-    grabber = new ContainerGrabber(leftGrabberMotorA, leftGrabberMotorB, rightGrabberMotorA, rightGrabberMotorB, leftGrabberEncoder, rightGrabberEncoder);
+    grabber = new ContainerGrabber(leftGrabberMotorA, leftGrabberMotorB, rightGrabberMotorA, rightGrabberMotorB);
 
     controls = new ControlMap(driver, coDriver);
 
@@ -148,7 +147,8 @@ void Robot::runCompressor() {
 
 void Robot::dashboardUpdate()
 {
-    SmartDashboard::PutNumber("Grabber Encoder: ", leftGrabberEncoder->Get());
+    printf("position: %d\n", leftGrabberMotorA->GetEncPosition());
+    SmartDashboard::PutNumber("Grabber Encoder: ", leftGrabberMotorA->GetEncPosition());
     SmartDashboard::PutNumber("drive distance: ", locator->getMovedDistance());
     SmartDashboard::PutNumber("left drive distance: ", locator->getDistance(leftDriveEncoder));
     SmartDashboard::PutNumber("raw elevator encoder: ", elevatorEncoder->Get());
@@ -203,6 +203,7 @@ void Robot::TeleopInit()
 {
     stateManager->unBrakeClaw();
     statusLED->Set(Relay::kOn);
+    grabber->setPIDslot(0);
 }
 
 void Robot::TeleopPeriodic()
@@ -210,7 +211,22 @@ void Robot::TeleopPeriodic()
     controlManager->update();
     stateManager->update();
 
-    grabber->testMotor(1);
+    if (oliverStick->GetRawButton(1)) {
+        grabber->setControlMode("position");
+        grabber->setPIDslot(0);
+        grabber->setPositionTarget(90);
+    } else if (oliverStick->GetRawButton(2)) {
+        grabber->setControlMode("position");
+        grabber->setPIDslot(1);
+        grabber->setPositionTarget(-1000);
+    } else if (oliverStick->GetRawButton(3)) {
+        grabber->setControlMode("openLoop");
+        grabber->testMotor(1);
+    } else if (oliverStick->GetRawButton(4)) {
+        grabber->setControlMode("openLoop");
+        grabber->testSetPositionTarget(4000);
+        grabber->testMotorClosedLoop();
+    }
 
     runCompressor();
 
