@@ -8,12 +8,12 @@ class PID;
 class ContainerGrabber {
 
 public:
-    ContainerGrabber(CANTalon* leftMotorA_, CANTalon* leftMotorB_, CANTalon* rightMotorA_, CANTalon* rightMotorB_, Encoder* encoderA_, Encoder* encoderB_);
+    ContainerGrabber(CANTalon* leftMotorA_, CANTalon* leftMotorB_, CANTalon* rightMotorA_, CANTalon* rightMotorB_);
     void grab();
     void retract();
     void testMotor(float speed);
     void testSetPositionTarget(float position);
-    void testMotorClosedLoop(float position);
+    void testMotorClosedLoop();
     void setControlMode(std::string mode);
     void setPIDslot(int slot);
     void setPositionTarget(float target);
@@ -31,7 +31,6 @@ private:
         int state;
         CANTalon *motorA;
         CANTalon *motorB;
-        Encoder *encoder;
         bool angleFault;
         Timer *timer;
     };
@@ -42,8 +41,6 @@ private:
     CANTalon *leftMotorB;
     CANTalon *rightMotorA;
     CANTalon *rightMotorB;
-    Encoder *leftEncoder;
-    Encoder *rightEncoder;
 
     Arm leftArm;
     Arm rightArm;

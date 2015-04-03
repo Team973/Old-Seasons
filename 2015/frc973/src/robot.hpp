@@ -58,8 +58,6 @@ private:
     Encoder *rightDriveEncoder;
     Encoder *elevatorEncoder;
     Encoder *gyro;
-    Encoder *leftGrabberEncoder;
-    Encoder *rightGrabberEncoder;
 
     //SPIGyro *spiGyro;
 
@@ -73,6 +71,7 @@ private:
 
     Joystick *driver;
     Joystick *coDriver;
+    Joystick *oliverStick;
 
     Locator *locator;
 
