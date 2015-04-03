@@ -108,8 +108,9 @@ void StateManager::setResting() {
 void StateManager::setAutoLoad(bool wantLoad) {
     if (wantLoad) {
         robotState = AUTO_LOAD;
-    } else if (wantAutoLoad && wantLoad && !lastTote) {
-        restingPath = "loadHigh";
+    } else if (wantLoad && !lastTote) {
+        restingPath = "loadLow";
+        pickupPath = "loadHigh";
     }
     wantAutoLoad = wantLoad;
 }
@@ -192,7 +193,7 @@ void StateManager::update() {
                             sauropod->setPreset("loadHigh");
                     }
 
-                    if (sauropod->isCurrPreset(restingPath) && !sauropod->motionDone()) {
+                    if (sauropod->isCurrPreset("loadHigh") && !sauropod->motionDone()) {
                         intakePosition = "open";
                     }
 
@@ -200,11 +201,11 @@ void StateManager::update() {
                         hadTote = true;
                         drive->lock();
                         lockTimer->Start();
-                        if (sauropod->getCurrPreset() != "loadLow") {
+                        if (!sauropod->isCurrPreset("loadLow")) {
                             sauropod->setPreset("loadLow");
                         }
                     } else if (sauropod->motionDone() && hadTote && sauropod->inCradle()) {
-                        sauropod->setPreset(restingPath);
+                        sauropod->setPreset("loadHigh");
                         hadTote = false;
                         if (lastTote) {
                             internalState = DEAD;

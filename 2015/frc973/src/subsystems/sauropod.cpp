@@ -25,8 +25,8 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, Encoder* elevatorEncoder_, Solenoid
     elevatorPID->setBounds(-1,1);
     elevatorPID->start();
 
-    addPreset("hardStop", -1.5);
-    addPreset("autoScore", -1.5);
+    addPreset("hardStop", -1);
+    addPreset("autoScore", -1);
     addPreset("stow", -1);
     addPreset("humanLoadHigh", 31);
     addPreset("humanLoadLow", 10);
