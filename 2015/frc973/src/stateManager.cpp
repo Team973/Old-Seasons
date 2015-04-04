@@ -67,6 +67,7 @@ void StateManager::raiseGrabber() {
 }
 
 void StateManager::setIntakeSpeed(float speed) {
+    /*
     if (robotState == HUMAN_LOAD) {
         speed *= 0.4;
         if (speed > 0.4) {
@@ -75,6 +76,7 @@ void StateManager::setIntakeSpeed(float speed) {
             speed = -0.4;
         }
     }
+    */
     leftIntakeSpeed = speed;
     rightIntakeSpeed = speed;
 }
