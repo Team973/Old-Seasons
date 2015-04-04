@@ -29,6 +29,7 @@ ContainerGrabber::ContainerGrabber(CANTalon* leftMotorA_, CANTalon* leftMotorB_,
 
     grabberPID = new PID(0.001,0.0,0.0);
     grabberPID->start();
+    initGrabSequence();
 }
 
 void ContainerGrabber::testMotor(float speed) {
@@ -125,7 +126,7 @@ void ContainerGrabber::stateHandler(Arm arm) {
                 }
             }
 
-            if (arm.motorA->GetEncPosition() > Constants::getConstant("kGrabberDropTarget")->getInt()) {
+            if (arm.motorA->GetEncPosition() > 200) {
                 initSettleState(arm);
             }
             break;
@@ -142,7 +143,8 @@ void ContainerGrabber::stateHandler(Arm arm) {
 
 void ContainerGrabber::update() {
     stateHandler(leftArm);
-    stateHandler(rightArm);
+    //stateHandler(rightArm);
+    SmartDashboard::PutNumber("Left Arm State: ", leftArm.state);
 }
 
 } /* namespace frc973 */

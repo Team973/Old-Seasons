@@ -147,7 +147,7 @@ void Robot::runCompressor() {
 
 void Robot::dashboardUpdate()
 {
-    printf("position: %d\n", leftGrabberMotorA->GetEncPosition());
+    //printf("position: %d\n", leftGrabberMotorA->GetEncPosition());
     SmartDashboard::PutNumber("Grabber Encoder: ", leftGrabberMotorA->GetEncPosition());
     SmartDashboard::PutNumber("drive distance: ", locator->getMovedDistance());
     SmartDashboard::PutNumber("left drive distance: ", locator->getDistance(leftDriveEncoder));
@@ -204,12 +204,14 @@ void Robot::TeleopInit()
     stateManager->unBrakeClaw();
     statusLED->Set(Relay::kOn);
     //grabber->setPIDslot(0);
+    grabber->startGrabSequence();
 }
 
 void Robot::TeleopPeriodic()
 {
     controlManager->update();
     stateManager->update();
+    grabber->update();
 
     /*
     if (oliverStick->GetRawButton(1)) {
