@@ -8,15 +8,29 @@ class PID;
 class ContainerGrabber {
 
 public:
+
+    struct Arm {
+        int state;
+        CANTalon *motorA;
+        CANTalon *motorB;
+        bool angleFault;
+        Timer *timer;
+    };
+
     ContainerGrabber(CANTalon* leftMotorA_, CANTalon* leftMotorB_, CANTalon* rightMotorA_, CANTalon* rightMotorB_);
-    void grab();
+    void initGrabSequence();
+    void startGrabSequence();
+    void initSettleState(Arm arm);
+    void initPullState(Arm arm);
+    void initIdleState(Arm arm);
     void retract();
     void testMotor(float speed);
     void testSetPositionTarget(float position);
     void testMotorClosedLoop();
-    void setControlMode(std::string mode);
-    void setPIDslot(int slot);
-    void setPositionTarget(float target);
+    ContainerGrabber::Arm testGetArm(int arm);
+    void setControlMode(Arm arm, std::string mode);
+    void setPIDslot(Arm arm, int slot);
+    void setPositionTarget(Arm arm, float target);
     void setPIDTarget(float target);
     void update();
 
@@ -26,14 +40,6 @@ public:
     const static int PULL = 3;
     const static int RETRACT = 4;
 private:
-
-    struct Arm {
-        int state;
-        CANTalon *motorA;
-        CANTalon *motorB;
-        bool angleFault;
-        Timer *timer;
-    };
 
     void stateHandler(Arm arm);
     

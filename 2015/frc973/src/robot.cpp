@@ -104,8 +104,8 @@ Robot::Robot()
     leftGrabberMotorA->SetFeedbackDevice(CANTalon::QuadEncoder);
     leftGrabberMotorA->SetSensorDirection(false);
     leftGrabberMotorB = new CANTalon(1);
-    //leftGrabberMotorB->SetFeedbackDevice(CANTalon::QuadEncoder);
-    //leftGrabberMotorB->SetControlMode(CANSpeedController::kPosition);
+    leftGrabberMotorB->SetFeedbackDevice(CANTalon::QuadEncoder);
+    leftGrabberMotorB->SetControlMode(CANSpeedController::kPosition);
     rightGrabberMotorA = new CANTalon(2);
     //rightGrabberMotorA->SetFeedbackDevice(CANTalon::QuadEncoder);
     //rightGrabberMotorA->SetControlMode(CANSpeedController::kPosition);
@@ -203,7 +203,7 @@ void Robot::TeleopInit()
 {
     stateManager->unBrakeClaw();
     statusLED->Set(Relay::kOn);
-    grabber->setPIDslot(0);
+    //grabber->setPIDslot(0);
 }
 
 void Robot::TeleopPeriodic()
@@ -211,22 +211,24 @@ void Robot::TeleopPeriodic()
     controlManager->update();
     stateManager->update();
 
+    /*
     if (oliverStick->GetRawButton(1)) {
-        grabber->setControlMode("position");
+        grabber->setControlMode(grabber->testGetArm(1), "position");
         grabber->setPIDslot(0);
         grabber->setPositionTarget(90);
     } else if (oliverStick->GetRawButton(2)) {
-        grabber->setControlMode("position");
+        grabber->setControlMode(grabber->testGetArm(1), "position");
         grabber->setPIDslot(1);
         grabber->setPositionTarget(-1000);
     } else if (oliverStick->GetRawButton(3)) {
-        grabber->setControlMode("openLoop");
+        grabber->setControlMode(grabber->testGetArm(1), "openLoop");
         grabber->testMotor(1);
     } else if (oliverStick->GetRawButton(4)) {
-        grabber->setControlMode("openLoop");
+        grabber->setControlMode(grabber->testGetArm(1), "openLoop");
         grabber->testSetPositionTarget(4000);
         grabber->testMotorClosedLoop();
     }
+    */
 
     runCompressor();
 

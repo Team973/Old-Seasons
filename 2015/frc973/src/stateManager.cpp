@@ -59,7 +59,7 @@ void StateManager::incrementElevatorHeight(float increment) {
 }
 
 void StateManager::dropGrabber() {
-    grabber->grab();
+    grabber->startGrabSequence();
 }
 
 void StateManager::raiseGrabber() {
