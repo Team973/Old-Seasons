@@ -4,7 +4,6 @@ package main
 
 import (
 		"fmt"
-		"io"
 		"io/ioutil"
 		"html/template"
 		"net"
@@ -96,16 +95,7 @@ func constantsHandler(w http.ResponseWriter, r *http.Request) {
 
 func handleConnection(conn net.Conn) {
 	for {
-		var buffer []byte
-		bytes, err := conn.Read(buffer);
-		if err != nil && err != io.EOF {
-			fmt.Printf("error reading from connection", err)
-			return
-		}
-		if bytes > 0 {
-			recvChan <- string(buffer)
-		}
-		_, err = conn.Write([]byte(<-sendChan));
+		_, err := conn.Write([]byte(<-sendChan));
 		if err != nil {
 			fmt.Printf("error writing to connection", err)
 			return
@@ -130,7 +120,6 @@ func connect(port string) {
 }
 
 func socketHandler(w http.ResponseWriter, r *http.Request) {
-	var recvMsg MessageBoard
 	tmpl, err := template.ParseFiles("templates/socket.html")
 	if err != nil {
 		fmt.Println("can't parse template", err)
@@ -139,10 +128,7 @@ func socketHandler(w http.ResponseWriter, r *http.Request) {
 
 	val := r.FormValue("val")
 	sendChan <- val
-	if len(recvChan) > 0 {
-		recvMsg.Msg = append(recvMsg.Msg, <-recvChan)
-	}
-    tmpl.Execute(w, recvMsg)
+    tmpl.Execute(w, nil)
 }
 
 func main() {
