@@ -33,7 +33,6 @@ StateManager::StateManager(Drive *drive_, Sauropod *sauropod_, Intake *intake_, 
 
     restingPath = "loadHigh";
     pickupPath = "loadLow";
-    intakePosition = "float";
 
     vTec_yo = false;
 }
@@ -86,8 +85,12 @@ void StateManager::setIntakeLeftRight(float left, float right) {
     rightIntakeSpeed = right;
 }
 
-void StateManager::setIntakePosition(std::string position) {
-    intakePosition = position;
+void StateManager::setIntakePosition(bool actuate) {
+    intake->actuateIntake(actuate);
+}
+
+void StateManager::setFunnelPosition(bool position) {
+    intake->actuateFunnel(position);
 }
 
 bool StateManager::gotTote() {
@@ -196,7 +199,7 @@ void StateManager::update() {
                     }
 
                     if (sauropod->isCurrPreset("loadHigh") && !sauropod->motionDone()) {
-                        intakePosition = "open";
+                        setIntakePosition(true);
                     }
 
                     if (wantAutoLoad && intake->gotTote() && !sauropod->inCradle() && !hadTote && sauropod->motionDone()) {
@@ -302,15 +305,6 @@ void StateManager::update() {
     }
 
     intake->setIntakeLeftRight(leftIntakeSpeed, rightIntakeSpeed);
-
-    if (intakePosition == "open") {
-        intake->actuateIntake(false, true);
-    } else if (intakePosition == "float") {
-        //intake->actuateIntake(false, false);
-        intake->actuateIntake(true, false);
-    } else if (intakePosition == "closed") {
-        intake->actuateIntake(true, false);
-    }
 
     SmartDashboard::PutNumber("Current Internal State: ", internalState);
     SmartDashboard::PutBoolean("Last Tote: ", lastTote);

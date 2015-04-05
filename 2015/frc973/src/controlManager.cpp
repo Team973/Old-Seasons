@@ -54,18 +54,12 @@ void ControlManager::update() {
         stateManager->setResting();
     }
 
-    if (controls->getCodriverButton(5)) {
-        stateManager->setLastTote();
-    }
+    stateManager->setFunnelPosition(controls->getCodriverButton(5));
 
     stateManager->setContainerLoad(controls->getCodriverButton(6));
 
 
-    if (controls->getCodriverButton(8)) {
-        stateManager->setIntakePosition("open");
-    } else {
-        stateManager->setIntakePosition("float");
-    }
+    stateManager->setIntakePosition(controls->getCodriverButton(8));
 
     if (controls->getCodriverButton(9)) {
         stateManager->brakeClaw();

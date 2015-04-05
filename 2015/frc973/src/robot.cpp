@@ -75,8 +75,8 @@ Robot::Robot()
 
     containerGrabberMotor = new VictorSP(4);
 
-    intakeSolenoidA = new Solenoid(1);
-    intakeSolenoidB = new Solenoid(0);
+    humanLoadFunnelSolenoid = new Solenoid(0);
+    intakeSolenoid = new Solenoid(1);
     footSolenoid = new Solenoid(7);
 
     clawClampSolenoid = new Solenoid(2);
@@ -120,7 +120,7 @@ Robot::Robot()
 
     drive = new Drive(leftDriveMotors, rightDriveMotors);
     sauropod = new Sauropod(elevatorMotor, elevatorEncoder, clawClampSolenoid, clawBrakeSolenoid);
-    intake = new Intake(leftIntakeMotor, rightIntakeMotor, intakeSolenoidA, intakeSolenoidB, footSolenoid, toteSensor);
+    intake = new Intake(leftIntakeMotor, rightIntakeMotor, intakeSolenoid, humanLoadFunnelSolenoid, footSolenoid, toteSensor);
     grabber = new ContainerGrabber(leftGrabberMotorA, leftGrabberMotorB, rightGrabberMotorA, rightGrabberMotorB);
 
     controls = new ControlMap(driver, coDriver);
@@ -202,16 +202,20 @@ void Robot::AutonomousPeriodic()
 void Robot::TeleopInit()
 {
     stateManager->unBrakeClaw();
-    statusLED->Set(Relay::kOn);
     //grabber->setPIDslot(0);
     grabber->startGrabSequence();
 }
 
 void Robot::TeleopPeriodic()
 {
-    controlManager->update();
-    stateManager->update();
-    grabber->update();
+    //controlManager->update();
+    //stateManager->update();
+    //grabber->update();
+
+    if (oliverStick->GetRawButton(1)) {
+        statusLED->Set(Relay::kOn);
+        drive->arcade(1.0, 0.0);
+    }
 
     /*
     if (oliverStick->GetRawButton(1)) {

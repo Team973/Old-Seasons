@@ -48,8 +48,8 @@ private:
     CANTalon *rightGrabberMotorA;
     CANTalon *rightGrabberMotorB;
 
-    Solenoid *intakeSolenoidA;
-    Solenoid *intakeSolenoidB;
+    Solenoid *intakeSolenoid;
+    Solenoid *humanLoadFunnelSolenoid;
     Solenoid *footSolenoid;
     Solenoid *clawClampSolenoid;
     Solenoid *clawBrakeSolenoid;

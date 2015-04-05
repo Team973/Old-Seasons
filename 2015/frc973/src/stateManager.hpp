@@ -20,7 +20,8 @@ public:
     void incrementElevatorHeight(float increment);
     void setIntakeSpeed(float speed);
     void setIntakeLeftRight(float left, float right);
-    void setIntakePosition(std::string position);
+    void setIntakePosition(bool actuate);
+    void setFunnelPosition(bool position);
     void setLastTote();
     bool gotTote();
     void setRobotState(int state);
@@ -67,7 +68,6 @@ private:
 
     std::string restingPath;
     std::string pickupPath;
-    std::string intakePosition;
 
     float leftIntakeSpeed;
     float rightIntakeSpeed;
