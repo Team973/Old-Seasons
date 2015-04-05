@@ -4,7 +4,7 @@
 
 namespace frc973 {
 
-IntakeCommand::IntakeCommand(StateManager *manager_, float speed_, std::string position_, float timeout_) {
+IntakeCommand::IntakeCommand(StateManager *manager_, float speed_, bool position_, float timeout_) {
     manager = manager_;
     leftSpeed = speed_;
     rightSpeed = speed_;
@@ -12,7 +12,7 @@ IntakeCommand::IntakeCommand(StateManager *manager_, float speed_, std::string p
     setTimeout(timeout_);
 }
 
-IntakeCommand::IntakeCommand(StateManager *manager_, float leftSpeed_, float rightSpeed_, std::string position_, float timeout_) {
+IntakeCommand::IntakeCommand(StateManager *manager_, float leftSpeed_, float rightSpeed_, bool position_, float timeout_) {
     manager = manager_;
     leftSpeed = leftSpeed_;
     rightSpeed = rightSpeed_;
