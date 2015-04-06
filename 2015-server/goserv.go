@@ -141,8 +141,8 @@ func main() {
 	tempConstants = constantList
 
 	http.HandleFunc("/", indexHandler)
-	http.HandleFunc("/constants/", constantsHandler)
-	http.HandleFunc("/socket/", socketHandler)
+	http.HandleFunc("/constants.html/", constantsHandler)
+	http.HandleFunc("/socket.html/", socketHandler)
 
 	// Start Web server
 	http.ListenAndServe(":8080", nil)
