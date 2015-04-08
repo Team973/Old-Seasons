@@ -179,6 +179,7 @@ void Robot::DisabledPeriodic()
 
 void Robot::AutonomousInit()
 {
+    grabber->startGrabSequence();
     autoManager->setMode("Grab");
     //spiGyro->ZeroAngle();
     locator->resetGyro();
@@ -208,33 +209,9 @@ void Robot::TeleopInit()
 
 void Robot::TeleopPeriodic()
 {
-    //controlManager->update();
-    //stateManager->update();
-    //grabber->update();
-
-    if (oliverStick->GetRawButton(1)) {
-        statusLED->Set(Relay::kOn);
-        drive->arcade(1.0, 0.0);
-    }
-
-    /*
-    if (oliverStick->GetRawButton(1)) {
-        grabber->setControlMode(grabber->testGetArm(1), "position");
-        grabber->setPIDslot(0);
-        grabber->setPositionTarget(90);
-    } else if (oliverStick->GetRawButton(2)) {
-        grabber->setControlMode(grabber->testGetArm(1), "position");
-        grabber->setPIDslot(1);
-        grabber->setPositionTarget(-1000);
-    } else if (oliverStick->GetRawButton(3)) {
-        grabber->setControlMode(grabber->testGetArm(1), "openLoop");
-        grabber->testMotor(1);
-    } else if (oliverStick->GetRawButton(4)) {
-        grabber->setControlMode(grabber->testGetArm(1), "openLoop");
-        grabber->testSetPositionTarget(4000);
-        grabber->testMotorClosedLoop();
-    }
-    */
+    controlManager->update();
+    stateManager->update();
+    grabber->update();
 
     runCompressor();
 

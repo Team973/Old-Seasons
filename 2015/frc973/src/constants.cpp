@@ -35,6 +35,7 @@ void Constants::Extend()
     addConstant("kGrabberP", 0.0);
     addConstant("kGrabberFaultTime", 0.0);
     addConstant("kGrabberFaultAngle", 0.0);
+    addConstant("kGrabberDropTransAngle", 0.0);
 
     readConstantsFile();
 }
