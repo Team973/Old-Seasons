@@ -36,6 +36,8 @@ private:
 
     void dashboardUpdate();
 
+    bool autoRan;
+
     VictorSP *leftDriveMotors;
     VictorSP *rightDriveMotors;
     VictorSP *elevatorMotor;
