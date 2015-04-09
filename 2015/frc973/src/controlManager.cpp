@@ -19,13 +19,6 @@ void ControlManager::update() {
         stateManager->setScore();
     }
 
-    if (controls->getDriverButton(5)) {
-        stateManager->dropGrabber();
-    } else {
-        stateManager->raiseGrabber();
-    }
-
-
     if (!controls->getCodriverButton(7)) {
         stateManager->actuateClaw(!controls->getDriverButton(3));
     } else if (!controls->getDriverButton(3)) {
