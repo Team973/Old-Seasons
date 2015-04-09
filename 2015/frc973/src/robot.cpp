@@ -125,7 +125,7 @@ Robot::Robot()
 
     controls = new ControlMap(driver, coDriver);
 
-    stateManager = new StateManager(drive, sauropod, intake, grabber);
+    stateManager = new StateManager(drive, sauropod, intake);
 
     controlManager = new ControlManager(controls, stateManager);
 
