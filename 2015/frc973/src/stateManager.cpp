@@ -8,11 +8,10 @@
 
 namespace frc973 {
 
-StateManager::StateManager(Drive *drive_, Sauropod *sauropod_, Intake *intake_, ContainerGrabber *grabber_) {
+StateManager::StateManager(Drive *drive_, Sauropod *sauropod_, Intake *intake_) {
     drive = drive_;
     sauropod = sauropod_;
     intake = intake_;
-    grabber = grabber_;
 
     robotState = IDLE;
     lastRobotState = IDLE;
@@ -55,14 +54,6 @@ void StateManager::setElevatorFromControls(float speed) {
 
 void StateManager::incrementElevatorHeight(float increment) {
     sauropod->incrementElevator(increment);
-}
-
-void StateManager::dropGrabber() {
-    //grabber->startGrabSequence();
-}
-
-void StateManager::raiseGrabber() {
-    //grabber->retract();
 }
 
 void StateManager::setIntakeSpeed(float speed) {
