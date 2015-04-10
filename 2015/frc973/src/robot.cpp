@@ -37,6 +37,7 @@ void* Robot::runTxtIO(void*)
 
 void* Robot::runServer(void*)
 {
+	SocketClient::Start();
     SocketClient::Run(NULL);
     return NULL;
 }
