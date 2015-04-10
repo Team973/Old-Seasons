@@ -18,16 +18,14 @@ public:
     };
 
     ContainerGrabber(CANTalon* leftMotorA_, CANTalon* leftMotorB_, CANTalon* rightMotorA_, CANTalon* rightMotorB_);
+    void setMotorsOpenLoop(Arm* arm, float speed);
+    void cancelGrabSequence();
     void initGrabSequence();
     void startGrabSequence();
     void initSettleState(Arm* arm);
     void initPullState(Arm* arm);
     void initIdleState(Arm* arm);
     void retract();
-    void testMotor(float speed);
-    void testSetPositionTarget(float position);
-    void testMotorClosedLoop();
-    ContainerGrabber::Arm* testGetArm(int arm);
     void setControlMode(Arm* arm, std::string mode);
     void setPIDslot(Arm* arm, int slot);
     void setPositionTarget(Arm* arm, float target);
