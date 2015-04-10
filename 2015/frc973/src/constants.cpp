@@ -16,7 +16,7 @@ void Constants::Extend()
     addConstant("kDriveP", 0.0);
     addConstant("kDriveI", 0.0);
     addConstant("kDriveD", 0.0);
-    addConstant("kTurnP", 0.0);
+    addConstant("kTurnP", 0.1);
     addConstant("kTurnI", 0.0);
     addConstant("kTurnD", 0.0);
     addConstant("kUpElevatorP", 0.5);

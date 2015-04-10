@@ -4,11 +4,11 @@
 
 namespace frc973 {
 
-Locator::Locator(Encoder *leftEncoder_, Encoder *rightEncoder_, Encoder *colinGyro_)//SPIGyro *gyro_, Encoder *colinGyro_)
+Locator::Locator(Encoder *leftEncoder_, Encoder *rightEncoder_, SPIGyro *gyro_, Encoder *colinGyro_)
 {
     leftEncoder = leftEncoder_;
     rightEncoder = rightEncoder_;
-    //gyro = gyro_;
+    gyro = gyro_;
     colinGyro = colinGyro_;
 
     currPoint = new Point;
@@ -18,12 +18,12 @@ void Locator::resetAll()
 {
     leftEncoder->Reset();
     rightEncoder->Reset();
-    //gyro->Reset();
+    gyro->Reset();
 }
 
 void Locator::resetGyro()
 {
-    //gyro->Reset();
+    gyro->Reset();
     colinGyro->Reset();
 }
 
@@ -81,9 +81,11 @@ float Locator::getEncoderGyro() {
 // in degrees
 float Locator::getAngle()
 {
+    /*
     float encoderTicks = 1024;
     return normalizeAngle(colinGyro->Get() * (360 / encoderTicks));
-    //return normalizeAngle((gyro->GetDegrees()));
+    */
+    return normalizeAngle((gyro->GetDegrees()));
 }
 
 Locator::Point Locator::getPoint()
