@@ -30,27 +30,6 @@ ContainerGrabber::ContainerGrabber(CANTalon* leftMotorA_, CANTalon* leftMotorB_,
     initGrabSequence();
 }
 
-void ContainerGrabber::testMotor(float speed) {
-    leftArm->motorA->Set(speed);
-}
-
-void ContainerGrabber::testSetPositionTarget(float position) {
-    grabberPID->setTarget(position);
-}
-
-void ContainerGrabber::testMotorClosedLoop() {
-    leftArm->motorA->Set(-grabberPID->update(-leftArm->motorA->GetEncPosition()));
-}
-
-ContainerGrabber::Arm* ContainerGrabber::testGetArm(int arm) {
-    if (arm == 1) {
-        return leftArm;
-    } else if (arm == 2) {
-        return rightArm;
-    }
-    return leftArm;
-}
-
 void ContainerGrabber::setControlMode(Arm* arm, std::string mode) {
     if (mode == "position") {
         arm->motorA->SetControlMode(CANSpeedController::kPosition);
@@ -71,8 +50,22 @@ void ContainerGrabber::setPositionTarget(Arm* arm, float target) {
     leftArm->motorB->Set(target);
 }
 
+// this should only be called after the arm gets set to openloop control
+void ContainerGrabber::setMotorsOpenLoop(Arm* arm, float speed) {
+    arm->motorA->Set(speed);
+    arm->motorB->Set(speed);
+}
+
 void ContainerGrabber::setPIDTarget(float target) {
     grabberPID->setTarget(target);
+}
+
+void ContainerGrabber::cancelGrabSequence() {
+    setControlMode(leftArm, "openLoop");
+    setControlMode(rightArm, "openLoop");
+    setPIDTarget(0);
+    initIdleState(leftArm);
+    initIdleState(rightArm);
 }
 
 void ContainerGrabber::initGrabSequence() {
@@ -135,6 +128,7 @@ void ContainerGrabber::stateHandler(Arm* arm) {
         case RETRACT:
             break;
         case IDLE:
+            setMotorsOpenLoop(arm, grabberPID->update(arm->motorA->GetEncPosition()));
             break;
     }
 }
