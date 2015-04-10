@@ -90,6 +90,7 @@ void ContainerGrabber::initSettleState(Arm* arm) {
     arm->state = SETTLE;
     setPIDslot(arm, 1);
     setPositionTarget(arm, Constants::getConstant("kGrabberSettleTarget")->getFloat());
+    arm->timer->Reset();
 }
 
 void ContainerGrabber::initPullState(Arm* arm) {
@@ -114,7 +115,7 @@ void ContainerGrabber::stateHandler(Arm* arm) {
 
     switch (arm->state) {
         case DROP:
-            if (arm->timer->Get() > faultCheckTime) {
+            if (arm->timer->Get() >= faultCheckTime) {
                 if (arm->motorA->GetEncPosition() < angleFaultCheck) {
                     arm->angleFault = true;
                 }
@@ -125,6 +126,9 @@ void ContainerGrabber::stateHandler(Arm* arm) {
             }
             break;
         case SETTLE:
+            if (arm->timer->Get() >= 0.25) {
+                initPullState(arm);
+            }
             break;
         case PULL:
             break;
