@@ -9,6 +9,7 @@
 #include "auto/commands/grabCommand.hpp"
 #include "subsystems/drive.hpp"
 #include "subsystems/sauropod.hpp"
+#include "lib/socketClient.hpp"
 
 namespace frc973 {
 
@@ -16,6 +17,7 @@ AutoManager::AutoManager(StateManager *stateManager_)
 {
     stateManager = stateManager_;
     resetModes();
+    SocketClient::AddListener("autoMode", this);
 }
 
 void AutoManager::setModes() {
@@ -95,6 +97,15 @@ AutoSequencer* AutoManager::getCurrentMode()
 std::string AutoManager::getCurrentName()
 {
     return it->first;
+}
+
+void AutoManager::OnValueChange(std::string varName, std::string newValue)
+{
+    if (modes.find(newValue) != modes.end()) {
+        setMode(newValue);
+    }
+    else
+        printf("'%s' is not a valid auto mode - doing nothing\n", newValue.c_str());
 }
 
 void AutoManager::nextMode()

@@ -3,13 +3,14 @@
 
 #include <map>
 #include "auto/autoSequencer.hpp"
+#include "lib/socketClient.hpp"
 
 namespace frc973 {
 
 class Wait;
 class StateManager;
 
-class AutoManager
+class AutoManager : public SocketClient::SocketListener
 {
 public:
     AutoManager(StateManager* stateManager_);
@@ -19,6 +20,7 @@ public:
     void nextMode();
     AutoSequencer* getCurrentMode();
     std::string getCurrentName();
+    void OnValueChange(std::string varName, std::string newValue);
 private:
 
     StateManager *stateManager;
