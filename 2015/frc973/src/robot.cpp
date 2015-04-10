@@ -190,6 +190,7 @@ void Robot::DisabledPeriodic()
 
 void Robot::AutonomousInit()
 {
+    grabManager->startSequence(1.0, false);
     autoManager->setMode("Grab");
     //spiGyro->ZeroAngle();
     locator->resetGyro();
@@ -213,6 +214,7 @@ void Robot::AutonomousPeriodic()
 
 void Robot::TeleopInit()
 {
+    grabManager->startSequence(1.0, false);
     stateManager->unBrakeClaw();
 }
 
