@@ -53,7 +53,8 @@ float Locator::getVelocity(Encoder *encoder) {
 // in feet
 float Locator::getMovedDistance()
 {
-    return ((getDistance(leftEncoder) + getDistance(rightEncoder))/2)/12;
+    //return ((getDistance(leftEncoder) + getDistance(rightEncoder))/2)/12;
+    return getDistance(rightEncoder)/12;
 }
 
 float Locator::getLinearVelocity() {
