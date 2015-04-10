@@ -17,7 +17,7 @@ import (
 var (
 	tmpl *template.Template
 
-	sendChan = make(chan string, 5)
+	sendChan = make(chan string, 5)	//send to robot
 	recvChan = make(chan string, 5)
 
 )
@@ -94,7 +94,9 @@ func constantsHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl.Execute(w, tempConstants)
 }
 
+//with robot
 func handleConnection(conn net.Conn) {
+	fmt.Printf("starting handleConnection\n")
 	for {
 		var buffer []byte
 		bytes, err := conn.Read(buffer);
@@ -105,26 +107,38 @@ func handleConnection(conn net.Conn) {
 		if bytes > 0 {
 			recvChan <- string(buffer)
 		}
-		_, err = conn.Write([]byte(<-sendChan));
-		if err != nil {
-			fmt.Printf("error writing to connection", err)
-			return
+
+		buff := []byte(<-sendChan)
+		message := make([]byte, 1)
+		message[0] = byte(uint8(len(buff)))
+		fmt.Printf("Sending message out (length %d)\n", int(message[0]))
+		message = append(message, buff...)
+		_, err = conn.Write(message);
+		if message[0] != 0 {
+			if err != nil {
+				fmt.Printf("error writing to connection", err)
+				return
+			}
 		}
 	}
+	fmt.Printf("ending handleConnection\n")
 }
 
+//List for connections on robot side
 func connect(port string) {
 	ln, err := net.Listen("tcp", "localhost:" + port)
 	if err != nil {
 		fmt.Println("unable to listen on port " + port, err)
 	}
 
+	fmt.Println("listening for robots")
 	for {
 		conn, err := ln.Accept()
 		if err != nil {
 			fmt.Println("unable to accept connections on port " + port, err)
 		}
 
+		fmt.Println("Starting connection with robot")
 		go handleConnection(conn)
 	}
 }
