@@ -101,6 +101,9 @@ void ContainerGrabber::initIdleState(Arm* arm) {
 }
 
 void ContainerGrabber::retract() {
+    setControlMode(leftArm, "openLoop");
+    setControlMode(rightArm, "openLoop");
+    setPIDTarget(0);
     leftArm->state = RETRACT;
     rightArm->state = RETRACT;
 }
@@ -126,6 +129,7 @@ void ContainerGrabber::stateHandler(Arm* arm) {
         case PULL:
             break;
         case RETRACT:
+            setMotorsOpenLoop(arm, grabberPID->update(arm->motorA->GetEncPosition()));
             break;
         case IDLE:
             setMotorsOpenLoop(arm, grabberPID->update(arm->motorA->GetEncPosition()));
