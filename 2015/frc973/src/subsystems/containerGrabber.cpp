@@ -32,6 +32,9 @@ ContainerGrabber::ContainerGrabber(CANTalon* leftMotorA_, CANTalon* leftMotorB_,
 
     grabberPID = new PID(0.001,0.0,0.0);
     grabberPID->start();
+
+    homePID = new PID(0.0,0.0,0.0);
+    homePID->start();
     initGrabSequence();
 }
 
@@ -120,6 +123,11 @@ void ContainerGrabber::initIdleState(Arm* arm) {
     arm->state = IDLE;
 }
 
+void ContainerGrabber::initHomeState(Arm* arm) {
+    arm->state = HOME;
+    homePID->setTarget(1);
+}
+
 void ContainerGrabber::retract() {
     setControlMode(leftArm, "openLoop");
     setControlMode(rightArm, "openLoop");
@@ -156,6 +164,10 @@ void ContainerGrabber::stateHandler(Arm* arm) {
         case PULL:
             break;
         case RETRACT:
+            if (arm->motorA->GetEncPosition() <= 10) {
+                initHomeState(arm);
+            }
+
             setMotorsOpenLoop(arm, grabberPID->update(arm->motorA->GetEncPosition()));
             break;
         case IDLE:
@@ -164,6 +176,9 @@ void ContainerGrabber::stateHandler(Arm* arm) {
             } else {
                 setMotorsOpenLoop(arm, grabberPID->update(arm->motorA->GetEncPosition()));
             }
+            break;
+        case HOME:
+            setMotorsOpenLoop(arm, homePID->update(arm->motorA->GetEncPosition()));
             break;
     }
 }

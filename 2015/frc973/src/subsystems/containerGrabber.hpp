@@ -26,6 +26,7 @@ public:
     void initSettleState(Arm* arm);
     void initPullState(Arm* arm);
     void initIdleState(Arm* arm);
+    void initHomeState(Arm* arm);
     void retract();
     void setControlMode(Arm* arm, std::string mode);
     void setPIDslot(Arm* arm, int slot);
@@ -39,6 +40,7 @@ public:
     const static int SETTLE = 2;
     const static int PULL = 3;
     const static int RETRACT = 4;
+    const static int HOME = 5;
 private:
 
     void stateHandler(Arm* arm);
@@ -52,6 +54,7 @@ private:
     Arm *rightArm;
 
     PID *grabberPID;
+    PID *homePID;
 
     bool goinSlow;
     float limitSpeed;
