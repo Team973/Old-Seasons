@@ -62,7 +62,7 @@ private:
     Encoder *elevatorEncoder;
     Encoder *gyro;
 
-    //SPIGyro *spiGyro;
+    SPIGyro *spiGyro;
 
     AnalogInput *elevatorPot;
 

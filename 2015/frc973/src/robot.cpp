@@ -96,7 +96,7 @@ Robot::Robot()
 
     gyro = new Encoder(0,1,false,CounterBase::k2X);
 
-    //spiGyro = new SPIGyro();
+    spiGyro = new SPIGyro();
 
     toteSensor = new DigitalInput(8);
 
@@ -114,7 +114,7 @@ Robot::Robot()
     //rightGrabberMotorB->SetFeedbackDevice(CANTalon::QuadEncoder);
     //rightGrabberMotorB->SetControlMode(CANSpeedController::kPosition);
 
-    locator = new Locator(leftDriveEncoder, rightDriveEncoder, gyro);//spiGyro, gyro);
+    locator = new Locator(leftDriveEncoder, rightDriveEncoder, spiGyro, gyro);
 
     xyManager = XYManager::getInstance();
     xyManager->injectLocator(locator);
@@ -164,7 +164,7 @@ void Robot::dashboardUpdate()
     SmartDashboard::PutNumber("anaglog tote sensor: ", elevatorPot->GetVoltage());
     SmartDashboard::PutBoolean("pressure: ", airPressureSwitch->Get());
     SmartDashboard::PutNumber("gyro angle: ", locator->getAngle());
-    //SmartDashboard::PutNumber("spigyro angle: ", spiGyro->GetDegrees());
+    SmartDashboard::PutNumber("spigyro angle: ", spiGyro->GetDegrees());
     SmartDashboard::PutNumber("Elevator Height:", sauropod->getElevatorHeight());
 }
 
@@ -191,8 +191,8 @@ void Robot::DisabledPeriodic()
 void Robot::AutonomousInit()
 {
     grabManager->startSequence(1.0, false);
-    autoManager->setMode("Grab");
-    //spiGyro->ZeroAngle();
+    autoManager->setMode("Turn");
+    spiGyro->ZeroAngle();
     locator->resetGyro();
     locator->resetAll();
     autoManager->getCurrentMode()->init();
