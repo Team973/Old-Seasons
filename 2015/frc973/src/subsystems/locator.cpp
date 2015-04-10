@@ -85,7 +85,7 @@ float Locator::getAngle()
     float encoderTicks = 1024;
     return normalizeAngle(colinGyro->Get() * (360 / encoderTicks));
     */
-    return normalizeAngle((gyro->GetDegrees()));
+    return gyro->GetDegrees();
 }
 
 Locator::Point Locator::getPoint()
