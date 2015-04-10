@@ -14,6 +14,7 @@ class StateManager;
 class ControlManager;
 class SPIGyro;
 class ContainerGrabber;
+class GrabManager;
 
 class Robot : public IterativeRobot
 {
@@ -83,6 +84,8 @@ private:
     Sauropod *sauropod;
     Intake *intake;
     ContainerGrabber *grabber;
+
+    GrabManager *grabManager;
 
     ControlMap *controls;
 
