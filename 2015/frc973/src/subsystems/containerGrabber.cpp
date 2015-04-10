@@ -17,6 +17,7 @@ ContainerGrabber::ContainerGrabber(CANTalon* leftMotorA_, CANTalon* leftMotorB_,
     leftArm->motorB = leftMotorB;
     leftArm->angleFault = false;
     leftArm->timer = new Timer();
+    leftArm->contact = false;
 
     rightArm = new Arm();
     rightArm->state = IDLE;
@@ -24,6 +25,10 @@ ContainerGrabber::ContainerGrabber(CANTalon* leftMotorA_, CANTalon* leftMotorB_,
     rightArm->motorB = rightMotorB;
     rightArm->angleFault = false;
     rightArm->timer = new Timer();
+    rightArm->contact = false;
+
+    goinSlow = false;
+    limitSpeed = 1.0;
 
     grabberPID = new PID(0.001,0.0,0.0);
     grabberPID->start();
@@ -52,6 +57,9 @@ void ContainerGrabber::setPositionTarget(Arm* arm, float target) {
 
 // this should only be called after the arm gets set to openloop control
 void ContainerGrabber::setMotorsOpenLoop(Arm* arm, float speed) {
+    if (speed > limitSpeed) {
+        speed = limitSpeed;
+    }
     arm->motorA->Set(speed);
     arm->motorB->Set(speed);
 }
@@ -77,17 +85,28 @@ void ContainerGrabber::initGrabSequence() {
     setPositionTarget(rightArm, Constants::getConstant("kGrabberDropTarget")->getFloat());
 }
 
-void ContainerGrabber::startGrabSequence() {
-    leftArm->state = DROP;
-    rightArm->state = DROP;
-    leftArm->timer->Start();
-    leftArm->timer->Reset();
-    rightArm->timer->Start();
-    rightArm->timer->Reset();
+void ContainerGrabber::startGrabSequence(float speed) {
+    if (speed < 1.0) {
+        limitSpeed = speed;
+        goinSlow = true;
+        setControlMode(leftArm, "openLoop");
+        setControlMode(rightArm, "openLoop");
+        setPIDTarget(290);
+        initIdleState(leftArm);
+        initIdleState(rightArm);
+    } else {
+        leftArm->state = DROP;
+        rightArm->state = DROP;
+        leftArm->timer->Start();
+        leftArm->timer->Reset();
+        rightArm->timer->Start();
+        rightArm->timer->Reset();
+    }
 }
 
 void ContainerGrabber::initSettleState(Arm* arm) {
     arm->state = SETTLE;
+    arm->contact = true;
     setPIDslot(arm, 1);
     setPositionTarget(arm, Constants::getConstant("kGrabberSettleTarget")->getFloat());
     arm->timer->Reset();
@@ -107,6 +126,10 @@ void ContainerGrabber::retract() {
     setPIDTarget(0);
     leftArm->state = RETRACT;
     rightArm->state = RETRACT;
+}
+
+bool ContainerGrabber::haveBothContact() {
+    return leftArm->contact && rightArm->contact;
 }
 
 void ContainerGrabber::stateHandler(Arm* arm) {
@@ -136,7 +159,11 @@ void ContainerGrabber::stateHandler(Arm* arm) {
             setMotorsOpenLoop(arm, grabberPID->update(arm->motorA->GetEncPosition()));
             break;
         case IDLE:
-            setMotorsOpenLoop(arm, grabberPID->update(arm->motorA->GetEncPosition()));
+            if (goinSlow && arm->motorA->GetEncPosition() >= 267) {
+                setMotorsOpenLoop(arm, 1.0);
+            } else {
+                setMotorsOpenLoop(arm, grabberPID->update(arm->motorA->GetEncPosition()));
+            }
             break;
     }
 }

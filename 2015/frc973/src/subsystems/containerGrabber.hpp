@@ -15,13 +15,14 @@ public:
         CANTalon *motorB;
         bool angleFault;
         Timer *timer;
+        bool contact;
     };
 
     ContainerGrabber(CANTalon* leftMotorA_, CANTalon* leftMotorB_, CANTalon* rightMotorA_, CANTalon* rightMotorB_);
     void setMotorsOpenLoop(Arm* arm, float speed);
     void cancelGrabSequence();
     void initGrabSequence();
-    void startGrabSequence();
+    void startGrabSequence(float speed);
     void initSettleState(Arm* arm);
     void initPullState(Arm* arm);
     void initIdleState(Arm* arm);
@@ -30,6 +31,7 @@ public:
     void setPIDslot(Arm* arm, int slot);
     void setPositionTarget(Arm* arm, float target);
     void setPIDTarget(float target);
+    bool haveBothContact();
     void update();
 
     const static int IDLE = 0;
@@ -50,6 +52,9 @@ private:
     Arm *rightArm;
 
     PID *grabberPID;
+
+    bool goinSlow;
+    float limitSpeed;
 };
 
 } /* namespace frc973 */
