@@ -12,7 +12,7 @@ ContainerGrabber::ContainerGrabber(CANTalon* leftMotorA_, CANTalon* leftMotorB_,
     rightMotorB = rightMotorB_;
 
     leftArm = new Arm();
-    leftArm->state = IDLE;
+    leftArm->state = HOME;
     leftArm->motorA = leftMotorA;
     leftArm->motorB = leftMotorB;
     leftArm->angleFault = false;
@@ -20,7 +20,7 @@ ContainerGrabber::ContainerGrabber(CANTalon* leftMotorA_, CANTalon* leftMotorB_,
     leftArm->contact = false;
 
     rightArm = new Arm();
-    rightArm->state = IDLE;
+    rightArm->state = HOME;
     rightArm->motorA = rightMotorA;
     rightArm->motorB = rightMotorB;
     rightArm->angleFault = false;

@@ -5,6 +5,7 @@
 #include "autoManager.hpp"
 #include "stateManager.hpp"
 #include "controlManager.hpp"
+#include "grabManager.hpp"
 #include "lib/utility.hpp"
 #include "lib/logger.hpp"
 #include "lib/txtFileIO.hpp"
@@ -122,6 +123,8 @@ Robot::Robot()
     sauropod = new Sauropod(elevatorMotor, elevatorEncoder, clawClampSolenoid, clawBrakeSolenoid);
     intake = new Intake(leftIntakeMotor, rightIntakeMotor, intakeSolenoid, humanLoadFunnelSolenoid, footSolenoid, toteSensor);
     grabber = new ContainerGrabber(leftGrabberMotorA, leftGrabberMotorB, rightGrabberMotorA, rightGrabberMotorB);
+
+    grabManager = new GrabManager(drive, grabber);
 
     controls = new ControlMap(driver, coDriver);
 
