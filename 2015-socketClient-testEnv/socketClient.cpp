@@ -67,10 +67,10 @@ namespace frc973 {
      */
     void SocketClient::UpdateRobot(char *key, char *val) {
         std::string msg (key);
-		if (listeners.find(msg) != listeners.end())
-			listeners[msg]->OnValueChange(msg, val);
-		else
-			printf("No listener found for key '%s' so set event falling through\n", key);
+        if (listeners.find(msg) != listeners.end())
+            listeners[msg]->OnValueChange(msg, val);
+        else
+            printf("No listener found for key '%s' so set event falling through\n", key);
     }
 
     /**
@@ -126,9 +126,9 @@ namespace frc973 {
     }
 
 
-	void SocketClient::AddListener(std::string var, SocketClient::SocketListener *listener) {
-		listeners[var] = listener;
-	}
+    void SocketClient::AddListener(std::string var, SocketClient::SocketListener *listener) {
+        listeners[var] = listener;
+    }
 
     /**
      * Checks the connection with the server to see if server has said anthing.
