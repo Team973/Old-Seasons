@@ -1,0 +1,12 @@
+Test environment for the socket client
+
+to build:
+
+make clean
+make servertest
+
+to run:
+
+./servertest
+
+the go server should be started before this one.  Messages to robot addressed to http://localhost:8080/socket/  follow the syntax "set varname val-as-string;"

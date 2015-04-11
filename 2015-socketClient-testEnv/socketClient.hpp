@@ -22,8 +22,6 @@ public:
 	class SocketListener {
 	public:
 		virtual void OnValueChange(std::string name, std::string newValue) {exit(1);};
-	protected:
-		virtual ~SocketListener() {};
 	};
 
 	static void AddListener(std::string name, SocketListener *listener);
