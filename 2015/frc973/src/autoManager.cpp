@@ -68,7 +68,7 @@ void AutoManager::setModes() {
     modes["BasicThreeTote"]->addConcurrent(new IntakeCommand(stateManager, 0.0, false, 0));
     modes["BasicThreeTote"]->addConcurrent(new SauropodCommand(stateManager, "rest", 0, true, 1));
     modes["BasicThreeTote"]->addSequential(new TurnCommand(stateManager, -50, 0.9, 5));
-    modes["BasicThreeTote"]->addSequential(new DriveCommand(stateManager, threeTote + 7, "hellaFast"));
+    modes["BasicThreeTote"]->addSequential(new DriveCommand(stateManager, threeTote + 8, "hellaFast"));
     modes["BasicThreeTote"]->addConcurrent(new TurnCommand(stateManager, 0, 0.9, 5));
     modes["BasicThreeTote"]->addConcurrent(new SauropodCommand(stateManager, "autoScore", 0.0, true, 0, true));
     modes["BasicThreeTote"]->addConcurrent(new IntakeCommand(stateManager, 0.0, true, 0));
