@@ -30,6 +30,14 @@ ContainerGrabber::ContainerGrabber(CANTalon* leftMotorA_, CANTalon* leftMotorB_,
     goinSlow = false;
     limitSpeed = 1.0;
 
+    angleFaultCheck = Constants::getConstant("kGrabberFaultAngle")->getInt();
+    faultCheckTime = Constants::getConstant("kGrabberFaultTime")->getInt();
+
+    dropTransitionAngle = Constants::getConstant("kGrabberDropTransAngle")->getFloat();
+    dropTargetAngle = Constants::getConstant("kGrabberDropTarget")->getFloat();
+
+    settleTargetAngle = Constants::getConstant("kGrabberSettleTarget")->getFloat();
+
     grabberPID = new PID(0.001,0.0,0.0);
     grabberPID->start();
 
@@ -84,8 +92,8 @@ void ContainerGrabber::initGrabSequence() {
     setControlMode(rightArm, "position");
     setPIDslot(leftArm, 0);
     setPIDslot(rightArm, 0);
-    setPositionTarget(leftArm, Constants::getConstant("kGrabberDropTarget")->getFloat());
-    setPositionTarget(rightArm, Constants::getConstant("kGrabberDropTarget")->getFloat());
+    setPositionTarget(leftArm, dropTargetAngle);
+    setPositionTarget(rightArm, dropTargetAngle);
 }
 
 void ContainerGrabber::startGrabSequence(float speed) {
@@ -111,7 +119,7 @@ void ContainerGrabber::initSettleState(Arm* arm) {
     arm->state = SETTLE;
     arm->contact = true;
     setPIDslot(arm, 1);
-    setPositionTarget(arm, Constants::getConstant("kGrabberSettleTarget")->getFloat());
+    setPositionTarget(arm, settleTargetAngle);
     arm->timer->Reset();
 }
 
@@ -141,8 +149,6 @@ bool ContainerGrabber::haveBothContact() {
 }
 
 void ContainerGrabber::stateHandler(Arm* arm) {
-    float angleFaultCheck = Constants::getConstant("kGrabberFaultAngle")->getInt();
-    float faultCheckTime = Constants::getConstant("kGrabberFaultTime")->getInt();
 
     switch (arm->state) {
         case DROP:
@@ -152,7 +158,7 @@ void ContainerGrabber::stateHandler(Arm* arm) {
                 }
             }
 
-            if (arm->motorA->GetEncPosition() > Constants::getConstant("kGrabberDropTransAngle")->getFloat()) {
+            if (arm->motorA->GetEncPosition() > dropTransitionAngle) {
                 initSettleState(arm);
             }
             break;

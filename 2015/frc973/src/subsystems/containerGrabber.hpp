@@ -58,6 +58,11 @@ private:
 
     bool goinSlow;
     float limitSpeed;
+    float dropTransitionAngle;
+    float dropTargetAngle;
+    float settleTargetAngle;
+    float angleFaultCheck;
+    float faultCheckTime;
 };
 
 } /* namespace frc973 */
