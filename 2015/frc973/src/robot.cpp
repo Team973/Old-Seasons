@@ -104,16 +104,15 @@ Robot::Robot()
     leftGrabberMotorA = new CANTalon(0);
     leftGrabberMotorA->SetControlMode(CANSpeedController::kPosition);
     leftGrabberMotorA->SetFeedbackDevice(CANTalon::QuadEncoder);
-    leftGrabberMotorA->SetSensorDirection(false);
     leftGrabberMotorB = new CANTalon(1);
     leftGrabberMotorB->SetFeedbackDevice(CANTalon::QuadEncoder);
     leftGrabberMotorB->SetControlMode(CANSpeedController::kPosition);
     rightGrabberMotorA = new CANTalon(2);
-    //rightGrabberMotorA->SetFeedbackDevice(CANTalon::QuadEncoder);
-    //rightGrabberMotorA->SetControlMode(CANSpeedController::kPosition);
+    rightGrabberMotorA->SetFeedbackDevice(CANTalon::QuadEncoder);
+    rightGrabberMotorA->SetControlMode(CANSpeedController::kPosition);
     rightGrabberMotorB = new CANTalon(3);
-    //rightGrabberMotorB->SetFeedbackDevice(CANTalon::QuadEncoder);
-    //rightGrabberMotorB->SetControlMode(CANSpeedController::kPosition);
+    rightGrabberMotorB->SetFeedbackDevice(CANTalon::QuadEncoder);
+    rightGrabberMotorB->SetControlMode(CANSpeedController::kPosition);
 
     locator = new Locator(leftDriveEncoder, rightDriveEncoder, spiGyro, gyro);
 
