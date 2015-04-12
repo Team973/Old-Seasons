@@ -42,7 +42,7 @@ XYManager::XYManager()
             Constants::getConstant("kDriveI")->getDouble(),
             Constants::getConstant("kDriveD")->getDouble());
     drivePID->start();
-    drivePID->setBounds(-.6,.6);
+    drivePID->setBounds(-.9,.9);
     turnPID = new PID(
             Constants::getConstant("kTurnP")->getDouble(),
             Constants::getConstant("kTurnI")->getDouble(),
@@ -56,6 +56,7 @@ XYManager::XYManager()
     isPaused = true;
 
     speedLimit = 0.6;
+    turnLimit = 1.0;
 
     angularMovement = false;
     linearMovement = false;
@@ -73,10 +74,14 @@ void XYManager::setSpeed(std::string speed) {
     } else if (speed == "slow") {
         speedLimit = 0.25;
     } else if (speed == "hellaFast") {
-        speedLimit = 1;
+        speedLimit = 1.0;
     } else {
         speedLimit = 0.0;
     }
+}
+
+void XYManager::limitTurnSpeed(float speed) {
+    turnLimit = speed;
 }
 
 void XYManager::injectLocator(Locator* locator_)
@@ -94,8 +99,9 @@ void XYManager::setTargetDistance(float distance_)
     currPoint = locator->getPoint();
     origPoint = locator->getPoint();
     linearProfile = new TrapProfile(distance_ - currPoint.distance, 10000, 10000, 10000);
-    angleTarget = currPoint.angle;
-    drivePID->setBounds(-.6,.6);
+    //angleTarget = currPoint.angle;
+    turnLimit = 0.9;
+    drivePID->setBounds(-.8,.8);
     done = false;
     linearMovement = true;
     angularMovement = false;
@@ -162,12 +168,12 @@ void XYManager::update()
 
     float linearError = linearProfile->getTarget() - relativeDistance;
     if (linearMovement) {
-        if (linearProfile->getTarget() < relativeDistance ? linearError >= -0.05 : linearError <= 0.5
+        if (linearProfile->getTarget() < relativeDistance ? linearError >= -0.5 : linearError <= 0.5
                 && fabs(locator->getLinearVelocity()) < 2 && fabs(angleError) <= 5) {
             done = true;
         }
     } else if (angularMovement) {
-        if (fabs(angleError) <= 5) {
+        if (fabs(angleError) <= 4 && fabs(locator->getAngularVelocity()) <= 1) {
             done = true;
         }
     }
@@ -185,11 +191,17 @@ void XYManager::update()
         driveInput += 0.1;
     }
 
-    driveInput += 0.05*(linearProfile->getTarget() < 0 ? -1 : 1);
+    //driveInput += 0.05*(linearProfile->getTarget() < 0 ? -1 : 1);
     if (driveInput > speedLimit) {
         driveInput = speedLimit;
     } else if (driveInput < -speedLimit) {
         driveInput = -speedLimit;
+    }
+
+    if (angularInput > turnLimit) {
+        angularInput = turnLimit;
+    } else if (angularInput < -turnLimit) {
+        angularInput = -turnLimit;
     }
 
     updateValue->throttle = driveInput;

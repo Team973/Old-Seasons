@@ -172,6 +172,7 @@ namespace frc973 {
         while (true) {
             HandleNetInput();
             HandleRobotInput();
+            usleep(10000);
         }
     }
 

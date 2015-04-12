@@ -10,7 +10,7 @@ class StateManager;
 
 class TurnCommand : public AutoCommand {
 public:
-    TurnCommand(StateManager *manager_, float target_, float timeout_);
+    TurnCommand(StateManager *manager_, float target_, float speed_, float timeout_);
     void init();
     bool taskPeriodic();
 private:
@@ -19,6 +19,7 @@ private:
     StateManager *manager;
 
     float target;
+    float speed;
 };
 
 }

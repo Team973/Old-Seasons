@@ -21,6 +21,7 @@ public:
     static XYManager* getInstance();
     void injectLocator(Locator* locator_);
     void setSpeed(std::string speed);
+    void limitTurnSpeed(float speed);
     bool isMovementDone();
     void setTargetDistance(float distance_);
     void setTargetAngle(float angle_);
@@ -58,6 +59,7 @@ private:
     float relativeDistance;
 
     float speedLimit;
+    float turnLimit;
 
     bool isPaused;
 
