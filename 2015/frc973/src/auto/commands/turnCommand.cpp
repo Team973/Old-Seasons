@@ -4,13 +4,14 @@
 
 namespace frc973 {
 
-TurnCommand::TurnCommand(StateManager *manager_, float target_, float timeout_)
+TurnCommand::TurnCommand(StateManager *manager_, float target_, float speed_, float timeout_)
 {
     xyManager = XYManager::getInstance();
 
     manager = manager_;
 
     target = target_;
+    speed = speed_;
 
     setTimeout(timeout_);
 }
@@ -20,6 +21,7 @@ void TurnCommand::init()
     timer->Start();
     timer->Reset();
     xyManager->setTargetAngle(target);
+    xyManager->limitTurnSpeed(speed);
     xyManager->resetProfile();
     xyManager->startProfile();
 }

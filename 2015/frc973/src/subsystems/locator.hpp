@@ -22,6 +22,7 @@ public:
     float getMovedDistance();
     float getDistance(Encoder *encoder);
     float getLinearVelocity();
+    float getAngularVelocity();
     float normalizeAngle(float theta);
     float getEncoderGyro();
     float getAngle();

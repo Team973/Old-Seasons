@@ -38,8 +38,8 @@ void* Robot::runTxtIO(void*)
 
 void* Robot::runServer(void*)
 {
-	SocketClient::Start();
-    SocketClient::Run(NULL);
+	//SocketClient::Start();
+    //SocketClient::Run(NULL);
     return NULL;
 }
 
@@ -192,7 +192,7 @@ void Robot::DisabledPeriodic()
 void Robot::AutonomousInit()
 {
     grabManager->startSequence(1.0, false);
-    autoManager->setMode("ThreeTote");
+    autoManager->setMode("BasicThreeTote");
     spiGyro->ZeroAngle();
     locator->resetGyro();
     locator->resetAll();

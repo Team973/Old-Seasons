@@ -50,6 +50,10 @@ float Locator::getVelocity(Encoder *encoder) {
     return (encoder->GetRate()*gearRatio) / encoderTicks * M_PI / 12 * diameter;
 }
 
+float Locator::getAngularVelocity() {
+    return gyro->GetDegreesPerSec();
+}
+
 // in feet
 float Locator::getMovedDistance()
 {
