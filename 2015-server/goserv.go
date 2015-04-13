@@ -1,6 +1,6 @@
 package main
 
-// localhost:8080
+// localhost:5801
 
 import (
 		"fmt"
@@ -157,7 +157,7 @@ func socketHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	go connect("8081")
+	go connect("5800")
 
 	err := loadConstants()
 	if err != nil {
@@ -170,7 +170,7 @@ func main() {
 	http.HandleFunc("/socket.html/", socketHandler)
 
 	// Start Web server
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(":5801", nil)
 }
 
 func loadConstants() (error) {

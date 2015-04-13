@@ -12,7 +12,7 @@
 #include "socketClient.hpp"
 #include <map>
 
-#define SERVER_PORT "8081"
+#define SERVER_PORT "5800"
 #define MAX_MSG_LEN 128
 
 namespace frc973 {
@@ -172,7 +172,7 @@ namespace frc973 {
         while (true) {
             HandleNetInput();
             HandleRobotInput();
-            usleep(10000);
+            usleep(100000);
         }
     }
 
