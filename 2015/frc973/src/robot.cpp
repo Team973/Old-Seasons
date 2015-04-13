@@ -104,9 +104,11 @@ Robot::Robot()
     leftGrabberMotorA = new CANTalon(0);
     leftGrabberMotorA->SetControlMode(CANSpeedController::kPosition);
     leftGrabberMotorA->SetFeedbackDevice(CANTalon::QuadEncoder);
+    leftGrabberMotorA->SetSensorDirection(true);
     leftGrabberMotorB = new CANTalon(1);
     leftGrabberMotorB->SetFeedbackDevice(CANTalon::QuadEncoder);
     leftGrabberMotorB->SetControlMode(CANSpeedController::kPosition);
+    leftGrabberMotorB->SetSensorDirection(true);
     rightGrabberMotorA = new CANTalon(2);
     rightGrabberMotorA->SetFeedbackDevice(CANTalon::QuadEncoder);
     rightGrabberMotorA->SetControlMode(CANSpeedController::kPosition);
@@ -153,7 +155,8 @@ void Robot::runCompressor() {
 void Robot::dashboardUpdate()
 {
     //printf("position: %d\n", leftGrabberMotorA->GetEncPosition());
-    SmartDashboard::PutNumber("Grabber Encoder: ", leftGrabberMotorA->GetEncPosition());
+    SmartDashboard::PutNumber("Left Grabber Encoder: ", leftGrabberMotorA->GetEncPosition());
+    SmartDashboard::PutNumber("Right Grabber Encoder: ", rightGrabberMotorA->GetEncPosition());
     SmartDashboard::PutNumber("drive distance: ", locator->getMovedDistance());
     SmartDashboard::PutNumber("left drive distance: ", locator->getDistance(leftDriveEncoder));
     SmartDashboard::PutNumber("raw elevator encoder: ", elevatorEncoder->Get());
@@ -179,12 +182,14 @@ void Robot::DisabledInit()
 
 void Robot::DisabledPeriodic()
 {
+    /*
     if (!autoRan) {
         leftGrabberMotorA->SetPosition(0);
         leftGrabberMotorB->SetPosition(0);
         rightGrabberMotorA->SetPosition(0);
         rightGrabberMotorB->SetPosition(0);
     }
+    */
     dashboardUpdate();
 }
 
