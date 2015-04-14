@@ -104,17 +104,19 @@ Robot::Robot()
     leftGrabberMotorA = new CANTalon(0);
     leftGrabberMotorA->SetControlMode(CANSpeedController::kPosition);
     leftGrabberMotorA->SetFeedbackDevice(CANTalon::QuadEncoder);
-    leftGrabberMotorA->SetSensorDirection(true);
-    leftGrabberMotorB = new CANTalon(1);
-    leftGrabberMotorB->SetFeedbackDevice(CANTalon::QuadEncoder);
-    leftGrabberMotorB->SetControlMode(CANSpeedController::kPosition);
-    leftGrabberMotorB->SetSensorDirection(true);
+    leftGrabberMotorA->SelectProfileSlot(0);
     rightGrabberMotorA = new CANTalon(2);
     rightGrabberMotorA->SetFeedbackDevice(CANTalon::QuadEncoder);
     rightGrabberMotorA->SetControlMode(CANSpeedController::kPosition);
+    rightGrabberMotorA->SelectProfileSlot(0);
+    leftGrabberMotorB = new CANTalon(1);
+    leftGrabberMotorB->SetFeedbackDevice(CANTalon::QuadEncoder);
+    leftGrabberMotorB->SetControlMode(CANSpeedController::kPosition);
+    leftGrabberMotorB->SelectProfileSlot(0);
     rightGrabberMotorB = new CANTalon(3);
     rightGrabberMotorB->SetFeedbackDevice(CANTalon::QuadEncoder);
     rightGrabberMotorB->SetControlMode(CANSpeedController::kPosition);
+    rightGrabberMotorB->SelectProfileSlot(0);
 
     locator = new Locator(leftDriveEncoder, rightDriveEncoder, spiGyro, gyro);
 
@@ -154,9 +156,12 @@ void Robot::runCompressor() {
 
 void Robot::dashboardUpdate()
 {
-    //printf("position: %d\n", leftGrabberMotorA->GetEncPosition());
-    SmartDashboard::PutNumber("Left Grabber Encoder: ", leftGrabberMotorA->GetEncPosition());
-    SmartDashboard::PutNumber("Right Grabber Encoder: ", rightGrabberMotorA->GetEncPosition());
+    SmartDashboard::PutNumber("LeftA Grabber Encoder: ", leftGrabberMotorA->GetEncPosition());
+    SmartDashboard::PutNumber("LeftB Grabber Encoder: ", leftGrabberMotorB->GetEncPosition());
+    SmartDashboard::PutNumber("RightA Grabber Encoder: ", rightGrabberMotorA->GetEncPosition());
+    SmartDashboard::PutNumber("RightB Grabber Encoder: ", rightGrabberMotorB->GetEncPosition());
+    SmartDashboard::PutNumber("LeftA Grabber Velocity: ", leftGrabberMotorA->GetEncVel());
+    SmartDashboard::PutNumber("RightA Grabber Velocity: ", rightGrabberMotorA->GetEncVel());
     SmartDashboard::PutNumber("drive distance: ", locator->getMovedDistance());
     SmartDashboard::PutNumber("left drive distance: ", locator->getDistance(leftDriveEncoder));
     SmartDashboard::PutNumber("raw elevator encoder: ", elevatorEncoder->Get());
@@ -182,20 +187,18 @@ void Robot::DisabledInit()
 
 void Robot::DisabledPeriodic()
 {
-    /*
     if (!autoRan) {
         leftGrabberMotorA->SetPosition(0);
         leftGrabberMotorB->SetPosition(0);
         rightGrabberMotorA->SetPosition(0);
         rightGrabberMotorB->SetPosition(0);
     }
-    */
     dashboardUpdate();
 }
 
 void Robot::AutonomousInit()
 {
-    grabManager->startSequence(1.0, false);
+    //grabManager->startSequence(1.0, false);
     autoManager->setMode("TurnThreeTote");
     spiGyro->ZeroAngle();
     locator->resetGyro();
@@ -219,15 +222,16 @@ void Robot::AutonomousPeriodic()
 
 void Robot::TeleopInit()
 {
-    grabManager->startSequence(1.0, false);
+    //grabManager->startSequence(1.0, false);
     stateManager->unBrakeClaw();
 }
 
 void Robot::TeleopPeriodic()
 {
+    grabManager->runArmsFreeSpeed();
     controlManager->update();
     stateManager->update();
-    grabber->update();
+    //grabber->update();
 
     runCompressor();
 

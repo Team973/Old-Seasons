@@ -9,6 +9,7 @@ class Drive;
 class GrabManager {
 public:
     GrabManager(Drive* drive_, ContainerGrabber* grabber_);
+    void runArmsFreeSpeed();
     void startSequence(float speed, bool waitForContact);
     void cancelSequence();
     void update();

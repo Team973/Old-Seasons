@@ -79,6 +79,13 @@ void ContainerGrabber::setPIDTarget(float target) {
     grabberPID->setTarget(target);
 }
 
+void ContainerGrabber::runArmsFreeSpeed() {
+    setControlMode(leftArm, "openLoop");
+    setControlMode(rightArm, "openLoop");
+    setMotorsOpenLoop(leftArm, 1.0);
+    setMotorsOpenLoop(rightArm, 1.0);
+}
+
 void ContainerGrabber::cancelGrabSequence() {
     setControlMode(leftArm, "openLoop");
     setControlMode(rightArm, "openLoop");
