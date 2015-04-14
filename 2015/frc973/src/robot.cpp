@@ -87,7 +87,10 @@ Robot::Robot()
     airPressureSwitch = new DigitalInput(9);
     compressor = new Relay(0, Relay::kForwardOnly);
 
-    statusLED = new Relay(1, Relay::kBothDirections);
+    statusLEDA = new Relay(1, Relay::kBothDirections);
+    statusLEDB = new Relay(2, Relay::kBothDirections);
+    statusLEDC = new Relay(3, Relay::kBothDirections);
+    statusLEDD = new Relay(4, Relay::kBothDirections);
 
     leftDriveEncoder = new Encoder(4,5, false, CounterBase::k2X);
     rightDriveEncoder = new Encoder(2,3, false, CounterBase::k2X);
@@ -232,6 +235,11 @@ void Robot::TeleopPeriodic()
     grabManager->runArmsFreeSpeed();
     controlManager->update();
     stateManager->update();
+
+    statusLEDA->Set(Relay::kOn);
+    statusLEDB->Set(Relay::kOn);
+    statusLEDC->Set(Relay::kOn);
+    statusLEDD->Set(Relay::kOn);
 
     runCompressor();
 
