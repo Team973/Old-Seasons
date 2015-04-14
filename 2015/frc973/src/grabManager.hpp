@@ -5,6 +5,7 @@ namespace frc973 {
 
 class ContainerGrabber;
 class Drive;
+class XYManager;
 
 class GrabManager {
 public:
@@ -16,8 +17,13 @@ public:
 private:
     Drive *drive;
     ContainerGrabber *grabber;
+    XYManager *xyManager;
+
+    Timer *timer;
 
     bool waitForContact;
+    bool goinSlow;
+    bool driving;
 };
 
 }

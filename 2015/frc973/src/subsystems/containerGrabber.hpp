@@ -14,8 +14,8 @@ public:
         CANTalon *motorA;
         CANTalon *motorB;
         bool angleFault;
-        Timer *timer;
         bool contact;
+        bool atDriveAngle;
     };
 
     ContainerGrabber(CANTalon* leftMotorA_, CANTalon* leftMotorB_, CANTalon* rightMotorA_, CANTalon* rightMotorB_);
@@ -25,8 +25,7 @@ public:
     void initGrabSequence();
     void startGrabSequence(float speed);
     void initSettleState(Arm* arm);
-    void initPullState(Arm* arm);
-    void initIdleState(Arm* arm);
+    void initSlowState(Arm* arm);
     void initHomeState(Arm* arm);
     void retract();
     void setControlMode(Arm* arm, std::string mode);
@@ -34,9 +33,11 @@ public:
     void setPositionTarget(Arm* arm, float target);
     void setPIDTarget(float target);
     bool haveBothContact();
+    bool bothAtDriveAngle();
+    bool gotFault();
     void update();
 
-    const static int IDLE = 0;
+    const static int SLOW = 0;
     const static int DROP = 1;
     const static int SETTLE = 2;
     const static int PULL = 3;
@@ -63,7 +64,9 @@ private:
     float dropTargetAngle;
     float settleTargetAngle;
     float angleFaultCheck;
-    float faultCheckTime;
+    float driveAngle;
+    float fastDriveAngle;
+    float slowDriveAngle;
 };
 
 } /* namespace frc973 */

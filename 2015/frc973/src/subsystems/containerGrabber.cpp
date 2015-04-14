@@ -16,22 +16,25 @@ ContainerGrabber::ContainerGrabber(CANTalon* leftMotorA_, CANTalon* leftMotorB_,
     leftArm->motorA = leftMotorA;
     leftArm->motorB = leftMotorB;
     leftArm->angleFault = false;
-    leftArm->timer = new Timer();
     leftArm->contact = false;
+    leftArm->atDriveAngle = false;
 
     rightArm = new Arm();
     rightArm->state = HOME;
     rightArm->motorA = rightMotorA;
     rightArm->motorB = rightMotorB;
     rightArm->angleFault = false;
-    rightArm->timer = new Timer();
     rightArm->contact = false;
+    rightArm->atDriveAngle = false;
 
     goinSlow = false;
     limitSpeed = 1.0;
 
     angleFaultCheck = Constants::getConstant("kGrabberFaultAngle")->getInt();
-    faultCheckTime = Constants::getConstant("kGrabberFaultTime")->getInt();
+
+    driveAngle = 0;
+    slowDriveAngle = 0;
+    fastDriveAngle = 0;
 
     dropTransitionAngle = Constants::getConstant("kGrabberDropTransAngle")->getFloat();
     dropTargetAngle = Constants::getConstant("kGrabberDropTarget")->getFloat();
@@ -90,8 +93,8 @@ void ContainerGrabber::cancelGrabSequence() {
     setControlMode(leftArm, "openLoop");
     setControlMode(rightArm, "openLoop");
     setPIDTarget(0);
-    initIdleState(leftArm);
-    initIdleState(rightArm);
+    initHomeState(leftArm);
+    initHomeState(rightArm);
 }
 
 void ContainerGrabber::initGrabSequence() {
@@ -109,33 +112,27 @@ void ContainerGrabber::startGrabSequence(float speed) {
         goinSlow = true;
         setControlMode(leftArm, "openLoop");
         setControlMode(rightArm, "openLoop");
-        setPIDTarget(290);
-        initIdleState(leftArm);
-        initIdleState(rightArm);
+        driveAngle = slowDriveAngle;
+        initSlowState(leftArm);
+        initSlowState(rightArm);
     } else {
         leftArm->state = DROP;
         rightArm->state = DROP;
-        leftArm->timer->Start();
-        leftArm->timer->Reset();
-        rightArm->timer->Start();
-        rightArm->timer->Reset();
+        driveAngle = fastDriveAngle;
     }
 }
 
 void ContainerGrabber::initSettleState(Arm* arm) {
     arm->state = SETTLE;
     arm->contact = true;
-    setPIDslot(arm, 1);
-    setPositionTarget(arm, settleTargetAngle);
-    arm->timer->Reset();
+    setControlMode(arm, "openLoop");
+    setMotorsOpenLoop(arm, 0.5);
 }
 
-void ContainerGrabber::initPullState(Arm* arm) {
-    arm->state = PULL;
-}
-
-void ContainerGrabber::initIdleState(Arm* arm) {
-    arm->state = IDLE;
+void ContainerGrabber::initSlowState(Arm* arm) {
+    arm->state = SLOW;
+    setControlMode(arm, "openLoop");
+    setMotorsOpenLoop(arm, 1.0);
 }
 
 void ContainerGrabber::initHomeState(Arm* arm) {
@@ -155,14 +152,20 @@ bool ContainerGrabber::haveBothContact() {
     return leftArm->contact && rightArm->contact;
 }
 
+bool ContainerGrabber::gotFault() {
+    return leftArm->angleFault || rightArm->angleFault;
+}
+
+bool ContainerGrabber::bothAtDriveAngle() {
+    return leftArm->atDriveAngle && rightArm->atDriveAngle;
+}
+
 void ContainerGrabber::stateHandler(Arm* arm) {
 
     switch (arm->state) {
         case DROP:
-            if (arm->timer->Get() >= faultCheckTime) {
-                if (arm->motorA->GetEncPosition() < angleFaultCheck) {
-                    arm->angleFault = true;
-                }
+            if (arm->motorA->GetEncPosition() < angleFaultCheck) {
+                arm->angleFault = true;
             }
 
             if (arm->motorA->GetEncPosition() > dropTransitionAngle) {
@@ -170,11 +173,7 @@ void ContainerGrabber::stateHandler(Arm* arm) {
             }
             break;
         case SETTLE:
-            if (arm->timer->Get() >= 0.25) {
-                initPullState(arm);
-            }
-            break;
-        case PULL:
+            setMotorsOpenLoop(arm, 0.5);
             break;
         case RETRACT:
             if (arm->motorA->GetEncPosition() <= 10) {
@@ -183,16 +182,21 @@ void ContainerGrabber::stateHandler(Arm* arm) {
 
             setMotorsOpenLoop(arm, grabberPID->update(arm->motorA->GetEncPosition()));
             break;
-        case IDLE:
-            if (goinSlow && arm->motorA->GetEncPosition() >= 267) {
-                setMotorsOpenLoop(arm, 1.0);
+        case SLOW:
+            if (arm->motorA->GetEncPosition() >= dropTargetAngle) {
+                setMotorsOpenLoop(arm, 0.5);
             } else {
-                setMotorsOpenLoop(arm, grabberPID->update(arm->motorA->GetEncPosition()));
+                setMotorsOpenLoop(arm, 1.0);
             }
             break;
         case HOME:
             setMotorsOpenLoop(arm, homePID->update(arm->motorA->GetEncPosition()));
             break;
+    }
+
+    if (arm->motorA->GetEncPosition() >= 320) {
+        arm->state = SETTLE;
+        setMotorsOpenLoop(arm, 0.0);
     }
 }
 
