@@ -12,6 +12,10 @@ GrabManager::GrabManager(Drive* drive_, ContainerGrabber* grabber_) {
     waitForContact = false;
 }
 
+void GrabManager::runArmsFreeSpeed() {
+    grabber->runArmsFreeSpeed();
+}
+
 void GrabManager::startSequence(float speed, bool wait) {
     waitForContact = wait;
     grabber->startGrabSequence(speed);

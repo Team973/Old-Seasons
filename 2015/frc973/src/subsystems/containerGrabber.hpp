@@ -20,6 +20,7 @@ public:
 
     ContainerGrabber(CANTalon* leftMotorA_, CANTalon* leftMotorB_, CANTalon* rightMotorA_, CANTalon* rightMotorB_);
     void setMotorsOpenLoop(Arm* arm, float speed);
+    void runArmsFreeSpeed();
     void cancelGrabSequence();
     void initGrabSequence();
     void startGrabSequence(float speed);
