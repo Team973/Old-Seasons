@@ -208,6 +208,7 @@ void Robot::AutonomousInit()
 
 void Robot::AutonomousPeriodic()
 {
+    grabManager->update();
     autoRan = true;
     autoManager->getCurrentMode()->run();
 
@@ -231,7 +232,6 @@ void Robot::TeleopPeriodic()
     grabManager->runArmsFreeSpeed();
     controlManager->update();
     stateManager->update();
-    //grabber->update();
 
     runCompressor();
 
