@@ -35,12 +35,12 @@ public:
     bool haveBothContact();
     bool bothAtDriveAngle();
     bool gotFault();
+    bool isSettled();
     void update();
 
     const static int SLOW = 0;
     const static int DROP = 1;
     const static int SETTLE = 2;
-    const static int PULL = 3;
     const static int RETRACT = 4;
     const static int HOME = 5;
 private:
@@ -67,6 +67,7 @@ private:
     float driveAngle;
     float fastDriveAngle;
     float slowDriveAngle;
+    float settleSpeed;
 };
 
 } /* namespace frc973 */

@@ -13,6 +13,7 @@ public:
     void runArmsFreeSpeed();
     void startSequence(float speed, bool waitForContact);
     void cancelSequence();
+    bool isDriving();
     void update();
 private:
     Drive *drive;
