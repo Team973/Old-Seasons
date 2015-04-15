@@ -109,16 +109,16 @@ Robot::Robot()
     leftGrabberMotorA->SetFeedbackDevice(CANTalon::QuadEncoder);
     leftGrabberMotorA->SelectProfileSlot(0);
     rightGrabberMotorA = new CANTalon(2);
-    rightGrabberMotorA->SetFeedbackDevice(CANTalon::QuadEncoder);
     rightGrabberMotorA->SetControlMode(CANSpeedController::kPosition);
+    rightGrabberMotorA->SetFeedbackDevice(CANTalon::QuadEncoder);
     rightGrabberMotorA->SelectProfileSlot(0);
     leftGrabberMotorB = new CANTalon(1);
-    leftGrabberMotorB->SetFeedbackDevice(CANTalon::QuadEncoder);
     leftGrabberMotorB->SetControlMode(CANSpeedController::kPosition);
+    leftGrabberMotorB->SetFeedbackDevice(CANTalon::QuadEncoder);
     leftGrabberMotorB->SelectProfileSlot(0);
     rightGrabberMotorB = new CANTalon(3);
-    rightGrabberMotorB->SetFeedbackDevice(CANTalon::QuadEncoder);
     rightGrabberMotorB->SetControlMode(CANSpeedController::kPosition);
+    rightGrabberMotorB->SetFeedbackDevice(CANTalon::QuadEncoder);
     rightGrabberMotorB->SelectProfileSlot(0);
 
     locator = new Locator(leftDriveEncoder, rightDriveEncoder, spiGyro, gyro);
@@ -146,6 +146,8 @@ Robot::Robot()
     Logger::Log(MESSAGE, "starting smart dashboard\n");
 
     autoRan = false;
+
+    grabManager->cancelSequence();
 
 }
 
@@ -190,18 +192,20 @@ void Robot::DisabledInit()
 
 void Robot::DisabledPeriodic()
 {
+    /*
     if (!autoRan) {
         leftGrabberMotorA->SetPosition(0);
         leftGrabberMotorB->SetPosition(0);
         rightGrabberMotorA->SetPosition(0);
         rightGrabberMotorB->SetPosition(0);
     }
+    */
     dashboardUpdate();
 }
 
 void Robot::AutonomousInit()
 {
-    //grabManager->startSequence(1.0, false);
+    grabManager->startSequence(1.0, false);
     autoManager->setMode("TurnThreeTote");
     spiGyro->ZeroAngle();
     locator->resetGyro();
@@ -213,33 +217,39 @@ void Robot::AutonomousPeriodic()
 {
     grabManager->update();
     autoRan = true;
-    autoManager->getCurrentMode()->run();
+    //autoManager->getCurrentMode()->run();
 
-    xyManager->update();
-    stateManager->update();
-    drive->update();
+    statusLEDA->Set(Relay::kOn);
 
-    runCompressor();
+    if (grabManager->isDriving()) {
+        statusLEDB->Set(Relay::kOn);
+    }
+    if (grabber->isSettled()) {
+        statusLEDC->Set(Relay::kOn);
+    }
+
+    //xyManager->update();
+    //stateManager->update();
+    //drive->update();
+
+    //runCompressor();
 
     dashboardUpdate();
 }
 
 void Robot::TeleopInit()
 {
+    //grabManager->cancelSequence();
     //grabManager->startSequence(1.0, false);
+    //grabber->retract();
     stateManager->unBrakeClaw();
 }
 
 void Robot::TeleopPeriodic()
 {
-    grabManager->runArmsFreeSpeed();
+    grabber->update();
     controlManager->update();
     stateManager->update();
-
-    statusLEDA->Set(Relay::kOn);
-    statusLEDB->Set(Relay::kOn);
-    statusLEDC->Set(Relay::kOn);
-    statusLEDD->Set(Relay::kOn);
 
     runCompressor();
 

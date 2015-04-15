@@ -33,6 +33,10 @@ void GrabManager::cancelSequence() {
     grabber->cancelGrabSequence();
 }
 
+bool GrabManager::isDriving() {
+    return driving;
+}
+
 void GrabManager::update() {
     grabber->update();
 
@@ -43,21 +47,23 @@ void GrabManager::update() {
 
     if (waitForContact) {
         if (grabber->haveBothContact()) {
-            drive->arcade(1.0, 0.0);
+            //drive->arcade(1.0, 0.0);
+            driving = true;
             timer->Start();
         }
     } else if (grabber->bothAtDriveAngle() && !driving) {
-        drive->arcade(1.0, 0.0);
+        //drive->arcade(1.0, 0.0);
+        driving = true;
         timer->Start();
     }
 
     if (timer->Get() >= 3.0 && !driving) {
         driving = true;
-        xyManager->setTargetDistance(8.0);
+        //xyManager->setTargetDistance(8.0);
     }
 
     if (driving) {
-        drive->update();
+        //drive->update();
     }
 
 }
