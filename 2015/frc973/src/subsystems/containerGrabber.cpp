@@ -34,7 +34,7 @@ ContainerGrabber::ContainerGrabber(CANTalon* leftMotorA_, CANTalon* leftMotorB_,
 
     driveAngle = 0;
     slowDriveAngle = 0;
-    fastDriveAngle = 260;
+    fastDriveAngle = 200;
 
     dropTransitionAngle = Constants::getConstant("kGrabberDropTransAngle")->getFloat();
     dropTargetAngle = Constants::getConstant("kGrabberDropTarget")->getFloat();
@@ -204,11 +204,13 @@ void ContainerGrabber::stateHandler(Arm* arm) {
             break;
     }
 
-    /*
+    if (arm->motorA->GetEncPosition() > driveAngle) {
+        arm->atDriveAngle = true;
+    }
+
     if (arm->motorA->GetEncPosition() >= 320) {
         setMotorsOpenLoop(arm, 0.0);
     }
-    */
 }
 
 void ContainerGrabber::update() {

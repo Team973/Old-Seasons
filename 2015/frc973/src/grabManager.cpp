@@ -47,18 +47,17 @@ void GrabManager::update() {
 
     if (waitForContact) {
         if (grabber->haveBothContact()) {
-            //drive->arcade(1.0, 0.0);
-            driving = true;
+            drive->arcade(-1.0, 0.0);
             timer->Start();
         }
     } else if (grabber->bothAtDriveAngle() && !driving) {
-        //drive->arcade(1.0, 0.0);
-        driving = true;
+        drive->arcade(-1.0, 0.0);
         timer->Start();
     }
 
-    if (timer->Get() >= 3.0 && !driving) {
-        driving = true;
+    if (timer->Get() >= 1.0 && !driving) {
+        //driving = true;
+        drive->arcade(0.0, 0.0);
         //xyManager->setTargetDistance(8.0);
     }
 

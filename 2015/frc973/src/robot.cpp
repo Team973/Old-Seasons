@@ -146,9 +146,6 @@ Robot::Robot()
     Logger::Log(MESSAGE, "starting smart dashboard\n");
 
     autoRan = false;
-
-    grabManager->cancelSequence();
-
 }
 
 void Robot::runCompressor() {
@@ -192,14 +189,12 @@ void Robot::DisabledInit()
 
 void Robot::DisabledPeriodic()
 {
-    /*
     if (!autoRan) {
         leftGrabberMotorA->SetPosition(0);
         leftGrabberMotorB->SetPosition(0);
         rightGrabberMotorA->SetPosition(0);
         rightGrabberMotorB->SetPosition(0);
     }
-    */
     dashboardUpdate();
 }
 
