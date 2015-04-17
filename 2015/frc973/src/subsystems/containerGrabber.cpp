@@ -1,6 +1,8 @@
 #include "WPILib.h"
 #include "containerGrabber.hpp"
 #include "../lib/pid.hpp"
+#include "../lib/utility.hpp"
+#include "../lib/logger.hpp"
 #include "../constants.hpp"
 
 namespace frc973 {
@@ -34,14 +36,14 @@ ContainerGrabber::ContainerGrabber(CANTalon* leftMotorA_, CANTalon* leftMotorB_,
 
     driveAngle = 0;
     slowDriveAngle = 0;
-    fastDriveAngle = 200;
+    fastDriveAngle = 0;
 
     dropTransitionAngle = Constants::getConstant("kGrabberDropTransAngle")->getFloat();
     dropTargetAngle = Constants::getConstant("kGrabberDropTarget")->getFloat();
 
     settleTargetAngle = Constants::getConstant("kGrabberSettleTarget")->getFloat();
 
-    settleSpeed = 0.8;
+    settleSpeed = 0.0;
 
     grabberPID = new PID(0.001,0.0,0.0);
     grabberPID->start();
@@ -168,6 +170,7 @@ bool ContainerGrabber::bothAtDriveAngle() {
 
 void ContainerGrabber::stateHandler(Arm* arm) {
 
+    printf("%d\n", arm->motorA->GetEncPosition());
     switch (arm->state) {
         case DROP:
             if (arm->motorA->GetEncPosition() < angleFaultCheck) {
@@ -179,6 +182,11 @@ void ContainerGrabber::stateHandler(Arm* arm) {
             }
             break;
         case SETTLE:
+            if (arm->motorA->GetEncPosition() < 270) {
+                settleSpeed = 0.0;
+            } else {
+                settleSpeed = 0.0;
+            }
             setMotorsOpenLoop(arm, settleSpeed);
             break;
         case RETRACT:
