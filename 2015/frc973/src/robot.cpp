@@ -213,6 +213,7 @@ void Robot::AutonomousPeriodic()
     grabManager->update();
     autoRan = true;
     //autoManager->getCurrentMode()->run();
+    drive->arcade(-1.0, 0.0);
 
     statusLEDA->Set(Relay::kOn);
 
