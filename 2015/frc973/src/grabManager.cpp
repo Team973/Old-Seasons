@@ -40,23 +40,32 @@ bool GrabManager::isDriving() {
 void GrabManager::update() {
     grabber->update();
 
+    /*
     if (grabber->gotFault()) {
         waitForContact = true;
     }
+    */
 
+    SmartDashboard::PutString("HIT", "1");
 
+    SmartDashboard::PutBoolean("Both at drive angle: ", grabber->bothAtDriveAngle());
+    SmartDashboard::PutBoolean("Both at contact: ", grabber->haveBothContact());
+    waitForContact = false;
     if (waitForContact) {
         if (grabber->haveBothContact()) {
+            SmartDashboard::PutString("HIT", "2");
             drive->arcade(-1.0, 0.0);
             timer->Start();
         }
-    } else if (grabber->bothAtDriveAngle() && !driving) {
+    } else if (grabber->bothAtDriveAngle()) {
+        SmartDashboard::PutString("HIT", "3");
         drive->arcade(-1.0, 0.0);
         timer->Start();
     }
 
     if (timer->Get() >= 1.0 && !driving) {
         //driving = true;
+        SmartDashboard::PutString("HIT", "4");
         drive->arcade(0.0, 0.0);
         //xyManager->setTargetDistance(8.0);
     }

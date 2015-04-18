@@ -213,7 +213,6 @@ void Robot::AutonomousPeriodic()
     grabManager->update();
     autoRan = true;
     //autoManager->getCurrentMode()->run();
-    drive->arcade(-1.0, 0.0);
 
     statusLEDA->Set(Relay::kOn);
 
@@ -238,6 +237,7 @@ void Robot::TeleopInit()
     //grabManager->cancelSequence();
     //grabManager->startSequence(1.0, false);
     //grabber->retract();
+    grabManager->cancelSequence();
     stateManager->unBrakeClaw();
 }
 
