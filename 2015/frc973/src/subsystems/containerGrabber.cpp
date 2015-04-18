@@ -35,15 +35,15 @@ ContainerGrabber::ContainerGrabber(CANTalon* leftMotorA_, CANTalon* leftMotorB_,
     angleFaultCheck = Constants::getConstant("kGrabberFaultAngle")->getInt();
 
     driveAngle = 0;
-    slowDriveAngle = 0;
-    fastDriveAngle = 0;
+    slowDriveAngle = 100;
+    fastDriveAngle = 150;
 
     dropTransitionAngle = Constants::getConstant("kGrabberDropTransAngle")->getFloat();
     dropTargetAngle = Constants::getConstant("kGrabberDropTarget")->getFloat();
 
     settleTargetAngle = Constants::getConstant("kGrabberSettleTarget")->getFloat();
 
-    settleSpeed = 0.0;
+    settleSpeed = 0.8;
 
     grabberPID = new PID(0.001,0.0,0.0);
     grabberPID->start();
@@ -165,7 +165,8 @@ bool ContainerGrabber::gotFault() {
 }
 
 bool ContainerGrabber::bothAtDriveAngle() {
-    return leftArm->atDriveAngle && rightArm->atDriveAngle;
+    //return leftArm->atDriveAngle && rightArm->atDriveAngle;
+    return rightArm->atDriveAngle;
 }
 
 void ContainerGrabber::stateHandler(Arm* arm) {
@@ -182,11 +183,6 @@ void ContainerGrabber::stateHandler(Arm* arm) {
             }
             break;
         case SETTLE:
-            if (arm->motorA->GetEncPosition() < 270) {
-                settleSpeed = 0.0;
-            } else {
-                settleSpeed = 0.0;
-            }
             setMotorsOpenLoop(arm, settleSpeed);
             break;
         case RETRACT:
@@ -212,13 +208,17 @@ void ContainerGrabber::stateHandler(Arm* arm) {
             break;
     }
 
-    if (arm->motorA->GetEncPosition() > driveAngle) {
+    if (arm->motorA->GetEncPosition() >= driveAngle) {
         arm->atDriveAngle = true;
     }
 
+    arm->contact = true;
+
+    /*
     if (arm->motorA->GetEncPosition() >= 320) {
         setMotorsOpenLoop(arm, 0.0);
     }
+    */
 }
 
 void ContainerGrabber::update() {
