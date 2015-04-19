@@ -145,6 +145,10 @@ Robot::Robot()
 
     Logger::Log(MESSAGE, "starting smart dashboard\n");
 
+    autoType = NORMAL;
+    grabberType = CARBON_FIBER;
+    grabberSpeed = FAST;
+
     autoRan = false;
 }
 
@@ -195,12 +199,44 @@ void Robot::DisabledPeriodic()
         rightGrabberMotorA->SetPosition(0);
         rightGrabberMotorB->SetPosition(0);
     }
+
+    switch (autoType) {
+        case CANBURGLE:
+            grabManager->initSequence();
+
+            switch (grabberType) {
+                case CARBON_FIBER:
+                    switch (grabberSpeed) {
+                        case FAST:
+                            grabManager->startSequence(1.0, false);
+                            break;
+                        case SLOW:
+                            grabManager->startSequence(0.4, false);
+                            break;
+                    }
+                    break;
+                case ALUMINUM:
+                    switch (grabberSpeed) {
+                        case FAST:
+                            grabManager->startSequence(0.6, false);
+                            break;
+                        case SLOW:
+                            grabManager->startSequence(0.4, false);
+                            break;
+                    }
+                    break;
+            }
+            break;
+        case NORMAL:
+            grabManager->cancelSequence();
+            break;
+    }
+
     dashboardUpdate();
 }
 
 void Robot::AutonomousInit()
 {
-    grabManager->startSequence(1.0, false);
     autoManager->setMode("TurnThreeTote");
     spiGyro->ZeroAngle();
     locator->resetGyro();
@@ -210,9 +246,18 @@ void Robot::AutonomousInit()
 
 void Robot::AutonomousPeriodic()
 {
-    grabManager->update();
     autoRan = true;
-    //autoManager->getCurrentMode()->run();
+    switch (autoType) {
+        case NORMAL:
+            autoManager->getCurrentMode()->run();
+
+            xyManager->update();
+            stateManager->update();
+            drive->update();
+
+            runCompressor();
+            break;
+    }
 
     statusLEDA->Set(Relay::kOn);
 
@@ -223,11 +268,7 @@ void Robot::AutonomousPeriodic()
         statusLEDC->Set(Relay::kOn);
     }
 
-    //xyManager->update();
-    //stateManager->update();
-    //drive->update();
-
-    //runCompressor();
+    grabManager->update();
 
     dashboardUpdate();
 }
