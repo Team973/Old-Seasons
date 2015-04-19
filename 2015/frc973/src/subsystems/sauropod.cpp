@@ -142,7 +142,7 @@ bool Sauropod::atTarget() {
     return false;
 }
 
-// in feet
+// in inches
 float Sauropod::getElevatorHeight() {
     float encoderTicks = 360;
     float diameter = 1.27; //inches
