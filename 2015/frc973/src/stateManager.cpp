@@ -189,7 +189,7 @@ void StateManager::update() {
                             sauropod->setPreset("loadHigh");
                     }
 
-                    if (sauropod->isCurrPreset("loadHigh") && !sauropod->motionDone()) {
+                    if (sauropod->isCurrPreset("loadHigh") && sauropod->getElevatorHeight() < 15.0) {
                         setIntakePosition(true);
                     }
 
