@@ -23,6 +23,10 @@ void GrabManager::runArmsFreeSpeed() {
     grabber->runArmsFreeSpeed();
 }
 
+void GrabManager::initSequence() {
+    grabber->initGrabSequence();
+}
+
 void GrabManager::startSequence(float speed, bool wait) {
     waitForContact = wait;
     goinSlow = speed < 1.0;

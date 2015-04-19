@@ -37,6 +37,21 @@ private:
 
     void dashboardUpdate();
 
+    const static int CARBON_FIBER = 1;
+    const static int ALUMINUM = 2;
+
+    int grabberType;
+
+    const static int FAST = 1;
+    const static int SLOW = 2;
+
+    int grabberSpeed;
+
+    const static int CANBURGLE = 1;
+    const static int NORMAL = 2;
+
+    int autoType;
+
     bool autoRan;
 
     VictorSP *leftDriveMotors;
