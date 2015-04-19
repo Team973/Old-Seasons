@@ -205,6 +205,7 @@ void Robot::DisabledPeriodic()
             grabManager->initSequence();
 
             switch (grabberType) {
+                grabManager->injectArmType(grabberType);
                 case CARBON_FIBER:
                     switch (grabberSpeed) {
                         case FAST:

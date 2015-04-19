@@ -27,6 +27,10 @@ void GrabManager::initSequence() {
     grabber->initGrabSequence();
 }
 
+void GrabManager::injectArmType(int type) {
+    grabber->injectArmType(type);
+}
+
 void GrabManager::startSequence(float speed, bool wait) {
     waitForContact = wait;
     goinSlow = speed < 1.0;
