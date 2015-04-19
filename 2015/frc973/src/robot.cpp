@@ -280,7 +280,6 @@ void Robot::TeleopInit()
     //grabManager->startSequence(1.0, false);
     //grabber->retract();
     grabManager->cancelSequence();
-    stateManager->unBrakeClaw();
 }
 
 void Robot::TeleopPeriodic()

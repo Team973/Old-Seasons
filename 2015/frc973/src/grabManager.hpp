@@ -27,6 +27,7 @@ private:
     bool waitForContact;
     bool goinSlow;
     bool driving;
+    bool sequenceCanceled;
 };
 
 }
