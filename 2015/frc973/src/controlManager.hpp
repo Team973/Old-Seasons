@@ -14,6 +14,8 @@ private:
 
     ControlMap *controls;
     StateManager *stateManager;
+
+    bool clawClosedOverriden;
 };
 
 } /* namespace frc973 */

@@ -9,6 +9,8 @@ namespace frc973 {
 ControlManager::ControlManager(ControlMap *controls_, StateManager *stateManager_) {
     controls = controls_;
     stateManager = stateManager_;
+
+    clawClosedOverriden = false;
 }
 
 void ControlManager::update() {
@@ -19,13 +21,20 @@ void ControlManager::update() {
         stateManager->setScore();
     }
 
-    if (!controls->getCodriverButton(7)) {
-        stateManager->actuateClaw(!controls->getDriverButton(3));
-    } else if (!controls->getDriverButton(3)) {
-        stateManager->actuateClaw(!controls->getCodriverButton(7));
-    } else {
-        stateManager->actuateClaw(true);
+    if (controls->getDriverButton(3)) {
+        stateManager->actuateClaw(false);
+        clawClosedOverriden = true;
     }
+
+    if (controls->getCodriverButton(7) && clawClosedOverriden) {
+        clawClosedOverriden = false;
+    }
+
+    if (!clawClosedOverriden) {
+        stateManager->actuateClaw(!controls->getCodriverButton(7));
+    }
+
+
 
     if (controls->getDriverButton(8)) {
         stateManager->unBrakeClaw();
