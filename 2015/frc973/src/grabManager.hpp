@@ -11,6 +11,7 @@ class GrabManager {
 public:
     GrabManager(Drive* drive_, ContainerGrabber* grabber_);
     void runArmsFreeSpeed();
+    void injectArmType(int type);
     void initSequence();
     void startSequence(float speed, bool waitForContact);
     void cancelSequence();

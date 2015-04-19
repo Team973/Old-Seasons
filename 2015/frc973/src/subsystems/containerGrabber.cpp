@@ -45,6 +45,8 @@ ContainerGrabber::ContainerGrabber(CANTalon* leftMotorA_, CANTalon* leftMotorB_,
 
     settleSpeed = 0.8;
 
+    armType = ALUMINUM;
+
     grabberPID = new PID(0.001,0.0,0.0);
     grabberPID->start();
 
@@ -84,6 +86,10 @@ void ContainerGrabber::setMotorsOpenLoop(Arm* arm, float speed) {
 
 void ContainerGrabber::setPIDTarget(float target) {
     grabberPID->setTarget(target);
+}
+
+void ContainerGrabber::injectArmType(int type) {
+    armType = type;
 }
 
 void ContainerGrabber::runArmsFreeSpeed() {

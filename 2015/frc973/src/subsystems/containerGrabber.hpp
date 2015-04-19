@@ -21,6 +21,7 @@ public:
     ContainerGrabber(CANTalon* leftMotorA_, CANTalon* leftMotorB_, CANTalon* rightMotorA_, CANTalon* rightMotorB_);
     void setMotorsOpenLoop(Arm* arm, float speed);
     void runArmsFreeSpeed();
+    void injectArmType(int type);
     void cancelGrabSequence();
     void initGrabSequence();
     void startGrabSequence(float speed);
@@ -43,6 +44,9 @@ public:
     const static int SETTLE = 2;
     const static int RETRACT = 4;
     const static int HOME = 5;
+
+    const static int CARBON_FIBER = 1;
+    const static int ALUMINUM = 2;
 private:
 
     void stateHandler(Arm* arm);
@@ -57,6 +61,8 @@ private:
 
     PID *grabberPID;
     PID *homePID;
+
+    int armType;
 
     bool goinSlow;
     float limitSpeed;
