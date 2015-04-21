@@ -2,15 +2,19 @@
 #include "controlManager.hpp"
 #include "controlMap.hpp"
 #include "stateManager.hpp"
+#include "grabManager.hpp"
 #include "subsystems/sauropod.hpp"
 
 namespace frc973 {
 
-ControlManager::ControlManager(ControlMap *controls_, StateManager *stateManager_) {
+ControlManager::ControlManager(ControlMap *controls_, StateManager *stateManager_, GrabManager *grabManager_) {
     controls = controls_;
     stateManager = stateManager_;
+    grabManager = grabManager_;
 
     clawClosedOverriden = false;
+
+    initialRetract = false;
 }
 
 void ControlManager::update() {
@@ -20,6 +24,17 @@ void ControlManager::update() {
     if (controls->getDriverButton(4)) {
         stateManager->setScore();
     }
+
+    if (controls->getDriverButton(5) && !initialRetract) {
+        initialRetract = true;
+    }
+
+    if (controls->getDriverButton(5) && initialRetract) {
+        grabManager->retractArms();
+    } else if (controls->getDriverButton(6)) {
+        grabManager->startSequence(0.4, false);
+    }
+
 
     if (controls->getDriverButton(3)) {
         stateManager->actuateClaw(false);
