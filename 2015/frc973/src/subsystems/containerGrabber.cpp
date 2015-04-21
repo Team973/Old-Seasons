@@ -218,7 +218,7 @@ void ContainerGrabber::stateHandler(Arm* arm) {
         arm->atDriveAngle = true;
     }
 
-    arm->contact = true;
+    //arm->contact = true;
 
     /*
     if (arm->motorA->GetEncPosition() >= 320) {

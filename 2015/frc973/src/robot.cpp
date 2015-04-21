@@ -212,7 +212,7 @@ void Robot::DisabledPeriodic()
                             grabManager->startSequence(1.0, false);
                             break;
                         case SLOW:
-                            grabManager->startSequence(0.4, false);
+                            grabManager->startSequence(0.7, true);
                             break;
                     }
                     break;

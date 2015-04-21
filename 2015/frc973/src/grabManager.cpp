@@ -50,6 +50,7 @@ bool GrabManager::isDriving() {
 
 void GrabManager::update() {
     grabber->update();
+
     if (!sequenceCanceled) {
 
         /*
@@ -62,7 +63,7 @@ void GrabManager::update() {
 
         SmartDashboard::PutBoolean("Both at drive angle: ", grabber->bothAtDriveAngle());
         SmartDashboard::PutBoolean("Both at contact: ", grabber->haveBothContact());
-        waitForContact = false;
+        //waitForContact = false;
         if (waitForContact) {
             if (grabber->haveBothContact()) {
                 SmartDashboard::PutString("HIT", "2");
