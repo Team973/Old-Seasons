@@ -10,6 +10,7 @@ class XYManager;
 class GrabManager {
 public:
     GrabManager(Drive* drive_, ContainerGrabber* grabber_);
+    void retractArms();
     void runArmsFreeSpeed();
     void injectArmType(int type);
     void initSequence();
