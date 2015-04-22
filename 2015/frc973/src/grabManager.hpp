@@ -13,6 +13,7 @@ public:
     void retractArms();
     void runArmsFreeSpeed();
     void injectArmType(int type);
+    void teleopInit();
     void initSequence();
     void startSequence(float speed, bool waitForContact);
     void cancelSequence();
@@ -29,6 +30,7 @@ private:
     bool goinSlow;
     bool driving;
     bool sequenceCanceled;
+    bool isTeleop;
 };
 
 }
