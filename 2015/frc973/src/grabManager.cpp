@@ -19,7 +19,6 @@ GrabManager::GrabManager(Drive* drive_, ContainerGrabber* grabber_) {
     waitForContact = false;
     goinSlow = false;
     driving = false;
-    isTeleop = false;
 }
 
 void GrabManager::runArmsFreeSpeed() {
@@ -49,10 +48,6 @@ void GrabManager::cancelSequence() {
     sequenceCanceled = true;
 }
 
-void GrabManager::teleopInit() {
-    isTeleop = true;
-}
-
 bool GrabManager::isDriving() {
     return driving;
 }
@@ -73,29 +68,27 @@ void GrabManager::update() {
         SmartDashboard::PutBoolean("Both at drive angle: ", grabber->bothAtDriveAngle());
         SmartDashboard::PutBoolean("Both at contact: ", grabber->haveBothContact());
         //waitForContact = false;
-        if (!isTeleop) {
-            if (waitForContact) {
-                if (grabber->haveBothContact()) {
-                    SmartDashboard::PutString("HIT", "2");
-                    drive->arcade(-1.0, 0.0);
-                    timer->Start();
-                }
-            } else if (grabber->bothAtDriveAngle()) {
-                SmartDashboard::PutString("HIT", "3");
+        if (waitForContact) {
+            if (grabber->haveBothContact()) {
+                SmartDashboard::PutString("HIT", "2");
                 drive->arcade(-1.0, 0.0);
                 timer->Start();
             }
+        } else if (grabber->bothAtDriveAngle()) {
+            SmartDashboard::PutString("HIT", "3");
+            drive->arcade(-1.0, 0.0);
+            timer->Start();
+        }
 
-            if (timer->Get() >= 1.0 && !driving) {
-                //driving = true;
-                SmartDashboard::PutString("HIT", "4");
-                drive->arcade(0.0, 0.0);
-                //xyManager->setTargetDistance(8.0);
-            }
+        if (timer->Get() >= 1.0 && !driving) {
+            //driving = true;
+            SmartDashboard::PutString("HIT", "4");
+            drive->arcade(0.0, 0.0);
+            //xyManager->setTargetDistance(8.0);
+        }
 
-            if (driving) {
-                //drive->update();
-            }
+        if (driving) {
+            //drive->update();
         }
     }
 

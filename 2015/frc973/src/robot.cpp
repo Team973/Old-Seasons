@@ -283,7 +283,6 @@ void Robot::AutonomousPeriodic()
 
 void Robot::TeleopInit()
 {
-    grabManager->teleopInit();
     if (!autoRan) {
         grabManager->cancelSequence();
     }
