@@ -245,7 +245,7 @@ void Robot::DisabledPeriodic()
 
 void Robot::AutonomousInit()
 {
-    autoManager->setMode("TurnThreeTote");
+    autoManager->setMode("BasicThreeTote");
     spiGyro->ZeroAngle();
     locator->resetGyro();
     locator->resetAll();
