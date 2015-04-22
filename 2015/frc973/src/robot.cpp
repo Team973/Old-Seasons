@@ -283,10 +283,10 @@ void Robot::AutonomousPeriodic()
 
 void Robot::TeleopInit()
 {
-    //grabManager->cancelSequence();
-    //grabManager->startSequence(1.0, false);
-    //grabber->retract();
-    grabManager->cancelSequence();
+    grabManager->teleopInit();
+    if (!autoRan) {
+        grabManager->cancelSequence();
+    }
 }
 
 void Robot::TeleopPeriodic()
