@@ -200,6 +200,13 @@ void Robot::DisabledPeriodic()
         rightGrabberMotorB->SetPosition(0);
     }
 
+    /* AUTO DEFINITIONS */
+
+    autoType = NORMAL;
+
+    grabberType = CARBON_FIBER;
+    grabberSpeed = SLOW;
+
     switch (autoType) {
         case CANBURGLE:
             grabManager->initSequence();
