@@ -91,7 +91,11 @@ void StateManager::setIntakeLeftRight(float left, float right) {
 }
 
 void StateManager::setIntakePosition(bool actuate) {
-    intake->actuateIntake(actuate);
+    if (robotState == AUTO_LOAD && sauropod->isCurrPreset("loadHigh") && sauropod->getElevatorHeight() < 15.0) {
+        intake->actuateIntake(true);
+    } else {
+        intake->actuateIntake(actuate);
+    }
 }
 
 void StateManager::setFunnelPosition(bool position) {
@@ -207,9 +211,6 @@ void StateManager::update() {
                             sauropod->setPreset("loadHigh");
                     }
 
-                    if (sauropod->isCurrPreset("loadHigh") && sauropod->getElevatorHeight() < 15.0) {
-                        setIntakePosition(true);
-                    }
 
                     if (wantAutoLoad && intake->gotTote() && !sauropod->inCradle() && !hadTote && sauropod->motionDone()) {
                         hadTote = true;

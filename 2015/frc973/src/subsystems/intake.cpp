@@ -49,6 +49,7 @@ void Intake::update() {
     rightIntakeMotor->Set(rightSpeed);
     leftIntakeMotor->Set(leftSpeed);
 
+    /*
     if (!hasTote && toteSensor->Get()) {
         toteTimer->Start();
         if (toteTimer->Get() >= 0.25) {
@@ -60,6 +61,8 @@ void Intake::update() {
         toteTimer->Stop();
         toteTimer->Reset();
     }
+    */
+    hasTote = false;
 }
 
 } /* namespace frc973 */

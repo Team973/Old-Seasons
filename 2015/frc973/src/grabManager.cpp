@@ -37,10 +37,14 @@ void GrabManager::injectArmType(int type) {
     grabber->injectArmType(type);
 }
 
-void GrabManager::startSequence(float speed, bool wait) {
-    waitForContact = wait;
-    goinSlow = speed < 1.0;
-    grabber->startGrabSequence(speed);
+void GrabManager::startSequence(float speed, bool wait, bool teleop) {
+    if (!teleop) {
+        waitForContact = wait;
+        goinSlow = speed < 1.0;
+        grabber->startGrabSequence(speed);
+    } else {
+        grabber->startGrabSequence(80, true);
+    }
 }
 
 void GrabManager::cancelSequence() {
@@ -68,7 +72,12 @@ void GrabManager::update() {
         SmartDashboard::PutBoolean("Both at drive angle: ", grabber->bothAtDriveAngle());
         SmartDashboard::PutBoolean("Both at contact: ", grabber->haveBothContact());
         //waitForContact = false;
-        if (waitForContact) {
+        if (timer->Get() >= 1.0 && !driving) {
+            //driving = true;
+            SmartDashboard::PutString("HIT", "4");
+            drive->arcade(0.0, 0.0);
+            //xyManager->setTargetDistance(8.0);
+        } else if (waitForContact) {
             if (grabber->haveBothContact()) {
                 SmartDashboard::PutString("HIT", "2");
                 drive->arcade(-1.0, 0.0);
@@ -80,12 +89,6 @@ void GrabManager::update() {
             timer->Start();
         }
 
-        if (timer->Get() >= 1.0 && !driving) {
-            //driving = true;
-            SmartDashboard::PutString("HIT", "4");
-            drive->arcade(0.0, 0.0);
-            //xyManager->setTargetDistance(8.0);
-        }
 
         if (driving) {
             //drive->update();
