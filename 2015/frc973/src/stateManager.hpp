@@ -15,12 +15,15 @@ public:
     void setElevatorFromControls(float speed);
     void setSauropodPreset(std::string name);
     void incrementElevatorHeight(float increment);
+    void incrementCapHeight();
+    void decrementCapHeight();
     void setIntakeSpeed(float speed);
     void setIntakeLeftRight(float left, float right);
     void setIntakePosition(bool actuate);
     void setFunnelPosition(bool position);
     void setLastTote();
     bool gotTote();
+    void setCapState();
     void setRobotState(int state);
     void setScore();
     void setResting();
@@ -44,6 +47,7 @@ public:
     const static int CONTAINER_LOAD = 4;
     const static int HUMAN_LOAD = 5;
     const static int REPACK = 6;
+    const static int CAP = 7;
 private:
     Drive *drive;
     Sauropod *sauropod;
@@ -54,6 +58,13 @@ private:
     const static int END = 2;
     const static int DEAD = 3;
 
+    // cap heights
+    const static int ONE = 1;
+    const static int TWO = 2;
+    const static int THREE = 3;
+    const static int FOUR = 4;
+    const static int FIVE = 5;
+
     Timer *lockTimer;
 
     bool vTec_yo;
@@ -61,6 +72,8 @@ private:
     int robotState;
     int lastRobotState;
     int internalState;
+
+    int capHeight;
 
     std::string restingPath;
     std::string pickupPath;

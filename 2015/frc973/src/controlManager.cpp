@@ -87,11 +87,13 @@ void ControlManager::update() {
     }
 
     if (controls->getCodriverDpadUp()) {
-        stateManager->incrementElevatorHeight(5);
+        stateManager->setCapState();
+        stateManager->incrementCapHeight();
     }
 
     if (controls->getCodriverDpadDown()) {
-        stateManager->incrementElevatorHeight(-5);
+        stateManager->setCapState();
+        stateManager->decrementCapHeight();
     }
 }
 
