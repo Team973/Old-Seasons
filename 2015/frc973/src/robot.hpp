@@ -76,6 +76,8 @@ private:
     Encoder *rightDriveEncoder;
     Encoder *elevatorEncoder;
     Encoder *gyro;
+    Encoder *leftArmEncoder;
+    Encoder *rightArmEncoder;
 
     SPIGyro *spiGyro;
 

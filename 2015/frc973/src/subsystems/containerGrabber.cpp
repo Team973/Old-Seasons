@@ -7,7 +7,7 @@
 
 namespace frc973 {
 
-ContainerGrabber::ContainerGrabber(CANTalon* leftMotorA_, CANTalon* leftMotorB_, CANTalon* rightMotorA_, CANTalon* rightMotorB_) {
+ContainerGrabber::ContainerGrabber(CANTalon* leftMotorA_, CANTalon* leftMotorB_, CANTalon* rightMotorA_, CANTalon* rightMotorB_, Encoder *leftEncoder_, Encoder *rightEncoder_) {
     leftMotorA = leftMotorA_;
     leftMotorB = leftMotorB_;
     rightMotorA = rightMotorA_;
@@ -17,6 +17,7 @@ ContainerGrabber::ContainerGrabber(CANTalon* leftMotorA_, CANTalon* leftMotorB_,
     leftArm->state = HOME;
     leftArm->motorA = leftMotorA;
     leftArm->motorB = leftMotorB;
+    leftArm->encoder = leftEncoder_;
     leftArm->angleFault = false;
     leftArm->contact = false;
     leftArm->atDriveAngle = false;
@@ -25,6 +26,7 @@ ContainerGrabber::ContainerGrabber(CANTalon* leftMotorA_, CANTalon* leftMotorB_,
     rightArm->state = HOME;
     rightArm->motorA = rightMotorA;
     rightArm->motorB = rightMotorB;
+    rightArm->encoder = rightEncoder_;
     rightArm->angleFault = false;
     rightArm->contact = false;
     rightArm->atDriveAngle = false;
@@ -177,14 +179,13 @@ bool ContainerGrabber::bothAtDriveAngle() {
 
 void ContainerGrabber::stateHandler(Arm* arm) {
 
-    printf("%d\n", arm->motorA->GetEncPosition());
     switch (arm->state) {
         case DROP:
-            if (arm->motorA->GetEncPosition() < angleFaultCheck) {
+            if (arm->encoder->Get() < angleFaultCheck) {
                 arm->angleFault = true;
             }
 
-            if (arm->motorA->GetEncPosition() > dropTransitionAngle) {
+            if (arm->encoder->Get() > dropTransitionAngle) {
                 initSettleState(arm);
             }
             break;
@@ -192,29 +193,29 @@ void ContainerGrabber::stateHandler(Arm* arm) {
             setMotorsOpenLoop(arm, settleSpeed);
             break;
         case RETRACT:
-            if (arm->motorA->GetEncPosition() <= 10) {
+            if (arm->encoder->Get() <= 10) {
                 initHomeState(arm);
             }
 
-            if (arm->motorA->GetEncPosition() > 75) {
+            if (arm->encoder->Get() > 75) {
                 setMotorsOpenLoop(arm, -0.2);
             } else {
                 setMotorsOpenLoop(arm, -0.07);
             }
             break;
         case SLOW:
-            if (arm->motorA->GetEncPosition() >= dropTargetAngle) {
+            if (arm->encoder->Get() >= dropTargetAngle) {
                 setMotorsOpenLoop(arm, 0.5);
             } else {
                 setMotorsOpenLoop(arm, 1.0);
             }
             break;
         case HOME:
-            setMotorsOpenLoop(arm, homePID->update(arm->motorA->GetEncPosition()) - 0.05);
+            setMotorsOpenLoop(arm, homePID->update(arm->encoder->Get()) - 0.05);
             break;
     }
 
-    if (arm->motorA->GetEncPosition() >= driveAngle) {
+    if (arm->encoder->Get() >= driveAngle) {
         arm->atDriveAngle = true;
     }
 
