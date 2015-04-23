@@ -37,7 +37,7 @@ ContainerGrabber::ContainerGrabber(CANTalon* leftMotorA_, CANTalon* leftMotorB_,
     angleFaultCheck = Constants::getConstant("kGrabberFaultAngle")->getInt();
 
     driveAngle = 0;
-    slowDriveAngle = 100;
+    slowDriveAngle = 270;
     fastDriveAngle = 150;
 
     dropTransitionAngle = Constants::getConstant("kGrabberDropTransAngle")->getFloat();
@@ -49,7 +49,9 @@ ContainerGrabber::ContainerGrabber(CANTalon* leftMotorA_, CANTalon* leftMotorB_,
 
     armType = ALUMINUM;
 
-    grabberPID = new PID(0.001,0.0,0.0);
+    dropTimer = new Timer();
+
+    grabberPID = new PID(0.1,0.0,0.0);
     grabberPID->start();
 
     homePID = new PID(0.001,0.0,0.0);
@@ -118,20 +120,28 @@ void ContainerGrabber::initGrabSequence() {
     setPositionTarget(rightArm, dropTargetAngle);
 }
 
-void ContainerGrabber::startGrabSequence(float speed) {
-    if (speed < 1.0) {
-        limitSpeed = speed;
-        goinSlow = true;
-        setControlMode(leftArm, "openLoop");
-        setControlMode(rightArm, "openLoop");
-        driveAngle = slowDriveAngle;
-        initSlowState(leftArm);
-        initSlowState(rightArm);
+void ContainerGrabber::startGrabSequence(float speed, bool teleop) {
+    if (!teleop) {
+        if (speed < 1.0) {
+            limitSpeed = speed;
+            goinSlow = true;
+            setControlMode(leftArm, "openLoop");
+            setControlMode(rightArm, "openLoop");
+            driveAngle = slowDriveAngle;
+            initSlowState(leftArm);
+            initSlowState(rightArm);
+        } else {
+            leftArm->state = DROP;
+            rightArm->state = DROP;
+            driveAngle = fastDriveAngle;
+        }
     } else {
-        leftArm->state = DROP;
-        rightArm->state = DROP;
-        driveAngle = fastDriveAngle;
+        grabberPID->setTarget(speed);
+        limitSpeed = 0.2;
+        leftArm->state = TELEOP;
+        rightArm->state = TELEOP;
     }
+    dropTimer->Reset();
 }
 
 void ContainerGrabber::initSettleState(Arm* arm) {
@@ -173,11 +183,11 @@ bool ContainerGrabber::gotFault() {
 }
 
 bool ContainerGrabber::bothAtDriveAngle() {
-    //return leftArm->atDriveAngle && rightArm->atDriveAngle;
-    return rightArm->atDriveAngle;
+    return leftArm->atDriveAngle && rightArm->atDriveAngle;
 }
 
 void ContainerGrabber::stateHandler(Arm* arm) {
+    dropTimer->Start();
 
     switch (arm->state) {
         case DROP:
@@ -197,27 +207,35 @@ void ContainerGrabber::stateHandler(Arm* arm) {
                 initHomeState(arm);
             }
 
-            if (arm->encoder->Get() > 75) {
+            if (arm->encoder->Get() > 40) {
                 setMotorsOpenLoop(arm, -0.2);
             } else {
                 setMotorsOpenLoop(arm, -0.07);
             }
             break;
         case SLOW:
-            if (arm->encoder->Get() >= dropTargetAngle) {
-                setMotorsOpenLoop(arm, 0.5);
+            if (dropTimer->Get() >= 4 && arm->state != HOME) {
+                setMotorsOpenLoop(arm, 0.1);
             } else {
                 setMotorsOpenLoop(arm, 1.0);
+            }
+
+            if (arm->encoder->Get() >= dropTransitionAngle) {
+                arm->contact = true;
             }
             break;
         case HOME:
             setMotorsOpenLoop(arm, homePID->update(arm->encoder->Get()) - 0.05);
+            break;
+        case TELEOP:
+            setMotorsOpenLoop(arm, grabberPID->update(arm->encoder->Get()));
             break;
     }
 
     if (arm->encoder->Get() >= driveAngle) {
         arm->atDriveAngle = true;
     }
+
 
     //arm->contact = true;
 

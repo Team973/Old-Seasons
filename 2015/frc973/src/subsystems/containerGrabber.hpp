@@ -25,7 +25,7 @@ public:
     void injectArmType(int type);
     void cancelGrabSequence();
     void initGrabSequence();
-    void startGrabSequence(float speed);
+    void startGrabSequence(float speed, bool teleop=false);
     void initSettleState(Arm* arm);
     void initSlowState(Arm* arm);
     void initHomeState(Arm* arm);
@@ -45,6 +45,7 @@ public:
     const static int SETTLE = 2;
     const static int RETRACT = 4;
     const static int HOME = 5;
+    const static int TELEOP = 6;
 
     const static int CARBON_FIBER = 1;
     const static int ALUMINUM = 2;
@@ -62,6 +63,8 @@ private:
 
     PID *grabberPID;
     PID *homePID;
+
+    Timer *dropTimer;
 
     int armType;
 

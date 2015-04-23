@@ -187,15 +187,13 @@ void Robot::DisabledInit()
 void Robot::DisabledPeriodic()
 {
     if (!autoRan) {
-        /*
         leftArmEncoder->Reset();
         rightArmEncoder->Reset();
-        */
     }
 
     /* AUTO DEFINITIONS */
 
-    autoType = NORMAL;
+    autoType = CANBURGLE;
 
     grabberType = CARBON_FIBER;
     grabberSpeed = SLOW;

@@ -31,8 +31,10 @@ void ControlManager::update() {
 
     if (controls->getDriverButton(5) && initialRetract) {
         grabManager->retractArms();
-    } else if (controls->getDriverButton(6)) {
-        grabManager->startSequence(0.4, false);
+    }
+
+    if (controls->getDriverButton(7)) {
+        grabManager->startSequence(0.4, false, true);
     }
 
 
@@ -71,7 +73,9 @@ void ControlManager::update() {
         stateManager->setResting();
     }
 
-    stateManager->setFunnelPosition(controls->getCodriverButton(5));
+    if (controls->getCodriverButton(5)) {
+        stateManager->unBrakeClaw();
+    }
 
     stateManager->setContainerLoad(controls->getCodriverButton(6));
 
