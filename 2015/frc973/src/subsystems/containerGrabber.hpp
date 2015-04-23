@@ -13,12 +13,13 @@ public:
         int state;
         CANTalon *motorA;
         CANTalon *motorB;
+        Encoder *encoder;
         bool angleFault;
         bool contact;
         bool atDriveAngle;
     };
 
-    ContainerGrabber(CANTalon* leftMotorA_, CANTalon* leftMotorB_, CANTalon* rightMotorA_, CANTalon* rightMotorB_);
+    ContainerGrabber(CANTalon* leftMotorA_, CANTalon* leftMotorB_, CANTalon* rightMotorA_, CANTalon* rightMotorB_, Encoder *leftEncoder_, Encoder *rightEncoder_);
     void setMotorsOpenLoop(Arm* arm, float speed);
     void runArmsFreeSpeed();
     void injectArmType(int type);
