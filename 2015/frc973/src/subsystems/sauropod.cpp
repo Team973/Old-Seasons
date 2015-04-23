@@ -36,8 +36,6 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, Encoder* elevatorEncoder_, Solenoid
     addPreset("containerLoad", 0);
     addPreset("upperLimit", 48);
     addPreset("rest", 6);
-    addPreset("capOne", 15);
-    addPreset("capTwo", 25);
     addPreset("capThree", 30);
     addPreset("capFour", 40);
     addPreset("capFive", 56);
