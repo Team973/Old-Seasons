@@ -204,7 +204,7 @@ void XYManager::update()
         angularInput = -turnLimit;
     }
 
-    updateValue->throttle = driveInput;
+    updateValue->throttle = -driveInput;
     updateValue->turn = angularInput;
 }
 }
