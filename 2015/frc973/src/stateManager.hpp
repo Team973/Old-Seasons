@@ -59,8 +59,6 @@ private:
     const static int DEAD = 3;
 
     // cap heights
-    const static int ONE = 1;
-    const static int TWO = 2;
     const static int THREE = 3;
     const static int FOUR = 4;
     const static int FIVE = 5;

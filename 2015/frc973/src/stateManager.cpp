@@ -59,14 +59,14 @@ void StateManager::incrementElevatorHeight(float increment) {
 void StateManager::incrementCapHeight() {
     capHeight += 1;
     if (capHeight > FIVE) {
-        capHeight = ONE;
+        capHeight = FIVE;
     }
 }
 
 void StateManager::decrementCapHeight() {
     capHeight -= 1;
-    if (capHeight < ONE) {
-        capHeight = FIVE;
+    if (capHeight < THREE) {
+        capHeight = THREE;
     }
 }
 
@@ -308,12 +308,6 @@ void StateManager::update() {
             break;
         case CAP:
             switch (capHeight) {
-                case ONE:
-                    sauropod->setPreset("capOne");
-                    break;
-                case TWO:
-                    sauropod->setPreset("capTwo");
-                    break;
                 case THREE:
                     sauropod->setPreset("capThree");
                     break;
