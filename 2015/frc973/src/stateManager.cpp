@@ -56,6 +56,20 @@ void StateManager::incrementElevatorHeight(float increment) {
     sauropod->incrementElevator(increment);
 }
 
+void StateManager::incrementCapHeight() {
+    capHeight += 1;
+    if (capHeight > FIVE) {
+        capHeight = ONE;
+    }
+}
+
+void StateManager::decrementCapHeight() {
+    capHeight -= 1;
+    if (capHeight < ONE) {
+        capHeight = FIVE;
+    }
+}
+
 void StateManager::setIntakeSpeed(float speed) {
     /*
     if (robotState == HUMAN_LOAD) {
@@ -127,6 +141,10 @@ void StateManager::setHumanLoad(bool wantLoad) {
         }
     }
     wantHumanLoad = wantLoad;
+}
+
+void StateManager::setCapState() {
+    robotState = CAP;
 }
 
 void StateManager::actuateClaw(bool clamp) {
@@ -285,6 +303,25 @@ void StateManager::update() {
                 break;
                 case DEAD:
                 break;
+            }
+            break;
+        case CAP:
+            switch (capHeight) {
+                case ONE:
+                    sauropod->setPreset("capOne");
+                    break;
+                case TWO:
+                    sauropod->setPreset("capTwo");
+                    break;
+                case THREE:
+                    sauropod->setPreset("capThree");
+                    break;
+                case FOUR:
+                    sauropod->setPreset("capFour");
+                    break;
+                case FIVE:
+                    sauropod->setPreset("capFive");
+                    break;
             }
             break;
         case SCORE:
