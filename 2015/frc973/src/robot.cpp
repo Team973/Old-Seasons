@@ -79,10 +79,10 @@ Robot::Robot()
 
     humanLoadFunnelSolenoid = new Solenoid(0);
     intakeSolenoid = new Solenoid(1);
-    footSolenoid = new Solenoid(7);
+    footSolenoid = new Solenoid(4);
 
     clawClampSolenoid = new Solenoid(2);
-    clawBrakeSolenoid = new Solenoid(3);
+    clawBrakeSolenoid = new Solenoid(5);
 
     airPressureSwitch = new DigitalInput(9);
     compressor = new Relay(0, Relay::kForwardOnly);
