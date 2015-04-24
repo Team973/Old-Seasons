@@ -90,8 +90,8 @@ float Drive::signSquare(float x) {
 void Drive::controlInterface(double throttle, double wheel, bool lowGear) {
     float turnCap, driveCap;
     if (lowGear) {
-        driveCap = 0.3;
-        turnCap = 0.5;
+        driveCap = 0.4;
+        turnCap = 0.3;
     } else {
         driveCap = 0.4;
         turnCap = 0.7;
