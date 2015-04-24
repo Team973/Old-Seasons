@@ -47,7 +47,7 @@ bool ControlMap::getCodriverDpadDown() {
 }
 
 bool ControlMap::getCodriverDpadUp() {
-    double axis = coDriver->GetRawAxis(6);
+    double axis = coDriver->GetRawAxis(13);
     bool up = axis < -0.5 && prevCodriverDpad >= -0.5;
     prevCodriverDpad = axis;
     return up;

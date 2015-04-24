@@ -49,6 +49,8 @@ ContainerGrabber::ContainerGrabber(CANTalon* leftMotorA_, CANTalon* leftMotorB_,
 
     armType = ALUMINUM;
 
+    boosted = false;
+
     dropTimer = new Timer();
 
     grabberPID = new PID(0.1,0.0,0.0);
@@ -86,6 +88,10 @@ void ContainerGrabber::setMotorsOpenLoop(Arm* arm, float speed) {
     }
     arm->motorA->Set(speed);
     arm->motorB->Set(speed);
+}
+
+void ContainerGrabber::boost() {
+    boosted = true;
 }
 
 void ContainerGrabber::setPIDTarget(float target) {
@@ -207,8 +213,15 @@ void ContainerGrabber::stateHandler(Arm* arm) {
                 initHomeState(arm);
             }
 
+
             if (arm->encoder->Get() > 40) {
-                setMotorsOpenLoop(arm, -0.2);
+                if (boosted) {
+                    limitSpeed  = 0.4;
+                    setMotorsOpenLoop(arm, -0.4);
+                } else {
+                    limitSpeed  = 0.2;
+                    setMotorsOpenLoop(arm, -0.2);
+                }
             } else {
                 setMotorsOpenLoop(arm, -0.07);
             }

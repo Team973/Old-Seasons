@@ -39,6 +39,7 @@ public:
     bool gotFault();
     bool isSettled();
     void update();
+    void boost();
 
     const static int SLOW = 0;
     const static int DROP = 1;
@@ -69,6 +70,7 @@ private:
     int armType;
 
     bool goinSlow;
+    bool boosted;
     float limitSpeed;
     float dropTransitionAngle;
     float dropTargetAngle;
