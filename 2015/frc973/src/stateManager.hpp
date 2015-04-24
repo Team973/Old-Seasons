@@ -16,7 +16,6 @@ public:
     void setSauropodPreset(std::string name);
     void incrementElevatorHeight(float increment);
     void incrementCapHeight();
-    void decrementCapHeight();
     void setIntakeSpeed(float speed);
     void setIntakeLeftRight(float left, float right);
     void setIntakePosition(bool actuate);
@@ -59,6 +58,7 @@ private:
     const static int DEAD = 3;
 
     // cap heights
+    const static int ZERO = 2;
     const static int THREE = 3;
     const static int FOUR = 4;
     const static int FIVE = 5;

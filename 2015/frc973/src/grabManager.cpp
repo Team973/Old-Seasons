@@ -25,6 +25,10 @@ void GrabManager::runArmsFreeSpeed() {
     grabber->runArmsFreeSpeed();
 }
 
+void GrabManager::boostRetract() {
+    grabber->boost();
+}
+
 void GrabManager::retractArms() {
     grabber->retract();
 }

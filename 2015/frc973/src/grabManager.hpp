@@ -14,6 +14,7 @@ public:
     void runArmsFreeSpeed();
     void injectArmType(int type);
     void initSequence();
+    void boostRetract();
     void startSequence(float speed, bool wait, bool teleop = false);
     void cancelSequence();
     bool isDriving();

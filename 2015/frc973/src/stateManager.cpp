@@ -17,6 +17,8 @@ StateManager::StateManager(Drive *drive_, Sauropod *sauropod_, Intake *intake_) 
     lastRobotState = IDLE;
     internalState = RUNNING;
 
+    capHeight = ZERO;
+
     leftIntakeSpeed = 0;
     rightIntakeSpeed = 0;
 
@@ -59,14 +61,7 @@ void StateManager::incrementElevatorHeight(float increment) {
 void StateManager::incrementCapHeight() {
     capHeight += 1;
     if (capHeight > FIVE) {
-        capHeight = FIVE;
-    }
-}
-
-void StateManager::decrementCapHeight() {
-    capHeight -= 1;
-    if (capHeight < THREE) {
-        capHeight = THREE;
+        capHeight = ZERO;
     }
 }
 
@@ -112,6 +107,7 @@ void StateManager::setRobotState(int state) {
 
 void StateManager::setScore() {
     sauropod->setPreset("hardStop");
+    capHeight = ZERO;
     robotState = SCORE;
 }
 
@@ -308,6 +304,9 @@ void StateManager::update() {
             break;
         case CAP:
             switch (capHeight) {
+                case ZERO:
+                    sauropod->setPreset("hardStop");
+                    break;
                 case THREE:
                     sauropod->setPreset("capThree");
                     break;

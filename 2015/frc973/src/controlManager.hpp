@@ -19,6 +19,7 @@ private:
 
     bool clawClosedOverriden;
     bool initialRetract;
+    bool capButtonDelay;
 };
 
 } /* namespace frc973 */

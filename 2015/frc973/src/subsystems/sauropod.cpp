@@ -36,9 +36,9 @@ Sauropod::Sauropod(VictorSP* elevatorMotor_, Encoder* elevatorEncoder_, Solenoid
     addPreset("containerLoad", 0);
     addPreset("upperLimit", 48);
     addPreset("rest", 6);
-    addPreset("capThree", 30);
-    addPreset("capFour", 40);
-    addPreset("capFive", 56);
+    addPreset("capThree", 39.5);
+    addPreset("capFour", 50.5);
+    addPreset("capFive", 58);
 
     Gains empty = {
         {Constants::getConstant("kUpElevatorP")->getFloat(),

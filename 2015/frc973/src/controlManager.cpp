@@ -15,6 +15,8 @@ ControlManager::ControlManager(ControlMap *controls_, StateManager *stateManager
     clawClosedOverriden = false;
 
     initialRetract = false;
+
+    capButtonDelay = false;
 }
 
 void ControlManager::update() {
@@ -23,6 +25,10 @@ void ControlManager::update() {
 
     if (controls->getDriverButton(4)) {
         stateManager->setScore();
+    }
+
+    if (controls->getDriverButton(1)) {
+        grabManager->boostRetract();
     }
 
     if (controls->getDriverButton(5) && !initialRetract) {
@@ -90,15 +96,12 @@ void ControlManager::update() {
         stateManager->setRepack();
     }
 
-    if (controls->getCodriverDpadUp()) {
+    if (controls->getCodriverButton(11) && !capButtonDelay) {
+        capButtonDelay = true;
         stateManager->setCapState();
         stateManager->incrementCapHeight();
     }
-
-    if (controls->getCodriverDpadDown()) {
-        stateManager->setCapState();
-        stateManager->decrementCapHeight();
-    }
+    capButtonDelay = controls->getCodriverButton(11);
 }
 
 } /* namespace frc973 */
