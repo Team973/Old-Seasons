@@ -9,26 +9,19 @@ class XYManager;
 
 class GrabManager {
 public:
-    GrabManager(Drive* drive_, ContainerGrabber* grabber_);
-    void retractArms();
-    void runArmsFreeSpeed();
-    void injectArmType(int type);
-    void initSequence();
-    void boostRetract();
-    void startSequence(float speed, bool wait, bool teleop = false);
+    GrabManager(Drive* drive_, Talon* leftArm_, Talon* rightArm_);
+    void runArms();
+    void init();
     void cancelSequence();
-    bool isDriving();
     void update();
 private:
     Drive *drive;
-    ContainerGrabber *grabber;
-    XYManager *xyManager;
 
     Timer *timer;
 
-    bool waitForContact;
-    bool goinSlow;
-    bool driving;
+    Talon *leftArm;
+    Talon *rightArm;
+
     bool sequenceCanceled;
 };
 
