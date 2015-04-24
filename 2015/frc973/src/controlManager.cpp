@@ -27,23 +27,6 @@ void ControlManager::update() {
         stateManager->setScore();
     }
 
-    if (controls->getDriverButton(1)) {
-        grabManager->boostRetract();
-    }
-
-    if (controls->getDriverButton(5) && !initialRetract) {
-        initialRetract = true;
-    }
-
-    if (controls->getDriverButton(5) && initialRetract) {
-        grabManager->retractArms();
-    }
-
-    if (controls->getDriverButton(7)) {
-        grabManager->startSequence(0.4, false, true);
-    }
-
-
     if (controls->getDriverButton(3)) {
         stateManager->actuateClaw(false);
         clawClosedOverriden = true;

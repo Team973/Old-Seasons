@@ -65,7 +65,7 @@ Robot::Robot()
 
     driver = new Joystick(0);
     coDriver = new Joystick(1);
-    oliverStick = new Joystick(2);
+    armController = new Joystick(2);
 
     leftDriveMotors = new VictorSP(0);
     rightDriveMotors = new VictorSP(1);
@@ -129,7 +129,7 @@ Robot::Robot()
     intake = new Intake(leftIntakeMotor, rightIntakeMotor, intakeSolenoid, humanLoadFunnelSolenoid, footSolenoid, toteSensor);
     grabber = new ContainerGrabber(leftGrabberMotorA, leftGrabberMotorB, rightGrabberMotorA, rightGrabberMotorB, leftArmEncoder, rightArmEncoder);
 
-    grabManager = new GrabManager(drive, grabber);
+    grabManager = new GrabManager(drive, leftArmMotors, rightArmMotors);
 
     controls = new ControlMap(driver, coDriver);
 
@@ -203,31 +203,7 @@ void Robot::DisabledPeriodic()
 
     switch (autoType) {
         case CANBURGLE:
-            grabManager->initSequence();
-
-            switch (grabberType) {
-                grabManager->injectArmType(grabberType);
-                case CARBON_FIBER:
-                    switch (grabberSpeed) {
-                        case FAST:
-                            grabManager->startSequence(1.0, false);
-                            break;
-                        case SLOW:
-                            grabManager->startSequence(0.7, true);
-                            break;
-                    }
-                    break;
-                case ALUMINUM:
-                    switch (grabberSpeed) {
-                        case FAST:
-                            grabManager->startSequence(0.6, false);
-                            break;
-                        case SLOW:
-                            grabManager->startSequence(0.4, false);
-                            break;
-                    }
-                    break;
-            }
+            grabManager->runArms();
             break;
         case NORMAL:
             grabManager->cancelSequence();
@@ -244,6 +220,7 @@ void Robot::AutonomousInit()
     locator->resetGyro();
     locator->resetAll();
     autoManager->getCurrentMode()->init();
+    grabManager->init();
 }
 
 void Robot::AutonomousPeriodic()
@@ -263,13 +240,6 @@ void Robot::AutonomousPeriodic()
 
     statusLEDA->Set(Relay::kOn);
 
-    if (grabManager->isDriving()) {
-        statusLEDB->Set(Relay::kOn);
-    }
-    if (grabber->isSettled()) {
-        statusLEDC->Set(Relay::kOn);
-    }
-
     grabManager->update();
 
     dashboardUpdate();
@@ -284,9 +254,24 @@ void Robot::TeleopInit()
 
 void Robot::TeleopPeriodic()
 {
-    grabber->update();
     controlManager->update();
     stateManager->update();
+
+    if (armController->GetRawButton(1)) {
+        leftArmMotors->Set(-0.1);
+    } else if (armController->GetRawButton(4)) {
+        leftArmMotors->Set(0.5);
+    } else {
+        leftArmMotors->Set(0.0);
+    }
+
+    if (armController->GetRawButton(2)) {
+        rightArmMotors->Set(-0.1);
+    } else if (armController->GetRawButton(3)) {
+        rightArmMotors->Set(0.5);
+    } else {
+        rightArmMotors->Set(0.0);
+    }
 
     runCompressor();
 

@@ -60,8 +60,8 @@ private:
     VictorSP *leftIntakeMotor;
     VictorSP *rightIntakeMotor;
     VictorSP *containerGrabberMotor;
-    VictorSP *leftArmMotors;
-    VictorSP *rightArmMotors;
+    Talon *leftArmMotors;
+    Talon *rightArmMotors;
     
     CANTalon *leftGrabberMotorA;
     CANTalon *leftGrabberMotorB;
@@ -96,7 +96,7 @@ private:
 
     Joystick *driver;
     Joystick *coDriver;
-    Joystick *oliverStick;
+    Joystick *armController;
 
     Locator *locator;
 
