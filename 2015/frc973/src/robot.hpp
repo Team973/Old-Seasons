@@ -60,6 +60,8 @@ private:
     VictorSP *leftIntakeMotor;
     VictorSP *rightIntakeMotor;
     VictorSP *containerGrabberMotor;
+    VictorSP *leftArmMotors;
+    VictorSP *rightArmMotors;
     
     CANTalon *leftGrabberMotorA;
     CANTalon *leftGrabberMotorB;

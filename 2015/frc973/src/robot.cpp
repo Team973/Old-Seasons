@@ -70,6 +70,9 @@ Robot::Robot()
     leftDriveMotors = new VictorSP(0);
     rightDriveMotors = new VictorSP(1);
 
+    leftArmMotors = new VictorSP(2);
+    rightArmMotors = new VictorSP(3);
+
     elevatorMotor = new VictorSP(6);
 
     leftIntakeMotor = new VictorSP(8);
