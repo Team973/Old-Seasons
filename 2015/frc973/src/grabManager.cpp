@@ -7,6 +7,9 @@ namespace frc973 {
 GrabManager::GrabManager(Drive* drive_, Talon* leftArm_, Talon* rightArm_) {
     drive = drive_;
 
+    leftArm = leftArm_;
+    rightArm = rightArm_;
+
     timer = new Timer();
 
     sequenceCanceled = false;
