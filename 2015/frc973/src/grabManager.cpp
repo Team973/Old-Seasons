@@ -34,9 +34,9 @@ void GrabManager::update() {
 
     if (!sequenceCanceled) {
 
-        if (timer->Get() >= 0.1) {
+        if (timer->Get() <= 0.30 && timer->Get() >= 0.1) {
             drive->arcade(-1.0, 0.0);
-        } else if (timer->Get() >= 1.1) {
+        } else {
             drive->arcade(0.0, 0.0);
         }
 

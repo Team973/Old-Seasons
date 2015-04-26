@@ -258,17 +258,17 @@ void Robot::TeleopPeriodic()
     stateManager->update();
 
     if (armController->GetRawButton(1)) {
-        leftArmMotors->Set(-0.1);
+        leftArmMotors->Set(-0.2);
     } else if (armController->GetRawButton(4)) {
-        leftArmMotors->Set(0.5);
+        leftArmMotors->Set(0.35);
     } else {
         leftArmMotors->Set(0.0);
     }
 
     if (armController->GetRawButton(2)) {
-        rightArmMotors->Set(-0.1);
+        rightArmMotors->Set(-0.2);
     } else if (armController->GetRawButton(3)) {
-        rightArmMotors->Set(0.5);
+        rightArmMotors->Set(0.35);
     } else {
         rightArmMotors->Set(0.0);
     }
