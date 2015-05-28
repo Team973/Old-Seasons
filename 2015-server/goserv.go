@@ -32,6 +32,15 @@ type Constant struct {
 	Value float64
 }
 
+type BufferedConstant struct {
+	Key string
+	Value []float64
+}
+
+type BufferedConstantsFile struct {
+	List []BufferedConstant
+}
+
 type ConstantsFile struct {
 	Title string
 	List []Constant
@@ -42,7 +51,7 @@ type MessageBoard struct {
 }
 
 var constantList ConstantsFile
-var tempConstants ConstantsFile
+var tempConstants BufferedConstantsFile
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles("templates/index.html")
@@ -166,7 +175,7 @@ func main() {
 	tempConstants = constantList
 
 	http.HandleFunc("/", indexHandler)
-	http.HandleFunc("/constants.html/", constantsHandler)
+	http.HandleFunc("/goserv.html/", constantsHandler)
 	http.HandleFunc("/socket.html/", socketHandler)
 
 	// Start Web server
