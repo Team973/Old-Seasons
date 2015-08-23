@@ -27,6 +27,11 @@ type File struct {
 	Body  []string
 }
 
+type File struct {
+	Title string
+	Body []string
+}
+
 type Constant struct {
 	Key string
 	Value float64
