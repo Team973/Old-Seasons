@@ -9,11 +9,12 @@ namespace frc973 {
 
 class Wait;
 class StateManager;
+class GrabManager;
 
 class AutoManager : public SocketClient::SocketListener
 {
 public:
-    AutoManager(StateManager* stateManager_);
+    AutoManager(StateManager *stateManager_, GrabManager *grabManager_);
     void resetModes();
     void setMode(std::string mode);
     void setModes();
@@ -24,6 +25,7 @@ public:
 private:
 
     StateManager *stateManager;
+    GrabManager *grabManager;
 
     std::map<std::string, AutoSequencer*> modes;
 

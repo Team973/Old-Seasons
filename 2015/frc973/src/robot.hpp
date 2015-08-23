@@ -47,9 +47,6 @@ private:
 
     int grabberSpeed;
 
-    const static int CANBURGLE = 1;
-    const static int NORMAL = 2;
-
     int autoType;
 
     bool autoRan;
@@ -73,6 +70,7 @@ private:
     Solenoid *footSolenoid;
     Solenoid *clawClampSolenoid;
     Solenoid *clawBrakeSolenoid;
+    Solenoid *grabberSolenoid;
 
     Encoder *leftDriveEncoder;
     Encoder *rightDriveEncoder;
@@ -87,6 +85,8 @@ private:
 
     DigitalInput *toteSensor;
     DigitalInput *airPressureSwitch;
+    DigitalInput *autoSwitchA;
+    DigitalInput *autoSwitchB;
 
     Relay *compressor;
     Relay *statusLEDA;

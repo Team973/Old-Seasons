@@ -87,6 +87,8 @@ Robot::Robot()
     clawClampSolenoid = new Solenoid(2);
     clawBrakeSolenoid = new Solenoid(5);
 
+    grabberSolenoid = new Solenoid(3);
+
     airPressureSwitch = new DigitalInput(9);
     compressor = new Relay(0, Relay::kForwardOnly);
 
@@ -110,6 +112,9 @@ Robot::Robot()
 
     toteSensor = new DigitalInput(8);
 
+    autoSwitchA = new DigitalInput(24);
+    autoSwitchB = new DigitalInput(25);
+
     leftGrabberMotorA = new CANTalon(0);
     leftGrabberMotorA->SetControlMode(CANSpeedController::kPercentVbus);
     rightGrabberMotorA = new CANTalon(2);
@@ -129,21 +134,20 @@ Robot::Robot()
     intake = new Intake(leftIntakeMotor, rightIntakeMotor, intakeSolenoid, humanLoadFunnelSolenoid, footSolenoid, toteSensor);
     grabber = new ContainerGrabber(leftGrabberMotorA, leftGrabberMotorB, rightGrabberMotorA, rightGrabberMotorB, leftArmEncoder, rightArmEncoder);
 
-    grabManager = new GrabManager(drive, leftArmMotors, rightArmMotors);
+    grabManager = new GrabManager(grabberSolenoid);
 
     controls = new ControlMap(driver, coDriver);
 
     stateManager = new StateManager(drive, sauropod, intake);
 
-    controlManager = new ControlManager(controls, stateManager, grabManager);
+    controlManager = new ControlManager(controls, stateManager);
 
-    autoManager = new AutoManager(stateManager);
+    autoManager = new AutoManager(stateManager, grabManager);
 
     Logger::Log(MESSAGE, "objects initialized\n");
 
     Logger::Log(MESSAGE, "starting smart dashboard\n");
 
-    autoType = NORMAL;
     grabberType = CARBON_FIBER;
     grabberSpeed = FAST;
 
@@ -189,25 +193,15 @@ void Robot::DisabledInit()
 
 void Robot::DisabledPeriodic()
 {
-    if (!autoRan) {
-        leftArmEncoder->Reset();
-        rightArmEncoder->Reset();
-    }
 
-    /* AUTO DEFINITIONS */
-
-    autoType = CANBURGLE;
-
-    grabberType = CARBON_FIBER;
-    grabberSpeed = SLOW;
-
-    switch (autoType) {
-        case CANBURGLE:
-            grabManager->runArms();
-            break;
-        case NORMAL:
-            grabManager->cancelSequence();
-            break;
+    if (autoSwitchA->Get() && autoSwitchB->Get()) {
+        autoManager->setMode("UberAuto");
+    } else if (autoSwitchA->Get()) {
+        autoManager->setMode("BasicThreeTote");
+    } else if (autoSwitchB->Get()) {
+        autoManager->setMode("Grab");
+    } else {
+        autoManager->setMode("None");
     }
 
     dashboardUpdate();
@@ -215,32 +209,25 @@ void Robot::DisabledPeriodic()
 
 void Robot::AutonomousInit()
 {
-    autoManager->setMode("BasicThreeTote");
     spiGyro->ZeroAngle();
     locator->resetGyro();
     locator->resetAll();
     autoManager->getCurrentMode()->init();
-    grabManager->init();
 }
 
 void Robot::AutonomousPeriodic()
 {
     autoRan = true;
-    switch (autoType) {
-        case NORMAL:
-            autoManager->getCurrentMode()->run();
+    autoManager->getCurrentMode()->run();
 
-            xyManager->update();
-            stateManager->update();
-            drive->update();
+    xyManager->update();
+    stateManager->update();
+    drive->update();
 
-            runCompressor();
-            break;
-    }
+    runCompressor();
 
     statusLEDA->Set(Relay::kOn);
 
-    grabManager->update();
 
     dashboardUpdate();
 }
@@ -248,7 +235,6 @@ void Robot::AutonomousPeriodic()
 void Robot::TeleopInit()
 {
     if (!autoRan) {
-        grabManager->cancelSequence();
     }
 }
 
