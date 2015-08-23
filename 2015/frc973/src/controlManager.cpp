@@ -2,15 +2,13 @@
 #include "controlManager.hpp"
 #include "controlMap.hpp"
 #include "stateManager.hpp"
-#include "grabManager.hpp"
 #include "subsystems/sauropod.hpp"
 
 namespace frc973 {
 
-ControlManager::ControlManager(ControlMap *controls_, StateManager *stateManager_, GrabManager *grabManager_) {
+ControlManager::ControlManager(ControlMap *controls_, StateManager *stateManager_) {
     controls = controls_;
     stateManager = stateManager_;
-    grabManager = grabManager_;
 
     clawClosedOverriden = false;
 
@@ -39,8 +37,6 @@ void ControlManager::update() {
     if (!clawClosedOverriden) {
         stateManager->actuateClaw(!controls->getCodriverButton(7));
     }
-
-
 
     if (controls->getDriverButton(8)) {
         stateManager->unBrakeClaw();

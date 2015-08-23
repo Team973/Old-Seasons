@@ -9,13 +9,12 @@ class GrabManager;
 
 class ControlManager {
 public:
-    ControlManager(ControlMap *controls_, StateManager *stateManager_, GrabManager *grabManager_);
+    ControlManager(ControlMap *controls_, StateManager *stateManager_);
     void update();
 private:
 
     ControlMap *controls;
     StateManager *stateManager;
-    GrabManager *grabManager;
 
     bool clawClosedOverriden;
     bool initialRetract;
