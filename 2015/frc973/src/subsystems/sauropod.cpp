@@ -173,7 +173,7 @@ bool Sauropod::lotsoTotes() {
 }
 
 void Sauropod::setClawBrake(bool brake) {
-    clawBrake->Set(brake);
+    clawBrake->Set(!brake);
     isClawBraked = brake;
 }
 

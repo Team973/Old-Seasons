@@ -39,13 +39,14 @@ void AutoManager::setModes() {
     //float driveOffset = 4.0;
     //float thirdFudge = 1.0;
 
-    modes["Drive"]->addSequential(new DriveCommand(stateManager, -5.0, "fast"));
+    modes["Drive"]->addSequential(new TimerDriveCommand(stateManager, 1, 2));
 
     modes["None"]->addSequential(new WaitCommand(10000));
 
     modes["Grab"]->addSequential(new WaitCommand(1));
     modes["Grab"]->addSequential(new GrabCommand(grabManager));
-    modes["Grab"]->addSequential(new TimerDriveCommand(stateManager, 1, 0.25));
+    modes["Grab"]->addSequential(new WaitCommand(2));
+    modes["Grab"]->addSequential(new TimerDriveCommand(stateManager, 1, 2));
     modes["Grab"]->addSequential(new TimerDriveCommand(stateManager, -1, 0.15));
 
     modes["UberAuto"]->addSequential(new WaitCommand(1));
@@ -55,7 +56,7 @@ void AutoManager::setModes() {
     modes["UberAuto"]->addSequential(new WaitCommand(1));
     modes["UberAuto"]->addSequential(new GrabCommand(grabManager));
     modes["UberAuto"]->addSequential(new WaitCommand(1));
-    modes["UberAuto"]->addSequential(new TimerDriveCommand(stateManager, 1, 0.25));
+    modes["UberAuto"]->addSequential(new TimerDriveCommand(stateManager, 1, 2));
     modes["UberAuto"]->addSequential(new TimerDriveCommand(stateManager, -1, 0.15));
 
     modes["BasicThreeTote"]->addConcurrent(new SauropodCommand(stateManager, "humanLoadHigh", 0, false, 0));

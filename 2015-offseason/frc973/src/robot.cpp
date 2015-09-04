@@ -1,39 +1,28 @@
 #include "WPILib.h"
+#include "robot.hpp"
 
-class Robot: public IterativeRobot
-{
-private:
-	LiveWindow *lw;
+namespace frc973 {
 
-	void RobotInit()
-	{
-		lw = LiveWindow::GetInstance();
+    Robot::Robot() {
+    }
+
+	void Robot::RobotInit() {
 	}
 
-	void AutonomousInit()
-	{
-
+	void Robot::AutonomousInit() {
 	}
 
-	void AutonomousPeriodic()
-	{
-
+	void Robot::AutonomousPeriodic() {
 	}
 
-	void TeleopInit()
-	{
-
+	void Robot::TeleopInit() {
 	}
 
-	void TeleopPeriodic()
-	{
-
+	void Robot::TeleopPeriodic() {
 	}
 
-	void TestPeriodic()
-	{
-		lw->Run();
+	void Robot::TestPeriodic() {
 	}
-};
+}
 
-START_ROBOT_CLASS(Robot);
+START_ROBOT_CLASS(frc973::Robot);
