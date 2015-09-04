@@ -112,8 +112,9 @@ Robot::Robot()
 
     toteSensor = new DigitalInput(8);
 
-    autoSwitchA = new DigitalInput(24);
-    autoSwitchB = new DigitalInput(25);
+    autoSwitchA = new DigitalInput(0);
+    autoSwitchB = new DigitalInput(1);
+    autoSwitchC = new DigitalInput(25);
 
     leftGrabberMotorA = new CANTalon(0);
     leftGrabberMotorA->SetControlMode(CANSpeedController::kPercentVbus);
@@ -180,6 +181,10 @@ void Robot::dashboardUpdate()
     SmartDashboard::PutNumber("gyro angle: ", locator->getAngle());
     SmartDashboard::PutNumber("spigyro angle: ", spiGyro->GetDegrees());
     SmartDashboard::PutNumber("Elevator Height:", sauropod->getElevatorHeight());
+
+    SmartDashboard::PutBoolean("AutoSwitch A: ", autoSwitchA->Get());
+    SmartDashboard::PutBoolean("AutoSwitch B: ", autoSwitchB->Get());
+    SmartDashboard::PutBoolean("AutoSwitch C: ", autoSwitchC->Get());
 }
 
 void Robot::RobotInit()
@@ -195,13 +200,17 @@ void Robot::DisabledPeriodic()
 {
 
     if (autoSwitchA->Get() && autoSwitchB->Get()) {
-        autoManager->setMode("UberAuto");
+        autoManager->setMode("Drive");
     } else if (autoSwitchA->Get()) {
         autoManager->setMode("BasicThreeTote");
     } else if (autoSwitchB->Get()) {
         autoManager->setMode("Grab");
     } else {
         autoManager->setMode("None");
+    }
+
+    if (!autoSwitchC->Get()) {
+        autoManager->setMode("UberAuto");
     }
 
     dashboardUpdate();
@@ -217,6 +226,7 @@ void Robot::AutonomousInit()
 
 void Robot::AutonomousPeriodic()
 {
+    stateManager->actuateClaw(true);
     autoRan = true;
     autoManager->getCurrentMode()->run();
 
@@ -236,6 +246,7 @@ void Robot::TeleopInit()
 {
     if (!autoRan) {
     }
+    stateManager->unBrakeClaw();
 }
 
 void Robot::TeleopPeriodic()

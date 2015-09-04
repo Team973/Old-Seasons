@@ -87,6 +87,7 @@ private:
     DigitalInput *airPressureSwitch;
     DigitalInput *autoSwitchA;
     DigitalInput *autoSwitchB;
+    DigitalInput *autoSwitchC;
 
     Relay *compressor;
     Relay *statusLEDA;
