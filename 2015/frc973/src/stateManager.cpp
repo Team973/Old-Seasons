@@ -4,14 +4,15 @@
 #include "subsystems/drive.hpp"
 #include "subsystems/sauropod.hpp"
 #include "subsystems/intake.hpp"
-#include "subsystems/containerGrabber.hpp"
+#include "grabManager.hpp"
 
 namespace frc973 {
 
-StateManager::StateManager(Drive *drive_, Sauropod *sauropod_, Intake *intake_) {
+StateManager::StateManager(Drive *drive_, Sauropod *sauropod_, Intake *intake_, GrabManager *grabber_) {
     drive = drive_;
     sauropod = sauropod_;
     intake = intake_;
+    grabber = grabber_;
 
     robotState = IDLE;
     lastRobotState = IDLE;
@@ -48,6 +49,14 @@ void StateManager::setDriveFromControls(double throttle, double turn, bool lowGe
     } else {
         drive->controlInterface(deadband(throttle, 0.1), deadband(turn, 0.1), lowGear);
     }
+}
+
+void StateManager::dropGrabber() {
+    grabber->drop();
+}
+
+void StateManager::retractGrabber() {
+    grabber->retract();
 }
 
 void StateManager::setElevatorFromControls(float speed) {

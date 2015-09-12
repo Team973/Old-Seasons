@@ -6,10 +6,11 @@ namespace frc973 {
 class Drive;
 class Sauropod;
 class Intake;
+class GrabManager;
 
 class StateManager {
 public:
-    StateManager(Drive *drive_, Sauropod *sauropod_, Intake *intake_);
+    StateManager(Drive *drive_, Sauropod *sauropod_, Intake *intake_, GrabManager * grabber_);
     void vTecKickedInYo(bool kickedInYo);
     void setDriveFromControls(double throttle, double turn, bool lowGear);
     void setElevatorFromControls(float speed);
@@ -39,6 +40,8 @@ public:
     void lockDrive();
     void unlockDrive();
     void update();
+    void dropGrabber();
+    void retractGrabber();
 
     const static int AUTO_LOAD = 1;
     const static int SCORE = 2;
@@ -51,6 +54,7 @@ private:
     Drive *drive;
     Sauropod *sauropod;
     Intake *intake;
+    GrabManager *grabber;
 
     // secondary states
     const static int RUNNING = 1;

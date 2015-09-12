@@ -42,6 +42,12 @@ void ControlManager::update() {
         stateManager->unBrakeClaw();
     }
 
+    if (controls->getDriverButton(5)) {
+        stateManager->dropGrabber();
+    } else {
+        stateManager->retractGrabber();
+    }
+
     stateManager->setIntakeSpeed(-controls->getCodriverAxis(1));
 
     stateManager->setElevatorFromControls(controls->getCodriverAxis(3));
