@@ -10,6 +10,12 @@ Lua`_. ``2010-boss``, and all code after ``2013-cpp`` use c++.
 
 Subdirectories
 ================
+``2015-server``
+   The partially unfinished webserver that was used to communicate data to the robot from a webbrowser
+``2015``
+   The 2015 season code
+``2014-offseason-test``
+   The 2014 offseason code used to test several new ideas
 ``2014``
    The 2014 season code
 ``2013-cpp``
